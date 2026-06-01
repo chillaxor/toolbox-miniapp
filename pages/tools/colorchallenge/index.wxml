@@ -1,0 +1,48 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">色感测试</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <!-- 状态栏 -->
+  <view class="stats-bar">
+    <view class="stat-item">
+      <text class="stat-label">第</text>
+      <text class="stat-value">{{round}}</text>
+      <text class="stat-label">轮</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-label">得分</text>
+      <text class="stat-value">{{score}}</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-label">最高</text>
+      <text class="stat-value">{{bestScore}}</text>
+    </view>
+  </view>
+
+  <!-- 提示 -->
+  <view class="hint-text">
+    <text>找出颜色不同的那个方块</text>
+  </view>
+
+  <!-- 色块网格 -->
+  <view class="color-grid grid-{{gridSize}}">
+    <view class="color-cell {{index === wrongIndex ? 'cell-wrong' : ''}}"
+          wx:for="{{cells}}" wx:key="index"
+          style="background: {{item.color}}"
+          data-idx="{{index}}" bindtap="onCellTap">
+    </view>
+  </view>
+
+  <!-- 结果弹窗 -->
+  <view class="result-overlay" wx:if="{{showResult}}" bindtap="onCloseResult">
+    <view class="result-card" catchtap="">
+      <text class="result-emoji">{{rating.emoji}}</text>
+      <text class="result-level">{{rating.level}}</text>
+      <text class="result-score">通过 {{score}} 轮</text>
+      <text class="result-desc">{{rating.desc}}</text>
+      <button class="btn-retry" bindtap="restart">再来一次</button>
+    </view>
+  </view>
+</view>

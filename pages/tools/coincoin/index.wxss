@@ -1,0 +1,322 @@
+/* 模式切换 */
+.mode-card {
+  padding: 20rpx 24rpx;
+}
+
+.mode-btns {
+  display: flex;
+  gap: 16rpx;
+}
+
+.mode-btn {
+  flex: 1;
+  height: 72rpx;
+  line-height: 72rpx;
+  text-align: center;
+  font-size: 28rpx;
+  font-weight: 600;
+  background: #F5F5F5;
+  color: #666;
+  border-radius: 36rpx;
+  border: 2rpx solid #E5E5E5;
+}
+
+.mode-active {
+  background: #FDE8E8;
+  color: #E74C3C;
+  border-color: #E74C3C;
+}
+
+.multi-count {
+  display: flex;
+  align-items: center;
+  margin-top: 20rpx;
+  gap: 16rpx;
+}
+
+.count-label {
+  font-size: 26rpx;
+  color: #666;
+  white-space: nowrap;
+}
+
+.count-btns {
+  display: flex;
+  gap: 12rpx;
+}
+
+.count-btn {
+  width: 80rpx;
+  height: 64rpx;
+  line-height: 64rpx;
+  text-align: center;
+  font-size: 28rpx;
+  font-weight: 600;
+  background: #F5F5F5;
+  color: #666;
+  border-radius: 10rpx;
+  border: 2rpx solid #E5E5E5;
+}
+
+.count-active {
+  background: #FDE8E8;
+  color: #E74C3C;
+  border-color: #E74C3C;
+}
+
+/* 硬币舞台 */
+.coin-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60rpx 0 40rpx;
+}
+
+.coin-wrap {
+  width: 220rpx;
+  height: 220rpx;
+  border-radius: 50%;
+  box-shadow: 0 8rpx 32rpx rgba(0,0,0,0.15);
+}
+
+.coin-wrap.flipping {
+  animation: coin-flip 0.15s infinite;
+}
+
+@keyframes coin-flip {
+  0%   { transform: rotateY(0deg) scale(1); }
+  25%  { transform: rotateY(45deg) scale(0.8); }
+  50%  { transform: rotateY(90deg) scale(0.6); }
+  75%  { transform: rotateY(135deg) scale(0.8); }
+  100% { transform: rotateY(180deg) scale(1); }
+}
+
+.coin-face {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+
+.coin-emoji {
+  font-size: 120rpx;
+  line-height: 1;
+}
+
+.coin-hint {
+  margin-top: 32rpx;
+  font-size: 30rpx;
+  color: #666;
+  font-weight: 600;
+}
+
+.flipping-hint {
+  color: #E74C3C;
+  animation: blink 0.5s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* 多枚舞台 */
+.multi-stage {
+  min-height: 200rpx;
+  padding: 24rpx 0;
+}
+
+.multi-results {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20rpx;
+  padding: 0 24rpx;
+}
+
+.multi-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 110rpx;
+  padding: 16rpx 8rpx;
+  border-radius: 16rpx;
+  background: #FFF;
+  box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.08);
+}
+
+.multi-item.head {
+  background: #FEF9EE;
+  border: 2rpx solid #F39C12;
+}
+
+.multi-item.tail {
+  background: #F5F5F5;
+  border: 2rpx solid #999;
+}
+
+.multi-emoji {
+  font-size: 52rpx;
+  line-height: 1;
+}
+
+.multi-label {
+  font-size: 22rpx;
+  margin-top: 8rpx;
+  color: #555;
+  font-weight: 600;
+}
+
+.multi-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200rpx;
+}
+
+.multi-empty-text {
+  font-size: 28rpx;
+  color: #999;
+}
+
+/* 抛出按钮（多枚） */
+.btn-flip {
+  width: 100%;
+  height: 96rpx;
+  border-radius: 48rpx;
+  background: #E74C3C;
+  color: #fff;
+  font-size: 32rpx;
+  font-weight: 600;
+  border: none;
+  margin-top: 8rpx;
+}
+
+.btn-flipping {
+  background: #ccc;
+}
+
+/* 统计面板 */
+.stat-card {
+  margin-top: 32rpx;
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 32rpx 24rpx 24rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.06);
+}
+
+.stat-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 180rpx;
+}
+
+.stat-emoji {
+  font-size: 56rpx;
+  line-height: 1;
+}
+
+.stat-count {
+  font-size: 56rpx;
+  font-weight: 700;
+  margin-top: 8rpx;
+}
+
+.head-stat .stat-count {
+  color: #F39C12;
+}
+
+.tail-stat .stat-count {
+  color: #7F8C8D;
+}
+
+.stat-label {
+  font-size: 24rpx;
+  color: #999;
+  margin-top: 4rpx;
+}
+
+.stat-divider {
+  flex: 1;
+  text-align: center;
+}
+
+.stat-total {
+  font-size: 24rpx;
+  color: #999;
+}
+
+/* 概率条 */
+.prob-bar-wrap {
+  margin-top: 24rpx;
+  height: 16rpx;
+  background: #E5E5E5;
+  border-radius: 8rpx;
+  overflow: hidden;
+}
+
+.prob-bar-fill {
+  height: 100%;
+  background: linear-gradient(to right, #F39C12, #F5C518);
+  border-radius: 8rpx;
+  transition: width 0.4s ease;
+  min-width: 4rpx;
+}
+
+.prob-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8rpx;
+}
+
+.prob-label-left, .prob-label-right {
+  font-size: 22rpx;
+  color: #999;
+}
+
+.reset-btn-wrap {
+  text-align: center;
+  margin-top: 20rpx;
+}
+
+.reset-btn {
+  font-size: 24rpx;
+  color: #999;
+  text-decoration: underline;
+}
+
+/* 历史记录 */
+.history-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-top: 16rpx;
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  background: #F8F8F8;
+  padding: 8rpx 16rpx;
+  border-radius: 24rpx;
+}
+
+.hi-emoji {
+  font-size: 28rpx;
+}
+
+.hi-label {
+  font-size: 24rpx;
+  color: #555;
+}

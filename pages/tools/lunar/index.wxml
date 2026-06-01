@@ -1,0 +1,80 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">农历转换</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <!-- 模式切换 -->
+  <view class="mode-tabs">
+    <view class="mode-tab {{mode === 'solar2lunar' ? 'mode-active' : ''}}" data-mode="solar2lunar" bindtap="switchMode">
+      <text>公历→农历</text>
+    </view>
+    <view class="mode-tab {{mode === 'lunar2solar' ? 'mode-active' : ''}}" data-mode="lunar2solar" bindtap="switchMode">
+      <text>农历→公历</text>
+    </view>
+  </view>
+
+  <!-- 公历转农历 -->
+  <view class="card" wx:if="{{mode === 'solar2lunar'}}">
+    <view class="form-group">
+      <text class="form-label">公历日期</text>
+      <picker mode="date" value="{{solarYear}}-{{solarMonth < 10 ? '0' + solarMonth : solarMonth}}-{{solarDay < 10 ? '0' + solarDay : solarDay}}" bindchange="onSolarDateChange">
+        <view class="picker-field">
+          <text>{{solarYear}}年{{solarMonth}}月{{solarDay}}日</text>
+          <text class="picker-arrow">▼</text>
+        </view>
+      </picker>
+    </view>
+    <button class="btn-primary" style="background-color: #4ECDC4;" bindtap="onConvert">转换</button>
+  </view>
+
+  <!-- 农历转公历 -->
+  <view class="card" wx:if="{{mode === 'lunar2solar'}}">
+    <view class="form-group">
+      <text class="form-label">农历年份</text>
+      <input class="input-field" type="number" placeholder="如 2026" value="{{lunarYear}}" bindinput="onLunarYearInput" />
+    </view>
+    <view class="form-group">
+      <text class="form-label">农历月份</text>
+      <input class="input-field" type="number" placeholder="1-12" value="{{lunarMonth}}" bindinput="onLunarMonthInput" />
+    </view>
+    <view class="form-group">
+      <text class="form-label">农历日期</text>
+      <input class="input-field" type="number" placeholder="1-30" value="{{lunarDay}}" bindinput="onLunarDayInput" />
+    </view>
+    <button class="btn-primary" style="background-color: #4ECDC4;" bindtap="onConvert">转换</button>
+  </view>
+
+  <!-- 转换结果 -->
+  <view class="result-box" style="background-color: #E8F8F5;" wx:if="{{result}}">
+    <text class="result-title">转换结果</text>
+    <block wx:if="{{result.type === 'solar2lunar'}}">
+      <view class="detail-row">
+        <text class="detail-label">公历</text>
+        <text class="detail-value">{{result.sourceDate}}</text>
+      </view>
+      <view class="detail-row">
+        <text class="detail-label">农历</text>
+        <text class="detail-value">{{result.lunarMonthName}}{{result.lunarDayName}}</text>
+      </view>
+      <view class="detail-row">
+        <text class="detail-label">生肖</text>
+        <text class="detail-value">{{result.zodiac}}</text>
+      </view>
+      <view class="detail-row">
+        <text class="detail-label">干支</text>
+        <text class="detail-value">{{result.ganZhi}}</text>
+      </view>
+    </block>
+    <block wx:if="{{result.type === 'lunar2solar'}}">
+      <view class="detail-row">
+        <text class="detail-label">农历</text>
+        <text class="detail-value">{{result.lunarSource}}</text>
+      </view>
+      <view class="detail-row">
+        <text class="detail-label">公历</text>
+        <text class="detail-value">{{result.year}}年{{result.month}}月{{result.day}}日</text>
+      </view>
+    </block>
+  </view>
+</view>

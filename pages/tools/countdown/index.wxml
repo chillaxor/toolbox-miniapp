@@ -1,0 +1,45 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">倒计时</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <view class="card">
+    <view class="form-group">
+      <text class="form-label">事件名称</text>
+      <input class="input-field" placeholder="如：生日、假期、考试" value="{{eventName}}" bindinput="onEventInput" />
+    </view>
+    <view class="form-group">
+      <text class="form-label">目标日期</text>
+      <picker mode="date" value="{{targetDate}}" bindchange="onDateChange">
+        <view class="picker-field">
+          <text>{{targetDate || '请选择日期'}}</text>
+          <text class="picker-arrow">▼</text>
+        </view>
+      </picker>
+    </view>
+    <button class="btn-primary" style="background-color: #4ECDC4;" bindtap="onStartCountdown">开始倒计时</button>
+  </view>
+
+  <view class="result-box" style="background-color: #E8F8F5;" wx:if="{{result}}">
+    <text class="result-label">{{result.isPast ? '已过去' : '距离' + eventName}}</text>
+    <view class="countdown-grid">
+      <view class="countdown-item">
+        <text class="countdown-number">{{result.days}}</text>
+        <text class="countdown-unit">天</text>
+      </view>
+      <view class="countdown-item">
+        <text class="countdown-number">{{result.hours}}</text>
+        <text class="countdown-unit">时</text>
+      </view>
+      <view class="countdown-item">
+        <text class="countdown-number">{{result.minutes}}</text>
+        <text class="countdown-unit">分</text>
+      </view>
+      <view class="countdown-item">
+        <text class="countdown-number">{{result.seconds}}</text>
+        <text class="countdown-unit">秒</text>
+      </view>
+    </view>
+  </view>
+</view>

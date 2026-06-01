@@ -1,0 +1,48 @@
+.stat-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 16rpx 0;
+}
+
+.stat-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.stat-num {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.stat-desc {
+  font-size: 22rpx;
+  color: var(--color-hint);
+  margin-top: 8rpx;
+}
+
+.stat-divider {
+  width: 2rpx;
+  height: 60rpx;
+  background-color: var(--color-border);
+}
+
+.setting-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24rpx 0;
+}
+
+.setting-label {
+  font-size: 28rpx;
+  color: var(--color-primary);
+}
+
+.setting-arrow {
+  font-size: 24rpx;
+  color: var(--color-hint);
+}

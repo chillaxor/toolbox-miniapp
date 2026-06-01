@@ -1,0 +1,61 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">专注力训练</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <!-- 难度选择 -->
+  <view class="level-bar">
+    <view class="level-btn {{level === 'small' ? 'level-active' : ''}}" data-level="small" bindtap="onLevelChange">简单</view>
+    <view class="level-btn {{level === 'medium' ? 'level-active' : ''}}" data-level="medium" bindtap="onLevelChange">中等</view>
+    <view class="level-btn {{level === 'large' ? 'level-active' : ''}}" data-level="large" bindtap="onLevelChange">困难</view>
+  </view>
+
+  <!-- 状态栏 -->
+  <view class="stats-bar">
+    <view class="stat-item">
+      <text class="stat-label">步数</text>
+      <text class="stat-value">{{steps}}</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-label">用时</text>
+      <text class="stat-value">{{formatTime(timer)}}</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-label">最佳</text>
+      <text class="stat-value">{{bestRecord ? bestRecord.steps + '步' : '--'}}</text>
+    </view>
+  </view>
+
+  <!-- 迷宫画布 -->
+  <view class="maze-wrapper">
+    <canvas type="2d" id="mazeCanvas" class="maze-canvas"></canvas>
+  </view>
+
+  <!-- 方向控制 -->
+  <view class="dpad">
+    <view class="dpad-row">
+      <view class="dpad-btn" data-dir="up" bindtap="onMove">⬆️</view>
+    </view>
+    <view class="dpad-row">
+      <view class="dpad-btn" data-dir="left" bindtap="onMove">⬅️</view>
+      <view class="dpad-center"></view>
+      <view class="dpad-btn" data-dir="right" bindtap="onMove">➡️</view>
+    </view>
+    <view class="dpad-row">
+      <view class="dpad-btn" data-dir="down" bindtap="onMove">⬇️</view>
+    </view>
+  </view>
+
+  <button class="btn-restart" bindtap="generateNewMaze">🔄 重新生成</button>
+
+  <!-- 完成弹窗 -->
+  <view class="complete-overlay" wx:if="{{showComplete}}" bindtap="onCloseComplete">
+    <view class="complete-card" catchtap="">
+      <text class="complete-emoji">🎉</text>
+      <text class="complete-title">走出迷宫！</text>
+      <text class="complete-desc">{{levelLabel}} {{steps}}步</text>
+      <button class="btn-primary" bindtap="generateNewMaze" style="margin-top: 32rpx;">再来一局</button>
+    </view>
+  </view>
+</view>

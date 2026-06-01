@@ -1,0 +1,32 @@
+.result-label {
+  font-size: 28rpx;
+  color: var(--color-hint);
+  text-align: center;
+  margin-bottom: 24rpx;
+}
+
+.countdown-grid {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.countdown-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 120rpx;
+}
+
+.countdown-number {
+  font-size: 56rpx;
+  font-weight: 700;
+  color: #4ECDC4;
+  line-height: 1.2;
+}
+
+.countdown-unit {
+  font-size: 24rpx;
+  color: var(--color-secondary);
+  margin-top: 8rpx;
+}

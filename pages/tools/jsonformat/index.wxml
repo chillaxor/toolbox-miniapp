@@ -1,0 +1,30 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">JSON格式化</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <view class="card">
+    <textarea class="textarea-field" placeholder="请输入或粘贴JSON内容" value="{{text}}" bindinput="onTextInput" auto-height maxlength="-1" style="min-height: 240rpx;" />
+  </view>
+
+  <view class="btn-group">
+    <view class="btn-mode" bindtap="onFormat" style="background-color: #45B058;">美化格式</view>
+    <view class="btn-mode" bindtap="onMinify" style="background-color: #45B058;">压缩</view>
+    <view class="btn-mode" bindtap="onClear" style="background-color: #999;">清空</view>
+  </view>
+
+  <view class="error-box" wx:if="{{errorMsg}}">
+    <text style="color: #E74C3C; font-size: 26rpx;">{{errorMsg}}</text>
+  </view>
+
+  <view class="card" wx:if="{{result}}">
+    <text class="form-label">处理结果</text>
+    <scroll-view scroll-y style="max-height: 600rpx;">
+      <text class="result-text" style="white-space: pre-wrap; word-break: break-all;">{{result}}</text>
+    </scroll-view>
+    <view class="btn-row" style="margin-top: 16rpx;">
+      <view class="btn-small" bindtap="onCopyResult"><text>一键复制</text></view>
+    </view>
+  </view>
+</view>

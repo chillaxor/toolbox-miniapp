@@ -1,0 +1,22 @@
+sequenceDiagram
+    participant User as 用户
+    participant Page as pages/tools/bmi
+    participant Calc as utils/bmi
+    participant Storage as utils/storage
+
+    User->>Page: 进入 BMI 页面
+    Page->>Page: onLoad() 初始化表单
+    User->>Page: 输入身高 170cm
+    User->>Page: 输入体重 65kg
+    User->>Page: 点击"计算"
+    Page->>Calc: calculateBMI(170, 65)
+    Calc-->>Page: { bmi: 22.5, category: '正常', suggestion: '...' }
+    Page->>Page: setData({ result })
+    Page->>Storage: addHistory('bmi', '身高170cm 体重65kg → BMI 22.5')
+    Page-->>User: 显示计算结果
+
+    User->>Page: 点击"收藏"
+    Page->>Storage: toggleFavorite('bmi')
+    Storage-->>Page: { isFavorite: true }
+    Page->>Page: setData({ isFavorite: true })
+    Page-->>User: 收藏图标变为已收藏

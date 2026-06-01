@@ -1,0 +1,46 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">随机分组</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <view class="card">
+    <view class="form-group">
+      <text class="form-label">输入名单（每行一个，或用逗号分隔）</text>
+      <textarea class="textarea-field" placeholder="例如：&#10;张三&#10;李四&#10;王五&#10;赵六&#10;钱七&#10;孙八" value="{{namesText}}" bindinput="onNamesInput" maxlength="-1" auto-height />
+    </view>
+
+    <view class="form-group">
+      <text class="form-label">分组数量</text>
+      <view class="count-btns">
+        <view class="count-btn {{groupCount === 2 ? 'count-active' : ''}}" data-count="2" bindtap="onGroupCountChange">2</view>
+        <view class="count-btn {{groupCount === 3 ? 'count-active' : ''}}" data-count="3" bindtap="onGroupCountChange">3</view>
+        <view class="count-btn {{groupCount === 4 ? 'count-active' : ''}}" data-count="4" bindtap="onGroupCountChange">4</view>
+        <view class="count-btn {{groupCount === 5 ? 'count-active' : ''}}" data-count="5" bindtap="onGroupCountChange">5</view>
+        <view class="count-btn {{groupCount === 6 ? 'count-active' : ''}}" data-count="6" bindtap="onGroupCountChange">6</view>
+      </view>
+    </view>
+
+    <button class="btn-primary" style="background-color: #E74C3C;" bindtap="onShuffle">
+      👥 随机分组
+    </button>
+  </view>
+
+  <view class="groups-area" wx:if="{{showResult}}">
+    <view class="group-card" wx:for="{{groups}}" wx:key="name">
+      <view class="group-header" style="background-color: {{item.color}};">
+        <text class="group-name">{{item.name}}</text>
+        <text class="group-count">{{item.members.length}}人</text>
+      </view>
+      <view class="group-members">
+        <view class="member-tag" wx:for="{{item.members}}" wx:for-item="member" wx:key="*this" style="background-color: {{item.color}}20; color: {{item.color}};">
+          {{member}}
+        </view>
+      </view>
+    </view>
+    <view class="action-row">
+      <button class="btn-reshuffle" bindtap="onShuffle">重新分组</button>
+      <button class="btn-reset" bindtap="onReset">清空</button>
+    </view>
+  </view>
+</view>

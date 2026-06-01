@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "万年历",
+  "usingComponents": {
+    "calendar-grid": "../../../components/calendar-grid/calendar-grid"
+  }
+}

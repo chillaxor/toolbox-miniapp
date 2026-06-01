@@ -1,0 +1,27 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">图转Base64</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <view class="card">
+    <view class="img-picker" bindtap="onChooseImage">
+      <image wx:if="{{imagePath}}" src="{{imagePath}}" mode="aspectFit" class="preview-img" />
+      <view wx:else class="picker-placeholder">
+        <text style="font-size: 48rpx;">🖼️</text>
+        <text style="color: #999; font-size: 26rpx; margin-top: 16rpx;">点击选择图片</text>
+      </view>
+    </view>
+    <text wx:if="{{fileSize}}" style="font-size: 24rpx; color: #999; margin-top: 8rpx;">文件大小：{{fileSize}}</text>
+  </view>
+
+  <view class="card" wx:if="{{base64Str}}">
+    <text class="form-label">Base64结果（{{charCount}} 字符）</text>
+    <scroll-view scroll-y style="max-height: 300rpx; margin-top: 12rpx;">
+      <text style="font-size: 22rpx; color: #666; word-break: break-all; line-height: 1.6;">{{base64Str}}</text>
+    </scroll-view>
+    <view style="display: flex; justify-content: flex-end; margin-top: 16rpx;">
+      <view class="btn-small" bindtap="onCopyResult" style="padding: 12rpx 32rpx; background-color: var(--color-border); border-radius: 24rpx; font-size: 24rpx; color: var(--color-secondary);"><text>一键复制</text></view>
+    </view>
+  </view>
+</view>

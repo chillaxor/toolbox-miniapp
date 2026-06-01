@@ -1,0 +1,75 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">贷款计算器</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <view class="card">
+    <view class="form-group">
+      <text class="form-label">贷款金额（万元）</text>
+      <input class="input-field" type="digit" placeholder="请输入贷款金额" value="{{principal}}" bindinput="onPrincipalInput" />
+    </view>
+
+    <view class="form-group">
+      <text class="form-label">年利率（%）</text>
+      <input class="input-field" type="digit" placeholder="如 4.2" value="{{yearRate}}" bindinput="onRateInput" />
+      <view class="rate-tags">
+        <view class="rate-tag" wx:for="{{commonRates}}" wx:key="label" data-rate="{{item.rate}}" bindtap="onRateSelect">
+          {{item.label}}
+        </view>
+      </view>
+    </view>
+
+    <view class="form-group">
+      <text class="form-label">贷款期限</text>
+      <view class="term-tags">
+        <view class="term-tag {{months === item.months ? 'term-active' : ''}}" wx:for="{{commonTerms}}" wx:key="months" data-months="{{item.months}}" bindtap="onTermSelect">
+          {{item.label}}
+        </view>
+      </view>
+    </view>
+
+    <view class="form-group">
+      <text class="form-label">还款方式</text>
+      <view class="method-switch">
+        <view class="method-btn {{method === 'equal_installment' ? 'method-active' : ''}}" data-method="equal_installment" bindtap="onMethodChange">等额本息</view>
+        <view class="method-btn {{method === 'equal_principal' ? 'method-active' : ''}}" data-method="equal_principal" bindtap="onMethodChange">等额本金</view>
+      </view>
+    </view>
+
+    <button class="btn-primary" style="background-color: #FF6B35;" bindtap="onCalculate">开始计算</button>
+  </view>
+
+  <view class="result-box" wx:if="{{result}}">
+    <text class="result-title">计算结果</text>
+    <view class="result-method">{{result.methodName}} · {{result.monthsLabel}}</view>
+
+    <view class="result-main">
+      <text class="result-label">{{result.methodName === '等额本息' ? '每月还款' : '首月还款'}}</text>
+      <text class="result-value">{{result.monthlyPayment || result.firstMonthPayment}}<text class="result-unit">元</text></text>
+    </view>
+
+    <view class="result-grid">
+      <view class="result-item">
+        <text class="ri-label">贷款总额</text>
+        <text class="ri-value">{{result.principalWan}}万</text>
+      </view>
+      <view class="result-item">
+        <text class="ri-label">还款总额</text>
+        <text class="ri-value">{{result.totalPaymentWan}}万</text>
+      </view>
+      <view class="result-item">
+        <text class="ri-label">利息总额</text>
+        <text class="ri-value" style="color: #E74C3C;">{{result.totalInterestWan}}万</text>
+      </view>
+      <view class="result-item" wx:if="{{result.decreaseAmount}}">
+        <text class="ri-label">每月递减</text>
+        <text class="ri-value">{{result.decreaseAmount}}元</text>
+      </view>
+      <view class="result-item" wx:if="{{result.lastMonthPayment}}">
+        <text class="ri-label">末月还款</text>
+        <text class="ri-value">{{result.lastMonthPayment}}元</text>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,67 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">拼图益智</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <!-- 玩法说明 -->
+  <view class="tip-bar">
+    <text class="tip-text">💡 点击紧邻空格的数字块，将数字按 1→{{size*size-1}} 顺序排列即可</text>
+  </view>
+
+  <!-- 难度切换 -->
+  <view class="size-bar">
+    <view class="size-btn {{size === 3 ? 'size-active' : ''}}" data-size="3" bindtap="onSizeChange">简单 3×3</view>
+    <view class="size-btn {{size === 4 ? 'size-active' : ''}}" data-size="4" bindtap="onSizeChange">普通 4×4</view>
+    <view class="size-btn {{size === 5 ? 'size-active' : ''}}" data-size="5" bindtap="onSizeChange">困难 5×5</view>
+  </view>
+
+  <!-- 状态栏 -->
+  <view class="stats-bar">
+    <view class="stat-item">
+      <text class="stat-label">步数</text>
+      <text class="stat-value">{{moves}}</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-label">用时</text>
+      <text class="stat-value">{{timerText}}</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-label">最佳</text>
+      <text class="stat-value">{{bestRecord ? bestRecord.moves + '步' : '--'}}</text>
+    </view>
+  </view>
+
+  <!-- 拼图区域 -->
+  <view class="puzzle-board puzzle-{{size}}">
+    <view
+      wx:for="{{tiles}}"
+      wx:key="index"
+      class="tile {{item === 0 ? 'tile-empty' : ''}} {{movableTiles.indexOf(index) !== -1 ? 'tile-movable' : ''}}"
+      data-idx="{{index}}"
+      bindtap="onTileTap"
+    >
+      <text class="tile-num" wx:if="{{item !== 0}}">{{item}}</text>
+    </view>
+  </view>
+
+  <!-- 目标提示 -->
+  <view class="target-hint">
+    <text class="target-label">目标排列（高亮 = 可移动）</text>
+    <view class="target-row">
+      <text wx:for="{{tiles}}" wx:key="index" class="target-num {{item !== 0 && item === index + 1 ? 'target-correct' : ''}}">{{item !== 0 ? item : '　'}}</text>
+    </view>
+  </view>
+
+  <view class="btn-restart" bindtap="startGame">🔄 重新开始</view>
+
+  <!-- 完成弹窗 -->
+  <view class="complete-overlay" wx:if="{{showComplete}}" bindtap="onCloseComplete">
+    <view class="complete-card" catchtap="">
+      <text class="complete-emoji">🎉</text>
+      <text class="complete-title">拼图完成！</text>
+      <text class="complete-desc">{{size}}×{{size}} · 用 {{moves}} 步 · {{timerText}}</text>
+      <view class="btn-primary" bindtap="startGame">再来一局</view>
+    </view>
+  </view>
+</view>

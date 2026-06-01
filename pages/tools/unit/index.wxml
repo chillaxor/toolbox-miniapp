@@ -1,0 +1,57 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">单位换算</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <view class="card">
+    <view class="form-group">
+      <text class="form-label">换算类型</text>
+      <picker mode="selector" range="{{unitTypeNames}}" value="{{unitTypeIndex}}" bindchange="onUnitTypeChange">
+        <view class="picker-field">
+          <text>{{unitTypeNames[unitTypeIndex]}}</text>
+          <text class="picker-arrow">▼</text>
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-group">
+      <text class="form-label">数值</text>
+      <input class="input-field" type="digit" placeholder="请输入数值" value="{{inputValue}}" bindinput="onInputValueChange" />
+    </view>
+
+    <view class="form-group">
+      <text class="form-label">从</text>
+      <picker mode="selector" range="{{fromUnitNames}}" value="{{fromUnitIndex}}" bindchange="onFromUnitChange">
+        <view class="picker-field">
+          <text>{{fromUnitNames[fromUnitIndex]}}</text>
+          <text class="picker-arrow">▼</text>
+        </view>
+      </picker>
+    </view>
+
+    <view class="swap-btn" bindtap="onSwap">
+      <text>⇅ 互换</text>
+    </view>
+
+    <view class="form-group">
+      <text class="form-label">到</text>
+      <picker mode="selector" range="{{toUnitNames}}" value="{{toUnitIndex}}" bindchange="onToUnitChange">
+        <view class="picker-field">
+          <text>{{toUnitNames[toUnitIndex]}}</text>
+          <text class="picker-arrow">▼</text>
+        </view>
+      </picker>
+    </view>
+
+    <button class="btn-primary" style="background-color: #FF6B35;" bindtap="onConvert">换算</button>
+  </view>
+
+  <view class="result-box" wx:if="{{result !== null}}">
+    <text class="result-title">换算结果</text>
+    <text class="result-value">{{result}}</text>
+    <view class="result-detail">
+      <text>{{inputValue}} {{fromUnitNames[fromUnitIndex]}} = {{result}} {{toUnitNames[toUnitIndex]}}</text>
+    </view>
+  </view>
+</view>

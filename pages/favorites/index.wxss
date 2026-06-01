@@ -1,0 +1,44 @@
+.section-header-bar {
+  display: flex;
+  align-items: center;
+  padding: 24rpx 0 12rpx 16rpx;
+  border-left: 8rpx solid var(--color-life);
+  margin-left: -16rpx;
+}
+
+.section-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--color-primary);
+  margin-left: 8rpx;
+}
+
+.tool-grid {
+  display: flex;
+  flex-wrap: wrap;
+  margin: -8rpx;
+}
+
+.tool-card {
+  width: calc(50% - 16rpx);
+  margin: 8rpx;
+  padding: 24rpx 20rpx;
+  border-radius: 16rpx;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.05);
+}
+
+.tool-card:active { transform: scale(0.97); }
+
+.tool-icon { font-size: 36rpx; margin-right: 16rpx; }
+
+.tool-name { font-size: 28rpx; font-weight: 500; color: var(--color-primary); }
+
+.empty-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: 200rpx;
+}

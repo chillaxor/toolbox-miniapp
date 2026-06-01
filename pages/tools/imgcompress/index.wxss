@@ -1,0 +1,10 @@
+.img-picker { width: 100%; min-height: 300rpx; border-radius: 12rpx; overflow: hidden; background-color: #F8F9FA; }
+.picker-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 300rpx; }
+.preview-img { width: 100%; max-height: 400rpx; border-radius: 12rpx; }
+.quality-tabs { display: flex; gap: 16rpx; margin-top: 12rpx; }
+.quality-tab { flex: 1; text-align: center; padding: 16rpx 0; border-radius: 12rpx; background-color: #F5F5F5; font-size: 26rpx; color: #666; }
+.quality-tab.quality-active { background-color: #9B59B6; color: #FFFFFF; font-weight: 600; }
+.compare-row { display: flex; justify-content: space-around; margin-top: 16rpx; }
+.compare-item { text-align: center; }
+.compare-label { font-size: 24rpx; color: #999; display: block; }
+.compare-value { font-size: 30rpx; font-weight: 700; color: #9B59B6; display: block; margin-top: 8rpx; }

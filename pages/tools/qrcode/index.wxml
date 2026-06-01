@@ -1,0 +1,19 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">二维码生成</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <view class="card">
+    <view class="form-group">
+      <text class="form-label">输入文本或URL</text>
+      <textarea class="textarea-field" placeholder="如：https://example.com" value="{{text}}" bindinput="onTextInput" auto-height maxlength="-1" />
+    </view>
+    <button class="btn-primary" style="background-color: #9B59B6;" bindtap="onGenerate">生成二维码</button>
+  </view>
+
+  <view class="card" style="display: flex; flex-direction: column; align-items: center;" wx:if="{{qrGenerated}}">
+    <canvas type="2d" id="qrCanvas" style="width: 400rpx; height: 400rpx; background-color: #FFFFFF; border-radius: 12rpx;"></canvas>
+    <button class="btn-secondary" style="margin-top: 24rpx; width: 60%;" bindtap="onSaveQRCode">保存到相册</button>
+  </view>
+</view>

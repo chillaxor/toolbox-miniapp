@@ -1,0 +1,93 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">抛硬币</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <!-- 模式切换 -->
+  <view class="card mode-card">
+    <view class="mode-btns">
+      <view class="mode-btn {{!multiMode ? 'mode-active' : ''}}" data-multi="false" bindtap="onModeChange">单枚</view>
+      <view class="mode-btn {{multiMode ? 'mode-active' : ''}}" data-multi="true" bindtap="onModeChange">多枚</view>
+    </view>
+    <view class="multi-count" wx:if="{{multiMode}}">
+      <text class="count-label">数量：</text>
+      <view class="count-btns">
+        <view class="count-btn {{multiCount === 2 ? 'count-active' : ''}}" data-count="2" bindtap="onMultiCountChange">2</view>
+        <view class="count-btn {{multiCount === 3 ? 'count-active' : ''}}" data-count="3" bindtap="onMultiCountChange">3</view>
+        <view class="count-btn {{multiCount === 5 ? 'count-active' : ''}}" data-count="5" bindtap="onMultiCountChange">5</view>
+        <view class="count-btn {{multiCount === 10 ? 'count-active' : ''}}" data-count="10" bindtap="onMultiCountChange">10</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 硬币展示区（单枚模式） -->
+  <view class="coin-stage" wx:if="{{!multiMode}}" bindtap="onFlip">
+    <view class="coin-wrap {{isFlipping ? 'flipping' : ''}}">
+      <view class="coin-face" style="background: {{coinColor}};">
+        <text class="coin-emoji">{{coinEmoji}}</text>
+      </view>
+    </view>
+    <text class="coin-hint" wx:if="{{!isFlipping}}">{{coinLabel}}</text>
+    <text class="coin-hint flipping-hint" wx:if="{{isFlipping}}">旋转中...</text>
+  </view>
+
+  <!-- 多枚模式展示 -->
+  <view class="multi-stage" wx:if="{{multiMode}}">
+    <view class="multi-results" wx:if="{{multiResults.length > 0}}">
+      <view class="multi-item {{item.face}}" wx:for="{{multiResults}}" wx:key="index">
+        <text class="multi-emoji">{{item.emoji}}</text>
+        <text class="multi-label">{{item.label}}</text>
+      </view>
+    </view>
+    <view class="multi-empty" wx:else>
+      <text class="multi-empty-text">点击按钮{{multiCountText}}</text>
+    </view>
+  </view>
+
+  <!-- 抛出按钮（多枚模式） -->
+  <button class="btn-flip {{isFlipping ? 'btn-flipping' : ''}}" bindtap="onFlip" wx:if="{{multiMode}}" disabled="{{isFlipping}}">
+    🪙 {{multiCountText}}
+  </button>
+
+  <!-- 统计面板 -->
+  <view class="stat-card" wx:if="{{totalCount > 0}}">
+    <view class="stat-row">
+      <view class="stat-item head-stat">
+        <text class="stat-emoji">🪙</text>
+        <text class="stat-count">{{headCount}}</text>
+        <text class="stat-label">正面</text>
+      </view>
+      <view class="stat-divider">
+        <text class="stat-total">共 {{totalCount}} 次</text>
+      </view>
+      <view class="stat-item tail-stat">
+        <text class="stat-emoji">🌑</text>
+        <text class="stat-count">{{tailCount}}</text>
+        <text class="stat-label">反面</text>
+      </view>
+    </view>
+    <!-- 概率条 -->
+    <view class="prob-bar-wrap">
+      <view class="prob-bar-fill" style="width: {{headBarWidth}}%;"></view>
+    </view>
+    <view class="prob-labels">
+      <text class="prob-label-left">正面 {{headPct}}%</text>
+      <text class="prob-label-right">{{tailPct}}% 反面</text>
+    </view>
+    <view class="reset-btn-wrap">
+      <text class="reset-btn" bindtap="onReset">重置统计</text>
+    </view>
+  </view>
+
+  <!-- 历史记录 -->
+  <view class="card" wx:if="{{history.length > 0}}" style="margin-top: 32rpx;">
+    <text class="card-title">最近记录</text>
+    <view class="history-list">
+      <view class="history-item" wx:for="{{history}}" wx:key="timestamp">
+        <text class="hi-emoji">{{item.emoji}}</text>
+        <text class="hi-label">{{item.label}}</text>
+      </view>
+    </view>
+  </view>
+</view>

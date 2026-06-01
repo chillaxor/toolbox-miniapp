@@ -1,0 +1,58 @@
+.tool-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20rpx 0;
+  margin-bottom: 16rpx;
+}
+
+.tool-header-title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.tool-header-fav {
+  font-size: 44rpx;
+  padding: 8rpx;
+}
+
+.card-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--color-primary);
+  margin-bottom: 20rpx;
+  display: block;
+}
+
+.result-tag {
+  display: inline-flex;
+  padding: 6rpx 24rpx;
+  border-radius: 20rpx;
+  margin-top: 16rpx;
+}
+
+.ref-table {
+  width: 100%;
+}
+
+.ref-row {
+  display: flex;
+  padding: 16rpx 0;
+  border-bottom: 1rpx solid var(--color-border);
+}
+
+.ref-row:last-child {
+  border-bottom: none;
+}
+
+.ref-header {
+  font-weight: 600;
+  color: var(--color-secondary);
+}
+
+.ref-cell {
+  flex: 1;
+  font-size: 26rpx;
+  text-align: center;
+}

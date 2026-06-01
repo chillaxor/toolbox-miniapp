@@ -1,0 +1,46 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">逻辑推理</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <!-- 模式切换 -->
+  <view class="mode-bar">
+    <view class="mode-btn {{mode === 'easy' ? 'mode-active' : ''}}" data-mode="easy" bindtap="onModeChange">4×4</view>
+    <view class="mode-btn {{mode === 'standard' ? 'mode-active' : ''}}" data-mode="standard" bindtap="onModeChange">9×9</view>
+    <view class="mode-info">已完成 {{completed}} 局</view>
+  </view>
+
+  <!-- 数独棋盘 -->
+  <view class="sudoku-board {{size === 4 ? 'board-4' : 'board-9'}}">
+    <view class="sudoku-row" wx:for="{{board}}" wx:for-item="row" wx:for-index="ri" wx:key="ri">
+      <view class="sudoku-cell {{item.isGiven ? 'cell-given' : ''}} {{item.isError ? 'cell-error' : ''}} {{selectedCell.row === ri && selectedCell.col === ci ? 'cell-selected' : ''}}"
+            wx:for="{{row}}" wx:for-item="item" wx:for-index="ci" wx:key="ci"
+            data-row="{{ri}}" data-col="{{ci}}" bindtap="onCellTap">
+        <text class="cell-text">{{item.value || ''}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 数字输入 -->
+  <view class="num-bar">
+    <view class="num-btn" wx:for="{{size}}" wx:key="*this" data-num="{{item + 1}}" bindtap="onNumInput">{{item + 1}}</view>
+    <view class="num-btn num-erase" bindtap="onErase">✕</view>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="action-btns">
+    <button class="btn-action btn-secondary" bindtap="onHint">💡 提示</button>
+    <button class="btn-action btn-primary" bindtap="newGame">🔄 新局</button>
+  </view>
+
+  <!-- 完成弹窗 -->
+  <view class="complete-overlay" wx:if="{{showComplete}}" bindtap="onCloseComplete">
+    <view class="complete-card" catchtap="">
+      <text class="complete-emoji">🎉</text>
+      <text class="complete-title">恭喜完成！</text>
+      <text class="complete-desc">{{size}}×{{size}} 数独已解</text>
+      <button class="btn-primary" bindtap="newGame" style="margin-top: 32rpx;">再来一局</button>
+    </view>
+  </view>
+</view>

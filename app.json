@@ -1,0 +1,80 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/favorites/index",
+    "pages/history/index",
+    "pages/mine/index",
+    "pages/tools/bmi/index",
+    "pages/tools/unit/index",
+    "pages/tools/currency/index",
+    "pages/tools/salary/index",
+    "pages/tools/calendar/index",
+    "pages/tools/countdown/index",
+    "pages/tools/workday/index",
+    "pages/tools/lunar/index",
+    "pages/tools/wordcount/index",
+    "pages/tools/caseconvert/index",
+    "pages/tools/jsonformat/index",
+    "pages/tools/base64/index",
+    "pages/tools/imgcompress/index",
+    "pages/tools/imgbase64/index",
+    "pages/tools/qrcode/index",
+    "pages/tools/loan/index",
+    "pages/tools/worldclock/index",
+    "pages/tools/whateat/index",
+    "pages/tools/drawlot/index",
+    "pages/tools/dice/index",
+    "pages/tools/randomgroup/index",
+    "pages/tools/sketch/index",
+    "pages/tools/math24/index",
+    "pages/tools/sudoku/index",
+    "pages/tools/klotski/index",
+    "pages/tools/maze/index",
+    "pages/tools/colorchallenge/index",
+    "pages/tools/jokes/index",
+    "pages/tools/luckywheel/index",
+    "pages/tools/coincoin/index",
+    "pages/tools/sticker/index"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#FFFFFF",
+    "navigationBarTitleText": "工具箱",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#F5F5F5"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#333333",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "assets/tabbar/home.png",
+        "selectedIconPath": "assets/tabbar/home_active.png"
+      },
+      {
+        "pagePath": "pages/favorites/index",
+        "text": "收藏",
+        "iconPath": "assets/tabbar/star.png",
+        "selectedIconPath": "assets/tabbar/star_active.png"
+      },
+      {
+        "pagePath": "pages/history/index",
+        "text": "历史",
+        "iconPath": "assets/tabbar/clock.png",
+        "selectedIconPath": "assets/tabbar/clock_active.png"
+      },
+      {
+        "pagePath": "pages/mine/index",
+        "text": "我的",
+        "iconPath": "assets/tabbar/person.png",
+        "selectedIconPath": "assets/tabbar/person_active.png"
+      }
+    ]
+  },
+  "sitemapLocation": "sitemap.json",
+  "style": "v2"
+}

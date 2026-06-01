@@ -1,0 +1,57 @@
+.tool-card {
+  display: flex;
+  align-items: center;
+  background-color: var(--color-card);
+  border-radius: 16rpx;
+  padding: 24rpx;
+  border-left: 8rpx solid var(--color-life);
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.06);
+  transition: all 0.2s ease;
+}
+
+.tool-card-hover {
+  transform: scale(0.97);
+  opacity: 0.9;
+}
+
+.tool-card-icon {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40rpx;
+  margin-right: 20rpx;
+  flex-shrink: 0;
+}
+
+.tool-card-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.tool-card-name {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--color-primary);
+  line-height: 1.4;
+}
+
+.tool-card-desc {
+  font-size: 24rpx;
+  color: var(--color-hint);
+  margin-top: 4rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tool-card-arrow {
+  font-size: 36rpx;
+  color: var(--color-hint);
+  margin-left: 12rpx;
+  flex-shrink: 0;
+}

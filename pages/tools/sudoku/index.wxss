@@ -1,0 +1,190 @@
+.mode-bar {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 0;
+  gap: 16rpx;
+}
+
+.mode-btn {
+  padding: 12rpx 32rpx;
+  border-radius: 32rpx;
+  font-size: 26rpx;
+  font-weight: 600;
+  background: #F5F5F5;
+  color: #666;
+}
+
+.mode-active {
+  background: #FDE8E8;
+  color: #E74C3C;
+}
+
+.mode-info {
+  margin-left: auto;
+  font-size: 24rpx;
+  color: #999;
+}
+
+.sudoku-board {
+  margin: 24rpx auto;
+  border: 4rpx solid #333;
+  border-radius: 8rpx;
+  overflow: hidden;
+}
+
+.board-4 {
+  width: 560rpx;
+}
+
+.board-9 {
+  width: 660rpx;
+}
+
+.sudoku-row {
+  display: flex;
+}
+
+.sudoku-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1rpx solid #DDD;
+  background: #fff;
+}
+
+.board-4 .sudoku-cell {
+  width: 140rpx;
+  height: 140rpx;
+}
+
+.board-9 .sudoku-cell {
+  width: 73rpx;
+  height: 73rpx;
+}
+
+.board-4 .cell-text {
+  font-size: 52rpx;
+}
+
+.board-9 .cell-text {
+  font-size: 32rpx;
+}
+
+.cell-text {
+  font-weight: 600;
+  color: #333;
+}
+
+.cell-given .cell-text {
+  color: #000;
+  font-weight: 700;
+}
+
+.cell-error {
+  background: #FFE5E5 !important;
+}
+
+.cell-error .cell-text {
+  color: #E74C3C;
+}
+
+.cell-selected {
+  background: #E8F5FF !important;
+}
+
+.num-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12rpx;
+  padding: 24rpx 0;
+}
+
+.num-btn {
+  width: 72rpx;
+  height: 72rpx;
+  line-height: 72rpx;
+  text-align: center;
+  border-radius: 50%;
+  font-size: 32rpx;
+  font-weight: 600;
+  background: #F5F5F5;
+  color: #333;
+}
+
+.num-btn:active {
+  background: #E74C3C;
+  color: #fff;
+}
+
+.num-erase {
+  background: #FFE5E5;
+  color: #E74C3C;
+  font-size: 28rpx;
+}
+
+.action-btns {
+  display: flex;
+  gap: 20rpx;
+  padding: 16rpx 0;
+}
+
+.btn-action {
+  flex: 1;
+  height: 88rpx;
+  line-height: 88rpx;
+  border-radius: 44rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  border: none;
+}
+
+.btn-primary {
+  background: #E74C3C;
+  color: #fff;
+}
+
+.btn-secondary {
+  background: #F0F0F0;
+  color: #666;
+}
+
+.complete-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.complete-card {
+  width: 560rpx;
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 48rpx 32rpx;
+  text-align: center;
+}
+
+.complete-emoji {
+  font-size: 80rpx;
+  display: block;
+  margin-bottom: 16rpx;
+}
+
+.complete-title {
+  display: block;
+  font-size: 36rpx;
+  font-weight: 700;
+  margin-bottom: 12rpx;
+}
+
+.complete-desc {
+  display: block;
+  font-size: 28rpx;
+  color: #999;
+}

@@ -1,0 +1,153 @@
+.level-bar {
+  display: flex;
+  justify-content: center;
+  gap: 20rpx;
+  padding: 16rpx 0;
+}
+
+.level-btn {
+  padding: 12rpx 36rpx;
+  border-radius: 32rpx;
+  font-size: 26rpx;
+  font-weight: 600;
+  background: #F5F5F5;
+  color: #666;
+}
+
+.level-active {
+  background: #FDE8E8;
+  color: #E74C3C;
+}
+
+.stats-bar {
+  display: flex;
+  justify-content: space-around;
+  padding: 16rpx 0;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-label {
+  display: block;
+  font-size: 22rpx;
+  color: #999;
+  margin-bottom: 4rpx;
+}
+
+.stat-value {
+  display: block;
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #E74C3C;
+}
+
+.maze-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 16rpx 0;
+}
+
+.maze-canvas {
+  width: 600rpx;
+  height: 600rpx;
+  background: #fff;
+  border-radius: 12rpx;
+  border: 2rpx solid #E5E5E5;
+}
+
+.dpad {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16rpx 0;
+  gap: 8rpx;
+}
+
+.dpad-row {
+  display: flex;
+  gap: 8rpx;
+}
+
+.dpad-btn {
+  width: 100rpx;
+  height: 100rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40rpx;
+  background: #F5F5F5;
+  border-radius: 16rpx;
+}
+
+.dpad-btn:active {
+  background: #FDE8E8;
+}
+
+.dpad-center {
+  width: 100rpx;
+  height: 100rpx;
+}
+
+.btn-restart {
+  width: 100%;
+  height: 88rpx;
+  line-height: 88rpx;
+  border-radius: 44rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  background: #E74C3C;
+  color: #fff;
+  border: none;
+  margin-top: 16rpx;
+}
+
+.complete-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.complete-card {
+  width: 560rpx;
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 48rpx 32rpx;
+  text-align: center;
+}
+
+.complete-emoji {
+  font-size: 80rpx;
+  display: block;
+  margin-bottom: 16rpx;
+}
+
+.complete-title {
+  display: block;
+  font-size: 36rpx;
+  font-weight: 700;
+  margin-bottom: 12rpx;
+}
+
+.complete-desc {
+  display: block;
+  font-size: 28rpx;
+  color: #999;
+}
+
+.btn-primary {
+  background: #E74C3C;
+  color: #fff;
+  border: none;
+  border-radius: 44rpx;
+  height: 88rpx;
+  line-height: 88rpx;
+}

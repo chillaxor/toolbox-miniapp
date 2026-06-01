@@ -1,0 +1,41 @@
+<view class="container">
+  <!-- 用户区域 -->
+  <view class="card" style="text-align: center; padding: 48rpx 32rpx;">
+    <text style="font-size: 80rpx;">🛠️</text>
+    <text style="font-size: 36rpx; font-weight: 700; color: #333; display: block; margin-top: 16rpx;">工具箱</text>
+    <text style="font-size: 24rpx; color: #999; display: block; margin-top: 8rpx;">日常高频，开箱即用</text>
+  </view>
+
+  <!-- 统计 -->
+  <view class="card">
+    <view class="stat-row">
+      <view class="stat-block">
+        <text class="stat-num">{{totalUsage}}</text>
+        <text class="stat-desc">使用次数</text>
+      </view>
+      <view class="stat-divider"></view>
+      <view class="stat-block">
+        <text class="stat-num">{{favoriteCount}}</text>
+        <text class="stat-desc">收藏工具</text>
+      </view>
+      <view class="stat-divider"></view>
+      <view class="stat-block">
+        <text class="stat-num">{{cacheSize}}</text>
+        <text class="stat-desc">缓存大小</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 设置 -->
+  <view class="card">
+    <view class="setting-item" bindtap="onClearCache">
+      <text class="setting-label">清除缓存</text>
+      <text class="setting-arrow">▶</text>
+    </view>
+  </view>
+
+  <!-- 关于 -->
+  <view class="card" style="text-align: center;">
+    <text style="font-size: 24rpx; color: #999;">版本 v1.0.0</text>
+  </view>
+</view>

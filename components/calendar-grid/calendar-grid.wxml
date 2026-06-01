@@ -1,0 +1,27 @@
+<view class="calendar-grid">
+  <!-- 星期标题行 -->
+  <view class="week-header">
+    <text class="week-cell weekend-text">日</text>
+    <text class="week-cell">一</text>
+    <text class="week-cell">二</text>
+    <text class="week-cell">三</text>
+    <text class="week-cell">四</text>
+    <text class="week-cell">五</text>
+    <text class="week-cell weekend-text">六</text>
+  </view>
+  <!-- 日期网格 -->
+  <view class="days-grid">
+    <block wx:for="{{grid}}" wx:for-item="row" wx:key="index">
+      <view class="days-row">
+        <block wx:for="{{row}}" wx:for-item="cell" wx:key="dateStr">
+          <view class="day-cell {{cell.isCurrentMonth ? '' : 'other-month'}} {{cell.isToday ? 'today' : ''}} {{cell.holiday ? 'holiday-cell' : ''}} {{cell.isMakeup ? 'makeup-cell' : ''}}"
+                bindtap="onDayTap"
+                data-cell="{{cell}}">
+            <text class="day-date {{cell.isWeekend ? 'weekend-text' : ''}}">{{cell.date}}</text>
+            <text class="day-lunar {{cell.holiday ? 'lunar-holiday' : ''}}">{{cell.displayText}}</text>
+          </view>
+        </block>
+      </view>
+    </block>
+  </view>
+</view>

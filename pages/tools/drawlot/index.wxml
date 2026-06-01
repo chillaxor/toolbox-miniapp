@@ -1,0 +1,33 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">抽签抓阄</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <view class="card">
+    <view class="form-group">
+      <text class="form-label">输入选项（每行一个，或用逗号分隔）</text>
+      <textarea class="textarea-field" placeholder="例如：&#10;小明&#10;小红&#10;小刚&#10;小李" value="{{optionsText}}" bindinput="onOptionsInput" maxlength="-1" auto-height />
+    </view>
+
+    <view class="form-group">
+      <text class="form-label">抽取数量</text>
+      <input class="input-field" type="number" placeholder="1" value="{{drawCount}}" bindinput="onCountChange" />
+    </view>
+
+    <button class="btn-primary" style="background-color: #E74C3C;" bindtap="onDraw" disabled="{{isDrawing}}">
+      {{isDrawing ? '抽签中...' : '🎯 开始抽签'}}
+    </button>
+  </view>
+
+  <view class="result-card" wx:if="{{result}}" style="border-left: 8rpx solid #E74C3C;">
+    <text class="result-title">抽签结果</text>
+    <view class="result-items">
+      <view class="result-item-box" wx:for="{{result.items}}" wx:key="*this">
+        <text class="ri-emoji">🎯</text>
+        <text class="ri-text">{{item}}</text>
+      </view>
+    </view>
+    <button class="btn-again" bindtap="onDraw" disabled="{{isDrawing}}">再抽一次</button>
+  </view>
+</view>

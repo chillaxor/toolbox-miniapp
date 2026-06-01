@@ -1,0 +1,30 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">Base64编解码</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <view class="card">
+    <textarea class="textarea-field" placeholder="请输入文本或Base64字符串" value="{{text}}" bindinput="onTextInput" auto-height maxlength="-1" style="min-height: 200rpx;" />
+  </view>
+
+  <view class="btn-group">
+    <view class="btn-mode" bindtap="onEncode" style="background-color: #45B058;">编码</view>
+    <view class="btn-mode" bindtap="onDecode" style="background-color: #45B058;">解码</view>
+    <view class="btn-mode" bindtap="onClear" style="background-color: #999;">清空</view>
+  </view>
+
+  <view class="error-box" wx:if="{{errorMsg}}" style="padding: 16rpx 24rpx; background-color: #FFF0F0; border-radius: 12rpx; margin-bottom: 24rpx;">
+    <text style="color: #E74C3C; font-size: 26rpx;">{{errorMsg}}</text>
+  </view>
+
+  <view class="card" wx:if="{{result}}">
+    <text class="form-label">结果</text>
+    <scroll-view scroll-y style="max-height: 400rpx;">
+      <text class="result-text" style="word-break: break-all;">{{result}}</text>
+    </scroll-view>
+    <view style="display: flex; justify-content: flex-end; margin-top: 16rpx;">
+      <view class="btn-small" bindtap="onCopyResult" style="padding: 12rpx 32rpx; background-color: var(--color-border); border-radius: 24rpx; font-size: 24rpx; color: var(--color-secondary);"><text>一键复制</text></view>
+    </view>
+  </view>
+</view>

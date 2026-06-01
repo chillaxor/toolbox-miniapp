@@ -1,0 +1,125 @@
+.count-btns {
+  display: flex;
+  gap: 16rpx;
+  margin-top: 16rpx;
+}
+
+.count-btn {
+  width: 80rpx;
+  height: 80rpx;
+  line-height: 80rpx;
+  text-align: center;
+  font-size: 32rpx;
+  font-weight: 600;
+  background: #F5F5F5;
+  color: #666;
+  border-radius: 12rpx;
+  border: 2rpx solid #E5E5E5;
+}
+
+.count-active {
+  background: #FDE8E8;
+  color: #E74C3C;
+  border-color: #E74C3C;
+}
+
+.dice-area {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 24rpx;
+  padding: 48rpx 0;
+}
+
+.dice-area.rolling {
+  animation: wobble 0.15s infinite;
+}
+
+@keyframes wobble {
+  0% { transform: rotate(-3deg); }
+  50% { transform: rotate(3deg); }
+  100% { transform: rotate(-3deg); }
+}
+
+.dice-face {
+  width: 140rpx;
+  height: 140rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border-radius: 20rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.1);
+}
+
+.dice-emoji {
+  font-size: 80rpx;
+}
+
+.total-box {
+  text-align: center;
+  margin-bottom: 24rpx;
+}
+
+.total-label {
+  font-size: 24rpx;
+  color: #999;
+  display: block;
+  margin-bottom: 4rpx;
+}
+
+.total-value {
+  font-size: 56rpx;
+  font-weight: 700;
+  color: #E74C3C;
+}
+
+.btn-roll {
+  width: 100%;
+  height: 100rpx;
+  border-radius: 50rpx;
+  background: #E74C3C;
+  color: #fff;
+  font-size: 32rpx;
+  font-weight: 600;
+  border: none;
+}
+
+.rolling-btn {
+  background: #ccc;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.card-clear {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12rpx 0;
+  border-bottom: 1rpx solid #F5F5F5;
+}
+
+.history-item:last-child {
+  border-bottom: none;
+}
+
+.hi-results {
+  font-size: 28rpx;
+  color: #333;
+}
+
+.hi-total {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #E74C3C;
+}

@@ -1,0 +1,19 @@
+.section-header {
+  display: flex;
+  align-items: center;
+  padding: 24rpx 0 16rpx 0;
+}
+
+.section-header-bar {
+  width: 8rpx;
+  height: 32rpx;
+  border-radius: 4rpx;
+  margin-right: 12rpx;
+  flex-shrink: 0;
+}
+
+.section-header-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--color-primary);
+}

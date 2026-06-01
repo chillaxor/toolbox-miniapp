@@ -1,0 +1,66 @@
+.month-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16rpx 0;
+  margin-bottom: 16rpx;
+}
+
+.nav-btn {
+  width: 72rpx;
+  height: 72rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: #F0F0F0;
+}
+
+.nav-btn:active {
+  background-color: #E0E0E0;
+}
+
+.nav-arrow {
+  font-size: 28rpx;
+  color: var(--color-primary);
+}
+
+.month-title {
+  flex: 1;
+  text-align: center;
+}
+
+.month-text {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.today-btn {
+  text-align: center;
+  margin-bottom: 16rpx;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16rpx 0;
+  border-bottom: 2rpx solid var(--color-border);
+}
+
+.detail-row:last-child {
+  border-bottom: none;
+}
+
+.detail-label {
+  font-size: 28rpx;
+  color: var(--color-hint);
+  min-width: 80rpx;
+}
+
+.detail-value {
+  font-size: 28rpx;
+  color: var(--color-primary);
+  font-weight: 500;
+}

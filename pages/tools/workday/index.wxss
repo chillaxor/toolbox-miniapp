@@ -1,0 +1,29 @@
+.result-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx 0;
+  border-bottom: 2rpx solid var(--color-border);
+}
+
+.result-item:last-child {
+  border-bottom: none;
+}
+
+.result-item.highlight {
+  background-color: rgba(78, 205, 196, 0.1);
+  border-radius: 12rpx;
+  padding: 20rpx 24rpx;
+  margin: 8rpx -24rpx;
+}
+
+.result-item-label {
+  font-size: 28rpx;
+  color: var(--color-secondary);
+}
+
+.result-item-value {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: var(--color-primary);
+}

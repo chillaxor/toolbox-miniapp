@@ -1,0 +1,114 @@
+.rate-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-top: 16rpx;
+}
+
+.rate-tag {
+  font-size: 22rpx;
+  padding: 6rpx 16rpx;
+  background: #FFE5D9;
+  color: #FF6B35;
+  border-radius: 20rpx;
+}
+
+.term-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-top: 16rpx;
+}
+
+.term-tag {
+  font-size: 24rpx;
+  padding: 10rpx 20rpx;
+  background: #F5F5F5;
+  color: #666;
+  border-radius: 8rpx;
+  border: 2rpx solid #E5E5E5;
+}
+
+.term-active {
+  background: #FFE5D9;
+  color: #FF6B35;
+  border-color: #FF6B35;
+}
+
+.method-switch {
+  display: flex;
+  gap: 16rpx;
+  margin-top: 16rpx;
+}
+
+.method-btn {
+  flex: 1;
+  text-align: center;
+  padding: 16rpx 0;
+  font-size: 26rpx;
+  background: #F5F5F5;
+  color: #666;
+  border-radius: 8rpx;
+  border: 2rpx solid #E5E5E5;
+}
+
+.method-active {
+  background: #FFE5D9;
+  color: #FF6B35;
+  border-color: #FF6B35;
+  font-weight: 600;
+}
+
+.result-method {
+  font-size: 24rpx;
+  color: #999;
+  margin-bottom: 16rpx;
+}
+
+.result-main {
+  text-align: center;
+  padding: 24rpx 0;
+  border-bottom: 1rpx solid #F0F0F0;
+  margin-bottom: 16rpx;
+}
+
+.result-label {
+  font-size: 24rpx;
+  color: #999;
+  display: block;
+  margin-bottom: 8rpx;
+}
+
+.result-value {
+  font-size: 56rpx;
+  font-weight: 700;
+  color: #FF6B35;
+}
+
+.result-unit {
+  font-size: 28rpx;
+  font-weight: 400;
+  color: #FF6B35;
+}
+
+.result-grid {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.result-item {
+  width: 50%;
+  padding: 16rpx 0;
+}
+
+.ri-label {
+  font-size: 22rpx;
+  color: #999;
+  display: block;
+}
+
+.ri-value {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #333;
+}

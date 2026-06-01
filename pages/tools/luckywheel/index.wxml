@@ -1,0 +1,57 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">抽签助手</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <!-- 转盘区域 -->
+  <view class="wheel-area">
+    <view class="wheel-pointer">▼</view>
+    <canvas type="2d" id="wheelCanvas" class="wheel-canvas"></canvas>
+    <!-- 覆盖在 Canvas 上的可点击层 -->
+    <view class="wheel-tap-layer" bindtap="onSpin"></view>
+  </view>
+
+  <!-- 选项管理 -->
+  <view class="options-section">
+    <view class="section-header">
+      <text class="section-title">选项列表</text>
+      <text class="section-preset" bindtap="onShowPresets">📋 预设</text>
+    </view>
+
+    <!-- 添加选项 -->
+    <view class="add-row">
+      <input class="add-input" placeholder="输入选项" value="{{newOption}}" bindinput="onNewOptionInput" bindconfirm="onAddOption" />
+      <view class="add-btn" bindtap="onAddOption">+</view>
+    </view>
+
+    <!-- 选项标签 -->
+    <view class="option-tags">
+      <view class="option-tag" wx:for="{{options}}" wx:key="index">
+        <text class="tag-text">{{item}}</text>
+        <text class="tag-remove" data-idx="{{index}}" bindtap="onRemoveOption">✕</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 预设弹窗 -->
+  <view class="preset-overlay" wx:if="{{showPresets}}" bindtap="onClosePresets">
+    <view class="preset-card" catchtap="">
+      <text class="preset-title">选择预设模板</text>
+      <view class="preset-item" wx:for="{{presets}}" wx:key="id" data-id="{{item.id}}" bindtap="onApplyPreset">
+        <text class="preset-name">{{item.name}}</text>
+        <text class="preset-preview">{{item.preview}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 结果弹窗 -->
+  <view class="result-overlay" wx:if="{{showResult}}" bindtap="onCloseResult">
+    <view class="result-card" catchtap="">
+      <text class="result-emoji">🎯</text>
+      <text class="result-label">抽中了</text>
+      <text class="result-value">{{result}}</text>
+      <view class="btn-retry" bindtap="onSpin">再转一次</view>
+    </view>
+  </view>
+</view>

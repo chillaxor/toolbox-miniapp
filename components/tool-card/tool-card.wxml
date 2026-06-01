@@ -1,0 +1,8 @@
+<view class="tool-card" style="border-left-color: {{color}}" bindtap="onTap" hover-class="tool-card-hover">
+  <view class="tool-card-icon" style="background-color: {{bgColor}}">{{icon}}</view>
+  <view class="tool-card-info">
+    <text class="tool-card-name">{{name}}</text>
+    <text class="tool-card-desc">{{description}}</text>
+  </view>
+  <view class="tool-card-arrow">›</view>
+</view>

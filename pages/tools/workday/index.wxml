@@ -1,0 +1,51 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">工作日计算</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <view class="card">
+    <view class="form-group">
+      <text class="form-label">开始日期</text>
+      <picker mode="date" value="{{startDate}}" bindchange="onStartDateChange">
+        <view class="picker-field">
+          <text>{{startDate || '请选择开始日期'}}</text>
+          <text class="picker-arrow">▼</text>
+        </view>
+      </picker>
+    </view>
+    <view class="form-group">
+      <text class="form-label">结束日期</text>
+      <picker mode="date" value="{{endDate}}" bindchange="onEndDateChange">
+        <view class="picker-field">
+          <text>{{endDate || '请选择结束日期'}}</text>
+          <text class="picker-arrow">▼</text>
+        </view>
+      </picker>
+    </view>
+    <button class="btn-primary" style="background-color: #4ECDC4;" bindtap="onCalculate">开始计算</button>
+  </view>
+
+  <view class="result-box" style="background-color: #E8F8F5;" wx:if="{{result}}">
+    <view class="result-item">
+      <text class="result-item-label">总天数</text>
+      <text class="result-item-value">{{result.totalDays}} 天</text>
+    </view>
+    <view class="result-item highlight">
+      <text class="result-item-label">工作日</text>
+      <text class="result-item-value" style="color: #4ECDC4;">{{result.workdays}} 天</text>
+    </view>
+    <view class="result-item">
+      <text class="result-item-label">周末</text>
+      <text class="result-item-value">{{result.weekends}} 天</text>
+    </view>
+    <view class="result-item">
+      <text class="result-item-label">法定节假日</text>
+      <text class="result-item-value" style="color: #E74C3C;">{{result.holidays}} 天</text>
+    </view>
+    <view class="result-item">
+      <text class="result-item-label">调休上班</text>
+      <text class="result-item-value" style="color: #27AE60;">{{result.makeupDays}} 天</text>
+    </view>
+  </view>
+</view>

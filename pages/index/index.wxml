@@ -1,0 +1,59 @@
+<view class="container">
+  <!-- 搜索栏 -->
+  <view class="search-bar">
+    <view class="search-input-wrap">
+      <text class="search-icon">🔍</text>
+      <input
+        class="search-input"
+        placeholder="搜索工具..."
+        value="{{searchText}}"
+        bindinput="onSearchInput"
+        confirm-type="search"
+      />
+      <text class="search-clear" wx:if="{{searchText}}" bindtap="clearSearch">✕</text>
+    </view>
+  </view>
+
+  <!-- 搜索结果 -->
+  <view wx:if="{{searchText && searchResults.length > 0}}" class="search-results">
+    <view class="tool-grid">
+      <view class="tool-grid-item" wx:for="{{searchResults}}" wx:key="id">
+        <tool-card
+          toolId="{{item.id}}"
+          name="{{item.name}}"
+          icon="{{item.icon}}"
+          description="{{item.description}}"
+          color="{{item.categoryColor}}"
+          bgColor="{{item.categoryBgColor}}"
+          path="{{item.path}}"
+        />
+      </view>
+    </view>
+  </view>
+
+  <!-- 搜索无结果 -->
+  <view wx:if="{{searchText && searchResults.length === 0}}" class="search-empty">
+    <text class="search-empty-icon">🔍</text>
+    <text class="search-empty-text">没有找到匹配的工具</text>
+  </view>
+
+  <!-- 分类列表 -->
+  <view wx:if="{{!searchText}}">
+    <block wx:for="{{categoryList}}" wx:key="id">
+      <section-header title="{{item.name}}" color="{{item.color}}"></section-header>
+      <view class="tool-grid">
+        <view class="tool-grid-item" wx:for="{{item.tools}}" wx:for-item="tool" wx:key="id">
+          <tool-card
+            toolId="{{tool.id}}"
+            name="{{tool.name}}"
+            icon="{{tool.icon}}"
+            description="{{tool.description}}"
+            color="{{item.color}}"
+            bgColor="{{item.bgColor}}"
+            path="{{tool.path}}"
+          />
+        </view>
+      </view>
+    </block>
+  </view>
+</view>

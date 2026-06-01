@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "工具箱",
+  "usingComponents": {
+    "tool-card": "/components/tool-card/tool-card",
+    "section-header": "/components/section-header/section-header",
+    "empty-state": "/components/empty-state/empty-state"
+  }
+}

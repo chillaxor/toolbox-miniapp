@@ -1,0 +1,44 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">简易画板</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <!-- 画布区域 -->
+  <view class="canvas-wrapper">
+    <canvas canvas-id="sketchCanvas" class="sketch-canvas" bindtouchstart="onTouchStart" bindtouchmove="onTouchMove" bindtouchend="onTouchEnd" disable-scroll></canvas>
+  </view>
+
+  <!-- 工具栏 -->
+  <view class="toolbar">
+    <!-- 颜色选择 -->
+    <view class="color-bar">
+      <view class="color-item {{colorIndex === index && !isEraser ? 'color-active' : ''}}" wx:for="{{colors}}" wx:key="*this" data-index="{{index}}" bindtap="onColorSelect">
+        <view class="color-dot" style="background-color: {{item}};"></view>
+      </view>
+    </view>
+
+    <!-- 线宽选择 -->
+    <view class="width-bar">
+      <view class="width-item {{lineWidth === item ? 'width-active' : ''}}" wx:for="{{lineOptions}}" wx:key="*this" data-width="{{item}}" bindtap="onLineWidthSelect">
+        <view class="width-dot" style="width: {{item * 4 + 8}}rpx; height: {{item * 4 + 8}}rpx;"></view>
+      </view>
+    </view>
+
+    <!-- 操作按钮 -->
+    <view class="action-bar">
+      <view class="action-btn {{isEraser ? 'eraser-active' : ''}}" bindtap="onEraser">
+        <text class="action-icon">🧹</text>
+        <text class="action-label">{{isEraser ? '橡皮' : '橡皮'}}</text>
+      </view>
+      <view class="action-btn" bindtap="onClear">
+        <text class="action-icon">🗑️</text>
+        <text class="action-label">清空</text>
+      </view>
+      <view class="action-btn" bindtap="onSave">
+        <text class="action-icon">💾</text>
+        <text class="action-label">保存</text>
+      </view>
+    </view>
+  </view>
+</view>

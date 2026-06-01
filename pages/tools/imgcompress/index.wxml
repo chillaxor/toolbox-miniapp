@@ -1,0 +1,43 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">图片压缩</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <view class="card">
+    <view class="img-picker" bindtap="onChooseImage">
+      <image wx:if="{{imagePath}}" src="{{imagePath}}" mode="aspectFit" class="preview-img" />
+      <view wx:else class="picker-placeholder">
+        <text style="font-size: 48rpx;">🖼️</text>
+        <text style="color: #999; font-size: 26rpx; margin-top: 16rpx;">点击选择图片</text>
+      </view>
+    </view>
+    <text wx:if="{{originalSize}}" style="font-size: 24rpx; color: #999; margin-top: 8rpx;">原图大小：{{originalSize}}</text>
+  </view>
+
+  <!-- 压缩质量 -->
+  <view class="card" wx:if="{{imagePath}}">
+    <text class="form-label">压缩质量</text>
+    <view class="quality-tabs">
+      <view class="quality-tab {{quality === 'light' ? 'quality-active' : ''}}" data-quality="light" bindtap="onQualityChange">轻度</view>
+      <view class="quality-tab {{quality === 'medium' ? 'quality-active' : ''}}" data-quality="medium" bindtap="onQualityChange">中度</view>
+      <view class="quality-tab {{quality === 'heavy' ? 'quality-active' : ''}}" data-quality="heavy" bindtap="onQualityChange">重度</view>
+    </view>
+    <button class="btn-primary" style="background-color: #9B59B6; margin-top: 24rpx;" bindtap="onCompress" disabled="{{isCompressing}}">
+      {{isCompressing ? '压缩中...' : '开始压缩'}}
+    </button>
+  </view>
+
+  <!-- 压缩结果 -->
+  <view class="card" wx:if="{{compressedPath}}">
+    <text class="form-label">压缩结果</text>
+    <image src="{{compressedPath}}" mode="aspectFit" class="preview-img" style="margin-top: 16rpx;" />
+    <view class="compare-row">
+      <view class="compare-item">
+        <text class="compare-label">压缩后</text>
+        <text class="compare-value">{{compressedSize}}</text>
+      </view>
+    </view>
+    <button class="btn-secondary" style="margin-top: 24rpx;" bindtap="onSaveImage">保存到相册</button>
+  </view>
+</view>

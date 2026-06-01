@@ -1,0 +1,107 @@
+.textarea-field {
+  width: 100%;
+  min-height: 200rpx;
+  background: #F5F5F5;
+  border-radius: 12rpx;
+  padding: 20rpx;
+  font-size: 28rpx;
+  line-height: 1.6;
+  box-sizing: border-box;
+}
+
+.count-btns {
+  display: flex;
+  gap: 16rpx;
+  margin-top: 16rpx;
+}
+
+.count-btn {
+  width: 80rpx;
+  height: 80rpx;
+  line-height: 80rpx;
+  text-align: center;
+  font-size: 32rpx;
+  font-weight: 600;
+  background: #F5F5F5;
+  color: #666;
+  border-radius: 12rpx;
+  border: 2rpx solid #E5E5E5;
+}
+
+.count-active {
+  background: #FDE8E8;
+  color: #E74C3C;
+  border-color: #E74C3C;
+}
+
+.groups-area {
+  margin-top: 24rpx;
+}
+
+.group-card {
+  background: #fff;
+  border-radius: 16rpx;
+  overflow: hidden;
+  margin-bottom: 16rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.06);
+}
+
+.group-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16rpx 24rpx;
+}
+
+.group-name {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #fff;
+}
+
+.group-count {
+  font-size: 24rpx;
+  color: rgba(255,255,255,0.8);
+}
+
+.group-members {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  padding: 20rpx 24rpx;
+}
+
+.member-tag {
+  font-size: 26rpx;
+  padding: 8rpx 20rpx;
+  border-radius: 20rpx;
+  font-weight: 500;
+}
+
+.action-row {
+  display: flex;
+  gap: 16rpx;
+  margin-top: 8rpx;
+}
+
+.btn-reshuffle {
+  flex: 1;
+  height: 80rpx;
+  line-height: 80rpx;
+  font-size: 28rpx;
+  color: #E74C3C;
+  background: #FDE8E8;
+  border-radius: 40rpx;
+  border: none;
+}
+
+.btn-reset {
+  flex: 1;
+  height: 80rpx;
+  line-height: 80rpx;
+  font-size: 28rpx;
+  color: #999;
+  background: #F5F5F5;
+  border-radius: 40rpx;
+  border: none;
+}

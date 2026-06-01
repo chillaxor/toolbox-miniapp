@@ -1,0 +1,62 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">税后工资</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <view class="card">
+    <view class="form-group">
+      <text class="form-label">税前月薪（元）</text>
+      <input class="input-field" type="digit" placeholder="请输入税前月薪" value="{{grossSalary}}" bindinput="onGrossSalaryInput" />
+    </view>
+    <view class="form-group">
+      <text class="form-label">社保基数（元，默认=税前月薪）</text>
+      <input class="input-field" type="digit" placeholder="默认等于税前月薪" value="{{socialBase}}" bindinput="onSocialBaseInput" />
+    </view>
+    <view class="form-group">
+      <text class="form-label">公积金基数（元，默认=税前月薪）</text>
+      <input class="input-field" type="digit" placeholder="默认等于税前月薪" value="{{fundBase}}" bindinput="onFundBaseInput" />
+    </view>
+    <view class="form-group">
+      <text class="form-label">公积金比例（%，默认7%）</text>
+      <input class="input-field" type="digit" placeholder="默认7" value="{{fundRate}}" bindinput="onFundRateInput" />
+    </view>
+    <button class="btn-primary" style="background-color: #FF6B35;" bindtap="onCalculate">计算税后工资</button>
+  </view>
+
+  <view class="result-box" wx:if="{{result}}">
+    <text class="result-title">税后月薪</text>
+    <text class="result-value" style="color: #27AE60;">¥{{result.netSalary}}</text>
+    <view class="divider"></view>
+    <view class="detail-list">
+      <view class="detail-row">
+        <text class="detail-label">税前工资</text>
+        <text class="detail-value">¥{{result.grossSalary}}</text>
+      </view>
+      <view class="detail-row">
+        <text class="detail-label">养老保险 (8%)</text>
+        <text class="detail-value" style="color: #E74C3C;">-¥{{result.deductionDetail.pension}}</text>
+      </view>
+      <view class="detail-row">
+        <text class="detail-label">医疗保险 (2%)</text>
+        <text class="detail-value" style="color: #E74C3C;">-¥{{result.deductionDetail.medical}}</text>
+      </view>
+      <view class="detail-row">
+        <text class="detail-label">失业保险 (0.5%)</text>
+        <text class="detail-value" style="color: #E74C3C;">-¥{{result.deductionDetail.unemployment}}</text>
+      </view>
+      <view class="detail-row">
+        <text class="detail-label">住房公积金 ({{result.deductionDetail.fundRate * 100}}%)</text>
+        <text class="detail-value" style="color: #E74C3C;">-¥{{result.housingFund}}</text>
+      </view>
+      <view class="detail-row">
+        <text class="detail-label">应纳税所得额</text>
+        <text class="detail-value">¥{{result.taxableIncome}}</text>
+      </view>
+      <view class="detail-row">
+        <text class="detail-label">个人所得税</text>
+        <text class="detail-value" style="color: #E74C3C;">-¥{{result.incomeTax}}</text>
+      </view>
+    </view>
+  </view>
+</view>

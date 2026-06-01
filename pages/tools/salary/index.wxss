@@ -1,0 +1,21 @@
+.detail-list {
+  margin-top: 8rpx;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12rpx 0;
+}
+
+.detail-label {
+  font-size: 26rpx;
+  color: var(--color-secondary);
+}
+
+.detail-value {
+  font-size: 26rpx;
+  color: var(--color-primary);
+  font-weight: 500;
+}

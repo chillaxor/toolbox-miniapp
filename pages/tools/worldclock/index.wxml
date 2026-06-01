@@ -1,0 +1,49 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">世界时钟</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <view class="clock-list">
+    <view class="clock-card" wx:for="{{watchedCities}}" wx:key="id">
+      <view class="clock-left">
+        <text class="clock-emoji">{{item.emoji}}</text>
+        <view class="clock-info">
+          <text class="clock-city">{{item.name}}</text>
+          <text class="clock-country">{{item.country}} · {{item.offsetLabel}}</text>
+        </view>
+      </view>
+      <view class="clock-right">
+        <text class="clock-time {{item.isDaytime ? '' : 'clock-night'}}">{{item.timeShort}}</text>
+        <text class="clock-date">{{item.date}} {{item.weekday}}</text>
+      </view>
+      <view class="clock-remove" data-id="{{item.id}}" bindtap="onRemoveCity">✕</view>
+    </view>
+  </view>
+
+  <view class="add-btn" bindtap="onAddCity">
+    <text>+ 添加城市</text>
+  </view>
+
+  <!-- 添加城市面板 -->
+  <view class="overlay" wx:if="{{showAddPanel}}" bindtap="onCloseAdd"></view>
+  <view class="add-panel {{showAddPanel ? 'show' : ''}}">
+    <view class="add-panel-header">
+      <text class="add-panel-title">添加城市</text>
+      <text class="add-panel-close" bindtap="onCloseAdd">✕</text>
+    </view>
+    <view class="search-box">
+      <input class="search-input" placeholder="搜索城市或国家" value="{{searchKeyword}}" bindinput="onSearchInput" />
+    </view>
+    <scroll-view class="city-list" scroll-y>
+      <view class="city-item" wx:for="{{searchResult}}" wx:key="id" data-id="{{item.id}}" bindtap="onSelectCity">
+        <text class="city-emoji">{{item.emoji}}</text>
+        <view class="city-info">
+          <text class="city-name">{{item.name}}</text>
+          <text class="city-country">{{item.country}}</text>
+        </view>
+        <text class="city-offset">UTC{{item.offset >= 0 ? '+' : ''}}{{item.offset}}</text>
+      </view>
+    </scroll-view>
+  </view>
+</view>

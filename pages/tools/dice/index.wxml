@@ -1,0 +1,49 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">摇骰子</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <!-- 骰子数量选择 -->
+  <view class="card">
+    <text class="card-title">骰子数量</text>
+    <view class="count-btns">
+      <view class="count-btn {{diceCount === 1 ? 'count-active' : ''}}" data-count="1" bindtap="onDiceCountChange">1</view>
+      <view class="count-btn {{diceCount === 2 ? 'count-active' : ''}}" data-count="2" bindtap="onDiceCountChange">2</view>
+      <view class="count-btn {{diceCount === 3 ? 'count-active' : ''}}" data-count="3" bindtap="onDiceCountChange">3</view>
+      <view class="count-btn {{diceCount === 4 ? 'count-active' : ''}}" data-count="4" bindtap="onDiceCountChange">4</view>
+      <view class="count-btn {{diceCount === 5 ? 'count-active' : ''}}" data-count="5" bindtap="onDiceCountChange">5</view>
+      <view class="count-btn {{diceCount === 6 ? 'count-active' : ''}}" data-count="6" bindtap="onDiceCountChange">6</view>
+    </view>
+  </view>
+
+  <!-- 骰子展示区 -->
+  <view class="dice-area {{isRolling ? 'rolling' : ''}}">
+    <view class="dice-face" wx:for="{{results}}" wx:key="index">
+      <text class="dice-emoji">{{item}}</text>
+    </view>
+  </view>
+
+  <!-- 总和 -->
+  <view class="total-box" wx:if="{{total > 0 && diceCount > 1}}">
+    <text class="total-label">总和</text>
+    <text class="total-value">{{total}}</text>
+  </view>
+
+  <!-- 摇骰子按钮 -->
+  <button class="btn-roll {{isRolling ? 'rolling-btn' : ''}}" bindtap="onRoll" disabled="{{isRolling}}">
+    {{isRolling ? '摇骰中...' : '🎲 摇一摇'}}
+  </button>
+
+  <!-- 历史记录 -->
+  <view class="card" wx:if="{{history.length > 0}}" style="margin-top: 32rpx;">
+    <view class="card-header">
+      <text class="card-title">历史记录</text>
+      <text class="card-clear" bindtap="onClearHistory">清空</text>
+    </view>
+    <view class="history-item" wx:for="{{history}}" wx:key="timestamp">
+      <text class="hi-results">{{item.results}}</text>
+      <text class="hi-total" wx:if="{{item.count > 1}}">= {{item.total}}</text>
+    </view>
+  </view>
+</view>

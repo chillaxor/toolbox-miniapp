@@ -1,0 +1,10 @@
+.swap-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16rpx;
+  margin: 8rpx 0;
+  color: #FF6B35;
+  font-size: 28rpx;
+  font-weight: 600;
+}

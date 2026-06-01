@@ -1,0 +1,26 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">大小写转换</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <view class="card">
+    <textarea class="textarea-field" placeholder="请输入英文文本" value="{{text}}" bindinput="onTextInput" auto-height maxlength="-1" />
+  </view>
+
+  <view class="btn-group">
+    <view class="btn-mode" data-mode="upper" bindtap="onConvert" style="background-color: #45B058;">全大写</view>
+    <view class="btn-mode" data-mode="lower" bindtap="onConvert" style="background-color: #45B058;">全小写</view>
+    <view class="btn-mode" data-mode="capitalize" bindtap="onConvert" style="background-color: #45B058;">首字母大写</view>
+    <view class="btn-mode" data-mode="toggle" bindtap="onConvert" style="background-color: #45B058;">交替大小写</view>
+  </view>
+
+  <view class="card" wx:if="{{result}}" style="margin-top: 24rpx;">
+    <text class="form-label">转换结果</text>
+    <view class="result-text">{{result}}</view>
+    <view class="btn-row" style="margin-top: 16rpx;">
+      <view class="btn-small" bindtap="onCopyResult"><text>一键复制</text></view>
+      <view class="btn-small" bindtap="onClear" style="margin-left: 16rpx;"><text>清空</text></view>
+    </view>
+  </view>
+</view>

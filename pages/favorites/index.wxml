@@ -1,0 +1,22 @@
+<view class="container">
+  <block wx:if="{{!isEmpty}}">
+    <block wx:for="{{categories}}" wx:key="id">
+      <view class="section-header-bar" style="border-left-color: {{item.color}};">
+        <text class="section-title">{{item.name}}</text>
+      </view>
+      <view class="tool-grid">
+        <view class="tool-card" wx:for="{{item.tools}}" wx:for-item="tool" wx:key="id"
+              style="background-color: {{item.bgColor}};" bindtap="onToolTap" data-path="{{tool.path}}">
+          <text class="tool-icon">{{tool.icon}}</text>
+          <text class="tool-name">{{tool.name}}</text>
+        </view>
+      </view>
+    </block>
+  </block>
+
+  <view class="empty-box" wx:if="{{isEmpty}}">
+    <text style="font-size: 64rpx;">⭐</text>
+    <text style="color: #999; font-size: 28rpx; margin-top: 16rpx;">还没有收藏的工具</text>
+    <text style="color: #ccc; font-size: 24rpx; margin-top: 8rpx;">在工具页面点击🤍即可收藏</text>
+  </view>
+</view>

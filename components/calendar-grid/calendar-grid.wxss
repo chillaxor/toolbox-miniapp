@@ -1,0 +1,93 @@
+.calendar-grid {
+  width: 100%;
+}
+
+.week-header {
+  display: flex;
+  justify-content: space-around;
+  padding: 16rpx 0;
+  border-bottom: 2rpx solid var(--color-border);
+}
+
+.week-cell {
+  flex: 1;
+  text-align: center;
+  font-size: 24rpx;
+  color: var(--color-secondary);
+  font-weight: 600;
+}
+
+.weekend-text {
+  color: var(--color-date);
+}
+
+.days-grid {
+  width: 100%;
+}
+
+.days-row {
+  display: flex;
+}
+
+.day-cell {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8rpx 0;
+  min-height: 100rpx;
+  position: relative;
+}
+
+.day-cell.other-month {
+  opacity: 0.3;
+}
+
+.day-cell.today {
+  background-color: var(--color-date);
+  border-radius: 12rpx;
+}
+
+.day-cell.today .day-date {
+  color: #FFFFFF;
+  font-weight: 700;
+}
+
+.day-cell.today .day-lunar {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.day-date {
+  font-size: 28rpx;
+  color: var(--color-primary);
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.day-lunar {
+  font-size: 18rpx;
+  color: var(--color-hint);
+  line-height: 1.4;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lunar-holiday {
+  color: var(--color-danger);
+  font-weight: 600;
+}
+
+.holiday-cell .day-date {
+  color: var(--color-danger);
+}
+
+.makeup-cell .day-lunar {
+  color: var(--color-success);
+}
+
+.day-cell:active {
+  opacity: 0.7;
+}

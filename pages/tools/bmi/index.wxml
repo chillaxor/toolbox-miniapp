@@ -1,0 +1,56 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">BMI计算</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <view class="card">
+    <view class="form-group">
+      <text class="form-label">身高（厘米）</text>
+      <input class="input-field" type="digit" placeholder="请输入身高，如 170" value="{{height}}" bindinput="onHeightInput" />
+    </view>
+    <view class="form-group">
+      <text class="form-label">体重（千克）</text>
+      <input class="input-field" type="digit" placeholder="请输入体重，如 65" value="{{weight}}" bindinput="onWeightInput" />
+    </view>
+    <button class="btn-primary" style="background-color: #FF6B35;" bindtap="onCalculate">开始计算</button>
+  </view>
+
+  <view class="result-box" wx:if="{{result}}">
+    <text class="result-title">计算结果</text>
+    <text class="result-value">{{result.bmi}}</text>
+    <view class="result-tag" style="background-color: {{resultColor}};">
+      <text style="color: #fff; font-size: 26rpx;">{{result.category}}</text>
+    </view>
+    <view class="result-detail">
+      <text>{{result.suggestion}}</text>
+    </view>
+  </view>
+
+  <!-- BMI参考表 -->
+  <view class="card" style="margin-top: 24rpx;">
+    <text class="card-title">BMI参考标准</text>
+    <view class="ref-table">
+      <view class="ref-row ref-header">
+        <text class="ref-cell">BMI范围</text>
+        <text class="ref-cell">分类</text>
+      </view>
+      <view class="ref-row">
+        <text class="ref-cell">&lt; 18.5</text>
+        <text class="ref-cell" style="color: #3498DB;">偏瘦</text>
+      </view>
+      <view class="ref-row">
+        <text class="ref-cell">18.5 - 23.9</text>
+        <text class="ref-cell" style="color: #27AE60;">正常</text>
+      </view>
+      <view class="ref-row">
+        <text class="ref-cell">24.0 - 27.9</text>
+        <text class="ref-cell" style="color: #F39C12;">偏胖</text>
+      </view>
+      <view class="ref-row">
+        <text class="ref-cell">≥ 28.0</text>
+        <text class="ref-cell" style="color: #E74C3C;">肥胖</text>
+      </view>
+    </view>
+  </view>
+</view>

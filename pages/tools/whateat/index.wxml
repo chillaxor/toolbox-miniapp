@@ -1,0 +1,59 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">今天吃什么</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <!-- 分类选择 -->
+  <view class="card">
+    <text class="card-title">选择分类</text>
+    <view class="cat-tags">
+      <view class="cat-tag {{selectedCategories.indexOf(item.id) >= 0 ? 'cat-active' : ''}}" wx:for="{{categories}}" wx:key="id" data-id="{{item.id}}" bindtap="onCategoryToggle">
+        {{item.emoji}} {{item.name}}
+      </view>
+    </view>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="action-area">
+    <button class="btn-random {{shaking ? 'shaking' : ''}}" style="background-color: #E74C3C;" bindtap="onRandomOne">
+      🎲 随机选一道
+    </button>
+    <button class="btn-random-outline" bindtap="onRandomThree">给我3个选项</button>
+  </view>
+
+  <!-- 结果展示 -->
+  <view class="result-card" wx:if="{{showResult && result}}">
+    <text class="result-emoji">{{result.emoji}}</text>
+    <text class="result-name">{{result.name}}</text>
+    <text class="result-cat">{{result.category}}</text>
+    <view class="result-actions">
+      <button class="btn-again" bindtap="onRandomOne">不满意，再来</button>
+      <button class="btn-ok" style="background-color: #E74C3C;" bindtap="onReset">就它了！</button>
+    </view>
+  </view>
+
+  <view class="result-list" wx:if="{{showResult && resultList.length > 0}}">
+    <view class="result-option" wx:for="{{resultList}}" wx:key="name">
+      <text class="ro-emoji">{{item.emoji}}</text>
+      <text class="ro-name">{{item.name}}</text>
+      <text class="ro-cat">{{item.category}}</text>
+    </view>
+    <button class="btn-again-center" bindtap="onRandomThree">全都不行，再选</button>
+  </view>
+
+  <!-- 自定义菜品 -->
+  <view class="card" style="margin-top: 24rpx;">
+    <text class="card-title">⭐ 自定义菜品</text>
+    <view class="custom-input-row">
+      <input class="custom-input" placeholder="输入菜品名称" value="{{customFood}}" bindinput="onCustomInput" />
+      <view class="custom-add-btn" bindtap="onAddCustom">添加</view>
+    </view>
+    <view class="custom-list" wx:if="{{customFoods.length > 0}}">
+      <view class="custom-item" wx:for="{{customFoods}}" wx:key="name">
+        <text class="ci-name">⭐ {{item.name}}</text>
+        <text class="ci-del" data-index="{{index}}" bindtap="onRemoveCustom">✕</text>
+      </view>
+    </view>
+  </view>
+</view>

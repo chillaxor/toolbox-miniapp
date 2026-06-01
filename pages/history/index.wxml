@@ -1,0 +1,28 @@
+<view class="container">
+  <block wx:if="{{!isEmpty}}">
+    <view class="clear-btn" bindtap="onClearHistory">
+      <text style="color: #E74C3C; font-size: 26rpx;">清空历史</text>
+    </view>
+
+    <block wx:for="{{groupedHistory}}" wx:key="date">
+      <view class="date-header">
+        <text class="date-text">{{item.date}}</text>
+      </view>
+      <view class="card" style="padding: 0 32rpx;">
+        <view class="history-item" wx:for="{{item.items}}" wx:for-item="record" wx:key="timestamp"
+              bindtap="onItemTap" data-toolid="{{record.toolId}}">
+          <view class="history-left">
+            <text class="history-name">{{record.toolName}}</text>
+            <text class="history-summary">{{record.summary}}</text>
+          </view>
+          <text class="history-time">{{record.timeStr}}</text>
+        </view>
+      </view>
+    </block>
+  </block>
+
+  <view class="empty-box" wx:if="{{isEmpty}}">
+    <text style="font-size: 64rpx;">📋</text>
+    <text style="color: #999; font-size: 28rpx; margin-top: 16rpx;">暂无使用记录</text>
+  </view>
+</view>
