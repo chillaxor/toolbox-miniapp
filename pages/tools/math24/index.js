@@ -230,6 +230,106 @@ Page({
     return parts.join('');
   },
 
+  // ---------- 表达式解析器（替代 eval/new Function，微信小程序不支持）----------
+
+  /**
+   * 递归下降解析四则运算表达式，返回数值或 null（出错时）
+   * 支持：整数/小数、+ - * /、括号、空格
+   */
+  _evalExpr: function (expr) {
+    var self = this;
+    var pos = 0;
+
+    function skipSpaces() {
+      while (pos < expr.length && expr[pos] === ' ') pos++;
+    }
+
+    // 解析基本单元：数字 或 (子表达式)
+    function parsePrimary() {
+      skipSpaces();
+      if (pos >= expr.length) return null;
+
+      // 括号
+      if (expr[pos] === '(') {
+        pos++; // skip (
+        var val = parseAddSub();
+        skipSpaces();
+        if (pos < expr.length && expr[pos] === ')') pos++; // skip )
+        return val;
+      }
+
+      // 负号
+      var sign = 1;
+      if (expr[pos] === '-') {
+        sign = -1;
+        pos++;
+      }
+
+      // 数字
+      skipSpaces();
+      var start = pos;
+      while (pos < expr.length && (
+        (expr[pos] >= '0' && expr[pos] <= '9') || expr[pos] === '.'
+      )) {
+        pos++;
+      }
+      if (pos === start) return null; // 没读到数字
+      return sign * parseFloat(expr.slice(start, pos));
+    }
+
+    // 解析乘除
+    function parseMulDiv() {
+      var left = parsePrimary();
+      if (left === null) return null;
+      while (true) {
+        skipSpaces();
+        if (pos >= expr.length) break;
+        var op = expr[pos];
+        if (op !== '*' && op !== '/') break;
+        pos++;
+        var right = parsePrimary();
+        if (right === null) return null;
+        if (op === '*') {
+          left = left * right;
+        } else {
+          if (Math.abs(right) < 1e-9) return null; // 除以0
+          left = left / right;
+        }
+      }
+      return left;
+    }
+
+    // 解析加减
+    function parseAddSub() {
+      var left = parseMulDiv();
+      if (left === null) return null;
+      while (true) {
+        skipSpaces();
+        if (pos >= expr.length) break;
+        var op = expr[pos];
+        if (op !== '+' && op !== '-') break;
+        pos++;
+        var right = parseMulDiv();
+        if (right === null) return null;
+        if (op === '+') {
+          left = left + right;
+        } else {
+          left = left - right;
+        }
+      }
+      return left;
+    }
+
+    try {
+      var result = parseAddSub();
+      skipSpaces();
+      if (pos < expr.length) return null; // 还有未消费的字符，表达式有问题
+      return result;
+    } catch (e) {
+      return null;
+    }
+  },
+
   // ---------- 验证 ----------
 
   onEqual: function () {
@@ -257,18 +357,9 @@ Page({
       return;
     }
 
-    // 计算
+    // 计算（用自定义解析器，微信小程序不支持 new Function/eval）
     var calcExpr = this._buildCalcExpr(tokens);
-    var result = null;
-    try {
-      // 安全性：只允许数字、运算符和括号
-      if (/^[\d\s\+\-\*\/\(\)\.]+$/.test(calcExpr)) {
-        // eslint-disable-next-line no-new-func
-        result = (new Function('return (' + calcExpr + ')'))();
-      }
-    } catch (err) {
-      result = null;
-    }
+    var result = this._evalExpr(calcExpr);
 
     if (result === null || isNaN(result) || !isFinite(result)) {
       this.setData({ resultTip: '⚠️ 表达式有误', exprState: 'expr-wrong' });
