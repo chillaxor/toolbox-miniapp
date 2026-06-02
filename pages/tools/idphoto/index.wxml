@@ -1,6 +1,10 @@
 <view class="container">
   <view class="tool-header">
     <text class="tool-header-title">证件照生成器</text>
+    <view class="mode-badge {{aiMode && aiAvailable ? 'mode-ai' : 'mode-basic'}}">
+      <text class="mode-badge-text">{{aiMode && aiAvailable ? '🤖 AI智能抠图' : '📝 基础模式'}}</text>
+      <text class="mode-status" wx:if="{{aiMode && aiAvailable && modelStatus !== 'ready'}}"> · {{modelStatus === 'loading' ? '加载中' + modelProgress + '%' : modelStatus === 'error' ? '不可用' : '待下载'}}</text>
+    </view>
     <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
   </view>
 
@@ -24,7 +28,7 @@
     </picker>
     <picker range="{{layouts}}" range-key="name" value="{{layoutIdx}}" bindchange="onLayoutChange">
       <view class="picker-row">
-        <text class="picker-label">排版拼图</text>
+        <text class="picker-label">排版方式</text>
         <text class="picker-value">{{layouts[layoutIdx].name}}</text>
       </view>
     </picker>
@@ -39,13 +43,13 @@
         <text class="bg-name">{{item.name}}</text>
       </view>
     </view>
-    <text class="bg-tip">💡 自动检测原图背景并替换，选纯色背景照片效果最佳</text>
+    <text class="bg-tip">{{aiMode && aiAvailable ? '✨ AI自动识别人像，精确到发丝边缘' : '💡 自动检测背景色替换，纯色背景效果最佳'}}</text>
   </view>
 
   <!-- 生成按钮 -->
   <view class="card" wx:if="{{photoPath}}">
     <view class="btn-generate {{generating ? 'btn-disabled' : ''}}" bindtap="{{generating ? '' : 'generatePhoto'}}">
-      {{generating ? '生成中...' : '📸 生成证件照'}}
+      {{generating ? '生成中...' : (aiMode && aiAvailable ? '🤖 AI抠图+生成证件照' : '📸 生成证件照')}}
     </view>
   </view>
 
@@ -78,7 +82,13 @@
     </view>
   </view>
 
-  <!-- 隐藏canvas: src用于像素操作(限制800px内), canvas用于最终裁剪合成 -->
+  <!-- 隐藏canvas -->
+  <!-- idphoto-src: 图片预处理(最大800px), AI模式也用于推理输入 -->
   <canvas canvas-id="idphoto-src" style="position:fixed;left:-9999px;width:800px;height:800px;"></canvas>
-  <canvas canvas-id="idphoto-canvas" style="position:fixed;left:-9999px;width:{{canvasW * layouts[layoutIdx].cols}}px;height:{{canvasH * layouts[layoutIdx].rows}}px;"></canvas>
+  <!-- idphoto-mask: AI推理用的512x512, 也用于mask存储和缩放 -->
+  <canvas canvas-id="idphoto-mask" style="position:fixed;left:-9999px;width:512px;height:512px;"></canvas>
+  <!-- idphoto-canvas: 最终裁剪合成(普通排版) -->
+  <canvas canvas-id="idphoto-canvas" style="position:fixed;left:-9999px;width:{{canvasW}}px;height:{{canvasH}}px;"></canvas>
+  <!-- idphoto-layout: 6寸排版拼图(1200x1800) -->
+  <canvas canvas-id="idphoto-layout" style="position:fixed;left:-9999px;width:1200px;height:1800px;"></canvas>
 </view>

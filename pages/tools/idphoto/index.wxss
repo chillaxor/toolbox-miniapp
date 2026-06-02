@@ -17,6 +17,88 @@
   padding: 8rpx;
 }
 
+/* 模式徽章 */
+.mode-badge {
+  display: flex;
+  align-items: center;
+  font-size: 22rpx;
+  padding: 6rpx 16rpx;
+  border-radius: 20rpx;
+  font-weight: 600;
+  margin-right: 12rpx;
+}
+
+.mode-ai {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: #fff;
+}
+
+.mode-basic {
+  background: #f0f0f0;
+  color: #999;
+}
+
+.mode-badge-text {
+  font-size: 22rpx;
+}
+
+.mode-status {
+  font-size: 20rpx;
+  opacity: 0.85;
+}
+
+/* 模型状态卡片 */
+.model-status-card {
+  background: var(--color-bg);
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 16rpx;
+}
+
+.model-status-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.model-status-icon {
+  font-size: 40rpx;
+}
+
+.model-status-text {
+  font-size: 26rpx;
+  color: var(--color-secondary);
+}
+
+.progress-bar {
+  width: 100%;
+  height: 12rpx;
+  background: #e0e0e0;
+  border-radius: 6rpx;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  border-radius: 6rpx;
+  transition: width 0.3s;
+}
+
+.btn-download {
+  height: 64rpx;
+  padding: 0 40rpx;
+  border-radius: 32rpx;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26rpx;
+  font-weight: bold;
+}
+
 .card-title {
   font-size: 30rpx;
   font-weight: 600;
@@ -109,6 +191,70 @@
   margin-top: 16rpx;
 }
 
+/* AI 抠图按钮 */
+.btn-ai-matting {
+  height: 88rpx;
+  border-radius: 44rpx;
+  background: linear-gradient(135deg, #f093fb, #f5576c);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+  font-weight: bold;
+}
+
+.ai-hint {
+  display: block;
+  text-align: center;
+  font-size: 22rpx;
+  color: var(--color-hint);
+  margin-top: 12rpx;
+}
+
+/* 抠图预览 */
+.matting-preview-frame {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image:
+    linear-gradient(45deg, #e0e0e0 25%, transparent 25%),
+    linear-gradient(-45deg, #e0e0e0 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #e0e0e0 75%),
+    linear-gradient(-45deg, transparent 75%, #e0e0e0 75%);
+  background-size: 24rpx 24rpx;
+  background-position: 0 0, 0 12rpx, 12rpx -12rpx, -12rpx 0rpx;
+  border-radius: 12rpx;
+  overflow: hidden;
+  max-width: 500rpx;
+  margin: 0 auto;
+}
+
+.matting-preview-img {
+  width: 100%;
+  max-height: 500rpx;
+}
+
+.matting-actions {
+  margin-top: 20rpx;
+  display: flex;
+  justify-content: center;
+}
+
+.btn-re-matting {
+  height: 64rpx;
+  padding: 0 32rpx;
+  border-radius: 32rpx;
+  background: #f0f0f0;
+  color: var(--color-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26rpx;
+  font-weight: 500;
+}
+
+/* 生成按钮 */
 .btn-generate {
   height: 88rpx;
   border-radius: 44rpx;
