@@ -1,0 +1,60 @@
+<view class="page">
+  <!-- 未选图状态 -->
+  <view class="upload-area" wx:if="{{!imagePath}}">
+    <view class="upload-btn" bindtap="onChooseImage">
+      <text class="upload-icon">🧱</text>
+      <text class="upload-text">选择图片</text>
+      <text class="upload-hint">支持 JPG / PNG，自动切成 3×3 九宫格</text>
+    </view>
+  </view>
+
+  <!-- 已选图状态 -->
+  <view class="result-area" wx:if="{{imagePath}}">
+    <!-- 操作栏 -->
+    <view class="toolbar">
+      <button class="btn btn-outline" bindtap="onChooseImage">🔄 换图</button>
+      <button class="btn btn-primary" bindtap="onSaveAll">💾 全部保存</button>
+    </view>
+
+    <!-- 原始图预览 -->
+    <view class="preview-section">
+      <text class="section-title">原始图片</text>
+      <image class="preview-img" src="{{imagePath}}" mode="aspectFit" />
+    </view>
+
+    <!-- 九宫格网格 -->
+    <view class="section-title">九宫格切片</view>
+    <view class="grid-3x3">
+      <view
+        class="grid-cell"
+        wx:for="{{gridPieces}}"
+        wx:key="index"
+        bindtap="onSavePiece"
+        data-index="{{index}}"
+      >
+        <image
+          class="piece-img"
+          src="{{item.path}}"
+          mode="aspectFill"
+          wx:if="{{item.path}}"
+        />
+        <view class="piece-placeholder" wx:else>
+          <text class="piece-num">{{index + 1}}</text>
+        </view>
+        <view class="piece-label">第{{index + 1}}格</view>
+      </view>
+    </view>
+
+    <!-- 生成中提示 -->
+    <view class="loading-overlay" wx:if="{{isProcessing}}">
+      <view class="loading-box">
+        <text class="loading-spin">⏳</text>
+        <text class="loading-text">正在切割中...</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 隐藏 canvas 用于切割（绝对定位移出视口） -->
+  <canvas canvas-id="gridcut-canvas" style="position:fixed;left:-9999px;width:300px;height:300px;"></canvas>
+  <canvas canvas-id="gridcut-piece" style="position:fixed;left:-9999px;width:200px;height:200px;"></canvas>
+</view>
