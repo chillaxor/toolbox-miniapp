@@ -1,8 +1,8 @@
 .stats-bar {
   display: flex;
   justify-content: space-around;
-  padding: 24rpx 0;
-  margin-bottom: 16rpx;
+  padding: 20rpx 0 8rpx;
+  margin-bottom: 8rpx;
 }
 
 .stat-item {
@@ -23,60 +23,101 @@
   color: #E74C3C;
 }
 
+/* ---- 数字牌 ---- */
 .number-cards {
   display: flex;
   justify-content: center;
   gap: 20rpx;
-  padding: 32rpx 0;
+  padding: 20rpx 0;
 }
 
 .number-card {
-  width: 140rpx;
-  height: 180rpx;
+  width: 136rpx;
+  height: 170rpx;
   background: #fff;
   border-radius: 16rpx;
-  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.08);
+  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.10);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   border: 3rpx solid transparent;
-  transition: all 0.2s;
+  transition: all 0.15s;
 }
 
-.card-selected {
-  border-color: #E74C3C;
+.card-active {
+  border-color: #eee;
+}
+
+.card-active:active {
   background: #FDE8E8;
-  transform: scale(1.05);
+  border-color: #E74C3C;
+  transform: scale(1.06);
+}
+
+.card-used {
+  background: #F0F0F0;
+  border-color: #ddd;
+  opacity: 0.45;
 }
 
 .card-face {
-  font-size: 40rpx;
-  font-weight: 700;
+  font-size: 44rpx;
+  font-weight: 800;
   color: #E74C3C;
 }
 
 .card-num {
-  font-size: 24rpx;
-  color: #999;
-  margin-top: 8rpx;
+  font-size: 22rpx;
+  color: #aaa;
+  margin-top: 6rpx;
 }
 
-.op-buttons {
+/* ---- 表达式框 ---- */
+.expr-box {
+  margin: 12rpx 0;
+  padding: 20rpx 28rpx;
+  background: #F9F9F9;
+  border-radius: 16rpx;
+  text-align: center;
+  min-height: 76rpx;
+  border: 3rpx solid transparent;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.expr-correct {
+  background: #E8F8F0;
+  border-color: #2ECC71;
+}
+
+.expr-wrong {
+  background: #FDE8E8;
+  border-color: #E74C3C;
+}
+
+.expr-text {
+  font-size: 34rpx;
+  font-weight: 600;
+  color: #333;
+  word-break: break-all;
+}
+
+/* ---- 运算符行 ---- */
+.op-row {
   display: flex;
   justify-content: center;
-  gap: 24rpx;
-  padding: 24rpx 0;
+  gap: 14rpx;
+  padding: 12rpx 0;
 }
 
 .op-btn {
-  width: 96rpx;
-  height: 96rpx;
-  line-height: 96rpx;
+  width: 88rpx;
+  height: 88rpx;
+  line-height: 88rpx;
   text-align: center;
-  font-size: 40rpx;
+  font-size: 38rpx;
   font-weight: 700;
-  background: #F5F5F5;
+  background: #F0F0F0;
   border-radius: 50%;
   color: #333;
 }
@@ -86,58 +127,96 @@
   color: #fff;
 }
 
-.expr-box {
-  margin: 24rpx 0;
-  padding: 24rpx 32rpx;
-  background: #F9F9F9;
-  border-radius: 16rpx;
-  text-align: center;
-  min-height: 80rpx;
+.op-bracket {
+  font-size: 40rpx;
+  color: #666;
+  background: #E8EAF6;
 }
 
-.expr-text {
-  font-size: 36rpx;
-  font-weight: 600;
-  color: #333;
-}
-
-.action-btns {
-  display: flex;
-  gap: 20rpx;
-  padding: 16rpx 0;
-}
-
-.btn-action {
-  flex: 1;
-  height: 88rpx;
-  line-height: 88rpx;
-  border-radius: 44rpx;
-  font-size: 28rpx;
-  font-weight: 600;
-  border: none;
-}
-
-.btn-primary {
-  background: #E74C3C;
+.op-bracket:active {
+  background: #5C6BC0;
   color: #fff;
 }
 
-.btn-secondary {
+/* ---- 操作行 ---- */
+.action-row {
+  display: flex;
+  gap: 14rpx;
+  padding: 12rpx 0;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-del, .btn-clear, .btn-hint, .btn-equal, .btn-new {
+  height: 88rpx;
+  border-radius: 44rpx;
+  font-size: 28rpx;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-del {
+  width: 88rpx;
+  background: #F0F0F0;
+  color: #666;
+  font-size: 36rpx;
+  border-radius: 50%;
+}
+
+.btn-del:active { background: #ddd; }
+
+.btn-clear {
+  flex: 1;
   background: #F0F0F0;
   color: #666;
 }
 
-.btn-accent {
-  background: #FF6B35;
-  color: #fff;
+.btn-clear:active { background: #ddd; }
+
+.btn-hint {
+  width: 88rpx;
+  background: #FFF3E0;
+  font-size: 36rpx;
+  border-radius: 50%;
 }
 
+.btn-hint:active { background: #FFE0B2; }
+
+.btn-equal {
+  flex: 2;
+  background: #E74C3C;
+  color: #fff;
+  font-size: 40rpx;
+}
+
+.btn-equal:active { background: #c0392b; }
+
+.btn-new {
+  width: 88rpx;
+  background: #FFF3E0;
+  font-size: 32rpx;
+  border-radius: 50%;
+}
+
+.btn-new:active { background: #FFE0B2; }
+
+/* ---- 结果提示 ---- */
+.result-tip {
+  text-align: center;
+  padding: 8rpx 0;
+}
+
+.result-tip-text {
+  font-size: 26rpx;
+  color: #E74C3C;
+}
+
+/* ---- 弹窗 ---- */
 .hint-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  top: 0; left: 0; right: 0; bottom: 0;
   background: rgba(0,0,0,0.5);
   display: flex;
   align-items: center;
@@ -153,11 +232,22 @@
   text-align: center;
 }
 
+.hint-success {
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8f8f0 100%);
+}
+
+.success-emoji {
+  display: block;
+  font-size: 72rpx;
+  margin-bottom: 12rpx;
+}
+
 .hint-title {
   display: block;
-  font-size: 32rpx;
-  font-weight: 600;
-  margin-bottom: 24rpx;
+  font-size: 36rpx;
+  font-weight: 700;
+  margin-bottom: 16rpx;
+  color: #333;
 }
 
 .hint-content {
@@ -165,11 +255,29 @@
   font-size: 36rpx;
   font-weight: 700;
   color: #E74C3C;
-  margin-bottom: 32rpx;
-  line-height: 1.5;
+  margin-bottom: 16rpx;
+  line-height: 1.6;
+  word-break: break-all;
 }
 
-.hint-close {
-  font-size: 24rpx;
+.success-time {
+  display: block;
+  font-size: 26rpx;
   color: #999;
+  margin-bottom: 32rpx;
+}
+
+.hint-close-btn {
+  display: inline-block;
+  padding: 16rpx 48rpx;
+  background: #E74C3C;
+  color: #fff;
+  border-radius: 40rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  margin-top: 16rpx;
+}
+
+.hint-close-btn:active {
+  background: #c0392b;
 }

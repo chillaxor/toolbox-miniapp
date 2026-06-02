@@ -8,11 +8,11 @@
   <view class="stats-bar">
     <view class="stat-item">
       <text class="stat-label">用时</text>
-      <text class="stat-value">{{formatTime(timer)}}</text>
+      <text class="stat-value">{{timerText}}</text>
     </view>
     <view class="stat-item">
       <text class="stat-label">最佳</text>
-      <text class="stat-value">{{bestTime ? formatTime(bestTime) : '--'}}</text>
+      <text class="stat-value">{{bestTimeText}}</text>
     </view>
     <view class="stat-item">
       <text class="stat-label">已解</text>
@@ -22,42 +22,45 @@
 
   <!-- 数字卡片 -->
   <view class="number-cards">
-    <view class="number-card {{selectedNums.indexOf(0) !== -1 ? 'card-selected' : ''}}" data-idx="0" bindtap="onNumberTap">
-      <text class="card-face">{{cardFaces[0]}}</text>
-      <text class="card-num">{{numbers[0]}}</text>
-    </view>
-    <view class="number-card {{selectedNums.indexOf(1) !== -1 ? 'card-selected' : ''}}" data-idx="1" bindtap="onNumberTap">
-      <text class="card-face">{{cardFaces[1]}}</text>
-      <text class="card-num">{{numbers[1]}}</text>
-    </view>
-    <view class="number-card {{selectedNums.indexOf(2) !== -1 ? 'card-selected' : ''}}" data-idx="2" bindtap="onNumberTap">
-      <text class="card-face">{{cardFaces[2]}}</text>
-      <text class="card-num">{{numbers[2]}}</text>
-    </view>
-    <view class="number-card {{selectedNums.indexOf(3) !== -1 ? 'card-selected' : ''}}" data-idx="3" bindtap="onNumberTap">
-      <text class="card-face">{{cardFaces[3]}}</text>
-      <text class="card-num">{{numbers[3]}}</text>
+    <view
+      wx:for="{{numbers}}"
+      wx:key="index"
+      class="number-card {{usedCardIdx[index] ? 'card-used' : 'card-active'}}"
+      data-idx="{{index}}"
+      bindtap="onCardTap"
+    >
+      <text class="card-face">{{cardFaces[index]}}</text>
+      <text class="card-num">{{item}}</text>
     </view>
   </view>
 
-  <!-- 运算符 -->
-  <view class="op-buttons">
+  <!-- 表达式显示框 -->
+  <view class="expr-box {{exprState}}">
+    <text class="expr-text">{{expression || '点击数字牌开始拼式子'}}</text>
+  </view>
+
+  <!-- 运算符 + 括号行 -->
+  <view class="op-row">
+    <view class="op-btn op-bracket" bindtap="onBracketLeft">(</view>
     <view class="op-btn" data-op="+" bindtap="onOpTap">+</view>
     <view class="op-btn" data-op="-" bindtap="onOpTap">−</view>
     <view class="op-btn" data-op="×" bindtap="onOpTap">×</view>
     <view class="op-btn" data-op="÷" bindtap="onOpTap">÷</view>
+    <view class="op-btn op-bracket" bindtap="onBracketRight">)</view>
   </view>
 
-  <!-- 表达式显示 -->
-  <view class="expr-box">
-    <text class="expr-text">{{expression || '选择数字和运算符'}}</text>
+  <!-- 操作按钮行 -->
+  <view class="action-row">
+    <view class="btn-del" bindtap="onBackspace">⌫</view>
+    <view class="btn-clear" bindtap="onClear">清空</view>
+    <view class="btn-hint" bindtap="onHint">💡</view>
+    <view class="btn-equal" bindtap="onEqual">=</view>
+    <view class="btn-new" bindtap="onNewPuzzle">🔄</view>
   </view>
 
-  <!-- 操作按钮 -->
-  <view class="action-btns">
-    <button class="btn-action btn-secondary" bindtap="onClearExpr">清空</button>
-    <button class="btn-action btn-primary" bindtap="onHint">💡 提示</button>
-    <button class="btn-action btn-accent" bindtap="onNewPuzzle">🔄 新题</button>
+  <!-- 结果提示 -->
+  <view class="result-tip" wx:if="{{resultTip}}">
+    <text class="result-tip-text">{{resultTip}}</text>
   </view>
 
   <!-- 提示弹窗 -->
@@ -65,7 +68,18 @@
     <view class="hint-card" catchtap="">
       <text class="hint-title">💡 参考答案</text>
       <text class="hint-content">{{hint}}</text>
-      <text class="hint-close">点击关闭</text>
+      <view class="hint-close-btn" bindtap="onCloseHint">知道了</view>
+    </view>
+  </view>
+
+  <!-- 成功弹窗 -->
+  <view class="hint-overlay" wx:if="{{showSuccess}}" bindtap="onCloseSuccess">
+    <view class="hint-card hint-success" catchtap="">
+      <text class="success-emoji">🎉</text>
+      <text class="hint-title">答对了！</text>
+      <text class="hint-content">{{expression}} = 24</text>
+      <text class="success-time">用时 {{timerText}}</text>
+      <view class="hint-close-btn" bindtap="onCloseSuccess">继续挑战</view>
     </view>
   </view>
 </view>

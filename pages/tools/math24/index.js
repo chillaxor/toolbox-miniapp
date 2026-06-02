@@ -6,16 +6,21 @@ Page({
     isFavorite: false,
     numbers: [],
     cardFaces: [],
-    selectedNums: [],
-    selectedOps: [],
-    expression: '',
+    usedCardIdx: {},      // { 0: true, 2: true } 记录哪些牌已用
+    expression: '',       // 显示用的表达式字符串
+    exprTokens: [],       // token列表，用于退格和计算
+    // exprTokens 每项格式：{ type: 'num'|'op'|'bracket', value: '3', cardIdx: 0 }
+    exprState: '',        // '' | 'expr-correct' | 'expr-wrong'
+    resultTip: '',
     hint: '',
     showHint: false,
+    showSuccess: false,
     timer: 0,
     timerRunning: false,
     bestTime: null,
     solvedCount: 0,
-    isAnimating: false
+    timerText: '0s',
+    bestTimeText: '--'
   },
 
   _timerInterval: null,
@@ -24,12 +29,20 @@ Page({
     this.checkFavorite();
     var best = wx.getStorageSync('toolbox_math24_best');
     var solved = wx.getStorageSync('toolbox_math24_solved') || 0;
-    this.setData({ bestTime: best || null, solvedCount: solved });
+    this.setData({
+      bestTime: best || null,
+      solvedCount: solved,
+      bestTimeText: best ? this.formatTime(best) : '--'
+    });
     this.newPuzzle();
   },
 
   onShow: function () {
     this.checkFavorite();
+  },
+
+  onUnload: function () {
+    if (this._timerInterval) clearInterval(this._timerInterval);
   },
 
   checkFavorite: function () {
@@ -41,6 +54,8 @@ Page({
     this.setData({ isFavorite: fav });
   },
 
+  // ---------- 游戏逻辑 ----------
+
   newPuzzle: function () {
     var nums = math24.generateNumbers();
     var faces = [];
@@ -50,12 +65,14 @@ Page({
     this.setData({
       numbers: nums,
       cardFaces: faces,
-      selectedNums: [],
-      selectedOps: [],
+      usedCardIdx: {},
       expression: '',
+      exprTokens: [],
+      exprState: '',
+      resultTip: '',
       hint: '',
       showHint: false,
-      isAnimating: false
+      showSuccess: false
     });
     this.startTimer();
   },
@@ -63,10 +80,11 @@ Page({
   startTimer: function () {
     var self = this;
     if (this._timerInterval) clearInterval(this._timerInterval);
-    this.setData({ timer: 0, timerRunning: true });
+    this.setData({ timer: 0, timerRunning: true, timerText: '0s' });
     this._timerInterval = setInterval(function () {
       if (self.data.timerRunning) {
-        self.setData({ timer: self.data.timer + 1 });
+        var t = self.data.timer + 1;
+        self.setData({ timer: t, timerText: self.formatTime(t) });
       }
     }, 1000);
   },
@@ -79,55 +97,225 @@ Page({
     }
   },
 
-  onNumberTap: function (e) {
-    var idx = e.currentTarget.dataset.idx;
-    var nums = this.data.selectedNums.slice();
-    if (nums.indexOf(idx) !== -1) {
-      // 取消选择
-      nums = nums.filter(function (i) { return i !== idx; });
-    } else {
-      if (nums.length >= 2) return; // 最多选2个数
-      nums.push(idx);
+  formatTime: function (seconds) {
+    var m = Math.floor(seconds / 60);
+    var s = seconds % 60;
+    if (m > 0) {
+      return m + ':' + (s < 10 ? '0' : '') + s;
     }
-    this.setData({ selectedNums: nums });
-    this.updateExpression(nums, this.data.selectedOps);
+    return s + 's';
   },
 
+  // ---------- 输入处理 ----------
+
+  // 点数字牌
+  onCardTap: function (e) {
+    var idx = parseInt(e.currentTarget.dataset.idx);
+    var used = this.data.usedCardIdx;
+    if (used[idx]) return; // 已用过
+
+    var token = {
+      type: 'num',
+      value: String(this.data.numbers[idx]),
+      display: this.data.cardFaces[idx],
+      cardIdx: idx
+    };
+    this._appendToken(token);
+  },
+
+  // 点运算符
   onOpTap: function (e) {
     var op = e.currentTarget.dataset.op;
-    var ops = this.data.selectedOps.slice();
-    if (ops.length >= 3) return;
-    ops.push(op);
-    this.setData({ selectedOps: ops });
-    this.updateExpression(this.data.selectedNums, ops);
+    var token = { type: 'op', value: op, display: op };
+    this._appendToken(token);
   },
 
-  updateExpression: function (nums, ops) {
-    var expr = '';
-    var numFaces = [];
-    for (var i = 0; i < nums.length; i++) {
-      numFaces.push(this.data.numbers[nums[i]]);
-    }
-    // 简单拼接表达式
-    if (numFaces.length === 2 && ops.length === 1) {
-      expr = numFaces[0] + ' ' + ops[0] + ' ' + numFaces[1];
-    } else if (numFaces.length === 2 && ops.length >= 2) {
-      expr = numFaces[0] + ' ' + ops[0] + ' ' + numFaces[1] + ' ' + ops[1] + ' ...';
-    }
-    this.setData({ expression: expr });
+  // 左括号
+  onBracketLeft: function () {
+    this._appendToken({ type: 'bracket', value: '(', display: '(' });
   },
 
-  onClearExpr: function () {
-    this.setData({ selectedNums: [], selectedOps: [], expression: '' });
+  // 右括号
+  onBracketRight: function () {
+    this._appendToken({ type: 'bracket', value: ')', display: ')' });
   },
+
+  // 追加 token
+  _appendToken: function (token) {
+    var tokens = this.data.exprTokens.slice();
+    tokens.push(token);
+
+    var usedOld = this.data.usedCardIdx;
+    var used = {};
+    for (var k in usedOld) { if (usedOld.hasOwnProperty(k)) used[k] = usedOld[k]; }
+    if (token.type === 'num' && token.cardIdx !== undefined) {
+      used[token.cardIdx] = true;
+    }
+
+    this.setData({
+      exprTokens: tokens,
+      usedCardIdx: used,
+      expression: this._buildExpr(tokens),
+      exprState: '',
+      resultTip: ''
+    });
+  },
+
+  // 退格
+  onBackspace: function () {
+    var tokens = this.data.exprTokens.slice();
+    if (tokens.length === 0) return;
+
+    var last = tokens.pop();
+    var usedOld2 = this.data.usedCardIdx;
+    var used = {};
+    for (var k2 in usedOld2) { if (usedOld2.hasOwnProperty(k2)) used[k2] = usedOld2[k2]; }
+    if (last.type === 'num' && last.cardIdx !== undefined) {
+      delete used[last.cardIdx];
+    }
+
+    this.setData({
+      exprTokens: tokens,
+      usedCardIdx: used,
+      expression: this._buildExpr(tokens),
+      exprState: '',
+      resultTip: ''
+    });
+  },
+
+  // 清空
+  onClear: function () {
+    this.setData({
+      exprTokens: [],
+      usedCardIdx: {},
+      expression: '',
+      exprState: '',
+      resultTip: ''
+    });
+  },
+
+  // 拼表达式字符串（显示用，数字显示牌面）
+  _buildExpr: function (tokens) {
+    var parts = [];
+    for (var i = 0; i < tokens.length; i++) {
+      var t = tokens[i];
+      if (t.type === 'num') {
+        parts.push(t.display);
+      } else if (t.type === 'op') {
+        parts.push(' ' + t.value + ' ');
+      } else {
+        // 括号：左括号前不加空格，右括号后不加空格
+        parts.push(t.value);
+      }
+    }
+    return parts.join('');
+  },
+
+  // 拼计算用表达式（数字用真实值，× → * ÷ → /）
+  _buildCalcExpr: function (tokens) {
+    var parts = [];
+    for (var i = 0; i < tokens.length; i++) {
+      var t = tokens[i];
+      if (t.type === 'num') {
+        parts.push(t.value);
+      } else if (t.type === 'op') {
+        var op = t.value;
+        if (op === '×') op = '*';
+        if (op === '÷') op = '/';
+        parts.push(op);
+      } else {
+        parts.push(t.value);
+      }
+    }
+    return parts.join('');
+  },
+
+  // ---------- 验证 ----------
+
+  onEqual: function () {
+    var tokens = this.data.exprTokens;
+
+    // 检查是否用了全部4个数字
+    var usedCount = Object.keys(this.data.usedCardIdx).length;
+    if (usedCount < 4) {
+      this.setData({ resultTip: '⚠️ 需要用上全部4张牌', exprState: 'expr-wrong' });
+      return;
+    }
+
+    // 括号配对检查
+    var depth = 0;
+    for (var i = 0; i < tokens.length; i++) {
+      if (tokens[i].value === '(') depth++;
+      if (tokens[i].value === ')') depth--;
+      if (depth < 0) {
+        this.setData({ resultTip: '⚠️ 括号不匹配', exprState: 'expr-wrong' });
+        return;
+      }
+    }
+    if (depth !== 0) {
+      this.setData({ resultTip: '⚠️ 括号不匹配', exprState: 'expr-wrong' });
+      return;
+    }
+
+    // 计算
+    var calcExpr = this._buildCalcExpr(tokens);
+    var result = null;
+    try {
+      // 安全性：只允许数字、运算符和括号
+      if (/^[\d\s\+\-\*\/\(\)\.]+$/.test(calcExpr)) {
+        // eslint-disable-next-line no-new-func
+        result = (new Function('return (' + calcExpr + ')'))();
+      }
+    } catch (err) {
+      result = null;
+    }
+
+    if (result === null || isNaN(result) || !isFinite(result)) {
+      this.setData({ resultTip: '⚠️ 表达式有误', exprState: 'expr-wrong' });
+      return;
+    }
+
+    if (Math.abs(result - 24) < 1e-9) {
+      // 答对！
+      this.stopTimer();
+      var t = this.data.timer;
+      var solved = this.data.solvedCount + 1;
+      wx.setStorageSync('toolbox_math24_solved', solved);
+
+      var best = this.data.bestTime;
+      if (!best || t < best) {
+        best = t;
+        wx.setStorageSync('toolbox_math24_best', best);
+      }
+
+      this.setData({
+        exprState: 'expr-correct',
+        solvedCount: solved,
+        bestTime: best,
+        bestTimeText: this.formatTime(best),
+        showSuccess: true
+      });
+    } else {
+      this.setData({
+        resultTip: '= ' + (Math.round(result * 1000) / 1000) + '，不是24，再想想',
+        exprState: 'expr-wrong'
+      });
+      // 1.5秒后清除提示
+      var self = this;
+      setTimeout(function () {
+        self.setData({ exprState: '', resultTip: '' });
+      }, 1500);
+    }
+  },
+
+  // ---------- 提示 ----------
 
   onHint: function () {
     var solution = math24.solve24(this.data.numbers);
-    if (solution) {
-      this.setData({ hint: solution, showHint: true });
-    } else {
-      this.setData({ hint: '此题暂无解，换一题吧', showHint: true });
-    }
+    this.setData({
+      hint: solution || '此题暂无解，换一题吧',
+      showHint: true
+    });
     this.stopTimer();
   },
 
@@ -135,14 +323,13 @@ Page({
     this.setData({ showHint: false });
   },
 
-  onNewPuzzle: function () {
+  onCloseSuccess: function () {
+    this.setData({ showSuccess: false });
     this.newPuzzle();
   },
 
-  formatTime: function (seconds) {
-    var m = Math.floor(seconds / 60);
-    var s = seconds % 60;
-    return (m > 0 ? m + ':' : '') + (s < 10 && m > 0 ? '0' : '') + s + 's';
+  onNewPuzzle: function () {
+    this.newPuzzle();
   },
 
   onShareAppMessage: function () {
