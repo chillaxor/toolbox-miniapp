@@ -1,0 +1,103 @@
+.textarea-field {
+  width: 100%;
+  min-height: 240rpx;
+  font-size: 28rpx;
+  line-height: 1.6;
+  color: var(--color-primary);
+}
+
+.card-title {
+  font-size: 28rpx;
+  color: var(--color-secondary);
+  font-weight: 600;
+  display: block;
+  margin-bottom: 16rpx;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.copy-link {
+  font-size: 26rpx;
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.unit-btns {
+  display: flex;
+  gap: 16rpx;
+}
+
+.unit-btn {
+  flex: 1;
+  height: 72rpx;
+  line-height: 72rpx;
+  text-align: center;
+  font-size: 28rpx;
+  background: #F5F5F5;
+  color: var(--color-secondary);
+  border-radius: 12rpx;
+  border: 2rpx solid var(--color-border);
+}
+
+.unit-active {
+  background: #D9F0DC;
+  color: var(--color-text);
+  border-color: var(--color-text);
+  font-weight: 600;
+}
+
+.action-row {
+  display: flex;
+  gap: 16rpx;
+  margin-bottom: 24rpx;
+}
+
+.btn-action {
+  flex: 1;
+  height: 80rpx;
+  border-radius: 40rpx;
+  font-size: 26rpx;
+  font-weight: 600;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+
+.btn-action::after {
+  border: none;
+}
+
+.btn-dedup {
+  background: var(--color-text);
+}
+
+.btn-sort {
+  background: #4ECDC4;
+}
+
+.btn-both {
+  background: #FF6B35;
+}
+
+.result-box {
+  background: #F8F9FA;
+  border-radius: 12rpx;
+  padding: 24rpx;
+  max-height: 600rpx;
+  overflow-y: auto;
+}
+
+.result-text {
+  font-size: 26rpx;
+  line-height: 1.8;
+  color: var(--color-primary);
+  white-space: pre-wrap;
+  word-break: break-all;
+}

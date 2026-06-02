@@ -1,0 +1,34 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">文本去重排序</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <view class="card">
+    <textarea class="textarea-field" placeholder="每行一条数据，粘贴到此处..." value="{{inputText}}" bindinput="onInputChange" auto-height maxlength="5000" />
+  </view>
+
+  <view class="card">
+    <text class="card-title">空行处理</text>
+    <view class="unit-btns">
+      <view class="unit-btn {{emptyLine === 'keep' ? 'unit-active' : ''}}" data-mode="keep" bindtap="onEmptyLineChange">保留空行</view>
+      <view class="unit-btn {{emptyLine === 'remove' ? 'unit-active' : ''}}" data-mode="remove" bindtap="onEmptyLineChange">去除空行</view>
+    </view>
+  </view>
+
+  <view class="action-row">
+    <button class="btn-action btn-dedup" bindtap="onDedup">去重</button>
+    <button class="btn-action btn-sort" bindtap="onSort">排序</button>
+    <button class="btn-action btn-both" bindtap="onDedupSort">去重+排序</button>
+  </view>
+
+  <view class="card" wx:if="{{resultText}}">
+    <view class="card-header">
+      <text class="card-title">结果 ({{resultLines}}行)</text>
+      <text class="copy-link" bindtap="onCopy">复制</text>
+    </view>
+    <view class="result-box">
+      <text class="result-text" selectable="true">{{resultText}}</text>
+    </view>
+  </view>
+</view>

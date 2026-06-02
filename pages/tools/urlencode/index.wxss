@@ -1,0 +1,66 @@
+.mode-tabs {
+  display: flex;
+  background: #fff;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  margin-bottom: 24rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.05);
+}
+
+.mode-tab {
+  flex: 1;
+  height: 88rpx;
+  line-height: 88rpx;
+  text-align: center;
+  font-size: 28rpx;
+  color: var(--color-secondary);
+}
+
+.mode-tab.active {
+  background: var(--color-text);
+  color: #fff;
+  font-weight: 600;
+}
+
+.textarea-field {
+  width: 100%;
+  min-height: 200rpx;
+  font-size: 28rpx;
+  line-height: 1.6;
+  color: var(--color-primary);
+}
+
+.card-title {
+  font-size: 28rpx;
+  color: var(--color-secondary);
+  font-weight: 600;
+  display: block;
+  margin-bottom: 16rpx;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.copy-link {
+  font-size: 26rpx;
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.result-box {
+  background: #F8F9FA;
+  border-radius: 12rpx;
+  padding: 24rpx;
+  word-break: break-all;
+}
+
+.result-text {
+  font-size: 26rpx;
+  line-height: 1.8;
+  color: var(--color-primary);
+  word-break: break-all;
+}

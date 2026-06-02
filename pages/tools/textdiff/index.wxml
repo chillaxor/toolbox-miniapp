@@ -1,0 +1,50 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">文本对比</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <view class="card">
+    <text class="card-title">文本A（原始）</text>
+    <textarea class="textarea-field" placeholder="输入原始文本..." value="{{textA}}" bindinput="onTextAInput" auto-height maxlength="10000" />
+  </view>
+
+  <view class="card">
+    <text class="card-title">文本B（对比）</text>
+    <textarea class="textarea-field" placeholder="输入对比文本..." value="{{textB}}" bindinput="onTextBInput" auto-height maxlength="10000" />
+  </view>
+
+  <view class="btn-row">
+    <button class="btn-primary" style="background: var(--color-text);" bindtap="onCompare">开始对比</button>
+    <button class="btn-secondary" bindtap="onClear">清空</button>
+  </view>
+
+  <!-- 结果统计 -->
+  <view class="card" wx:if="{{showResult}}">
+    <view class="stats-row">
+      <view class="stat-item">
+        <text class="stat-num stat-same">{{sameCount}}</text>
+        <text class="stat-label">相同</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-num stat-add">{{addCount}}</text>
+        <text class="stat-label">新增</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-num stat-del">{{delCount}}</text>
+        <text class="stat-label">删除</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 差异详情 -->
+  <view class="card" wx:if="{{showResult}}">
+    <text class="card-title">对比结果</text>
+    <scroll-view class="diff-scroll" scroll-y="true">
+      <view class="diff-line diff-{{item.type}}" wx:for="{{diffLines}}" wx:key="num">
+        <text class="diff-num">{{item.num}}</text>
+        <text class="diff-text">{{item.type === 'del' ? '- ' + item.textA : item.type === 'add' ? '+ ' + item.textB : item.type === 'diff' ? '~ ' + item.textB : '  ' + item.textA}}</text>
+      </view>
+    </scroll-view>
+  </view>
+</view>

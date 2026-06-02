@@ -1,0 +1,53 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">密码生成器</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <!-- 密码展示 -->
+  <view class="card">
+    <view class="password-display">
+      <text class="password-text" selectable="true">{{password}}</text>
+    </view>
+    <view class="password-actions">
+      <button class="btn-action btn-refresh" bindtap="onGenerate">🔄 换一个</button>
+      <button class="btn-action btn-copy {{copied ? 'copied' : ''}}" bindtap="onCopy">{{copied ? '已复制 ✓' : '📋 复制'}}</button>
+    </view>
+  </view>
+
+  <!-- 密码长度 -->
+  <view class="card">
+    <view class="card-header">
+      <text class="card-title">密码长度</text>
+      <text class="length-value">{{length}}</text>
+    </view>
+    <slider min="6" max="32" step="1" value="{{length}}" activeColor="#45B058" bindchange="onLengthChange" />
+    <view class="slider-labels">
+      <text>6</text>
+      <text>32</text>
+    </view>
+  </view>
+
+  <!-- 字符类型 -->
+  <view class="card">
+    <text class="card-title">字符类型</text>
+    <view class="option-list">
+      <view class="option-item" data-type="upper" bindtap="onToggleOption">
+        <text class="option-label">大写字母 A-Z</text>
+        <view class="option-check {{useUpper ? 'checked' : ''}}">{{useUpper ? '✓' : ''}}</view>
+      </view>
+      <view class="option-item" data-type="lower" bindtap="onToggleOption">
+        <text class="option-label">小写字母 a-z</text>
+        <view class="option-check {{useLower ? 'checked' : ''}}">{{useLower ? '✓' : ''}}</view>
+      </view>
+      <view class="option-item" data-type="number" bindtap="onToggleOption">
+        <text class="option-label">数字 0-9</text>
+        <view class="option-check {{useNumber ? 'checked' : ''}}">{{useNumber ? '✓' : ''}}</view>
+      </view>
+      <view class="option-item" data-type="symbol" bindtap="onToggleOption">
+        <text class="option-label">特殊符号 !@#$%</text>
+        <view class="option-check {{useSymbol ? 'checked' : ''}}">{{useSymbol ? '✓' : ''}}</view>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,59 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">纪念日</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <view class="card" wx:if="{{list.length === 0 && !showAdd}}">
+    <view class="empty-box">
+      <text class="empty-icon">💕</text>
+      <text class="empty-text">还没有纪念日</text>
+      <text class="empty-hint">点击下方按钮添加</text>
+    </view>
+  </view>
+
+  <!-- 纪念日列表 -->
+  <view class="list" wx:if="{{list.length > 0}}">
+    <view class="item {{item.isToday ? 'item-today' : ''}}" wx:for="{{list}}" wx:key="id">
+      <view class="item-left">
+        <text class="item-name">{{item.name}}</text>
+        <text class="item-date">{{item.date}} · 已过{{item.passedDays}}天</text>
+      </view>
+      <view class="item-right">
+        <text class="item-days {{item.isPast ? 'past' : 'future'}}">{{item.isToday ? '今天' : item.days > 0 ? '还有' + item.days + '天' : item.absDays + '天前'}}</text>
+        <text class="item-del" catchtap="onDelete" data-id="{{item.id}}">×</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 添加按钮 -->
+  <view class="add-btn" bindtap="onShowAdd" wx:if="{{!showAdd}}">
+    <text class="add-btn-text">+ 添加纪念日</text>
+  </view>
+
+  <!-- 添加表单 -->
+  <view class="card" wx:if="{{showAdd}}">
+    <text class="card-title">添加纪念日</text>
+    <view class="form-item">
+      <text class="form-label">名称</text>
+      <input class="input-field" placeholder="如：结婚纪念日" value="{{newName}}" bindinput="onNameInput" />
+    </view>
+    <view class="form-item">
+      <text class="form-label">日期</text>
+      <picker mode="date" value="{{newDate}}" bindchange="onDateChange">
+        <view class="picker-field">
+          <text>{{newDate || '选择日期'}}</text>
+          <text class="picker-arrow">▶</text>
+        </view>
+      </picker>
+    </view>
+    <view class="form-item">
+      <text class="form-label">每年重复</text>
+      <switch checked="{{newRepeat}}" color="#FF6B35" bindchange="onRepeatChange" />
+    </view>
+    <view class="form-btns">
+      <button class="btn-cancel" bindtap="onCancelAdd">取消</button>
+      <button class="btn-confirm" bindtap="onConfirmAdd">确定</button>
+    </view>
+  </view>
+</view>

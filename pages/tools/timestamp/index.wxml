@@ -1,0 +1,68 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">时间戳转换</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <!-- 当前时间 -->
+  <view class="card">
+    <view class="card-header">
+      <text class="card-title">当前时间</text>
+      <text class="copy-link" bindtap="onCopyCurrent">复制</text>
+    </view>
+    <text class="current-ts">{{currentTs}}</text>
+    <text class="current-dt">{{currentDt}}</text>
+  </view>
+
+  <!-- 模式切换 -->
+  <view class="mode-tabs">
+    <view class="mode-tab {{mode === 'ts2date' ? 'active' : ''}}" data-mode="ts2date" bindtap="onSwitchMode">时间戳 → 日期</view>
+    <view class="mode-tab {{mode === 'date2ts' ? 'active' : ''}}" data-mode="date2ts" bindtap="onSwitchMode">日期 → 时间戳</view>
+  </view>
+
+  <!-- 单位选择 -->
+  <view class="card">
+    <text class="card-title">时间单位</text>
+    <view class="unit-btns">
+      <view class="unit-btn {{unit === 'ms' ? 'unit-active' : ''}}" data-unit="ms" bindtap="onUnitChange">毫秒(ms)</view>
+      <view class="unit-btn {{unit === 's' ? 'unit-active' : ''}}" data-unit="s" bindtap="onUnitChange">秒(s)</view>
+    </view>
+  </view>
+
+  <!-- 输入区 -->
+  <view class="card">
+    <block wx:if="{{mode === 'ts2date'}}">
+      <text class="card-title">输入时间戳</text>
+      <input class="input-field" type="number" placeholder="如 1748524800000" value="{{inputVal}}" bindinput="onInputChange" />
+    </block>
+    <block wx:else>
+      <text class="card-title">选择日期时间</text>
+      <view class="date-row">
+        <picker mode="date" value="{{dateStr}}" bindchange="onDateChange">
+          <view class="picker-field">
+            <text>{{dateStr || '选择日期'}}</text>
+            <text class="picker-arrow">▶</text>
+          </view>
+        </picker>
+      </view>
+      <view class="date-row">
+        <picker mode="time" value="{{timeStr}}" bindchange="onTimeChange">
+          <view class="picker-field">
+            <text>{{timeStr || '选择时间 (可选)'}}</text>
+            <text class="picker-arrow">▶</text>
+          </view>
+        </picker>
+      </view>
+    </block>
+    <button class="btn-primary mt-md" style="background: var(--color-text);" bindtap="onConvert">转换</button>
+  </view>
+
+  <!-- 结果 -->
+  <view class="card" wx:if="{{result}}">
+    <text class="card-title">转换结果</text>
+    <view class="result-row">
+      <text class="result-val" selectable="true">{{result}}</text>
+      <text class="copy-link" bindtap="onCopyResult">复制</text>
+    </view>
+  </view>
+</view>

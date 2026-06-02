@@ -34,7 +34,18 @@
     "pages/tools/jokes/index",
     "pages/tools/luckywheel/index",
     "pages/tools/coincoin/index",
-    "pages/tools/sticker/index"
+    "pages/tools/sticker/index",
+    "pages/tools/password/index",
+    "pages/tools/timestamp/index",
+    "pages/tools/textdedup/index",
+    "pages/tools/urlencode/index",
+    "pages/tools/age/index",
+    "pages/tools/reaction/index",
+    "pages/tools/anniversary/index",
+    "pages/tools/gridcut/index",
+    "pages/tools/danmaku/index",
+    "pages/tools/textdiff/index",
+    "pages/tools/memory/index"
   ],
   "window": {
     "backgroundTextStyle": "light",

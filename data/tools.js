@@ -43,6 +43,17 @@ const TOOLS = [
   { id: 'luckywheel', name: '抽签助手', category: 'fun', icon: '🎯', path: '/pages/tools/luckywheel/index', description: '大转盘随机抽签' },
   { id: 'coincoin', name: '抛硬币', category: 'fun', icon: '🪙', path: '/pages/tools/coincoin/index', description: '随机正反面·统计概率' },
   { id: 'sticker', name: '表情包制作', category: 'image', icon: '😀', path: '/pages/tools/sticker/index', description: '自定义表情包·加字加表情' },
+  { id: 'password', name: '密码生成器', category: 'text', icon: '🔑', path: '/pages/tools/password/index', description: '随机安全密码生成' },
+  { id: 'timestamp', name: '时间戳转换', category: 'text', icon: '⏱️', path: '/pages/tools/timestamp/index', description: 'Unix时间戳↔日期互转' },
+  { id: 'textdedup', name: '文本去重排序', category: 'text', icon: '🔄', path: '/pages/tools/textdedup/index', description: '按行去重·排序处理' },
+  { id: 'urlencode', name: 'URL编解码', category: 'text', icon: '🔗', path: '/pages/tools/urlencode/index', description: 'URL编码/解码转换' },
+  { id: 'age', name: '年龄生肖', category: 'life', icon: '🎂', path: '/pages/tools/age/index', description: '年龄·生肖·星座计算' },
+  { id: 'reaction', name: '反应测试', category: 'fun', icon: '⚡', path: '/pages/tools/reaction/index', description: '测试你的反应速度' },
+  { id: 'anniversary', name: '纪念日', category: 'date', icon: '💕', path: '/pages/tools/anniversary/index', description: '重要日子倒计时·记录' },
+  { id: 'gridcut', name: '九宫格切图', category: 'image', icon: '🧱', path: '/pages/tools/gridcut/index', description: '图片切割九宫格发布' },
+  { id: 'danmaku', name: '弹幕墙', category: 'fun', icon: '💬', path: '/pages/tools/danmaku/index', description: '输入文字生成彩色弹幕' },
+  { id: 'textdiff', name: '文本对比', category: 'text', icon: '🔍', path: '/pages/tools/textdiff/index', description: '两段文本逐行对比差异' },
+  { id: 'memory', name: '记忆力训练', category: 'fun', icon: '🧠', path: '/pages/tools/memory/index', description: '方块闪烁记忆挑战' },
 ];
 
 /**

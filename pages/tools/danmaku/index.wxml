@@ -1,0 +1,18 @@
+<view class="container-full" bindtap="onTapScreen">
+  <view class="tool-header-abs">
+    <text class="tool-header-title">弹幕墙</text>
+    <text class="tool-header-fav" catchtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <view class="danmaku-layer">
+    <view class="danmaku-item" wx:for="{{danmakuList}}" wx:key="id"
+      style="top: {{item.top}}%; color: {{item.color}}; font-size: {{item.fontSize}}rpx;">
+      <text>{{item.text}}</text>
+    </view>
+  </view>
+
+  <view class="input-bar" wx:if="{{showInput}}">
+    <input class="danmaku-input" placeholder="发送弹幕..." value="{{inputText}}" bindinput="onInputChange" confirm-type="send" bindconfirm="onSend" />
+    <view class="send-btn" bindtap="onSend">发送</view>
+  </view>
+</view>

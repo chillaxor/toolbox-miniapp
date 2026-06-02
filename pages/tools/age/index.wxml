@@ -1,0 +1,50 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">年龄生肖</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <view class="card">
+    <text class="card-title">选择出生日期</text>
+    <picker mode="date" value="{{birthDate}}" end="2099-12-31" bindchange="onDateChange">
+      <view class="picker-field">
+        <text class="picker-icon">📅</text>
+        <text class="picker-text {{birthDate ? '' : 'placeholder'}}">{{birthDate || '点击选择出生日期'}}</text>
+        <text class="picker-arrow">▶</text>
+      </view>
+    </picker>
+  </view>
+
+  <!-- 年龄展示 -->
+  <view class="card" wx:if="{{showResult}}">
+    <view class="age-big">
+      <text class="age-num">{{ageYears}}</text>
+      <text class="age-unit">岁</text>
+      <text class="age-sub">{{ageMonths}}个月{{ageDays}}天</text>
+    </view>
+  </view>
+
+  <!-- 信息卡片 -->
+  <view class="info-grid" wx:if="{{showResult}}">
+    <view class="info-card">
+      <text class="info-icon">🐾</text>
+      <text class="info-label">生肖</text>
+      <text class="info-value">{{zodiac}}</text>
+    </view>
+    <view class="info-card">
+      <text class="info-icon">⭐</text>
+      <text class="info-label">星座</text>
+      <text class="info-value">{{constellation}}</text>
+    </view>
+    <view class="info-card">
+      <text class="info-icon">📊</text>
+      <text class="info-label">总天数</text>
+      <text class="info-value">{{totalDays}}</text>
+    </view>
+    <view class="info-card">
+      <text class="info-icon">🎂</text>
+      <text class="info-label">距下次生日</text>
+      <text class="info-value">{{nextBirthday}}</text>
+    </view>
+  </view>
+</view>

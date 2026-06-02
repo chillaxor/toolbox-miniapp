@@ -1,0 +1,55 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">记忆力训练</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <!-- 分数栏 -->
+  <view class="score-bar" wx:if="{{state !== 'idle'}}">
+    <view class="score-item">
+      <text class="score-label">当前关卡</text>
+      <text class="score-val">{{level}}</text>
+    </view>
+    <view class="score-item">
+      <text class="score-label">得分</text>
+      <text class="score-val">{{score}}</text>
+    </view>
+    <view class="score-item">
+      <text class="score-label">最佳</text>
+      <text class="score-val best">{{bestScore}}</text>
+    </view>
+  </view>
+
+  <!-- 开始 -->
+  <view class="card" wx:if="{{state === 'idle'}}">
+    <view class="intro-box">
+      <text class="intro-icon">🧠</text>
+      <text class="intro-title">记忆力训练</text>
+      <text class="intro-desc">观察方块闪烁的顺序，然后按相同顺序点击复现</text>
+      <text class="intro-desc">每轮会在序列末尾新增一个</text>
+    </view>
+    <button class="btn-primary" style="background: var(--color-text); margin-top: 24rpx;" bindtap="onStartGame">开始游戏</button>
+  </view>
+
+  <!-- 状态提示 -->
+  <view class="message-bar {{state}}" wx:if="{{state !== 'idle'}}">
+    <text>{{message}}</text>
+  </view>
+
+  <!-- 3x3 网格 -->
+  <view class="grid" wx:if="{{state !== 'idle'}}">
+    <view class="cell {{activeCell === item.id ? 'cell-active' : ''}} {{state === 'gameover' ? 'cell-disabled' : ''}}"
+      wx:for="{{cells}}" wx:key="id" data-idx="{{item.id}}" bindtap="onCellTap">
+      <text class="cell-num">{{item.id + 1}}</text>
+    </view>
+  </view>
+
+  <!-- 游戏结束 -->
+  <view class="card" wx:if="{{state === 'gameover'}}">
+    <view class="result-box">
+      <text class="result-score">🏆 得分: {{score}}</text>
+      <text class="result-best" wx:if="{{score >= bestScore && score > 0}}">🎉 新纪录！</text>
+      <button class="btn-primary" style="background: var(--color-text); margin-top: 24rpx;" bindtap="onStartGame">再来一次</button>
+    </view>
+  </view>
+</view>

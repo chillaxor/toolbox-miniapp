@@ -1,0 +1,45 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">反应测试</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <!-- 最佳成绩 -->
+  <view class="card" wx:if="{{bestMs > 0}}">
+    <view class="best-row">
+      <text class="best-label">🏆 最佳成绩</text>
+      <text class="best-val">{{bestMs}}ms</text>
+    </view>
+  </view>
+
+  <!-- 测试区域 -->
+  <view class="test-area state-{{state}}" bindtap="onTap">
+    <block wx:if="{{state === 'waiting'}}">
+      <text class="area-icon">⚡</text>
+      <text class="area-title">反应速度测试</text>
+      <text class="area-desc">屏幕变绿时尽快点击</text>
+      <view class="start-btn" catchtap="onStart">点击开始</view>
+    </block>
+    <block wx:elif="{{state === 'ready'}}">
+      <text class="area-icon">🔴</text>
+      <text class="area-title">等待绿色...</text>
+      <text class="area-desc">变绿后立即点击屏幕</text>
+    </block>
+    <block wx:elif="{{state === 'go'}}">
+      <text class="area-icon">🟢</text>
+      <text class="area-title">点击！</text>
+    </block>
+    <block wx:elif="{{state === 'result'}}">
+      <text class="area-icon">🎉</text>
+      <text class="area-title">{{resultMs}}ms</text>
+      <text class="area-desc">{{resultMs < 200 ? '闪电般反应！' : resultMs < 350 ? '反应很快！' : resultMs < 500 ? '还不错' : '继续加油'}}</text>
+      <view class="start-btn" catchtap="onStart">再来一次</view>
+    </block>
+    <block wx:elif="{{state === 'tooearly'}}">
+      <text class="area-icon">😅</text>
+      <text class="area-title">太早了！</text>
+      <text class="area-desc">等屏幕变绿再点击哦</text>
+      <view class="start-btn" catchtap="onStart">重新开始</view>
+    </block>
+  </view>
+</view>

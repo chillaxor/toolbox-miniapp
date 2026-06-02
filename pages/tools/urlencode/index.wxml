@@ -1,0 +1,27 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">URL编解码</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <view class="mode-tabs">
+    <view class="mode-tab {{mode === 'encode' ? 'active' : ''}}" data-mode="encode" bindtap="onSwitchMode">编码</view>
+    <view class="mode-tab {{mode === 'decode' ? 'active' : ''}}" data-mode="decode" bindtap="onSwitchMode">解码</view>
+  </view>
+
+  <view class="card">
+    <text class="card-title">{{mode === 'encode' ? '原始文本' : '编码文本'}}</text>
+    <textarea class="textarea-field" placeholder="{{mode === 'encode' ? '输入要编码的文本或URL...' : '输入要解码的URL编码文本...'}}" value="{{inputText}}" bindinput="onInputChange" auto-height maxlength="5000" />
+    <button class="btn-primary mt-md" style="background: var(--color-text);" bindtap="onConvert">{{mode === 'encode' ? '编码' : '解码'}}</button>
+  </view>
+
+  <view class="card" wx:if="{{resultText}}">
+    <view class="card-header">
+      <text class="card-title">转换结果</text>
+      <text class="copy-link" bindtap="onCopy">复制</text>
+    </view>
+    <view class="result-box">
+      <text class="result-text" selectable="true">{{resultText}}</text>
+    </view>
+  </view>
+</view>
