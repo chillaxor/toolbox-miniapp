@@ -1,43 +1,106 @@
-.canvas-wrapper {
-  position: relative;
-  background: #f0f0f0;
-  border-radius: 16rpx;
-  overflow: hidden;
-  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.08);
+/* 预览区 */
+.preview-wrap {
+  margin: 0 0 24rpx;
   display: flex;
-  align-items: center;
   justify-content: center;
-  min-height: 300rpx;
+  align-items: center;
+  min-height: 200rpx;
+  background: #f0f0f0;
+  border-radius: 20rpx;
+  overflow: hidden;
 }
 
-.sticker-canvas {
-  display: block;
+.preview-box {
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
 }
 
-.canvas-placeholder {
+.preview-bg {
   position: absolute;
   top: 0;
   left: 0;
+}
+
+/* 文字叠加层 */
+.text-layer {
+  position: absolute;
+  left: 0;
   right: 0;
-  bottom: 0;
+  text-align: center;
+  padding: 0 16rpx;
+  word-break: break-all;
+  pointer-events: none;
+  line-height: 1.3;
+  font-weight: bold;
+}
+
+.text-layer.top {
+  top: 12px;
+}
+
+.text-layer.center {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.text-layer.bottom {
+  bottom: 12px;
+}
+
+/* 表情叠加层 */
+.emoji-layer {
+  position: absolute;
+  pointer-events: none;
+  line-height: 1;
+}
+
+.emoji-layer.pos-top-left {
+  top: 8px;
+  left: 8px;
+}
+
+.emoji-layer.pos-top-right {
+  top: 8px;
+  right: 8px;
+}
+
+.emoji-layer.pos-center {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.emoji-layer.pos-bottom-left {
+  bottom: 8px;
+  left: 8px;
+}
+
+.emoji-layer.pos-bottom-right {
+  bottom: 8px;
+  right: 8px;
+}
+
+/* 空状态 */
+.preview-empty {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #f8f8f8;
+  padding: 60rpx 0;
 }
 
-.placeholder-icon {
+.empty-icon {
   font-size: 80rpx;
   margin-bottom: 16rpx;
 }
 
-.placeholder-text {
+.empty-tip {
   font-size: 28rpx;
   color: #999;
 }
 
-/* 区块标题 */
+/* 分区标题 */
 .section-title {
   display: flex;
   align-items: center;
@@ -52,125 +115,115 @@
   font-size: 32rpx;
 }
 
-/* 样式选择行 */
-.style-row {
-  display: flex;
-  flex-direction: column;
-  gap: 16rpx;
+.sub-title {
+  font-size: 26rpx;
+  color: #666;
+  margin-bottom: 14rpx;
 }
 
-.style-group {
-  margin-bottom: 8rpx;
+/* 输入框 */
+.input-field {
+  width: 100%;
+  height: 80rpx;
+  padding: 0 20rpx;
+  background: #f5f5f5;
+  border-radius: 14rpx;
+  font-size: 28rpx;
+  color: #333;
+  box-sizing: border-box;
+  margin-bottom: 20rpx;
 }
 
-.style-label {
+/* 选项行 */
+.option-row {
+  margin-bottom: 16rpx;
+}
+
+.option-label {
   font-size: 24rpx;
   color: #999;
-  margin-bottom: 10rpx;
   display: block;
+  margin-bottom: 12rpx;
 }
 
-/* 字号选项 */
-.size-options {
+/* chip */
+.chips {
   display: flex;
-  gap: 16rpx;
   flex-wrap: wrap;
+  gap: 12rpx;
 }
 
-.size-item {
-  min-width: 72rpx;
-  height: 56rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 12rpx;
+.chip {
+  padding: 10rpx 20rpx;
   background: #f5f5f5;
+  border-radius: 12rpx;
   font-size: 26rpx;
   color: #666;
   border: 2rpx solid transparent;
 }
 
-.size-active {
+.chip-active {
   background: #EFD9F7;
   color: #9B59B6;
   border-color: #9B59B6;
   font-weight: bold;
 }
 
-/* 颜色选项 */
-.color-options {
+/* 颜色 */
+.color-row {
   display: flex;
-  gap: 14rpx;
   flex-wrap: wrap;
+  gap: 14rpx;
 }
 
-.color-opt {
-  width: 56rpx;
-  height: 56rpx;
+.color-dot {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  border: 3rpx solid #e0e0e0;
+  box-shadow: 0 1rpx 4rpx rgba(0,0,0,0.12);
+}
+
+.color-dot-active {
+  border-color: #9B59B6;
+  box-shadow: 0 0 0 4rpx rgba(155,89,182,0.3);
+}
+
+/* 添加按钮 */
+.btn-row {
+  margin-top: 20rpx;
+}
+
+.add-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
-  border: 3rpx solid transparent;
-}
-
-.color-opt .color-swatch {
-  width: 38rpx;
-  height: 38rpx;
-  border-radius: 50%;
-  box-shadow: 0 1rpx 4rpx rgba(0,0,0,0.15);
-}
-
-.color-active {
-  border-color: #9B59B6;
-  background: #F5EEF8;
-}
-
-/* 位置选项 */
-.pos-options {
-  display: flex;
-  gap: 16rpx;
-  flex-wrap: wrap;
-}
-
-.pos-item {
-  display: flex;
-  align-items: center;
-  gap: 6rpx;
-  padding: 10rpx 20rpx;
-  border-radius: 12rpx;
-  background: #f5f5f5;
-  font-size: 26rpx;
-  color: #666;
-  border: 2rpx solid transparent;
-}
-
-.pos-active {
-  background: #EFD9F7;
-  color: #9B59B6;
-  border-color: #9B59B6;
-}
-
-.pos-label {
-  font-size: 24rpx;
+  height: 80rpx;
+  background: #9B59B6;
+  color: #fff;
+  font-size: 30rpx;
+  font-weight: bold;
+  border-radius: 16rpx;
 }
 
 /* 表情网格 */
 .emoji-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 12rpx;
+  gap: 10rpx;
+  margin-bottom: 20rpx;
 }
 
 .emoji-item {
-  width: 68rpx;
-  height: 68rpx;
+  width: 76rpx;
+  height: 76rpx;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 12rpx;
   background: #f8f8f8;
   border: 2rpx solid transparent;
+  font-size: 44rpx;
 }
 
 .emoji-active {
@@ -179,14 +232,11 @@
   transform: scale(1.1);
 }
 
-.emoji-text {
-  font-size: 40rpx;
-}
-
-/* 底图选择 */
+/* 底图 */
 .bg-options {
   display: flex;
   gap: 20rpx;
+  margin-bottom: 8rpx;
 }
 
 .bg-btn {
@@ -211,11 +261,10 @@
   color: #666;
 }
 
-/* 纯色底图 */
 .pure-bg-options {
   display: flex;
-  gap: 14rpx;
   flex-wrap: wrap;
+  gap: 14rpx;
 }
 
 .pure-bg-item {
@@ -223,7 +272,12 @@
   height: 56rpx;
   border-radius: 12rpx;
   overflow: hidden;
-  border: 2rpx solid #e0e0e0;
+  border: 3rpx solid transparent;
+}
+
+.pure-bg-item.pure-bg-active {
+  border-color: #9B59B6;
+  box-shadow: 0 0 0 3rpx rgba(155,89,182,0.3);
 }
 
 .pure-bg-preview {
@@ -231,27 +285,53 @@
   height: 100%;
 }
 
-/* 操作按钮区 */
-.action-section {
+/* 操作栏 */
+.action-bar {
   display: flex;
-  gap: 20rpx;
+  gap: 16rpx;
   margin-top: 24rpx;
-  margin-bottom: 24rpx;
+  margin-bottom: 32rpx;
 }
 
-.btn-row {
-  margin-top: 20rpx;
-}
-
-/* 历史记录 */
-.history-grid {
+.act-btn {
+  flex: 1;
+  height: 88rpx;
   display: flex;
-  gap: 12rpx;
-  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  font-weight: bold;
+  border-radius: 16rpx;
 }
 
-.history-thumb {
-  width: 140rpx;
-  height: 140rpx;
-  border-radius: 12rpx;
+.act-btn-undo {
+  background: #f0f0f0;
+  color: #666;
+  flex: 0 0 auto;
+  padding: 0 24rpx;
+}
+
+.act-btn-clear {
+  background: #FDE8E8;
+  color: #E74C3C;
+  flex: 0 0 auto;
+  padding: 0 24rpx;
+}
+
+.act-btn-save {
+  background: #9B59B6;
+  color: #fff;
+}
+
+/* 隐藏的导出 canvas */
+.export-canvas {
+  position: fixed;
+  top: -9999px;
+  left: -9999px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.mt-md {
+  margin-top: 24rpx;
 }

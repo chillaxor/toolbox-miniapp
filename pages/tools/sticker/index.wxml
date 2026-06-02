@@ -4,97 +4,34 @@
     <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
   </view>
 
-  <!-- 画布预览区 -->
-  <view class="canvas-wrapper">
-    <canvas canvas-id="stickerCanvas" class="sticker-canvas" style="width:{{canvasW}}px;height:{{canvasH}}px;" disable-scroll></canvas>
-    <view class="canvas-placeholder" wx:if="{{!bgImage}}">
-      <text class="placeholder-icon">🖼️</text>
-      <text class="placeholder-text">点击下方按钮选择底图</text>
-    </view>
-  </view>
+  <!-- 预览区（所见即所得） -->
+  <view class="preview-wrap">
+    <!-- 底图 -->
+    <view class="preview-box" style="width:{{previewW}}px;height:{{previewH}}px;">
+      <!-- 纯色底图 -->
+      <view wx:if="{{bgType === 'color'}}" class="preview-bg" style="background-color:{{bgColor}};width:{{previewW}}px;height:{{previewH}}px;"></view>
+      <!-- 图片底图 -->
+      <image wx:if="{{bgType === 'image'}}" class="preview-bg" src="{{bgImage}}" mode="scaleToFill" style="width:{{previewW}}px;height:{{previewH}}px;"></image>
 
-  <!-- 文字编辑区 -->
-  <view class="card" wx:if="{{bgImage}}">
-    <view class="section-title">
-      <text class="section-icon">✏️</text>
-      <text>添加文字</text>
-    </view>
-
-    <view class="form-group">
-      <input class="input-field" placeholder="输入文字内容" value="{{textInput}}" bindinput="onTextInput" maxlength="30" />
-    </view>
-
-    <!-- 文字样式 -->
-    <view class="style-row">
-      <view class="style-group">
-        <text class="style-label">字号</text>
-        <view class="size-options">
-          <view class="size-item {{fontSize === item ? 'size-active' : ''}}" wx:for="{{fontSizeOptions}}" wx:key="*this" data-size="{{item}}" bindtap="onFontSizeSelect">
-            <text>{{item}}</text>
-          </view>
+      <!-- 叠加文字层 -->
+      <block wx:for="{{textLayers}}" wx:key="id">
+        <view class="text-layer {{item.pos}}" style="color:{{item.color}};font-size:{{item.size}}px;-webkit-text-stroke:1px {{item.strokeColor}};text-shadow:1px 1px 2px {{item.shadowColor}};">
+          <text>{{item.content}}</text>
         </view>
-      </view>
+      </block>
 
-      <view class="style-group">
-        <text class="style-label">颜色</text>
-        <view class="color-options">
-          <view class="color-opt {{textColor === item ? 'color-active' : ''}}" wx:for="{{textColors}}" wx:key="*this" data-color="{{item}}" bindtap="onTextColorSelect">
-            <view class="color-swatch" style="background-color: {{item}};"></view>
-          </view>
+      <!-- 叠加表情层 -->
+      <block wx:for="{{emojiLayers}}" wx:key="id">
+        <view class="emoji-layer pos-{{item.pos}}" style="font-size:{{item.size}}px;">
+          <text>{{item.content}}</text>
         </view>
-      </view>
+      </block>
     </view>
 
-    <!-- 文字位置 -->
-    <view class="style-group mt-sm">
-      <text class="style-label">位置</text>
-      <view class="pos-options">
-        <view class="pos-item {{textPos === item.id ? 'pos-active' : ''}}" wx:for="{{posOptions}}" wx:key="id" data-pos="{{item.id}}" bindtap="onTextPosSelect">
-          <text>{{item.icon}}</text>
-          <text class="pos-label">{{item.name}}</text>
-        </view>
-      </view>
-    </view>
-
-    <view class="btn-row">
-      <button class="btn-primary" style="background-color: #9B59B6; flex:1;" bindtap="onAddText">添加文字到画布</button>
-    </view>
-  </view>
-
-  <!-- 表情贴纸 -->
-  <view class="card" wx:if="{{bgImage}}">
-    <view class="section-title">
-      <text class="section-icon">😀</text>
-      <text>表情贴纸</text>
-    </view>
-
-    <view class="emoji-grid">
-      <view class="emoji-item {{selectedEmoji === item ? 'emoji-active' : ''}}" wx:for="{{emojiList}}" wx:key="*this" data-emoji="{{item}}" bindtap="onEmojiSelect">
-        <text class="emoji-text">{{item}}</text>
-      </view>
-    </view>
-
-    <view class="style-group mt-sm">
-      <text class="style-label">表情大小</text>
-      <view class="size-options">
-        <view class="size-item {{emojiSize === item ? 'size-active' : ''}}" wx:for="{{emojiSizeOptions}}" wx:key="*this" data-size="{{item}}" bindtap="onEmojiSizeSelect">
-          <text>{{item}}</text>
-        </view>
-      </view>
-    </view>
-
-    <view class="style-group mt-sm">
-      <text class="style-label">表情位置</text>
-      <view class="pos-options">
-        <view class="pos-item {{emojiPos === item.id ? 'pos-active' : ''}}" wx:for="{{emojiPosOptions}}" wx:key="id" data-pos="{{item.id}}" bindtap="onEmojiPosSelect">
-          <text>{{item.icon}}</text>
-          <text class="pos-label">{{item.name}}</text>
-        </view>
-      </view>
-    </view>
-
-    <view class="btn-row">
-      <button class="btn-primary" style="background-color: #9B59B6; flex:1;" bindtap="onAddEmoji">添加表情到画布</button>
+    <!-- 空状态 -->
+    <view class="preview-empty" wx:if="{{!bgType}}">
+      <text class="empty-icon">🖼️</text>
+      <text class="empty-tip">从下方选择底图开始制作</text>
     </view>
   </view>
 
@@ -116,31 +53,98 @@
     </view>
 
     <!-- 纯色底图 -->
-    <view class="section-title mt-md">
-      <text class="section-icon">🎨</text>
-      <text>纯色底图</text>
-    </view>
+    <view class="sub-title mt-md">🎨 纯色底图</view>
     <view class="pure-bg-options">
-      <view class="pure-bg-item" wx:for="{{pureBgColors}}" wx:key="*this" data-color="{{item}}" bindtap="onPureBgSelect">
-        <view class="pure-bg-preview" style="background-color: {{item}};"></view>
+      <view class="pure-bg-item {{bgType==='color' && bgColor===item ? 'pure-bg-active' : ''}}" wx:for="{{pureBgColors}}" wx:key="*this" data-color="{{item}}" bindtap="onPureBgSelect">
+        <view class="pure-bg-preview" style="background-color:{{item}};"></view>
       </view>
     </view>
   </view>
 
-  <!-- 操作按钮 -->
-  <view class="action-section" wx:if="{{bgImage}}">
-    <button class="btn-secondary" bindtap="onClearCanvas">🗑️ 清空重做</button>
-    <button class="btn-primary" style="background-color: #9B59B6;" bindtap="onSaveSticker">💾 保存表情包</button>
+  <!-- 添加文字 -->
+  <view class="card" wx:if="{{bgType}}">
+    <view class="section-title">
+      <text class="section-icon">✏️</text>
+      <text>添加文字</text>
+    </view>
+
+    <input class="input-field" placeholder="输入文字内容（最多20字）" value="{{textInput}}" bindinput="onTextInput" maxlength="20" />
+
+    <view class="option-row">
+      <view class="option-group">
+        <text class="option-label">字号</text>
+        <view class="chips">
+          <view class="chip {{fontSize===item ? 'chip-active' : ''}}" wx:for="{{fontSizeOptions}}" wx:key="*this" data-val="{{item}}" bindtap="onFontSizeSelect">{{item}}</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="option-row">
+      <view class="option-group">
+        <text class="option-label">颜色</text>
+        <view class="color-row">
+          <view class="color-dot {{textColor===item ? 'color-dot-active' : ''}}" wx:for="{{textColors}}" wx:key="*this" data-val="{{item}}" bindtap="onTextColorSelect" style="background-color:{{item}};"></view>
+        </view>
+      </view>
+    </view>
+
+    <view class="option-row">
+      <view class="option-group">
+        <text class="option-label">位置</text>
+        <view class="chips">
+          <view class="chip {{textPos===item.id ? 'chip-active' : ''}}" wx:for="{{posOptions}}" wx:key="id" data-val="{{item.id}}" bindtap="onTextPosSelect">{{item.icon}}{{item.name}}</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="btn-row">
+      <view class="add-btn" bindtap="onAddText">＋ 添加文字</view>
+    </view>
   </view>
 
-  <!-- 历史记录 -->
-  <view class="card" wx:if="{{historyList.length > 0}}">
+  <!-- 添加表情 -->
+  <view class="card" wx:if="{{bgType}}">
     <view class="section-title">
-      <text class="section-icon">🕐</text>
-      <text>本次会话记录</text>
+      <text class="section-icon">😀</text>
+      <text>添加表情贴纸</text>
     </view>
-    <view class="history-grid">
-      <image class="history-thumb" wx:for="{{historyList}}" wx:key="index" src="{{item}}" mode="aspectFill"></image>
+
+    <view class="emoji-grid">
+      <view class="emoji-item {{selectedEmoji===item ? 'emoji-active' : ''}}" wx:for="{{emojiList}}" wx:key="*this" data-emoji="{{item}}" bindtap="onEmojiTap">
+        <text>{{item}}</text>
+      </view>
+    </view>
+
+    <view class="option-row">
+      <view class="option-group">
+        <text class="option-label">大小</text>
+        <view class="chips">
+          <view class="chip {{emojiSize===item ? 'chip-active' : ''}}" wx:for="{{emojiSizeOptions}}" wx:key="*this" data-val="{{item}}" bindtap="onEmojiSizeSelect">{{item}}</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="option-row">
+      <view class="option-group">
+        <text class="option-label">位置</text>
+        <view class="chips">
+          <view class="chip {{emojiPos===item.id ? 'chip-active' : ''}}" wx:for="{{emojiPosOptions}}" wx:key="id" data-val="{{item.id}}" bindtap="onEmojiPosSelect">{{item.icon}}{{item.name}}</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="btn-row">
+      <view class="add-btn" bindtap="onAddEmoji">＋ 添加表情</view>
     </view>
   </view>
+
+  <!-- 操作按钮 -->
+  <view class="action-bar" wx:if="{{bgType}}">
+    <view class="act-btn act-btn-undo" bindtap="onUndo">↩️ 撤销</view>
+    <view class="act-btn act-btn-clear" bindtap="onClearAll">🗑️ 清空</view>
+    <view class="act-btn act-btn-save" bindtap="onSave">💾 保存到相册</view>
+  </view>
+
+  <!-- 隐藏的合成 canvas（不显示，仅用于导出） -->
+  <canvas canvas-id="exportCanvas" class="export-canvas" style="width:{{exportW}}px;height:{{exportH}}px;"></canvas>
 </view>
