@@ -18,6 +18,12 @@ var BG_COLORS = [
   { name: '渐变蓝', color: '#6BA4E0', rgb: [107, 164, 224] }
 ];
 
+var LAYOUTS = [
+  { name: '单张', cols: 1, rows: 1 },
+  { name: '4 张拼图', cols: 2, rows: 2 },
+  { name: '6 张拼图', cols: 2, rows: 3 }
+];
+
 // 颜色距离阈值
 var COLOR_THRESHOLD = 80;
 
@@ -36,6 +42,8 @@ Page({
     photoPath: '',
     sizeIdx: 0,
     sizes: SIZES,
+    layoutIdx: 0,
+    layouts: LAYOUTS,
     bgIdx: 0,
     bgColors: BG_COLORS,
     isFavorite: false,
@@ -94,6 +102,14 @@ Page({
     });
   },
 
+  onLayoutChange: function (e) {
+    var idx = parseInt(e.detail.value);
+    this.setData({
+      layoutIdx: idx,
+      resultPath: ''
+    });
+  },
+
   onBgChange: function (e) {
     var idx = e.currentTarget.dataset.idx !== undefined ? parseInt(e.currentTarget.dataset.idx) : parseInt(e.detail.value);
     this.setData({ bgIdx: idx, resultPath: '' });
@@ -143,11 +159,16 @@ Page({
     wx.showLoading({ title: '处理中...' });
 
     var size = SIZES[this.data.sizeIdx];
+    var layout = LAYOUTS[this.data.layoutIdx];
     var targetBg = BG_COLORS[this.data.bgIdx];
     var cw = size.w;
     var ch = size.h;
     var imgW = this.data.imgWidth;
     var imgH = this.data.imgHeight;
+    var outputCols = layout.cols;
+    var outputRows = layout.rows;
+    var outputW = cw * outputCols;
+    var outputH = ch * outputRows;
 
     if (!imgW || !imgH) {
       wx.getImageInfo({
@@ -235,9 +256,9 @@ Page({
                     // Step 7: 把处理后的图画到最终裁剪canvas
                     var outCtx = wx.createCanvasContext('idphoto-canvas', self);
 
-                    // 背景色兜底
+                    // 背景色兜底，填满整张排版图
                     outCtx.setFillStyle(targetBg.color);
-                    outCtx.fillRect(0, 0, cw, ch);
+                    outCtx.fillRect(0, 0, outputW, outputH);
 
                     // cover模式裁剪（保留顶部=头部）
                     var srcRatio = procW / procH;
@@ -256,14 +277,20 @@ Page({
                       offY = 0;
                     }
 
-                    outCtx.drawImage(tmpRes.tempFilePath, offX, offY, drawW, drawH);
+                    for (var row = 0; row < outputRows; row++) {
+                      for (var col = 0; col < outputCols; col++) {
+                        var cellX = col * cw;
+                        var cellY = row * ch;
+                        outCtx.drawImage(tmpRes.tempFilePath, offX + cellX, offY + cellY, drawW, drawH);
+                      }
+                    }
                     outCtx.draw(false, function () {
                       setTimeout(function () {
                         // Step 8: 导出最终图片
                         wx.canvasToTempFilePath({
                           canvasId: 'idphoto-canvas',
-                          destWidth: cw * 2,
-                          destHeight: ch * 2,
+                          destWidth: outputW * 2,
+                          destHeight: outputH * 2,
                           quality: 1,
                           success: function (finalRes) {
                             wx.hideLoading();

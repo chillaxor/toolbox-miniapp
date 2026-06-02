@@ -22,6 +22,12 @@
         <text class="picker-value">{{sizes[sizeIdx].name}} ({{sizes[sizeIdx].label}})</text>
       </view>
     </picker>
+    <picker range="{{layouts}}" range-key="name" value="{{layoutIdx}}" bindchange="onLayoutChange">
+      <view class="picker-row">
+        <text class="picker-label">排版拼图</text>
+        <text class="picker-value">{{layouts[layoutIdx].name}}</text>
+      </view>
+    </picker>
   </view>
 
   <!-- 背景颜色 -->
@@ -74,5 +80,5 @@
 
   <!-- 隐藏canvas: src用于像素操作(限制800px内), canvas用于最终裁剪合成 -->
   <canvas canvas-id="idphoto-src" style="position:fixed;left:-9999px;width:800px;height:800px;"></canvas>
-  <canvas canvas-id="idphoto-canvas" style="position:fixed;left:-9999px;width:{{canvasW}}px;height:{{canvasH}}px;"></canvas>
+  <canvas canvas-id="idphoto-canvas" style="position:fixed;left:-9999px;width:{{canvasW * layouts[layoutIdx].cols}}px;height:{{canvasH * layouts[layoutIdx].rows}}px;"></canvas>
 </view>
