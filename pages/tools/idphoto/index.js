@@ -27,7 +27,9 @@ Page({
     bgColors: BG_COLORS,
     isFavorite: false,
     imgWidth: 0,
-    imgHeight: 0
+    imgHeight: 0,
+    canvasW: 295,
+    canvasH: 413
   },
 
   onLoad: function () {
@@ -67,11 +69,18 @@ Page({
   },
 
   onSizeChange: function (e) {
-    this.setData({ sizeIdx: parseInt(e.detail.value) });
+    var idx = parseInt(e.detail.value);
+    var size = SIZES[idx];
+    this.setData({
+      sizeIdx: idx,
+      canvasW: size.w,
+      canvasH: size.h
+    });
   },
 
   onBgChange: function (e) {
-    this.setData({ bgIdx: parseInt(e.currentTarget.dataset.idx !== undefined ? e.currentTarget.dataset.idx : e.detail.value) });
+    var idx = e.currentTarget.dataset.idx !== undefined ? e.currentTarget.dataset.idx : parseInt(e.detail.value);
+    this.setData({ bgIdx: idx });
   },
 
   savePhoto: function () {
@@ -87,10 +96,32 @@ Page({
     var bgColor = BG_COLORS[this.data.bgIdx].color;
     var imgW = this.data.imgWidth || size.w;
     var imgH = this.data.imgHeight || size.h;
-
-    // 画布尺寸用证件照像素
     var cw = size.w;
     var ch = size.h;
+
+    // 计算目标绘制区域：等比缩放后居中裁剪
+    // 旧版 canvas drawImage 只支持5参数: drawImage(img, dx, dy, dw, dh)
+    // 需要先用 canvas 画一个"等比缩放+居中裁剪"的版本
+    // 思路：分两步 — 先把原图缩放画到一个中间canvas，再从中间canvas取裁剪区域
+
+    var srcRatio = imgW / imgH;
+    var dstRatio = cw / ch;
+
+    // 计算缩放后的尺寸（cover模式：至少一边填满目标）
+    var scaleW, scaleH, offsetX, offsetY;
+    if (srcRatio > dstRatio) {
+      // 源图更宽，高度先填满，左右裁
+      scaleH = ch;
+      scaleW = imgW * (ch / imgH);
+      offsetX = -(scaleW - cw) / 2;
+      offsetY = 0;
+    } else {
+      // 源图更高，宽度先填满，上下裁（保留顶部即头部）
+      scaleW = cw;
+      scaleH = imgH * (cw / imgW);
+      offsetX = 0;
+      offsetY = 0; // 从顶部开始，保留头部
+    }
 
     var ctx = wx.createCanvasContext('idphoto-canvas', this);
 
@@ -98,32 +129,15 @@ Page({
     ctx.setFillStyle(bgColor);
     ctx.fillRect(0, 0, cw, ch);
 
-    // 计算裁剪：取中心正方形区域（人像通常在中心）
-    var srcRatio = imgW / imgH;
-    var dstRatio = cw / ch;
-    var sx, sy, sw, sh;
-
-    if (srcRatio > dstRatio) {
-      // 源图更宽，裁左右
-      sh = imgH;
-      sw = imgH * dstRatio;
-      sx = (imgW - sw) / 2;
-      sy = 0;
-    } else {
-      // 源图更高，裁上下（优先裁底部保留头部）
-      sw = imgW;
-      sh = imgW / dstRatio;
-      sx = 0;
-      sy = 0;
-    }
-
-    // 绘制照片
-    ctx.drawImage(self.data.photoPath, sx, sy, sw, sh, 0, 0, cw, ch);
+    // 绘制照片（cover模式：等比缩放后偏移居中/顶对齐）
+    ctx.drawImage(self.data.photoPath, offsetX, offsetY, scaleW, scaleH);
 
     ctx.draw(false, function () {
       setTimeout(function () {
         wx.canvasToTempFilePath({
           canvasId: 'idphoto-canvas',
+          destWidth: cw * 2,
+          destHeight: ch * 2,
           quality: 1,
           success: function (res) {
             wx.hideLoading();
@@ -137,12 +151,13 @@ Page({
               }
             });
           },
-          fail: function () {
+          fail: function (err) {
             wx.hideLoading();
-            wx.showToast({ title: '生成失败', icon: 'none' });
+            console.error('canvasToTempFilePath fail', err);
+            wx.showToast({ title: '生成失败，请重试', icon: 'none' });
           }
         }, self);
-      }, 300);
+      }, 500);
     });
   },
 

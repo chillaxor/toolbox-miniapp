@@ -41,7 +41,7 @@
     <view class="preview-frame" style="background: {{bgColors[bgIdx].color}}; width: {{sizes[sizeIdx].w * 0.5}}rpx; height: {{sizes[sizeIdx].h * 0.5}}rpx;">
       <image src="{{photoPath}}" mode="aspectFill" class="preview-photo" />
     </view>
-    <text class="save-hint">⚠️ 预览仅供参考，保存时会按规格裁剪</text>
+    <text class="save-hint">⚠️ 预览仅供参考，保存时按规格自动裁剪</text>
     <view class="btn-save-idphoto" bindtap="savePhoto">📸 生成并保存证件照</view>
   </view>
 
@@ -62,6 +62,6 @@
     </view>
   </view>
 
-  <!-- 隐藏canvas用于合成 -->
-  <canvas canvas-id="idphoto-canvas" style="position:fixed;left:-9999px;width:600px;height:800px;"></canvas>
+  <!-- 隐藏canvas用于合成，尺寸动态跟随规格 -->
+  <canvas canvas-id="idphoto-canvas" style="position:fixed;left:-9999px;width:{{canvasW}}px;height:{{canvasH}}px;"></canvas>
 </view>
