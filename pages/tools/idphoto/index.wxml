@@ -33,16 +33,26 @@
         <text class="bg-name">{{item.name}}</text>
       </view>
     </view>
+    <text class="bg-tip">💡 自动检测原图背景并替换，选纯色背景照片效果最佳</text>
   </view>
 
-  <!-- 生成预览 -->
+  <!-- 生成按钮 -->
   <view class="card" wx:if="{{photoPath}}">
-    <text class="card-title">预览效果</text>
-    <view class="preview-frame" style="background: {{bgColors[bgIdx].color}}; width: {{sizes[sizeIdx].w * 0.5}}rpx; height: {{sizes[sizeIdx].h * 0.5}}rpx;">
-      <image src="{{photoPath}}" mode="aspectFill" class="preview-photo" />
+    <view class="btn-generate {{generating ? 'btn-disabled' : ''}}" bindtap="{{generating ? '' : 'generatePhoto'}}">
+      {{generating ? '生成中...' : '📸 生成证件照'}}
     </view>
-    <text class="save-hint">⚠️ 预览仅供参考，保存时按规格自动裁剪</text>
-    <view class="btn-save-idphoto" bindtap="savePhoto">📸 生成并保存证件照</view>
+  </view>
+
+  <!-- 结果预览 -->
+  <view class="card" wx:if="{{resultPath}}">
+    <text class="card-title">✅ 生成结果</text>
+    <view class="result-frame" style="background: {{bgColors[bgIdx].color}};">
+      <image src="{{resultPath}}" mode="aspectFit" class="result-photo" />
+    </view>
+    <view class="result-actions">
+      <view class="btn-save-result" bindtap="saveResult">💾 再次保存</view>
+    </view>
+    <text class="save-hint">规格: {{sizes[sizeIdx].name}} {{sizes[sizeIdx].label}} | 背景: {{bgColors[bgIdx].name}}</text>
   </view>
 
   <!-- 常见规格参考 -->
@@ -62,6 +72,7 @@
     </view>
   </view>
 
-  <!-- 隐藏canvas用于合成，尺寸动态跟随规格 -->
+  <!-- 隐藏canvas: src用于像素操作(限制800px内), canvas用于最终裁剪合成 -->
+  <canvas canvas-id="idphoto-src" style="position:fixed;left:-9999px;width:800px;height:800px;"></canvas>
   <canvas canvas-id="idphoto-canvas" style="position:fixed;left:-9999px;width:{{canvasW}}px;height:{{canvasH}}px;"></canvas>
 </view>
