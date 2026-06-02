@@ -1,0 +1,75 @@
+<view class="container">
+  <!-- 显示屏 -->
+  <view class="display-area">
+    <view class="display-mode-bar">
+      <text class="mode-label {{mode === 'deg' ? 'mode-active' : ''}}" bindtap="setMode" data-mode="deg">DEG</text>
+      <text class="mode-label {{mode === 'rad' ? 'mode-active' : ''}}" bindtap="setMode" data-mode="rad">RAD</text>
+    </view>
+    <view class="display-expression">{{expression || '0'}}</view>
+    <view class="display-result" wx:if="{{result !== ''}}">= {{result}}</view>
+  </view>
+
+  <!-- 科学函数键 -->
+  <view class="func-row">
+    <view class="func-btn" bindtap="inputFunc" data-fn="sin">sin</view>
+    <view class="func-btn" bindtap="inputFunc" data-fn="cos">cos</view>
+    <view class="func-btn" bindtap="inputFunc" data-fn="tan">tan</view>
+    <view class="func-btn" bindtap="inputFunc" data-fn="log">log</view>
+    <view class="func-btn" bindtap="inputFunc" data-fn="ln">ln</view>
+  </view>
+  <view class="func-row">
+    <view class="func-btn" bindtap="inputFunc" data-fn="sqrt">√</view>
+    <view class="func-btn" bindtap="inputFunc" data-fn="pow">x²</view>
+    <view class="func-btn" bindtap="inputFunc" data-fn="pi">π</view>
+    <view class="func-btn" bindtap="inputFunc" data-fn="e">e</view>
+    <view class="func-btn" bindtap="inputFunc" data-fn="fact">n!</view>
+  </view>
+  <view class="func-row">
+    <view class="func-btn" bindtap="inputFunc" data-fn="inv">1/x</view>
+    <view class="func-btn" bindtap="inputFunc" data-fn="abs">|x|</view>
+    <view class="func-btn" bindtap="inputOp" data-op="(">(</view>
+    <view class="func-btn" bindtap="inputOp" data-op=")">)</view>
+    <view class="func-btn func-btn-del" bindtap="backspace">⌫</view>
+  </view>
+
+  <!-- 数字键 -->
+  <view class="num-row">
+    <view class="num-btn" bindtap="inputNum" data-num="7">7</view>
+    <view class="num-btn" bindtap="inputNum" data-num="8">8</view>
+    <view class="num-btn" bindtap="inputNum" data-num="9">9</view>
+    <view class="op-btn" bindtap="inputOp" data-op="÷">÷</view>
+    <view class="op-btn op-clear" bindtap="clear">C</view>
+  </view>
+  <view class="num-row">
+    <view class="num-btn" bindtap="inputNum" data-num="4">4</view>
+    <view class="num-btn" bindtap="inputNum" data-num="5">5</view>
+    <view class="num-btn" bindtap="inputNum" data-num="6">6</view>
+    <view class="op-btn" bindtap="inputOp" data-op="×">×</view>
+    <view class="op-btn op-clear2" bindtap="clearEntry">CE</view>
+  </view>
+  <view class="num-row">
+    <view class="num-btn" bindtap="inputNum" data-num="1">1</view>
+    <view class="num-btn" bindtap="inputNum" data-num="2">2</view>
+    <view class="num-btn" bindtap="inputNum" data-num="3">3</view>
+    <view class="op-btn" bindtap="inputOp" data-op="-">−</view>
+    <view class="op-btn" bindtap="inputOp" data-op="%">%</view>
+  </view>
+  <view class="num-row">
+    <view class="num-btn" bindtap="inputNum" data-num="0">0</view>
+    <view class="num-btn" bindtap="inputNum" data-num=".">.</view>
+    <view class="num-btn" bindtap="toggleSign">±</view>
+    <view class="op-btn" bindtap="inputOp" data-op="+">+</view>
+    <view class="op-btn op-equal" bindtap="calculate">=</view>
+  </view>
+
+  <!-- 历史记录 -->
+  <view class="history-toggle" bindtap="toggleHistory">📜 计算历史</view>
+  <view class="history-list" wx:if="{{showHistory}}">
+    <view class="history-item" wx:for="{{history}}" wx:key="index">
+      <text class="history-expr">{{item.expr}}</text>
+      <text class="history-result">= {{item.result}}</text>
+    </view>
+    <view class="history-empty" wx:if="{{history.length === 0}}">暂无历史记录</view>
+    <view class="history-clear" bindtap="clearHistory" wx:if="{{history.length > 0}}">清空历史</view>
+  </view>
+</view>

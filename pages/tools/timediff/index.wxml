@@ -1,0 +1,95 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">时间差计算</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <view class="card">
+    <view class="section-label">起始时间</view>
+    <view class="datetime-row">
+      <picker mode="date" value="{{startDate}}" bindchange="onStartDateChange">
+        <view class="picker-field">
+          <text>{{startDate || '选择日期'}}</text>
+          <text class="picker-arrow">▼</text>
+        </view>
+      </picker>
+      <picker mode="time" value="{{startTime}}" bindchange="onStartTimeChange">
+        <view class="picker-field">
+          <text>{{startTime || '选择时间'}}</text>
+          <text class="picker-arrow">▼</text>
+        </view>
+      </picker>
+    </view>
+    <view class="quick-btn-row">
+      <text class="quick-btn" bindtap="onSetNowStart">设为当前时间</text>
+    </view>
+
+    <view class="swap-row">
+      <view class="swap-btn" bindtap="onSwap">
+        <text class="swap-icon">⇅</text>
+        <text class="swap-text">交换</text>
+      </view>
+    </view>
+
+    <view class="section-label">结束时间</view>
+    <view class="datetime-row">
+      <picker mode="date" value="{{endDate}}" bindchange="onEndDateChange">
+        <view class="picker-field">
+          <text>{{endDate || '选择日期'}}</text>
+          <text class="picker-arrow">▼</text>
+        </view>
+      </picker>
+      <picker mode="time" value="{{endTime}}" bindchange="onEndTimeChange">
+        <view class="picker-field">
+          <text>{{endTime || '选择时间'}}</text>
+          <text class="picker-arrow">▼</text>
+        </view>
+      </picker>
+    </view>
+    <view class="quick-btn-row">
+      <text class="quick-btn" bindtap="onSetNowEnd">设为当前时间</text>
+    </view>
+
+    <button class="btn-primary" style="background-color: #4ECDC4; margin-top: 32rpx;" bindtap="onCalculate">计算时间差</button>
+  </view>
+
+  <!-- 结果展示 -->
+  <view class="result-box" wx:if="{{result}}">
+    <text class="result-title">计算结果</text>
+    <view class="result-main">
+      <text class="result-big-number">{{result.years}}</text>
+      <text class="result-unit">年</text>
+      <text class="result-big-number">{{result.months}}</text>
+      <text class="result-unit">月</text>
+      <text class="result-big-number">{{result.days}}</text>
+      <text class="result-unit">天</text>
+    </view>
+    <view class="result-sub-row">
+      <text class="result-sub-text">{{result.hours}}小时 {{result.minutes}}分 {{result.seconds}}秒</text>
+    </view>
+
+    <view class="result-grid">
+      <view class="result-grid-item">
+        <text class="result-grid-value">{{result.weeks}}</text>
+        <text class="result-grid-label">周 +{{result.remainDays}}天</text>
+      </view>
+      <view class="result-grid-item">
+        <text class="result-grid-value">{{result.totalHours}}</text>
+        <text class="result-grid-label">总小时</text>
+      </view>
+      <view class="result-grid-item">
+        <text class="result-grid-value">{{result.totalMinutes}}</text>
+        <text class="result-grid-label">总分钟</text>
+      </view>
+      <view class="result-grid-item">
+        <text class="result-grid-value">{{result.totalSeconds}}</text>
+        <text class="result-grid-label">总秒数</text>
+      </view>
+    </view>
+
+    <view class="result-workdays">
+      <text class="result-workdays-label">工作日</text>
+      <text class="result-workdays-value">{{result.workdays}}天</text>
+    </view>
+  </view>
+</view>

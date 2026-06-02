@@ -1,0 +1,56 @@
+<view class="container">
+  <!-- 烟花/星空背景 -->
+  <view class="sky-bg">
+    <view class="star" wx:for="{{stars}}" wx:key="index" style="left:{{item.x}}%;top:{{item.y}}%;animation-delay:{{item.delay}}s;"></view>
+  </view>
+
+  <!-- 许愿灯笼区域 -->
+  <view class="wishing-area">
+    <view class="lantern {{lanternFloat ? 'lantern-float' : ''}}" bindtap="makeWish">
+      <view class="lantern-body">
+        <view class="lantern-text">🏮</view>
+      </view>
+      <view class="lantern-light"></view>
+    </view>
+    <text class="wishing-hint">点击灯笼许个愿吧 ✨</text>
+  </view>
+
+  <!-- 许愿输入弹窗 -->
+  <view class="wish-modal" wx:if="{{showModal}}">
+    <view class="modal-mask" bindtap="closeModal"></view>
+    <view class="modal-content">
+      <view class="modal-title">🏮 写下你的心愿</view>
+      <textarea class="wish-input" placeholder="在这里写下你的新年愿望..." value="{{wishText}}" bindinput="onWishInput" maxlength="100" />
+      <view class="char-count">{{wishText.length}}/100</view>
+      <view class="modal-tags">
+        <view class="tag-item {{selectedTag === item ? 'tag-active' : ''}}" wx:for="{{tags}}" wx:key="*this" bindtap="selectTag" data-tag="{{item}}">
+          {{item}}
+        </view>
+      </view>
+      <view class="modal-btns">
+        <view class="modal-btn btn-cancel" bindtap="closeModal">取消</view>
+        <view class="modal-btn btn-confirm" bindtap="submitWish">放飞心愿 🎆</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 愿望墙 -->
+  <view class="wish-wall">
+    <view class="wall-title">🎆 心愿墙</view>
+    <view class="wish-empty" wx:if="{{wishes.length === 0}}">
+      还没有愿望，快去许愿吧~
+    </view>
+    <view class="wish-card" wx:for="{{wishes}}" wx:key="id">
+      <view class="wish-tag">{{item.tag}}</view>
+      <view class="wish-content">{{item.text}}</view>
+      <view class="wish-footer">
+        <text class="wish-time">{{item.time}}</text>
+        <view class="wish-actions">
+          <text class="wish-action" bindtap="lightWish" data-id="{{item.id}}">🕯️ 点亮</text>
+          <text class="wish-lights">{{item.lights}}盏</text>
+          <text class="wish-action wish-del" bindtap="deleteWish" data-id="{{item.id}}">删除</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

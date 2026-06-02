@@ -1,0 +1,169 @@
+.tool-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20rpx 0;
+  margin-bottom: 16rpx;
+}
+
+.tool-header-title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.tool-header-fav {
+  font-size: 44rpx;
+  padding: 8rpx;
+}
+
+.card-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--color-primary);
+  margin-bottom: 20rpx;
+  display: block;
+}
+
+.photo-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 80rpx 0;
+  border: 4rpx dashed var(--color-border);
+  border-radius: 16rpx;
+}
+
+.photo-icon {
+  font-size: 80rpx;
+  margin-bottom: 16rpx;
+}
+
+.photo-hint {
+  font-size: 28rpx;
+  color: var(--color-hint);
+}
+
+.photo-preview {
+  width: 100%;
+  max-height: 500rpx;
+  border-radius: 12rpx;
+}
+
+.picker-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16rpx 0;
+}
+
+.picker-label {
+  font-size: 28rpx;
+  color: var(--color-secondary);
+}
+
+.picker-value {
+  font-size: 28rpx;
+  color: var(--color-primary);
+  font-weight: 500;
+}
+
+.bg-grid {
+  display: flex;
+  gap: 32rpx;
+  justify-content: center;
+}
+
+.bg-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12rpx;
+  border-radius: 12rpx;
+  border: 2rpx solid transparent;
+}
+
+.bg-active {
+  border-color: var(--color-date);
+  background: var(--color-bg);
+}
+
+.bg-circle {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  border: 2rpx solid #ddd;
+  margin-bottom: 8rpx;
+}
+
+.bg-name {
+  font-size: 24rpx;
+  color: var(--color-secondary);
+}
+
+.preview-frame {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  overflow: hidden;
+  border-radius: 8rpx;
+}
+
+.preview-photo {
+  width: 100%;
+  height: 100%;
+}
+
+.save-hint {
+  display: block;
+  text-align: center;
+  font-size: 24rpx;
+  color: var(--color-hint);
+  margin-top: 16rpx;
+}
+
+.ref-table {
+  border: 2rpx solid var(--color-border);
+  border-radius: 8rpx;
+  overflow: hidden;
+}
+
+.ref-row {
+  display: flex;
+  border-bottom: 2rpx solid var(--color-border);
+}
+
+.ref-row:last-child {
+  border-bottom: none;
+}
+
+.ref-header {
+  background: var(--color-bg);
+}
+
+.ref-cell {
+  flex: 1;
+  padding: 12rpx 16rpx;
+  font-size: 24rpx;
+  color: var(--color-secondary);
+  text-align: center;
+}
+
+.ref-header .ref-cell {
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.btn-save-idphoto {
+  margin-top: 24rpx;
+  height: 88rpx;
+  border-radius: 44rpx;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+  font-weight: bold;
+}

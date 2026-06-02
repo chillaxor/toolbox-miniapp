@@ -54,6 +54,20 @@ const TOOLS = [
   { id: 'danmaku', name: '弹幕墙', category: 'fun', icon: '💬', path: '/pages/tools/danmaku/index', description: '输入文字生成彩色弹幕' },
   { id: 'textdiff', name: '文本对比', category: 'text', icon: '🔍', path: '/pages/tools/textdiff/index', description: '两段文本逐行对比差异' },
   { id: 'memory', name: '记忆力训练', category: 'fun', icon: '🧠', path: '/pages/tools/memory/index', description: '方块闪烁记忆挑战' },
+  { id: 'timediff', name: '时间差计算', category: 'date', icon: '⏲️', path: '/pages/tools/timediff/index', description: '两个时间点之间的差值' },
+  { id: 'kinship', name: '亲戚称呼', category: 'life', icon: '👨‍👩‍👧‍👦', path: '/pages/tools/kinship/index', description: '亲戚关系称呼速查' },
+  { id: 'truthordare', name: '真心话大冒险', category: 'fun', icon: '🎭', path: '/pages/tools/truthordare/index', description: '聚会必备真心话大冒险' },
+  { id: 'newyearwish', name: '新年许愿', category: 'fun', icon: '🎋', path: '/pages/tools/newyearwish/index', description: '许下新年愿望·生成贺卡' },
+  { id: 'chatbubble', name: '聊天气泡', category: 'fun', icon: '💬', path: '/pages/tools/chatbubble/index', description: '生成趣味聊天气泡截图' },
+  { id: 'idphoto', name: '证件照生成', category: 'image', icon: '📷', path: '/pages/tools/idphoto/index', description: '多尺寸证件照制作' },
+  { id: 'brainage', name: '脑力测试', category: 'fun', icon: '🧠', path: '/pages/tools/brainage/index', description: '测试你的脑力年龄' },
+  { id: 'hangingpicture', name: '挂画助手', category: 'life', icon: '🖼️', path: '/pages/tools/hangingpicture/index', description: '墙面画作排版规划' },
+  { id: 'ruler', name: '虚拟尺子', category: 'life', icon: '📏', path: '/pages/tools/ruler/index', description: '手机屏幕变尺子测量' },
+  { id: 'flashlight', name: '手电筒', category: 'life', icon: '🔦', path: '/pages/tools/flashlight/index', description: '一键开启闪光灯照明' },
+  { id: 'watermark', name: '水印相机', category: 'image', icon: '📸', path: '/pages/tools/watermark/index', description: '拍照添加时间地点水印' },
+  { id: 'scicalc', name: '科学计算器', category: 'life', icon: '🔬', path: '/pages/tools/scicalc/index', description: '科学计算·三角函数·对数' },
+  { id: 'todolist', name: '待办清单', category: 'life', icon: '📝', path: '/pages/tools/todolist/index', description: '任务管理·优先级·进度追踪' },
+  { id: 'vote', name: '投票决策', category: 'fun', icon: '🗳️', path: '/pages/tools/vote/index', description: '快速发起投票·统计结果' },
 ];
 
 /**

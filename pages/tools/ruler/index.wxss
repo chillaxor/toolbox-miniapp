@@ -1,0 +1,122 @@
+.tool-header {
+  padding: 20rpx 0;
+  margin-bottom: 16rpx;
+}
+
+.tool-header-title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.controls {
+  display: flex;
+  gap: 20rpx;
+  justify-content: center;
+}
+
+.unit-btn {
+  padding: 12rpx 40rpx;
+  border-radius: 24rpx;
+  font-size: 28rpx;
+  background: #f0f0f0;
+  color: #666;
+  text-align: center;
+}
+
+.unit-btn.active {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.ruler-container {
+  margin: 24rpx 0;
+  padding: 0 16rpx;
+}
+
+.ruler-body {
+  position: relative;
+  height: 160rpx;
+  background: #FFF9E6;
+  border: 3rpx solid #E6D5A8;
+  border-radius: 12rpx;
+  overflow: hidden;
+}
+
+.ruler-marks {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.mark-item {
+  position: absolute;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.mark-line {
+  width: 2rpx;
+  background: #8B7355;
+}
+
+.mark-cm {
+  background: #5C4033;
+  width: 3rpx;
+}
+
+.mark-mm {
+  background: #A0926B;
+}
+
+.mark-label {
+  font-size: 18rpx;
+  color: #5C4033;
+  margin-top: 4rpx;
+}
+
+.ruler-edge {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4rpx;
+  background: #5C4033;
+}
+
+.ruler-tip {
+  text-align: center;
+  padding: 16rpx 0;
+}
+
+.tip-text {
+  font-size: 24rpx;
+  color: var(--color-hint);
+}
+
+.tip-card {
+  padding: 32rpx;
+  margin-top: 20rpx;
+}
+
+.tip-title {
+  display: block;
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--color-primary);
+  margin-bottom: 16rpx;
+}
+
+.tip-text {
+  display: block;
+  font-size: 26rpx;
+  color: var(--color-secondary);
+  line-height: 1.8;
+  margin-bottom: 8rpx;
+}
+
+.calibrate-slider {
+  margin-top: 16rpx;
+}

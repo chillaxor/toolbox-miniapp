@@ -1,0 +1,40 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">📏 虚拟尺子</text>
+  </view>
+
+  <view class="card">
+    <view class="controls">
+      <view class="unit-btn {{unit === 'cm' ? 'active' : ''}}" bindtap="switchUnit" data-unit="cm">厘米</view>
+      <view class="unit-btn {{unit === 'inch' ? 'active' : ''}}" bindtap="switchUnit" data-unit="inch">英寸</view>
+    </view>
+  </view>
+
+  <view class="ruler-container">
+    <view class="ruler-body">
+      <view class="ruler-marks">
+        <view wx:for="{{rulerMarks}}" wx:key="position" class="mark-item" style="left: {{item.position}}px;">
+          <view class="mark-line {{item.isCm ? 'mark-cm' : 'mark-mm'}}" style="height: {{item.height}}rpx;"></view>
+          <text class="mark-label" wx:if="{{item.label !== ''}}">{{item.label}}</text>
+        </view>
+      </view>
+      <view class="ruler-edge"></view>
+    </view>
+    <view class="ruler-tip">
+      <text class="tip-text">将手机左边缘对齐物体起点</text>
+    </view>
+  </view>
+
+  <view class="card tip-card">
+    <text class="tip-title">⚙️ 校准</text>
+    <text class="tip-text">如果测量不准确，可以拖动滑块微调</text>
+    <slider class="calibrate-slider" min="30" max="70" value="50" bindchanging="onSliderChange" show-value />
+  </view>
+
+  <view class="card tip-card">
+    <text class="tip-title">💡 使用提示</text>
+    <text class="tip-text">• 请将手机屏幕左边缘对齐被测物体的起点</text>
+    <text class="tip-text">• 由于屏幕尺寸差异，建议先用已知长度物体校准</text>
+    <text class="tip-text">• 测量结果仅供参考</text>
+  </view>
+</view>

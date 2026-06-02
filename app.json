@@ -45,7 +45,21 @@
     "pages/tools/gridcut/index",
     "pages/tools/danmaku/index",
     "pages/tools/textdiff/index",
-    "pages/tools/memory/index"
+    "pages/tools/memory/index",
+    "pages/tools/timediff/index",
+    "pages/tools/kinship/index",
+    "pages/tools/truthordare/index",
+    "pages/tools/newyearwish/index",
+    "pages/tools/chatbubble/index",
+    "pages/tools/idphoto/index",
+    "pages/tools/brainage/index",
+    "pages/tools/hangingpicture/index",
+    "pages/tools/ruler/index",
+    "pages/tools/flashlight/index",
+    "pages/tools/watermark/index",
+    "pages/tools/scicalc/index",
+    "pages/tools/todolist/index",
+    "pages/tools/vote/index"
   ],
   "window": {
     "backgroundTextStyle": "light",

@@ -1,0 +1,105 @@
+<view class="container">
+  <!-- 顶部说明 -->
+  <view class="header">
+    <text class="header-icon">🖼️</text>
+    <text class="header-title">挂画助手</text>
+    <text class="header-desc">帮你计算最佳挂画高度和位置</text>
+  </view>
+
+  <!-- 输入区域 -->
+  <view class="input-section">
+    <view class="section-title">📏 墙面信息</view>
+    <view class="input-row">
+      <text class="input-label">墙面高度</text>
+      <input class="input-field" type="digit" placeholder="厘米" value="{{wallHeight}}" bindinput="onInput" data-key="wallHeight" />
+      <text class="input-unit">cm</text>
+    </view>
+    <view class="input-row">
+      <text class="input-label">墙面宽度</text>
+      <input class="input-field" type="digit" placeholder="厘米" value="{{wallWidth}}" bindinput="onInput" data-key="wallWidth" />
+      <text class="input-unit">cm</text>
+    </view>
+
+    <view class="section-title">🎨 画框信息</view>
+    <view class="input-row">
+      <text class="input-label">画框高度</text>
+      <input class="input-field" type="digit" placeholder="厘米" value="{{frameHeight}}" bindinput="onInput" data-key="frameHeight" />
+      <text class="input-unit">cm</text>
+    </view>
+    <view class="input-row">
+      <text class="input-label">画框宽度</text>
+      <input class="input-field" type="digit" placeholder="厘米" value="{{frameWidth}}" bindinput="onInput" data-key="frameWidth" />
+      <text class="input-unit">cm</text>
+    </view>
+    <view class="input-row">
+      <text class="input-label">挂钩距顶部</text>
+      <input class="input-field" type="digit" placeholder="默认5cm" value="{{hookOffset}}" bindinput="onInput" data-key="hookOffset" />
+      <text class="input-unit">cm</text>
+    </view>
+
+    <view class="section-title">🪑 参考家具</view>
+    <view class="input-row">
+      <text class="input-label">家具高度</text>
+      <input class="input-field" type="digit" placeholder="如沙发靠背(选填)" value="{{furnitureHeight}}" bindinput="onInput" data-key="furnitureHeight" />
+      <text class="input-unit">cm</text>
+    </view>
+    <view class="input-row">
+      <text class="input-label">画与家具间距</text>
+      <input class="input-field" type="digit" placeholder="默认15cm" value="{{gapWithFurniture}}" bindinput="onInput" data-key="gapWithFurniture" />
+      <text class="input-unit">cm</text>
+    </view>
+
+    <view class="btn-calc" bindtap="calculate">计算挂画位置</view>
+  </view>
+
+  <!-- 结果区域 -->
+  <view class="result-section" wx:if="{{showResult}}">
+    <view class="section-title">📐 计算结果</view>
+
+    <view class="result-card">
+      <view class="result-item">
+        <text class="result-label">画中心离地高度</text>
+        <text class="result-value highlight">{{centerHeight}} cm</text>
+      </view>
+      <view class="result-tip">💡 标准高度：画中心离地 145~152cm（人眼平视高度）</view>
+    </view>
+
+    <view class="result-card">
+      <view class="result-item">
+        <text class="result-label">钉子离地高度</text>
+        <text class="result-value">{{nailHeight}} cm</text>
+      </view>
+      <view class="result-item">
+        <text class="result-label">钉子离墙左边距离</text>
+        <text class="result-value">{{nailLeft}} cm</text>
+      </view>
+    </view>
+
+    <view class="result-card" wx:if="{{furnitureHeight > 0}}">
+      <view class="result-item">
+        <text class="result-label">家具上方挂画</text>
+        <text class="result-value">{{aboveFurniture ? '是' : '否'}}</text>
+      </view>
+      <view class="result-item" wx:if="{{aboveFurniture}}">
+        <text class="result-label">钉子离地高度(家具上方)</text>
+        <text class="result-value">{{furnitureNailHeight}} cm</text>
+      </view>
+    </view>
+
+    <!-- 示意图 -->
+    <view class="diagram">
+      <view class="diagram-wall">
+        <view class="diagram-nail" style="bottom:{{diagramNailY}}%;left:50%;">📌</view>
+        <view class="diagram-frame" style="bottom:{{diagramFrameY}}%;left:50%;width:{{diagramFrameW}}%;height:{{diagramFrameH}}%;">
+          <text class="diagram-frame-text">画框</text>
+        </view>
+        <view class="diagram-furniture" wx:if="{{furnitureHeight > 0}}" style="height:{{diagramFurnitureH}}%;">
+          <text class="diagram-furniture-text">家具</text>
+        </view>
+        <view class="diagram-center-line" style="bottom:{{diagramCenterY}}%;">
+          <text class="diagram-line-text">中心 {{centerHeight}}cm</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

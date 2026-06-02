@@ -1,0 +1,92 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">亲戚称呼计算器</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <!-- 性别选择 -->
+  <view class="card">
+    <view class="form-group">
+      <text class="form-label">我的性别</text>
+      <radio-group bindchange="onGenderChange" class="gender-row">
+        <label class="gender-item {{gender === 'male' ? 'gender-active' : ''}}">
+          <radio value="male" checked="{{gender === 'male'}}" color="#4ECDC4" />
+          <text>♂ 男</text>
+        </label>
+        <label class="gender-item {{gender === 'female' ? 'gender-active' : ''}}">
+          <radio value="female" checked="{{gender === 'female'}}" color="#E74C3C" />
+          <text>♀ 女</text>
+        </label>
+      </radio-group>
+    </view>
+  </view>
+
+  <!-- 关系链展示 -->
+  <view class="card" wx:if="{{chain.length > 0}}">
+    <view class="form-label">当前关系链</view>
+    <view class="chain-box">
+      <text class="chain-start">我</text>
+      <block wx:for="{{chain}}" wx:key="index">
+        <text class="chain-arrow">→</text>
+        <text class="chain-item">{{item}}</text>
+      </block>
+    </view>
+    <view class="chain-actions">
+      <button class="btn-sm btn-outline" bindtap="onRemoveLast">↩ 撤回</button>
+      <button class="btn-sm btn-outline-danger" bindtap="onReset">✕ 清空</button>
+    </view>
+  </view>
+
+  <!-- 结果展示 -->
+  <view class="result-box" wx:if="{{result}}">
+    <text class="result-title">称呼结果</text>
+    <view class="result-main">
+      <text class="result-call">{{result.result}}</text>
+    </view>
+    <view class="result-detail">
+      <text>{{result.path}}</text>
+    </view>
+  </view>
+
+  <!-- 关系选择按钮 -->
+  <view class="card">
+    <text class="card-title">选择关系</text>
+    <text class="form-label" style="margin-bottom: 16rpx; display: block;">
+      {{chain.length === 0 ? '从"我"出发，选择对方是你的...' : '继续选择下一层关系...'}}
+    </text>
+    <view class="rel-grid">
+      <view class="rel-btn {{item === '丈夫' || item === '妻子' ? 'rel-special' : ''}}"
+            wx:for="{{relationOptions}}" wx:key="*this"
+            data-rel="{{item}}" bindtap="onAddRelation">
+        <text class="rel-text">{{item}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 常见关系快速入口 -->
+  <view class="card">
+    <text class="card-title">常见称呼快速查</text>
+    <view class="example-list">
+      <view class="example-item" data-chain="['父亲','父亲']" bindtap="onExampleTap">
+        <text class="example-query">爸爸的爸爸</text>
+        <text class="example-result">→ 爷爷</text>
+      </view>
+      <view class="example-item" data-chain="['母亲','母亲']" bindtap="onExampleTap">
+        <text class="example-query">妈妈的妈妈</text>
+        <text class="example-result">→ 外婆</text>
+      </view>
+      <view class="example-item" data-chain="['父亲','姐姐','儿子']" bindtap="onExampleTap">
+        <text class="example-query">爸爸的姐姐的儿子</text>
+        <text class="example-result">→ 表哥/表弟</text>
+      </view>
+      <view class="example-item" data-chain="['母亲','哥哥','女儿']" bindtap="onExampleTap">
+        <text class="example-query">妈妈的哥哥的女儿</text>
+        <text class="example-result">→ 表姐/表妹</text>
+      </view>
+      <view class="example-item" data-chain="['父亲','弟弟']" bindtap="onExampleTap">
+        <text class="example-query">爸爸的弟弟</text>
+        <text class="example-result">→ 叔叔</text>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,72 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">聊天气泡生成器</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <!-- 主题选择 -->
+  <view class="card">
+    <text class="card-title">选择主题</text>
+    <view class="theme-grid">
+      <view class="theme-item {{themeIdx === index ? 'theme-active' : ''}}" wx:for="{{themes}}" wx:key="index" data-idx="{{index}}" bindtap="onThemeChange">
+        <view class="theme-preview" style="background: {{item.bg}};"></view>
+        <text class="theme-name">{{item.name}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 聊天预览 -->
+  <view class="card preview-card" style="background: {{themes[themeIdx].self}};">
+    <view class="chat-area">
+      <view wx:for="{{messages}}" wx:key="index" class="msg-row msg-{{item.side}}">
+        <view class="msg-bubble" style="background: {{item.side === 'left' ? themes[themeIdx].bg : '#FFFFFF'}}; color: {{themes[themeIdx].text}};">
+          <text class="msg-name">{{item.name}}</text>
+          <text class="msg-text">{{item.text}}</text>
+          <text class="msg-time">{{item.time}}</text>
+        </view>
+      </view>
+      <view wx:if="{{messages.length === 0}}" class="empty-chat">
+        <text>添加消息开始聊天</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 发送消息 -->
+  <view class="card">
+    <text class="card-title">添加消息</text>
+    <view class="side-toggle">
+      <view class="side-btn {{inputName === 'left' ? 'side-left-active' : ''}}" data-side="left" bindtap="onSelectSide">
+        <text>👤 {{leftName}}</text>
+      </view>
+      <view class="side-btn {{inputName === 'right' ? 'side-right-active' : ''}}" data-side="right" bindtap="onSelectSide">
+        <text>🙋 {{rightName}}</text>
+      </view>
+    </view>
+    <view class="send-row">
+      <input class="msg-input" placeholder="输入消息..." value="{{inputText}}" bindinput="onTextInput" bindconfirm="onAddMessage" />
+      <button class="btn-primary" style="flex-shrink:0;" bindtap="onAddMessage">发送</button>
+    </view>
+  </view>
+
+  <!-- 名称设置 -->
+  <view class="card">
+    <text class="card-title">角色设置</text>
+    <view class="form-row">
+      <text class="form-label">左侧名称</text>
+      <input class="form-input" value="{{leftName}}" bindinput="onLeftNameInput" />
+    </view>
+    <view class="form-row">
+      <text class="form-label">右侧名称</text>
+      <input class="form-input" value="{{rightName}}" bindinput="onRightNameInput" />
+    </view>
+  </view>
+
+  <!-- 操作 -->
+  <view class="card action-card" wx:if="{{messages.length > 0}}">
+    <view class="btn-save-chat" bindtap="saveChatImage">📷 保存聊天截图</view>
+    <button class="btn-outline" style="border-color:#FF6B6B; color:#FF6B6B;" bindtap="onClearAll">清空所有消息</button>
+  </view>
+
+  <!-- 隐藏canvas用于截图合成 -->
+  <canvas canvas-id="chatbubble-canvas" style="position:fixed;left:-9999px;width:750px;height:1334px;"></canvas>
+</view>

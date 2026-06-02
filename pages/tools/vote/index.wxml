@@ -1,0 +1,98 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">🗳️ 投票决策</text>
+  </view>
+
+  <!-- 编辑阶段 -->
+  <view wx:if="{{!isStarted}}">
+    <view class="card" style="margin-bottom:24rpx">
+      <view class="card-title">投票标题</view>
+      <input class="input-field" placeholder="输入投票主题..." value="{{title}}" bindinput="onTitleInput" />
+    </view>
+
+    <view class="card" style="margin-bottom:24rpx">
+      <view class="card-title">选项列表</view>
+      <view wx:for="{{options}}" wx:key="id" class="option-row">
+        <view class="option-num">{{index + 1}}</view>
+        <input class="input-field option-input" placeholder="选项{{index + 1}}" value="{{item.text}}" data-id="{{item.id}}" bindinput="onOptionInput" />
+        <view class="remove-btn" wx:if="{{options.length > 2}}" data-id="{{item.id}}" bindtap="onRemoveOption">
+          <text>✕</text>
+        </view>
+      </view>
+      <view class="add-option-btn" wx:if="{{options.length < 8}}" bindtap="onAddOption">
+        <text>+ 添加选项</text>
+      </view>
+    </view>
+
+    <view class="start-btn" bindtap="onStart">
+      <text>开始投票</text>
+    </view>
+  </view>
+
+  <!-- 投票阶段 -->
+  <view wx:if="{{isStarted && !showResult}}">
+    <view class="vote-title card">
+      <text class="vote-title-text">{{title}}</text>
+      <text class="vote-count">已投 {{totalVotes}} 票</text>
+    </view>
+
+    <view class="vote-options">
+      <view wx:for="{{options}}" wx:key="id" class="vote-option" data-id="{{item.id}}" bindtap="onVote">
+        <text class="vote-option-text">{{item.text}}</text>
+        <view class="vote-bar" style="width: {{item.pct}}%"></view>
+        <text class="vote-option-count">{{item.votes}}票</text>
+      </view>
+    </view>
+
+    <view class="action-btns">
+      <view class="result-btn" bindtap="onShowResult">
+        <text>查看结果</text>
+      </view>
+      <view class="reset-btn" bindtap="onReset">
+        <text>重新开始</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 结果阶段 -->
+  <view wx:if="{{showResult}}">
+    <view class="winner-card card">
+      <text class="winner-icon">🏆</text>
+      <text class="winner-label">投票结果</text>
+      <text class="winner-title">{{title}}</text>
+      <text class="winner-name">{{winner.text}}</text>
+      <text class="winner-votes">{{winner.votes}}票 / 共{{totalVotes}}票</text>
+    </view>
+
+    <view class="card" style="margin-bottom:24rpx">
+      <view class="card-title">详细结果</view>
+      <view wx:for="{{options}}" wx:key="id" class="result-row">
+        <text class="result-name">{{item.text}}</text>
+        <view class="result-bar-wrap">
+          <view class="result-bar" style="width: {{item.pct}}%"></view>
+        </view>
+        <text class="result-pct">{{item.pctText}}%</text>
+        <text class="result-votes">{{item.votes}}票</text>
+      </view>
+    </view>
+
+    <view class="reset-btn" bindtap="onReset" style="margin-bottom:40rpx">
+      <text>发起新投票</text>
+    </view>
+
+    <!-- 历史记录 -->
+    <view class="card" wx:if="{{history.length > 0}}">
+      <view class="card-title" style="display:flex;justify-content:space-between;align-items:center">
+        <text>历史记录</text>
+        <text class="clear-link" bindtap="onClearHistory">清空</text>
+      </view>
+      <view wx:for="{{history}}" wx:key="index" class="history-item">
+        <view class="history-top">
+          <text class="history-title">{{item.title}}</text>
+          <text class="history-time">{{item.time}}</text>
+        </view>
+        <text class="history-winner">🏆 {{item.winner}} ({{item.totalVotes}}票)</text>
+      </view>
+    </view>
+  </view>
+</view>

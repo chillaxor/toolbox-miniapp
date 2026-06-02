@@ -1,0 +1,144 @@
+.tool-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20rpx 0;
+  margin-bottom: 16rpx;
+}
+
+.tool-header-title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.tool-header-fav {
+  font-size: 44rpx;
+  padding: 8rpx;
+}
+
+.section-label {
+  font-size: 28rpx;
+  color: var(--color-secondary);
+  margin-bottom: 12rpx;
+  margin-top: 24rpx;
+}
+
+.datetime-row {
+  display: flex;
+  gap: 16rpx;
+}
+
+.datetime-row picker {
+  flex: 1;
+}
+
+.quick-btn-row {
+  margin-top: 12rpx;
+}
+
+.quick-btn {
+  font-size: 24rpx;
+  color: var(--color-date);
+  padding: 8rpx 16rpx;
+}
+
+.swap-row {
+  display: flex;
+  justify-content: center;
+  margin: 24rpx 0;
+}
+
+.swap-btn {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 16rpx 32rpx;
+  background: var(--color-card);
+  border-radius: 32rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.1);
+}
+
+.swap-icon {
+  font-size: 36rpx;
+  color: var(--color-date);
+}
+
+.swap-text {
+  font-size: 26rpx;
+  color: var(--color-secondary);
+}
+
+.result-main {
+  display: flex;
+  align-items: baseline;
+  gap: 8rpx;
+  margin-top: 16rpx;
+}
+
+.result-big-number {
+  font-size: 48rpx;
+  font-weight: 700;
+  color: var(--color-date);
+}
+
+.result-unit {
+  font-size: 28rpx;
+  color: var(--color-secondary);
+}
+
+.result-sub-row {
+  margin-top: 8rpx;
+}
+
+.result-sub-text {
+  font-size: 28rpx;
+  color: var(--color-secondary);
+}
+
+.result-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 16rpx;
+  margin-top: 24rpx;
+  padding-top: 24rpx;
+  border-top: 2rpx solid var(--color-border);
+}
+
+.result-grid-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.result-grid-value {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.result-grid-label {
+  font-size: 22rpx;
+  color: var(--color-hint);
+  margin-top: 4rpx;
+}
+
+.result-workdays {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 24rpx;
+  padding-top: 24rpx;
+  border-top: 2rpx solid var(--color-border);
+}
+
+.result-workdays-label {
+  font-size: 28rpx;
+  color: var(--color-secondary);
+}
+
+.result-workdays-value {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: var(--color-date);
+}

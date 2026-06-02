@@ -1,0 +1,21 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">🔦 手电筒</text>
+  </view>
+
+  <view class="flashlight-area {{isOn ? 'on' : 'off'}}">
+    <view class="light-glow" wx:if="{{isOn}}"></view>
+    <view class="toggle-btn {{isOn ? 'btn-on' : 'btn-off'}}" bindtap="toggleFlash">
+      <text class="toggle-icon">⏻</text>
+      <text class="toggle-text">{{isOn ? '关闭' : '开启'}}</text>
+    </view>
+    <camera wx:if="{{isOn}}" style="width:1px;height:1px;position:absolute;left:-999px;top:-999px;" flash="{{flashMode}}" binderror="onError"></camera>
+  </view>
+
+  <view class="card tip-card">
+    <text class="tip-title">💡 使用说明</text>
+    <text class="tip-text">• 点击按钮开启/关闭手电筒</text>
+    <text class="tip-text">• 首次使用需要授权相机权限</text>
+    <text class="tip-text">• 部分机型可能不支持闪光灯控制</text>
+  </view>
+</view>

@@ -1,0 +1,91 @@
+<view class="container">
+  <!-- 顶部得分区 -->
+  <view class="score-bar">
+    <view class="score-item">
+      <text class="score-label">当前得分</text>
+      <text class="score-value">{{score}}</text>
+    </view>
+    <view class="score-item">
+      <text class="score-label">最高纪录</text>
+      <text class="score-value best">{{bestScore}}</text>
+    </view>
+    <view class="score-item">
+      <text class="score-label">连续正确</text>
+      <text class="score-value streak">{{streak}}</text>
+    </view>
+  </view>
+
+  <!-- 游戏状态 -->
+  <view class="game-area" wx:if="{{state === 'idle'}}">
+    <view class="start-card">
+      <text class="start-icon">🧠</text>
+      <text class="start-title">脑力测试</text>
+      <text class="start-desc">包含计算、记忆、反应、逻辑四大关卡</text>
+      <view class="btn-start" bindtap="startGame">开始挑战</view>
+    </view>
+  </view>
+
+  <!-- 计算关卡 -->
+  <view class="game-area" wx:if="{{state === 'math'}}">
+    <view class="round-info">第 {{round}}/{{totalRounds}} 题 · 计算挑战</view>
+    <view class="math-question">{{mathQuestion}}</view>
+    <view class="math-options">
+      <view class="math-opt {{selectedAnswer === item ? (item === mathAnswer ? 'opt-correct' : 'opt-wrong') : ''}}" wx:for="{{mathOptions}}" wx:key="*this" bindtap="answerMath" data-val="{{item}}">
+        {{item}}
+      </view>
+    </view>
+    <view class="timer-bar">
+      <view class="timer-fill" style="width:{{timerPct}}%;background:{{timerPct > 30 ? '#4CAF50' : '#f44336'}};"></view>
+    </view>
+  </view>
+
+  <!-- 记忆关卡 -->
+  <view class="game-area" wx:if="{{state === 'memory'}}">
+    <view class="round-info">第 {{round}}/{{totalRounds}} 题 · 记忆挑战</view>
+    <view class="memory-sequence" wx:if="{{memoryPhase === 'show'}}">
+      <text class="memory-hint">记住这个序列！</text>
+      <view class="memory-cells">
+        <view class="memory-cell {{item.highlight ? 'cell-highlight' : ''}}" wx:for="{{memoryGrid}}" wx:key="index" style="background:{{item.highlight ? '#E91E63' : 'rgba(255,255,255,0.1)'}};"></view>
+      </view>
+    </view>
+    <view class="memory-sequence" wx:if="{{memoryPhase === 'input'}}">
+      <text class="memory-hint">请按顺序点击高亮过的格子</text>
+      <view class="memory-cells">
+        <view class="memory-cell {{item.clicked ? 'cell-clicked' : ''}}" wx:for="{{memoryGrid}}" wx:key="index" bindtap="clickMemoryCell" data-idx="{{index}}"></view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 反应关卡 -->
+  <view class="game-area" wx:if="{{state === 'reaction'}}">
+    <view class="round-info">反应测试</view>
+    <view class="reaction-circle {{reactionReady ? 'reaction-ready' : ''}} {{reactionGo ? 'reaction-go' : ''}}" bindtap="tapReaction">
+      <text class="reaction-text" wx:if="{{!reactionReady && !reactionGo}}">点击开始</text>
+      <text class="reaction-text" wx:if="{{reactionReady}}">等待变绿...</text>
+      <text class="reaction-text" wx:if="{{reactionGo}}">快点击！</text>
+    </view>
+    <text class="reaction-result" wx:if="{{reactionMs > 0}}">{{reactionMs}}ms</text>
+  </view>
+
+  <!-- 逻辑关卡 -->
+  <view class="game-area" wx:if="{{state === 'logic'}}">
+    <view class="round-info">第 {{round}}/{{totalRounds}} 题 · 逻辑推理</view>
+    <view class="logic-question">{{logicQuestion}}</view>
+    <view class="logic-options">
+      <view class="logic-opt {{selectedAnswer === item ? (item === logicAnswer ? 'opt-correct' : 'opt-wrong') : ''}}" wx:for="{{logicOptions}}" wx:key="*this" bindtap="answerLogic" data-val="{{item}}">
+        {{item}}
+      </view>
+    </view>
+  </view>
+
+  <!-- 结果 -->
+  <view class="game-area" wx:if="{{state === 'result'}}">
+    <view class="result-card">
+      <text class="result-icon">{{score >= 80 ? '🏆' : score >= 50 ? '👍' : '💪'}}</text>
+      <text class="result-score">{{score}}分</text>
+      <text class="result-label">脑力指数</text>
+      <text class="result-rank">{{rank}}</text>
+      <view class="btn-start" bindtap="startGame">再来一次</view>
+    </view>
+  </view>
+</view>

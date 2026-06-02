@@ -1,0 +1,51 @@
+<view class="container">
+  <!-- 添加待办 -->
+  <view class="add-bar">
+    <input class="add-input" placeholder="添加新待办..." value="{{newTodo}}" bindinput="onInput" bindconfirm="addTodo" />
+    <view class="add-btn" bindtap="addTodo">+</view>
+  </view>
+
+  <!-- 筛选栏 -->
+  <view class="filter-bar">
+    <view class="filter-item {{filter === 'all' ? 'filter-active' : ''}}" bindtap="setFilter" data-filter="all">全部 ({{totalCount}})</view>
+    <view class="filter-item {{filter === 'active' ? 'filter-active' : ''}}" bindtap="setFilter" data-filter="active">待办 ({{activeCount}})</view>
+    <view class="filter-item {{filter === 'done' ? 'filter-active' : ''}}" bindtap="setFilter" data-filter="done">完成 ({{doneCount}})</view>
+  </view>
+
+  <!-- 待办列表 -->
+  <view class="todo-list">
+    <view class="todo-item" wx:for="{{filteredTodos}}" wx:key="id">
+      <view class="todo-check {{item.done ? 'todo-checked' : ''}}" bindtap="toggleTodo" data-id="{{item.id}}">
+        <text wx:if="{{item.done}}">✓</text>
+      </view>
+      <view class="todo-content {{item.done ? 'todo-done' : ''}}">
+        <view class="todo-text">{{item.text}}</view>
+        <view class="todo-meta">
+          <text class="todo-time">{{item.time}}</text>
+          <view class="todo-priority priority-{{item.priority}}" bindtap="cyclePriority" data-id="{{item.id}}">
+            {{item.priority === 'high' ? '🔴高' : item.priority === 'medium' ? '🟡中' : '🟢低'}}
+          </view>
+        </view>
+      </view>
+      <view class="todo-delete" bindtap="deleteTodo" data-id="{{item.id}}">✕</view>
+    </view>
+
+    <view class="todo-empty" wx:if="{{filteredTodos.length === 0}}">
+      {{filter === 'all' ? '还没有待办，添加一个吧~' : filter === 'active' ? '没有待办事项 🎉' : '还没有完成的事项'}}
+    </view>
+  </view>
+
+  <!-- 底部操作 -->
+  <view class="bottom-bar" wx:if="{{doneCount > 0}}">
+    <view class="btn-clear" bindtap="clearDone">清除已完成 ({{doneCount}})</view>
+  </view>
+
+  <!-- 统计 -->
+  <view class="stats-area" wx:if="{{totalCount > 0}}">
+    <view class="stats-title">📊 今日统计</view>
+    <view class="stats-bar">
+      <view class="stats-fill" style="width:{{doneCount / totalCount * 100}}%;"></view>
+    </view>
+    <text class="stats-text">完成率 {{totalCount > 0 ? Math.round(doneCount / totalCount * 100) : 0}}%</text>
+  </view>
+</view>

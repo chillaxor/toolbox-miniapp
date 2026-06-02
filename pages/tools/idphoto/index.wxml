@@ -1,0 +1,67 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">证件照生成器</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <!-- 选择照片 -->
+  <view class="card" bindtap="onChoosePhoto">
+    <view class="photo-area" wx:if="{{!photoPath}}">
+      <text class="photo-icon">📷</text>
+      <text class="photo-hint">点击选择或拍摄照片</text>
+    </view>
+    <image wx:if="{{photoPath}}" src="{{photoPath}}" mode="aspectFit" class="photo-preview" />
+  </view>
+
+  <!-- 证件照规格 -->
+  <view class="card">
+    <text class="card-title">📐 选择规格</text>
+    <picker range="{{sizes}}" range-key="name" value="{{sizeIdx}}" bindchange="onSizeChange">
+      <view class="picker-row">
+        <text class="picker-label">照片尺寸</text>
+        <text class="picker-value">{{sizes[sizeIdx].name}} ({{sizes[sizeIdx].label}})</text>
+      </view>
+    </picker>
+  </view>
+
+  <!-- 背景颜色 -->
+  <view class="card">
+    <text class="card-title">🎨 背景颜色</text>
+    <view class="bg-grid">
+      <view class="bg-item {{bgIdx === index ? 'bg-active' : ''}}" wx:for="{{bgColors}}" wx:key="index" data-idx="{{index}}" bindtap="onBgChange">
+        <view class="bg-circle" style="background: {{item.color}};"></view>
+        <text class="bg-name">{{item.name}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 生成预览 -->
+  <view class="card" wx:if="{{photoPath}}">
+    <text class="card-title">预览效果</text>
+    <view class="preview-frame" style="background: {{bgColors[bgIdx].color}}; width: {{sizes[sizeIdx].w * 0.5}}rpx; height: {{sizes[sizeIdx].h * 0.5}}rpx;">
+      <image src="{{photoPath}}" mode="aspectFill" class="preview-photo" />
+    </view>
+    <text class="save-hint">⚠️ 预览仅供参考，保存时会按规格裁剪</text>
+    <view class="btn-save-idphoto" bindtap="savePhoto">📸 生成并保存证件照</view>
+  </view>
+
+  <!-- 常见规格参考 -->
+  <view class="card">
+    <text class="card-title">📋 常见规格参考</text>
+    <view class="ref-table">
+      <view class="ref-row ref-header">
+        <text class="ref-cell">规格</text>
+        <text class="ref-cell">尺寸</text>
+        <text class="ref-cell">像素</text>
+      </view>
+      <view class="ref-row" wx:for="{{sizes}}" wx:key="index">
+        <text class="ref-cell">{{item.name}}</text>
+        <text class="ref-cell">{{item.label}}</text>
+        <text class="ref-cell">{{item.w}}×{{item.h}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 隐藏canvas用于合成 -->
+  <canvas canvas-id="idphoto-canvas" style="position:fixed;left:-9999px;width:600px;height:800px;"></canvas>
+</view>

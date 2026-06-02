@@ -1,0 +1,112 @@
+.tool-header {
+  padding: 20rpx 0;
+  margin-bottom: 16rpx;
+}
+
+.tool-header-title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.flashlight-area {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 500rpx;
+  border-radius: 32rpx;
+  margin-bottom: 32rpx;
+  transition: background 0.3s ease;
+}
+
+.flashlight-area.off {
+  background: linear-gradient(135deg, #2c3e50, #34495e);
+}
+
+.flashlight-area.on {
+  background: linear-gradient(135deg, #f5f5dc, #fffacd);
+}
+
+.light-glow {
+  position: absolute;
+  width: 300rpx;
+  height: 300rpx;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,200,0.8) 0%, rgba(255,255,200,0) 70%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+  50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+}
+
+.toggle-btn {
+  position: relative;
+  z-index: 1;
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.toggle-btn.btn-off {
+  background: rgba(255,255,255,0.15);
+  border: 4rpx solid rgba(255,255,255,0.4);
+}
+
+.toggle-btn.btn-on {
+  background: rgba(0,0,0,0.1);
+  border: 4rpx solid rgba(0,0,0,0.2);
+}
+
+.toggle-icon {
+  font-size: 60rpx;
+  color: #fff;
+}
+
+.btn-on .toggle-icon {
+  color: #e74c3c;
+}
+
+.toggle-text {
+  font-size: 24rpx;
+  margin-top: 8rpx;
+}
+
+.btn-off .toggle-text {
+  color: rgba(255,255,255,0.8);
+}
+
+.btn-on .toggle-text {
+  color: #666;
+}
+
+.tip-card {
+  padding: 32rpx;
+}
+
+.tip-title {
+  display: block;
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--color-primary);
+  margin-bottom: 16rpx;
+}
+
+.tip-text {
+  display: block;
+  font-size: 26rpx;
+  color: var(--color-secondary);
+  line-height: 1.8;
+  margin-bottom: 8rpx;
+}
