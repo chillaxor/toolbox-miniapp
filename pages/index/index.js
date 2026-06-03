@@ -5,7 +5,9 @@ Page({
   data: {
     searchText: '',
     searchResults: [],
-    categoryList: []
+    categoryList: [],
+    activeCategoryIndex: 0,
+    currentTools: []
   },
 
   onLoad: function () {
@@ -27,10 +29,53 @@ Page({
         name: cat.name,
         color: cat.color,
         bgColor: cat.bgColor,
-        tools: toolsData.getToolsByCategory(cat.id)
+        icon: cat.icon || ''
       };
     });
-    this.setData({ categoryList: categoryList });
+    
+    // 设置分类图标映射
+    var categoryIcons = {
+      'life': '🏠',
+      'date': '📅',
+      'text': '📝',
+      'image': '🖼️',
+      'fun': '🎮'
+    };
+    
+    categoryList.forEach(function(cat) {
+      cat.icon = categoryIcons[cat.id] || '📦';
+    });
+
+    var currentTools = toolsData.getToolsByCategory(categoryList[0].id);
+    var category = categoryList[0];
+    currentTools.forEach(function(tool) {
+      tool.color = category.color;
+      tool.bgColor = category.bgColor;
+    });
+
+    this.setData({ 
+      categoryList: categoryList,
+      currentTools: currentTools
+    });
+  },
+
+  /**
+   * 切换分类标签
+   */
+  onCategoryTap: function (e) {
+    var index = e.currentTarget.dataset.index;
+    var category = this.data.categoryList[index];
+    var currentTools = toolsData.getToolsByCategory(category.id);
+    
+    currentTools.forEach(function(tool) {
+      tool.color = category.color;
+      tool.bgColor = category.bgColor;
+    });
+
+    this.setData({
+      activeCategoryIndex: index,
+      currentTools: currentTools
+    });
   },
 
   /**
@@ -67,6 +112,17 @@ Page({
     }
 
     this.setData({ searchResults: results });
+  },
+
+  /**
+   * 工具点击
+   */
+  onToolTap: function (e) {
+    var toolId = e.currentTarget.dataset.id;
+    var tool = toolsData.getToolById(toolId);
+    if (tool) {
+      wx.navigateTo({ url: tool.path });
+    }
   },
 
   /**

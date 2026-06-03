@@ -16,8 +16,8 @@
 
   <!-- 搜索结果 -->
   <view wx:if="{{searchText && searchResults.length > 0}}" class="search-results">
-    <view class="tool-grid">
-      <view class="tool-grid-item" wx:for="{{searchResults}}" wx:key="id">
+    <view class="search-result-grid">
+      <view class="search-result-item" wx:for="{{searchResults}}" wx:key="id">
         <tool-card
           toolId="{{item.id}}"
           name="{{item.name}}"
@@ -37,23 +37,44 @@
     <text class="search-empty-text">没有找到匹配的工具</text>
   </view>
 
-  <!-- 分类列表 -->
-  <view wx:if="{{!searchText}}">
-    <block wx:for="{{categoryList}}" wx:key="id">
-      <section-header title="{{item.name}}" color="{{item.color}}"></section-header>
+  <!-- 分类标签栏 + 工具宫格 -->
+  <view wx:if="{{!searchText}}" class="main-content">
+    <!-- 分类标签栏 -->
+    <view class="tabs-wrapper">
+      <scroll-view class="category-tabs" scroll-x="true" enhanced="true" show-scrollbar="false">
+        <view class="tabs-inner">
+          <view
+            class="category-tab {{activeCategoryIndex === index ? 'active' : ''}}"
+            wx:for="{{categoryList}}"
+            wx:key="id"
+            data-index="{{index}}"
+            bindtap="onCategoryTap"
+            style="{{activeCategoryIndex === index ? 'background-color: ' + item.color + ';' : ''}}"
+          >
+            <text class="tab-icon">{{item.icon}}</text>
+            <text class="tab-name">{{item.name}}</text>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- 工具图标宫格 -->
+    <view class="tool-grid-container">
       <view class="tool-grid">
-        <view class="tool-grid-item" wx:for="{{item.tools}}" wx:for-item="tool" wx:key="id">
-          <tool-card
-            toolId="{{tool.id}}"
-            name="{{tool.name}}"
-            icon="{{tool.icon}}"
-            description="{{tool.description}}"
-            color="{{item.color}}"
-            bgColor="{{item.bgColor}}"
-            path="{{tool.path}}"
-          />
+        <view
+          class="tool-grid-item"
+          wx:for="{{currentTools}}"
+          wx:key="id"
+          data-id="{{item.id}}"
+          bindtap="onToolTap"
+          hover-class="tool-grid-item-hover"
+        >
+          <view class="tool-icon-wrap" style="background-color: {{item.bgColor}}">
+            <text class="tool-icon">{{item.icon}}</text>
+          </view>
+          <text class="tool-name">{{item.name}}</text>
         </view>
       </view>
-    </block>
+    </view>
   </view>
 </view>

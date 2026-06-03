@@ -1,16 +1,23 @@
 var PHONES = require('../../../data/phones.js');
 
+/**
+ * 匹配设备物理尺寸
+ */
 function matchDevice(model) {
   if (!model) return null;
-  var defaults = PHONES['_default'] || {};
+  // 精确匹配
   if (PHONES[model] && model !== '_default') return PHONES[model];
+  // 模糊匹配
   var keys = Object.keys(PHONES);
   for (var i = 0; i < keys.length; i++) {
-    if (keys[i] === '_default') continue;
-    if (model.indexOf(keys[i]) >= 0 || keys[i].indexOf(model) >= 0) {
-      return PHONES[keys[i]];
+    var k = keys[i];
+    if (k === '_default') continue;
+    if (model.indexOf(k) >= 0 || k.indexOf(model) >= 0) {
+      return PHONES[k];
     }
   }
+  // 品牌默认值
+  var defaults = PHONES['_default'] || {};
   var m = model.toLowerCase();
   var dKeys = Object.keys(defaults);
   for (var j = 0; j < dKeys.length; j++) {
@@ -22,144 +29,180 @@ function matchDevice(model) {
 Page({
   data: {
     unit: 'cm',
-    rulerMarks: [],
-    pixelsPerCm: 0,
+    marks: [],
+    pxPerMm: 0,
     maxDisplay: 0,
     deviceInfo: '',
     isLandscape: false,
-    showCtrl: true,
-    statusBarHeight: 0
+    showCtrl: false,
+    statusBarHeight: 0,
+    rulerSize: 80
   },
 
   onLoad: function () {
-    var sysInfo = wx.getSystemInfoSync();
-    this.setData({ statusBarHeight: sysInfo.statusBarHeight || 20 });
-    this.detectOrientation();
-    this.autoCalibrate();
-    this.initRuler();
+    var sys = wx.getSystemInfoSync();
+    this._sys = sys;
+    this.setData({ statusBarHeight: sys.statusBarHeight || 20 });
+    this._refresh();
   },
 
   onResize: function () {
-    this.detectOrientation();
-    this.autoCalibrate();
-    this.initRuler();
+    this._sys = wx.getSystemInfoSync();
+    this._refresh();
   },
 
-  detectOrientation: function () {
-    var sysInfo = wx.getSystemInfoSync();
-    this.setData({ isLandscape: sysInfo.windowWidth > sysInfo.windowHeight });
+  _refresh: function () {
+    this._detectOrientation();
+    this._calibrate();
+    this._buildMarks();
+  },
+
+  /**
+   * 检测横竖屏
+   */
+  _detectOrientation: function () {
+    var sys = this._sys || wx.getSystemInfoSync();
+    this.setData({ isLandscape: sys.windowWidth > sys.windowHeight });
+  },
+
+  /**
+   * 校准：计算每毫米对应的CSS像素数
+   * 核心公式：pxPerMm = 屏幕CSS像素 / 物理毫米
+   *   竖屏：尺子沿屏幕高度方向 → pxPerMm = windowHeight / physH
+   *   横屏：尺子沿屏幕宽度方向 → pxPerMm = windowWidth / physH
+   *   （横屏时屏幕宽度 = 竖屏时的高度，都对应手机的长边物理尺寸）
+   */
+  _calibrate: function () {
+    var sys = this._sys || wx.getSystemInfoSync();
+    var model = sys.model || '';
+    var device = matchDevice(model);
+    var isLandscape = this.data.isLandscape;
+
+    var wW = sys.windowWidth;
+    var wH = sys.windowHeight;
+    var physW, physH; // 物理尺寸 mm
+
+    if (device) {
+      physW = device.w;
+      physH = device.h;
+      this.setData({
+        deviceInfo: model + ' (' + physW + '×' + physH + 'mm)'
+      });
+    } else {
+      // 无匹配设备时，根据DPI估算
+      var dpr = sys.pixelRatio || 3;
+      var sW = sys.screenWidth;
+      var sH = sys.screenHeight;
+      var physPxW = sW * dpr;
+      // 多数手机PPI在400-480之间，取420作为估算值
+      var ppi = 420;
+      physW = (physPxW / ppi) * 25.4;
+      physH = physW * (sH / sW);
+      this.setData({
+        deviceInfo: '估算 (' + Math.round(physW) + '×' + Math.round(physH) + 'mm)'
+      });
+    }
+
+    // 计算 px/mm
+    var rulerLength = isLandscape ? wW : wH;
+    var pxPerMm = rulerLength / physH;
+
+    // 应用用户微调偏移
+    var offset = wx.getStorageSync('ruler_offset') || 0;
+    pxPerMm += offset;
+
+    this.setData({
+      pxPerMm: Math.round(pxPerMm * 100) / 100,
+      rulerSize: isLandscape ? 50 : 80
+    });
+  },
+
+  /**
+   * 生成刻度数据（所有尺寸单位均为 px）
+   * cm模式：每毫米一条刻度，5mm中刻度，10mm(1cm)大刻度
+   * inch模式：每1/8英寸一条刻度，1/4中刻度，1/2中大刻度，1英寸大刻度
+   */
+  _buildMarks: function () {
+    var pxPerMm = this.data.pxPerMm;
+    if (pxPerMm <= 0) {
+      this.setData({ marks: [], maxDisplay: 0 });
+      return;
+    }
+
+    var isCm = this.data.unit === 'cm';
+    var isLandscape = this.data.isLandscape;
+    var sys = this._sys || wx.getSystemInfoSync();
+
+    // 每单位（cm或inch）对应的px数
+    var pxPerUnit = isCm ? pxPerMm * 10 : pxPerMm * 25.4;
+
+    // 每单位的细分数
+    var subDiv = isCm ? 10 : 8;
+
+    // 尺子可用总长度（px）
+    var totalPx = (isLandscape ? sys.windowWidth : sys.windowHeight) - 2;
+
+    var maxUnits = Math.floor(totalPx / pxPerUnit);
+    var totalSubs = maxUnits * subDiv;
+
+    var marks = [];
+    for (var i = 0; i <= totalSubs; i++) {
+      var pos = i * pxPerUnit / subDiv;
+      if (pos > totalPx) break;
+
+      var isMajor = (i % subDiv === 0);
+      var len;
+      var label = '';
+
+      if (isCm) {
+        var isHalf = (i % 5 === 0) && !isMajor;
+        len = isMajor ? 24 : (isHalf ? 16 : 8);
+        if (isMajor) label = String(i / subDiv);
+      } else {
+        var isHalfInch = (i % 4 === 0) && !isMajor;
+        var isQuarter = (i % 2 === 0) && !isMajor && !isHalfInch;
+        len = isMajor ? 24 : (isHalfInch ? 18 : (isQuarter ? 12 : 6));
+        if (isMajor) label = String(i / subDiv);
+      }
+
+      marks.push({
+        pos: Math.round(pos * 10) / 10,
+        len: len,
+        label: label,
+        major: isMajor
+      });
+    }
+
+    this.setData({
+      marks: marks,
+      maxDisplay: isCm ? maxUnits : maxUnits
+    });
+  },
+
+  /**
+   * 切换厘米/英寸
+   */
+  switchUnit: function () {
+    this.setData({ unit: this.data.unit === 'cm' ? 'inch' : 'cm' });
+    this._buildMarks();
+  },
+
+  /**
+   * 微调校准滑块
+   * 范围 0-4000，默认2000(无偏移)
+   * 偏移范围：±0.6 px/mm
+   */
+  onCalibrate: function (e) {
+    var val = e.detail.value;
+    var offset = (val - 2000) * 0.0003;
+    offset = Math.round(offset * 10000) / 10000;
+    wx.setStorageSync('ruler_offset', offset);
+    this._calibrate();
+    this._buildMarks();
   },
 
   toggleCtrl: function () {
     this.setData({ showCtrl: !this.data.showCtrl });
-  },
-
-  autoCalibrate: function () {
-    var sysInfo = wx.getSystemInfoSync();
-    var model = sysInfo.model || '';
-    var device = matchDevice(model);
-    var isLandscape = this.data.isLandscape;
-
-    // windowHeight/windowWidth = 小程序实际可用CSS像素（不含状态栏/导航栏）
-    var winW = sysInfo.windowWidth;
-    var winH = sysInfo.windowHeight;
-    // screen 是完整物理屏幕对应的CSS像素
-    var scrW = sysInfo.screenWidth;
-    var scrH = sysInfo.screenHeight;
-
-    var physWmm, physHmm;
-
-    if (device) {
-      physWmm = device.w;
-      physHmm = device.h;a
-      this.setData({ deviceInfo: model + ' ' + physWmm + '×' + physHmm + 'mm' });
-    } else {
-      var dpr = sysInfo.pixelRatio || 3;
-      var physPxW = scrW * dpr;
-      var ppi = 420;
-      physWmm = (physPxW / ppi) * 25.4;
-      physHmm = physWmm * (scrH / scrW);
-      this.setData({ deviceInfo: '估算 ' + Math.round(physWmm) + '×' + Math.round(physHmm) + 'mm' });
-    }
-
-    // 核心：CSS px 和 物理 mm 的映射
-    // 竖屏：尺子沿 windowHeight(CSS px) ↔ physHmm(物理高度)
-    // 横屏：尺子沿 windowWidth(CSS px) ↔ physHmm(物理高度横过来了)
-    var pxPerCm;
-    if (isLandscape) {
-      // 横屏时 windowWidth 对应物理高度（长边横过来了）
-      pxPerCm = winW / (physHmm / 10);
-    } else {
-      // 竖屏时 windowHeight 对应物理高度
-      pxPerCm = winH / (physHmm / 10);
-    }
-
-    var offset = wx.getStorageSync('ruler_pxPerCm_offset') || 0;
-    pxPerCm = pxPerCm + offset;
-    this.setData({ pixelsPerCm: Math.round(pxPerCm * 100) / 100 });
-  },
-
-  initRuler: function () {
-    var sysInfo = wx.getSystemInfoSync();
-    var pixelsPerCm = this.data.pixelsPerCm;
-    var isCmUnit = this.data.unit === 'cm';
-    var pixelsPerUnit = isCmUnit ? pixelsPerCm : pixelsPerCm * 2.54;
-    var subdivisions = isCmUnit ? 10 : 16;
-    var isLandscape = this.data.isLandscape;
-
-    // 尺子刻度使用 window 尺寸（实际渲染区域）
-    var pixelLength = isLandscape ? sysInfo.windowWidth : sysInfo.windowHeight;
-    // 只留极小边距给零点线
-    var availablePx = pixelLength - 4;
-
-    var maxUnits = Math.floor(availablePx / pixelsPerUnit);
-    var maxDisplayCm = isCmUnit ? maxUnits : Math.round(maxUnits * 2.54 * 10) / 10;
-
-    var marks = [];
-    var maxSub = maxUnits * subdivisions;
-
-    for (var i = 0; i <= maxSub; i++) {
-      var posPx = i * pixelsPerUnit / subdivisions;
-      if (posPx > availablePx) break;
-
-      var isMajor = i % subdivisions === 0;
-      var markSize, label = '';
-
-      if (isCmUnit) {
-        var isHalf = i % 5 === 0;
-        markSize = isMajor ? 140 : (isHalf ? 85 : 42);
-        label = isMajor ? String(i / subdivisions) : '';
-      } else {
-        var isQuarter = i % 4 === 0;
-        var isEighth = i % 2 === 0;
-        markSize = isMajor ? 140 : (isQuarter ? 100 : (isEighth ? 68 : 40));
-        label = isMajor ? String(i / subdivisions) : '';
-      }
-
-      marks.push({
-        position: posPx,
-        size: markSize,
-        label: label,
-        isMajor: isMajor
-      });
-    }
-
-    this.setData({ rulerMarks: marks, maxDisplay: maxDisplayCm });
-  },
-
-  switchUnit: function () {
-    var newUnit = this.data.unit === 'cm' ? 'inch' : 'cm';
-    this.setData({ unit: newUnit });
-    this.initRuler();
-  },
-
-  onCalibrate: function (e) {
-    var val = e.detail.value;
-    var offset = (val - 2000) * 0.0005;
-    offset = Math.round(offset * 10000) / 10000;
-    wx.setStorageSync('ruler_pxPerCm_offset', offset);
-    this.autoCalibrate();
-    this.initRuler();
   },
 
   onShareAppMessage: function () {
