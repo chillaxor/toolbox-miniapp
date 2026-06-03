@@ -5,15 +5,17 @@ Page({
     photoPath: '',
     showDate: true,
     showTime: true,
-    showLocation: true,
     showCustom: false,
     customText: '',
     watermarkPosition: 'bottom-left',
     watermarkDate: '',
     watermarkTime: '',
-    locationText: '',
     imgWidth: 0,
-    imgHeight: 0
+    imgHeight: 0,
+    canvasW: 750,
+    canvasH: 1334,
+    resultPath: '',
+    generating: false
   },
 
   onLoad: function () {
@@ -41,29 +43,28 @@ Page({
       sourceType: ['album', 'camera'],
       success: function (res) {
         var path = res.tempFilePaths[0];
-        self.setData({ photoPath: path });
         self._updateDateTime();
-        self._getLocation();
-        // 获取图片尺寸
         wx.getImageInfo({
           src: path,
           success: function (info) {
-            self.setData({ imgWidth: info.width, imgHeight: info.height });
+            // 限制最大宽度 750px，保持比例
+            var maxW = 750;
+            var scale = info.width > maxW ? maxW / info.width : 1;
+            var cw = Math.round(info.width * scale);
+            var ch = Math.round(info.height * scale);
+            self.setData({
+              photoPath: path,
+              imgWidth: info.width,
+              imgHeight: info.height,
+              canvasW: cw,
+              canvasH: ch,
+              resultPath: ''
+            });
+          },
+          fail: function () {
+            self.setData({ photoPath: path, canvasW: 750, canvasH: 1334, resultPath: '' });
           }
         });
-      }
-    });
-  },
-
-  _getLocation: function () {
-    var self = this;
-    wx.getLocation({
-      type: 'gcj02',
-      success: function (res) {
-        self.setData({ locationText: res.latitude.toFixed(4) + '°N, ' + res.longitude.toFixed(4) + '°E' });
-      },
-      fail: function () {
-        self.setData({ locationText: '' });
       }
     });
   },
@@ -84,91 +85,102 @@ Page({
   },
 
   rechoose: function () {
-    this.setData({ photoPath: '', locationText: '' });
+    this.setData({ photoPath: '', resultPath: '' });
   },
 
   savePhoto: function () {
     var self = this;
     if (!this.data.photoPath) return;
+    if (this.data.generating) return;
 
+    this.setData({ generating: true });
     wx.showLoading({ title: '生成中...' });
 
-    var imgW = this.data.imgWidth || 750;
-    var imgH = this.data.imgHeight || 1334;
-    // 限制canvas尺寸
-    var maxW = 750;
-    var scale = maxW / imgW;
-    var cw = Math.floor(imgW * scale);
-    var ch = Math.floor(imgH * scale);
+    var cw = this.data.canvasW;
+    var ch = this.data.canvasH;
 
     var ctx = wx.createCanvasContext('watermark-canvas', this);
 
-    // 绘制底图
+    // Step1: 画底图
     ctx.drawImage(self.data.photoPath, 0, 0, cw, ch);
 
-    // 绘制水印
+    // 构建水印文字行
     var lines = [];
     if (self.data.showDate) lines.push(self.data.watermarkDate);
     if (self.data.showTime) lines.push(self.data.watermarkTime);
-    if (self.data.showLocation && self.data.locationText) lines.push('📍 ' + self.data.locationText);
     if (self.data.showCustom && self.data.customText) lines.push(self.data.customText);
 
     if (lines.length > 0) {
-      var fontSize = Math.max(20, Math.floor(cw / 30));
-      var pad = Math.floor(fontSize * 0.8);
-      var lineH = Math.floor(fontSize * 1.5);
+      var fontSize = Math.max(18, Math.floor(cw / 28));
+      var pad = Math.floor(fontSize * 0.9);
+      var lineH = Math.floor(fontSize * 1.6);
       var blockH = lineH * lines.length + pad * 2;
-      var blockW = 0;
 
-      // 估算文字宽度
-      ctx.setFontSize(fontSize);
+      // 估算文字最大宽度（中文约 fontSize px/字，英文约 fontSize*0.6 px/字）
+      var blockW = 0;
       for (var i = 0; i < lines.length; i++) {
-        var w = lines[i].length * fontSize;
+        // 简单估算：每个字符约 fontSize * 0.9
+        var w = lines[i].length * fontSize * 0.9;
         if (w > blockW) blockW = w;
       }
       blockW += pad * 2;
+      if (blockW > cw - pad * 2) blockW = cw - pad * 2;
 
       // 计算位置
       var bx, by;
       var pos = self.data.watermarkPosition;
-      var margin = Math.floor(fontSize);
-      if (pos === 'bottom-left') { bx = margin; by = ch - blockH - margin; }
+      var margin = Math.floor(fontSize * 0.8);
+      if (pos === 'bottom-left')  { bx = margin;            by = ch - blockH - margin; }
       else if (pos === 'bottom-right') { bx = cw - blockW - margin; by = ch - blockH - margin; }
-      else if (pos === 'top-left') { bx = margin; by = margin; }
-      else { bx = cw - blockW - margin; by = margin; }
+      else if (pos === 'top-left')    { bx = margin;            by = margin; }
+      else                             { bx = cw - blockW - margin; by = margin; }
 
-      // 半透明背景
-      ctx.setFillStyle('rgba(0,0,0,0.4)');
+      // 半透明黑色背景
+      ctx.setFillStyle('rgba(0,0,0,0.45)');
+      // 圆角矩形模拟（用多个 fillRect 拼不了圆角，直接 fillRect 即可）
       ctx.fillRect(bx, by, blockW, blockH);
 
-      // 文字
+      // 白色文字
       ctx.setFillStyle('#ffffff');
       ctx.setFontSize(fontSize);
-      for (var i = 0; i < lines.length; i++) {
-        ctx.fillText(lines[i], bx + pad, by + pad + (i + 1) * lineH - fontSize * 0.3);
+      for (var j = 0; j < lines.length; j++) {
+        ctx.fillText(lines[j], bx + pad, by + pad + j * lineH + fontSize);
       }
     }
 
+    // Step2: draw 提交，然后导出
     ctx.draw(false, function () {
       setTimeout(function () {
         wx.canvasToTempFilePath({
           canvasId: 'watermark-canvas',
-          quality: 0.9,
+          x: 0,
+          y: 0,
+          width: cw,
+          height: ch,
+          destWidth: cw,
+          destHeight: ch,
+          quality: 0.92,
           success: function (res) {
             wx.hideLoading();
+            self.setData({ generating: false, resultPath: res.tempFilePath });
             wx.saveImageToPhotosAlbum({
               filePath: res.tempFilePath,
               success: function () {
                 wx.showToast({ title: '已保存到相册', icon: 'success' });
               },
               fail: function () {
-                wx.showToast({ title: '保存失败，请授权相册', icon: 'none' });
+                wx.showModal({
+                  title: '保存失败',
+                  content: '请在设置中允许访问相册',
+                  showCancel: false
+                });
               }
             });
           },
-          fail: function () {
+          fail: function (err) {
             wx.hideLoading();
-            wx.showToast({ title: '生成失败', icon: 'none' });
+            self.setData({ generating: false });
+            wx.showToast({ title: '生成失败: ' + (err.errMsg || ''), icon: 'none' });
           }
         }, self);
       }, 300);
@@ -176,6 +188,6 @@ Page({
   },
 
   onShareAppMessage: function () {
-    return { title: '水印相机 - 为照片添加时间地点水印', path: '/pages/tools/watermark/index' };
+    return { title: '水印相机 - 为照片添加时间水印', path: '/pages/tools/watermark/index' };
   }
 });
