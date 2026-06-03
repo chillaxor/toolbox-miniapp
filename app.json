@@ -70,7 +70,12 @@
     "pages/tools/gradient/index",
     "pages/tools/poetrygame/index",
     "pages/tools/dailyquote/index",
-    "pages/tools/woodfish/index"
+    "pages/tools/woodfish/index",
+    "pages/tools/miteguide/index",
+    "pages/tools/flowerlang/index",
+    "pages/tools/acupoint/index",
+    "pages/tools/answerbook/index",
+    "pages/tools/mbtitest/index"
   ],
   "window": {
     "backgroundTextStyle": "light",

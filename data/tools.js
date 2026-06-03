@@ -80,6 +80,10 @@ const TOOLS = [
   { id: 'poetrygame', name: '诗词飞花令', category: 'text', icon: '🏮', path: '/pages/tools/poetrygame/index', description: '选字列出经典诗句·挑战模式' },
   { id: 'dailyquote', name: '人生格言', category: 'fun', icon: '💬', path: '/pages/tools/dailyquote/index', description: '每日一句名人名言·收藏复制' },
   { id: 'woodfish', name: '电子木鱼', category: 'fun', icon: '🪵', path: '/pages/tools/woodfish/index', description: '敲木鱼积功德·功德计数' },
+  { id: 'miteguide', name: '螨虫指南', category: 'life', icon: '🔍', path: '/pages/tools/miteguide/index', description: '除螨方法·螨虫类型·预防指南' },
+  { id: 'flowerlang', name: '花语图鉴', category: 'life', icon: '🌸', path: '/pages/tools/flowerlang/index', description: '55种花语查询·送花场景推荐' },
+  { id: 'acupoint', name: '穴位图谱', category: 'life', icon: '📍', path: '/pages/tools/acupoint/index', description: '常见穴位查询·按摩养生指南' },
+  { id: 'answerbook', name: '答案之书', category: 'fun', icon: '📖', path: '/pages/tools/answerbook/index', description: '心中想问题·翻开答案之书解惑' },
 ];
 
 /**

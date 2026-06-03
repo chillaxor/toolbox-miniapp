@@ -1,0 +1,54 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">📖 答案之书</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <!-- 提问区域 -->
+  <view class="question-section">
+    <view class="question-hint">心中想一个问题，然后翻开答案之书…</view>
+    <view class="question-input-wrap">
+      <textarea class="question-input" placeholder="写下你心中的疑惑…" maxlength="100" bindinput="onQuestionInput" value="{{question}}" />
+      <text class="char-count">{{question.length}}/100</text>
+    </view>
+    <view class="ask-btn {{isFlipping ? 'btn-disabled' : ''}}" bindtap="onAsk">
+      <text wx:if="{{!isFlipping}}">📖 翻开答案</text>
+      <text wx:else>🔮 翻阅中…</text>
+    </view>
+  </view>
+
+  <!-- 翻阅动画 -->
+  <view class="flip-animation" wx:if="{{isFlipping}}">
+    <view class="flip-book">
+      <view class="flip-page page1"></view>
+      <view class="flip-page page2"></view>
+      <view class="flip-page page3"></view>
+    </view>
+    <text class="flip-text">答案正在显现…</text>
+  </view>
+
+  <!-- 答案展示 -->
+  <view class="answer-section" wx:if="{{showResult && currentAnswer}}">
+    <view class="answer-card">
+      <text class="answer-emoji">{{currentAnswer.emoji}}</text>
+      <text class="answer-text">{{currentAnswer.text}}</text>
+      <view class="answer-question">「{{question}}」</view>
+    </view>
+    <view class="reset-btn" bindtap="onReset">🔄 再问一个问题</view>
+  </view>
+
+  <!-- 历史记录 -->
+  <view class="history-section" wx:if="{{history.length > 0}}">
+    <view class="history-header">
+      <text class="history-title">📜 问答记录</text>
+      <text class="history-clear" bindtap="onClearHistory">清空</text>
+    </view>
+    <view class="history-list">
+      <view class="history-item" wx:for="{{history}}" wx:key="index">
+        <view class="history-q">{{item.emoji}} Q: {{item.question}}</view>
+        <view class="history-a">A: {{item.answer}}</view>
+        <text class="history-time">{{item.time}}</text>
+      </view>
+    </view>
+  </view>
+</view>

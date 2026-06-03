@@ -1,0 +1,49 @@
+.container { padding: 24rpx; padding-bottom: calc(24rpx + env(safe-area-inset-bottom)); }
+.tool-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32rpx; }
+.tool-header-title { font-size: 40rpx; font-weight: bold; color: #1a1a1a; }
+.tool-header-fav { font-size: 44rpx; padding: 8rpx; }
+
+.scene-tabs { display: flex; gap: 16rpx; margin-bottom: 28rpx; flex-wrap: wrap; }
+.scene-tab { flex: 1; min-width: 140rpx; text-align: center; padding: 16rpx 12rpx; background: #f5f5f5; border-radius: 20rpx; font-size: 26rpx; color: #666; transition: all .2s; }
+.scene-active { background: #FF6B35; color: #fff; font-weight: 600; }
+
+.guide-card { background: #fff; border-radius: 24rpx; padding: 32rpx; margin-bottom: 28rpx; box-shadow: 0 4rpx 20rpx rgba(0,0,0,.06); }
+.guide-title { font-size: 34rpx; font-weight: bold; color: #1a1a1a; margin-bottom: 12rpx; }
+.guide-desc { font-size: 26rpx; color: #888; line-height: 1.7; margin-bottom: 28rpx; }
+
+.guide-section { margin-bottom: 28rpx; }
+.guide-section:last-child { margin-bottom: 0; }
+.section-title { font-size: 30rpx; font-weight: 600; color: #333; margin-bottom: 18rpx; }
+
+.guide-item { display: flex; align-items: flex-start; gap: 18rpx; margin-bottom: 20rpx; }
+.item-step { width: 48rpx; height: 48rpx; background: linear-gradient(135deg,#FF6B35,#FF8F65); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 26rpx; font-weight: bold; flex-shrink: 0; }
+.item-body { flex: 1; }
+.item-name { font-size: 28rpx; font-weight: 600; color: #333; display: block; margin-bottom: 6rpx; }
+.item-detail { font-size: 24rpx; color: #888; line-height: 1.6; }
+
+.freq-list { display: flex; flex-direction: column; gap: 14rpx; }
+.freq-item { display: flex; align-items: center; gap: 12rpx; background: #FFF5F0; border-radius: 14rpx; padding: 16rpx 20rpx; }
+.freq-icon { font-size: 28rpx; }
+.freq-text { font-size: 26rpx; color: #555; }
+
+.knowledge-card { background: #fff; border-radius: 24rpx; padding: 32rpx; margin-bottom: 28rpx; box-shadow: 0 4rpx 20rpx rgba(0,0,0,.06); }
+.knowledge-title { font-size: 30rpx; font-weight: bold; color: #333; margin-bottom: 20rpx; }
+.knowledge-item { margin-bottom: 22rpx; }
+.knowledge-item:last-child { margin-bottom: 0; }
+.knowledge-q { font-size: 28rpx; font-weight: 600; color: #333; display: block; margin-bottom: 8rpx; }
+.knowledge-a { font-size: 25rpx; color: #666; line-height: 1.7; }
+
+.tips-card { background: #fff; border-radius: 24rpx; padding: 32rpx; margin-bottom: 28rpx; box-shadow: 0 4rpx 20rpx rgba(0,0,0,.06); }
+.tips-title { font-size: 30rpx; font-weight: bold; color: #333; margin-bottom: 20rpx; }
+.tip-item { display: flex; align-items: center; gap: 14rpx; margin-bottom: 16rpx; }
+.tip-item:last-child { margin-bottom: 0; }
+.tip-icon { font-size: 30rpx; }
+.tip-text { font-size: 26rpx; color: #555; line-height: 1.6; }
+
+.symptom-card { background: #FFF5F0; border-radius: 24rpx; padding: 32rpx; border: 2rpx solid #FFD4BF; }
+.symptom-title { font-size: 30rpx; font-weight: bold; color: #FF6B35; margin-bottom: 20rpx; }
+.symptom-list { display: flex; flex-wrap: wrap; gap: 16rpx; margin-bottom: 20rpx; }
+.symptom-item { display: flex; align-items: center; gap: 10rpx; background: #fff; border-radius: 14rpx; padding: 14rpx 20rpx; }
+.symptom-icon { font-size: 28rpx; }
+.symptom-text { font-size: 25rpx; color: #555; }
+.symptom-tip { font-size: 24rpx; color: #FF6B35; text-align: center; }

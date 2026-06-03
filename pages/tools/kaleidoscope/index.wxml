@@ -1,79 +1,117 @@
 <view class="page {{fullscreen ? 'fullscreen' : ''}}">
 
-  <!-- Hidden camera source – still renders to native layer -->
+  <!-- Hidden camera source -->
   <camera
     class="hidden-camera"
     device-position="{{position}}"
     flash="off"
-    resolution="high"
+    resolution="medium"
     binderror="onCameraError"
   ></camera>
 
-  <!-- Kaleidoscope viewport -->
-  <view
-    class="viewport"
-    style="transform: rotate({{rotationDeg}}deg);"
-    bindtap="onToggleFullscreen"
-  >
-    <!-- Each segment is a camera view clipped & rotated via inline style -->
-    <block wx:for="{{segmentStyles}}" wx:key="index">
-      <view class="segment" style="{{item}}">
-        <camera
-          class="segment-camera"
-          device-position="{{position}}"
-          flash="off"
-          resolution="high"
-          binderror="onCameraError"
-        ></camera>
-      </view>
-    </block>
-
-    <!-- Centre dot decoration -->
-    <view class="centre-dot"></view>
+  <!-- Kaleidoscope Canvas viewport -->
+  <view class="viewport-wrap" bindtap="onToggleFullscreen">
+    <view class="viewport">
+      <canvas canvas-id="kaleido-canvas" class="kaleido-canvas"></canvas>
+    </view>
+    <!-- 装饰光圈 -->
+    <view class="glow-ring"></view>
   </view>
 
-  <!-- Offscreen canvas used for screenshot -->
-  <canvas canvas-id="kaleidoscope-canvas" class="offscreen-canvas"></canvas>
+  <!-- 信息栏 -->
+  <view class="info-bar" wx:if="{{!fullscreen}}">
+    <text class="fps-text">{{fps}} FPS</text>
+    <text class="seg-text">{{segments}}片 · {{rotating ? '旋转中' : '已暂停'}}</text>
+  </view>
 
-  <!-- Floating control bar -->
+  <!-- 控制面板 -->
   <view class="controls" wx:if="{{!fullscreen}}">
-    <!-- Segment count selector -->
+    
+    <!-- 片数选择 -->
     <view class="control-group">
       <text class="control-label">片数</text>
-      <view class="seg-buttons">
-        <view
-          wx:for="{{segmentList}}"
-          wx:key="*this"
-          class="seg-btn {{segments === item ? 'active' : ''}}"
-          data-seg="{{item}}"
-          bindtap="onSegmentChange"
-        >
-          <text>{{item}}</text>
+      <view class="btn-scroll">
+        <view class="btn-row">
+          <view
+            wx:for="{{segmentList}}"
+            wx:key="*this"
+            class="pill-btn {{segments === item ? 'active' : ''}}"
+            data-seg="{{item}}"
+            bindtap="onSegmentChange"
+          >{{item}}</view>
         </view>
       </view>
     </view>
 
-    <!-- Action buttons row -->
+    <!-- 旋转速度 -->
+    <view class="control-group">
+      <text class="control-label">速度</text>
+      <view class="btn-row">
+        <view
+          wx:for="{{speedList}}"
+          wx:key="value"
+          class="pill-btn {{speed === item.value ? 'active' : ''}}"
+          data-speed="{{item.value}}"
+          bindtap="onSpeedChange"
+        >{{item.label}}</view>
+      </view>
+    </view>
+
+    <!-- 颜色模式 -->
+    <view class="control-group">
+      <text class="control-label">色调</text>
+      <view class="btn-row">
+        <view
+          wx:for="{{colorList}}"
+          wx:key="value"
+          class="pill-btn color-pill {{colorMode === item.value ? 'active' : ''}}"
+          data-color="{{item.value}}"
+          bindtap="onColorChange"
+        >{{item.label}}</view>
+      </view>
+    </view>
+
+    <!-- 镜像模式 -->
+    <view class="control-group">
+      <text class="control-label">镜像</text>
+      <view class="btn-row">
+        <view
+          wx:for="{{mirrorList}}"
+          wx:key="value"
+          class="pill-btn {{mirrorMode === item.value ? 'active' : ''}}"
+          data-mirror="{{item.value}}"
+          bindtap="onMirrorChange"
+        >{{item.label}}</view>
+      </view>
+    </view>
+
+    <!-- 操作按钮 -->
     <view class="action-row">
-      <view class="btn" bindtap="onToggleRotation">
-        <text class="btn-icon">{{rotating ? '⏸' : '▶'}}</text>
-        <text class="btn-label">旋转</text>
+      <view class="action-btn" bindtap="onToggleRotation">
+        <view class="action-icon-wrap">
+          <text class="action-icon">{{rotating ? '⏸' : '▶'}}</text>
+        </view>
+        <text class="action-label">{{rotating ? '暂停' : '旋转'}}</text>
       </view>
 
-      <view class="btn" bindtap="onSwitchCamera">
-        <text class="btn-icon">🔄</text>
-        <text class="btn-label">翻转</text>
+      <view class="action-btn" bindtap="onSwitchCamera">
+        <view class="action-icon-wrap">
+          <text class="action-icon">🔄</text>
+        </view>
+        <text class="action-label">翻转</text>
       </view>
 
-      <view class="btn" bindtap="onSave">
-        <text class="btn-icon">💾</text>
-        <text class="btn-label">保存</text>
+      <view class="action-btn" bindtap="onSave">
+        <view class="action-icon-wrap">
+          <text class="action-icon">💾</text>
+        </view>
+        <text class="action-label">保存</text>
       </view>
     </view>
   </view>
 
-  <!-- Fullscreen hint -->
+  <!-- 全屏提示 -->
   <view class="fullscreen-hint" wx:if="{{fullscreen}}" bindtap="onToggleFullscreen">
-    <text>点击画面退出全屏</text>
+    <text>点击退出全屏</text>
   </view>
 </view>

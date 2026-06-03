@@ -1,0 +1,33 @@
+.container { padding: 24rpx; padding-bottom: calc(24rpx + env(safe-area-inset-bottom)); }
+.tool-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32rpx; }
+.tool-header-title { font-size: 40rpx; font-weight: bold; color: #1a1a1a; }
+.tool-header-fav { font-size: 44rpx; padding: 8rpx; }
+
+.search-bar { margin-bottom: 28rpx; }
+.search-input { background: #fff; border-radius: 20rpx; padding: 26rpx 28rpx; font-size: 30rpx; box-shadow: 0 4rpx 20rpx rgba(0,0,0,.06); line-height: 1.5; }
+
+.scene-section { margin-bottom: 28rpx; }
+.section-title { font-size: 30rpx; font-weight: bold; color: #333; margin-bottom: 18rpx; }
+.scene-grid { display: flex; flex-wrap: wrap; gap: 16rpx; }
+.scene-item { display: flex; flex-direction: column; align-items: center; padding: 20rpx 16rpx; background: #fff; border-radius: 18rpx; min-width: 130rpx; box-shadow: 0 2rpx 12rpx rgba(0,0,0,.05); }
+.scene-active { background: #FF6B35; color: #fff; }
+.scene-icon { font-size: 40rpx; margin-bottom: 8rpx; }
+.scene-name { font-size: 24rpx; }
+
+.scene-flowers { margin-top: 24rpx; }
+.scene-title { font-size: 28rpx; font-weight: 600; color: #FF6B35; margin-bottom: 16rpx; }
+
+.flower-list { margin-bottom: 28rpx; }
+.list-title { font-size: 30rpx; font-weight: bold; color: #333; margin-bottom: 18rpx; }
+
+.flower-card { background: #fff; border-radius: 20rpx; padding: 28rpx; margin-bottom: 18rpx; box-shadow: 0 4rpx 20rpx rgba(0,0,0,.06); }
+.flower-header { display: flex; align-items: center; gap: 18rpx; margin-bottom: 16rpx; }
+.flower-emoji { font-size: 56rpx; }
+.flower-info { flex: 1; }
+.flower-name { font-size: 32rpx; font-weight: bold; color: #1a1a1a; display: block; }
+.flower-color { font-size: 24rpx; color: #999; }
+.flower-meaning { font-size: 28rpx; color: #FF6B35; font-weight: 600; margin-bottom: 10rpx; }
+.flower-send { font-size: 26rpx; color: #555; margin-bottom: 10rpx; }
+.flower-note { font-size: 24rpx; color: #999; line-height: 1.7; }
+
+.empty-tip { text-align: center; color: #999; font-size: 28rpx; padding: 60rpx 0; }

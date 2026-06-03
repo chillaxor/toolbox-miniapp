@@ -1,0 +1,86 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">📍 穴位图谱</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <!-- 搜索框 -->
+  <view class="search-bar">
+    <input class="search-input" placeholder="搜索穴位名/编码/功效" bindinput="onSearchInput" value="{{keyword}}" />
+  </view>
+
+  <!-- 搜索结果 -->
+  <view class="search-results" wx:if="{{keyword}}">
+    <view class="result-title">🔍 搜索结果（{{searchResults.length}}）</view>
+    <view class="point-card" wx:for="{{searchResults}}" wx:key="name">
+      <view class="point-header" data-name="{{item.name}}" bindtap="onPointTap">
+        <view class="point-name-row">
+          <text class="point-name">{{item.name}}</text>
+          <text class="point-code">{{item.code}}</text>
+        </view>
+        <text class="point-arrow">{{selectedPoint.name === item.name ? '▲' : '▼'}}</text>
+      </view>
+      <view class="point-detail" wx:if="{{selectedPoint.name === item.name}}">
+        <view class="detail-row">
+          <text class="detail-label">📍 位置</text>
+          <text class="detail-value">{{item.location}}</text>
+        </view>
+        <view class="detail-row">
+          <text class="detail-label">💊 功效</text>
+          <text class="detail-value">{{item.effect}}</text>
+        </view>
+        <view class="detail-row">
+          <text class="detail-label">🩺 主治</text>
+          <text class="detail-value">{{item.mainUse}}</text>
+        </view>
+        <view class="detail-row">
+          <text class="detail-label">🤲 按摩方法</text>
+          <text class="detail-value">{{item.method}}</text>
+        </view>
+      </view>
+    </view>
+    <view class="empty-tip" wx:if="{{searchResults.length === 0}}">没有找到匹配的穴位 🌿</view>
+  </view>
+
+  <!-- 身体部位选择 -->
+  <view class="parts-section" wx:if="{{!keyword}}">
+    <scroll-view scroll-x class="parts-bar">
+      <view class="part-btn {{currentPart === item.id ? 'part-active' : ''}}"
+        wx:for="{{bodyParts}}" wx:key="id" data-id="{{item.id}}" bindtap="onPartTap">
+        <text class="part-icon">{{item.icon}}</text>
+        <text class="part-name">{{item.name}}</text>
+      </view>
+    </scroll-view>
+
+    <!-- 穴位列表 -->
+    <view class="point-list">
+      <view class="point-card" wx:for="{{currentAcupoints}}" wx:key="name">
+        <view class="point-header" data-name="{{item.name}}" bindtap="onPointTap">
+          <view class="point-name-row">
+            <text class="point-name">{{item.name}}</text>
+            <text class="point-code">{{item.code}}</text>
+          </view>
+          <text class="point-arrow">{{selectedPoint.name === item.name ? '▲' : '▼'}}</text>
+        </view>
+        <view class="point-detail" wx:if="{{selectedPoint.name === item.name}}">
+          <view class="detail-row">
+            <text class="detail-label">📍 位置</text>
+            <text class="detail-value">{{item.location}}</text>
+          </view>
+          <view class="detail-row">
+            <text class="detail-label">💊 功效</text>
+            <text class="detail-value">{{item.effect}}</text>
+          </view>
+          <view class="detail-row">
+            <text class="detail-label">🩺 主治</text>
+            <text class="detail-value">{{item.mainUse}}</text>
+          </view>
+          <view class="detail-row">
+            <text class="detail-label">🤲 按摩方法</text>
+            <text class="detail-value">{{item.method}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

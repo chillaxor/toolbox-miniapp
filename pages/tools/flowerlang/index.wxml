@@ -1,0 +1,57 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">🌸 花语查询</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <!-- 搜索框 -->
+  <view class="search-bar">
+    <input class="search-input" placeholder="搜索花名或花语关键词" bindinput="onSearchInput" value="{{keyword}}" />
+  </view>
+
+  <!-- 场景推荐 -->
+  <view class="scene-section" wx:if="{{!keyword}}">
+    <view class="section-title">🎯 送花场景推荐</view>
+    <view class="scene-grid">
+      <view class="scene-item {{currentScene === item.name ? 'scene-active' : ''}}" wx:for="{{scenes}}" wx:key="name" data-name="{{item.name}}" bindtap="onSceneTap">
+        <text class="scene-icon">{{item.icon}}</text>
+        <text class="scene-name">{{item.name}}</text>
+      </view>
+    </view>
+
+    <!-- 场景推荐花 -->
+    <view class="scene-flowers" wx:if="{{currentScene && sceneFlowers.length > 0}}">
+      <view class="scene-title">「{{currentScene}}」推荐花卉</view>
+      <view class="flower-card" wx:for="{{sceneFlowers}}" wx:key="name">
+        <view class="flower-header">
+          <text class="flower-emoji">{{item.emoji}}</text>
+          <view class="flower-info">
+            <text class="flower-name">{{item.name}}</text>
+            <text class="flower-color">花色：{{item.color}}</text>
+          </view>
+        </view>
+        <view class="flower-meaning">花语：{{item.meaning}}</view>
+        <view class="flower-send">适合送给：{{item.send}}</view>
+        <view class="flower-note">{{item.note}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 花卉列表 -->
+  <view class="flower-list">
+    <view class="list-title">{{keyword ? '🔍 搜索结果（' + searchResults.length + '）' : '🌿 全部花卉'}}</view>
+    <view class="flower-card" wx:for="{{searchResults}}" wx:key="name">
+      <view class="flower-header">
+        <text class="flower-emoji">{{item.emoji}}</text>
+        <view class="flower-info">
+          <text class="flower-name">{{item.name}}</text>
+          <text class="flower-color">花色：{{item.color}}</text>
+        </view>
+      </view>
+      <view class="flower-meaning">花语：{{item.meaning}}</view>
+      <view class="flower-send">适合送给：{{item.send}}</view>
+      <view class="flower-note">{{item.note}}</view>
+    </view>
+    <view class="empty-tip" wx:if="{{searchResults.length === 0}}">没有找到匹配的花卉，请换个关键词试试 🌱</view>
+  </view>
+</view>

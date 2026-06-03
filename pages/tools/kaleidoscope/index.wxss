@@ -3,12 +3,13 @@
 /* ------------------------------------------------------------------ */
 
 page {
-  --vp-size: 640rpx;
   --bg: #0a0a14;
-  --glass-bg: rgba(255, 255, 255, 0.08);
-  --glass-border: rgba(255, 255, 255, 0.15);
+  --glass-bg: rgba(255, 255, 255, 0.06);
+  --glass-border: rgba(255, 255, 255, 0.12);
   --accent: #a78bfa;
   --accent-glow: rgba(167, 139, 250, 0.45);
+  --warm: #f59e0b;
+  --cool: #3b82f6;
 }
 
 /* ------------------------------------------------------------------ */
@@ -21,17 +22,18 @@ page {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
+  justify-content: flex-start;
+  padding: 24rpx;
+  padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
 }
 
 .page.fullscreen {
+  padding: 0;
   justify-content: center;
 }
 
 /* ------------------------------------------------------------------ */
-/*  Hidden camera (keeps native camera layer alive)                    */
+/*  Hidden camera                                                      */
 /* ------------------------------------------------------------------ */
 
 .hidden-camera {
@@ -45,75 +47,86 @@ page {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Kaleidoscope viewport                                              */
+/*  Viewport                                                           */
 /* ------------------------------------------------------------------ */
 
+.viewport-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20rpx;
+}
+
 .viewport {
-  width: var(--vp-size);
-  height: var(--vp-size);
+  width: 620rpx;
+  height: 620rpx;
   border-radius: 50%;
   overflow: hidden;
   position: relative;
-  background: #111;
+  background: radial-gradient(circle, #1a1030 0%, #0a0510 100%);
   box-shadow:
-    0 0 0 4rpx rgba(255, 255, 255, 0.1),
-    0 0 60rpx var(--accent-glow);
-  transition: width 0.3s ease, height 0.3s ease;
-  will-change: transform;
+    0 0 0 3rpx rgba(167, 139, 250, 0.2),
+    0 0 40rpx rgba(167, 139, 250, 0.15),
+    0 0 80rpx rgba(167, 139, 250, 0.08);
+}
+
+.fullscreen .viewport-wrap {
+  width: 100vw;
+  height: 100vh;
 }
 
 .fullscreen .viewport {
-  --vp-size: 100vw;
+  width: 100vw;
+  height: 100vw;
   border-radius: 0;
   box-shadow: none;
 }
 
-/* ------------------------------------------------------------------ */
-/*  Segments                                                           */
-/* ------------------------------------------------------------------ */
-
-.segment {
-  overflow: hidden;
+.kaleido-canvas {
+  width: 100%;
+  height: 100%;
 }
 
-.segment-camera {
-  /* Each segment-camera fills its segment container.
-     Because WeChat's camera component is a native layer, it cannot be
-     clipped by CSS clip-path on most devices.  To work around this we
-     give each camera the full viewport size and rely on the parent
-     segment's clip-path (which IS a regular view and therefore clips
-     its children correctly). */
+.glow-ring {
   position: absolute;
-  /* Centre the camera feed inside the clipped triangle */
-  top: 50%;
-  left: 50%;
-  width: var(--vp-size);
-  height: var(--vp-size);
-  transform: translate(-50%, -50%);
-}
-
-/* Centre dot */
-.centre-dot {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 12rpx;
-  height: 12rpx;
-  margin: -6rpx 0 0 -6rpx;
+  top: -6rpx;
+  left: -6rpx;
+  right: -6rpx;
+  bottom: -6rpx;
   border-radius: 50%;
-  background: var(--accent);
-  box-shadow: 0 0 16rpx var(--accent-glow);
+  border: 2rpx solid rgba(167, 139, 250, 0.15);
   pointer-events: none;
-  z-index: 10;
+  animation: glowPulse 3s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
 }
 
 /* ------------------------------------------------------------------ */
-/*  Rotation keyframes (used as fallback; JS drives the main rotation) */
+/*  Info bar                                                           */
 /* ------------------------------------------------------------------ */
 
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
+.info-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0 8rpx;
+  margin-bottom: 20rpx;
+}
+
+.fps-text {
+  font-size: 22rpx;
+  color: rgba(167, 139, 250, 0.6);
+  font-family: monospace;
+}
+
+.seg-text {
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.4);
 }
 
 /* ------------------------------------------------------------------ */
@@ -121,23 +134,18 @@ page {
 /* ------------------------------------------------------------------ */
 
 .controls {
-  position: fixed;
-  left: 24rpx;
-  right: 24rpx;
-  bottom: env(safe-area-inset-bottom, 24rpx);
-  padding: 24rpx 20rpx;
-  border-radius: 32rpx;
+  width: 100%;
   background: var(--glass-bg);
   border: 1rpx solid var(--glass-border);
-  backdrop-filter: blur(16rpx);
-  -webkit-backdrop-filter: blur(16rpx);
+  border-radius: 24rpx;
+  padding: 24rpx;
   display: flex;
   flex-direction: column;
   gap: 20rpx;
-  z-index: 20;
+  backdrop-filter: blur(20rpx);
+  -webkit-backdrop-filter: blur(20rpx);
 }
 
-/* Segment count selector */
 .control-group {
   display: flex;
   align-items: center;
@@ -146,63 +154,111 @@ page {
 
 .control-label {
   font-size: 24rpx;
-  color: rgba(255, 255, 255, 0.6);
-  min-width: 56rpx;
+  color: rgba(255, 255, 255, 0.45);
+  min-width: 60rpx;
+  text-align: right;
 }
 
-.seg-buttons {
+.btn-scroll {
+  flex: 1;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.btn-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.btn-row {
   display: flex;
-  gap: 16rpx;
+  gap: 14rpx;
+  flex-wrap: nowrap;
 }
 
-.seg-btn {
-  width: 72rpx;
-  height: 72rpx;
-  border-radius: 50%;
+.pill-btn {
+  min-width: 72rpx;
+  height: 56rpx;
+  padding: 0 20rpx;
+  border-radius: 28rpx;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 26rpx;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1rpx solid rgba(255, 255, 255, 0.08);
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.pill-btn.active {
+  background: linear-gradient(135deg, rgba(167, 139, 250, 0.3), rgba(167, 139, 250, 0.15));
+  color: #fff;
+  border-color: rgba(167, 139, 250, 0.5);
+  box-shadow: 0 0 16rpx rgba(167, 139, 250, 0.2);
+}
+
+/* 颜色按钮特殊样式 */
+.color-pill[data-color="1"].active {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.3), rgba(245, 158, 11, 0.15));
+  border-color: rgba(245, 158, 11, 0.5);
+  box-shadow: 0 0 16rpx rgba(245, 158, 11, 0.2);
+}
+
+.color-pill[data-color="2"].active {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(59, 130, 246, 0.15));
+  border-color: rgba(59, 130, 246, 0.5);
+  box-shadow: 0 0 16rpx rgba(59, 130, 246, 0.2);
+}
+
+.color-pill[data-color="3"].active {
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.3), rgba(167, 139, 250, 0.15));
+  border-color: rgba(236, 72, 153, 0.5);
+  box-shadow: 0 0 16rpx rgba(236, 72, 153, 0.2);
+}
+
+/* ------------------------------------------------------------------ */
+/*  Action buttons                                                     */
+/* ------------------------------------------------------------------ */
+
+.action-row {
+  display: flex;
+  justify-content: space-around;
+  padding-top: 8rpx;
+  border-top: 1rpx solid rgba(255, 255, 255, 0.06);
+}
+
+.action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10rpx;
+}
+
+.action-icon-wrap {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: rgba(255, 255, 255, 0.06);
   border: 1rpx solid rgba(255, 255, 255, 0.1);
   transition: all 0.2s;
 }
 
-.seg-btn.active {
-  background: var(--accent);
-  color: #fff;
-  border-color: var(--accent);
-  box-shadow: 0 0 20rpx var(--accent-glow);
+.action-icon-wrap:active {
+  transform: scale(0.92);
+  background: rgba(167, 139, 250, 0.15);
 }
 
-/* Action buttons row */
-.action-row {
-  display: flex;
-  justify-content: space-around;
+.action-icon {
+  font-size: 34rpx;
 }
 
-.btn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6rpx;
-}
-
-.btn-icon {
-  width: 80rpx;
-  height: 80rpx;
-  line-height: 80rpx;
-  text-align: center;
-  font-size: 36rpx;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1rpx solid rgba(255, 255, 255, 0.12);
-}
-
-.btn-label {
+.action-label {
   font-size: 20rpx;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.4);
 }
 
 /* ------------------------------------------------------------------ */
@@ -211,28 +267,17 @@ page {
 
 .fullscreen-hint {
   position: fixed;
-  bottom: 80rpx;
+  bottom: 60rpx;
   left: 50%;
   transform: translateX(-50%);
-  padding: 12rpx 32rpx;
+  padding: 14rpx 36rpx;
   border-radius: 40rpx;
-  background: rgba(0, 0, 0, 0.55);
+  background: rgba(0, 0, 0, 0.6);
+  border: 1rpx solid rgba(255, 255, 255, 0.1);
   z-index: 30;
 }
 
 .fullscreen-hint text {
   font-size: 24rpx;
-  color: rgba(255, 255, 255, 0.7);
-}
-
-/* ------------------------------------------------------------------ */
-/*  Offscreen canvas (for screenshot)                                  */
-/* ------------------------------------------------------------------ */
-
-.offscreen-canvas {
-  position: fixed;
-  top: -9999rpx;
-  left: -9999rpx;
-  width: 600px;
-  height: 600px;
+  color: rgba(255, 255, 255, 0.6);
 }

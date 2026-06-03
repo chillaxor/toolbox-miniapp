@@ -1,0 +1,71 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">🕷️ 除螨指南</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <!-- 除螨场景选择 -->
+  <view class="scene-tabs">
+    <view class="scene-tab {{currentScene === 'bedroom' ? 'scene-active' : ''}}" data-scene="bedroom" bindtap="onSceneTap">🛏️ 卧室</view>
+    <view class="scene-tab {{currentScene === 'living' ? 'scene-active' : ''}}" data-scene="living" bindtap="onSceneTap">🛋️ 客厅</view>
+    <view class="scene-tab {{currentScene === 'bathroom' ? 'scene-active' : ''}}" data-scene="bathroom" bindtap="onSceneTap">🚿 浴室</view>
+    <view class="scene-tab {{currentScene === 'closet' ? 'scene-active' : ''}}" data-scene="closet" bindtap="onSceneTap">👔 衣柜</view>
+  </view>
+
+  <!-- 当前场景指南 -->
+  <view class="guide-card">
+    <view class="guide-title">{{currentGuide.title}}</view>
+    <view class="guide-desc">{{currentGuide.desc}}</view>
+
+    <view class="guide-section">
+      <view class="section-title">🧹 除螨方法</view>
+      <view class="guide-item" wx:for="{{currentGuide.methods}}" wx:key="index">
+        <view class="item-step">{{index + 1}}</view>
+        <view class="item-body">
+          <text class="item-name">{{item.name}}</text>
+          <text class="item-detail">{{item.detail}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="guide-section">
+      <view class="section-title">📅 建议频率</view>
+      <view class="freq-list">
+        <view class="freq-item" wx:for="{{currentGuide.frequency}}" wx:key="index">
+          <text class="freq-icon">{{item.icon}}</text>
+          <text class="freq-text">{{item.text}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 螨虫知识卡片 -->
+  <view class="knowledge-card">
+    <view class="knowledge-title">🔬 螨虫小知识</view>
+    <view class="knowledge-item" wx:for="{{knowledge}}" wx:key="index">
+      <text class="knowledge-q">❓ {{item.q}}</text>
+      <text class="knowledge-a">💡 {{item.a}}</text>
+    </view>
+  </view>
+
+  <!-- 除螨好物推荐 -->
+  <view class="tips-card">
+    <view class="tips-title">💡 除螨小贴士</view>
+    <view class="tip-item" wx:for="{{tips}}" wx:key="index">
+      <text class="tip-icon">{{item.icon}}</text>
+      <text class="tip-text">{{item.text}}</text>
+    </view>
+  </view>
+
+  <!-- 过敏症状自查 -->
+  <view class="symptom-card">
+    <view class="symptom-title">⚠️ 螨虫过敏症状自查</view>
+    <view class="symptom-list">
+      <view class="symptom-item" wx:for="{{symptoms}}" wx:key="index">
+        <text class="symptom-icon">{{item.icon}}</text>
+        <text class="symptom-text">{{item.text}}</text>
+      </view>
+    </view>
+    <view class="symptom-tip">如有以上症状，建议加强除螨或就医检查</view>
+  </view>
+</view>
