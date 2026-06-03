@@ -68,7 +68,9 @@
     "pages/tools/countdown2/index",
     "pages/tools/neontext/index",
     "pages/tools/gradient/index",
-    "pages/tools/poetrygame/index"
+    "pages/tools/poetrygame/index",
+    "pages/tools/dailyquote/index",
+    "pages/tools/woodfish/index"
   ],
   "window": {
     "backgroundTextStyle": "light",

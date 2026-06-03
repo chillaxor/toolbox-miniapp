@@ -78,6 +78,8 @@ const TOOLS = [
   { id: 'gradient', name: '渐变色壁纸', category: 'image', icon: '🎨', path: '/pages/tools/gradient/index', description: '选颜色生成渐变壁纸·保存到相册' },
   { id: 'neontext', name: '流光文字', category: 'fun', icon: '✨', path: '/pages/tools/neontext/index', description: '霓虹流光动画文字效果' },
   { id: 'poetrygame', name: '诗词飞花令', category: 'text', icon: '🏮', path: '/pages/tools/poetrygame/index', description: '选字列出经典诗句·挑战模式' },
+  { id: 'dailyquote', name: '人生格言', category: 'fun', icon: '💬', path: '/pages/tools/dailyquote/index', description: '每日一句名人名言·收藏复制' },
+  { id: 'woodfish', name: '电子木鱼', category: 'fun', icon: '🪵', path: '/pages/tools/woodfish/index', description: '敲木鱼积功德·功德计数' },
 ];
 
 /**

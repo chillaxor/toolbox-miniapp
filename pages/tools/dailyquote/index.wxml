@@ -1,0 +1,75 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">💬 人生格言</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <!-- 今日格言卡片 -->
+  <view class="today-card">
+    <view class="today-label">📅 今日格言</view>
+    <text class="today-content">{{todayQuote.content}}</text>
+    <text class="today-author">—— {{todayQuote.author}}</text>
+  </view>
+
+  <!-- 分类标签 -->
+  <scroll-view scroll-x class="category-bar">
+    <view
+      class="cat-btn {{currentCategory === item ? 'cat-active' : ''}}"
+      wx:for="{{categories}}"
+      wx:key="*this"
+      data-cat="{{item}}"
+      bindtap="onCategoryTap"
+    >{{item}}</view>
+  </scroll-view>
+
+  <!-- 名言卡片 -->
+  <view class="quote-card" wx:if="{{quote}}">
+    <view class="quote-tag">{{quote.category}}</view>
+    <view class="quote-body">
+      <text class="quote-mark-left">"</text>
+      <text class="quote-content">{{quote.content}}</text>
+      <text class="quote-mark-right">"</text>
+    </view>
+    <text class="quote-author">—— {{quote.author}}</text>
+    <view class="quote-actions">
+      <view class="quote-action" bindtap="onNextQuote">
+        <text class="action-icon">🔄</text>
+        <text class="action-text">换一句</text>
+      </view>
+      <view class="quote-action" bindtap="onCopyQuote">
+        <text class="action-icon">📋</text>
+        <text class="action-text">复制</text>
+      </view>
+      <view class="quote-action" bindtap="onFavQuote">
+        <text class="action-icon">{{isFavQuote ? '❤️' : '🤍'}}</text>
+        <text class="action-text">{{isFavQuote ? '已收藏' : '收藏'}}</text>
+      </view>
+      <view class="quote-action" bindtap="onShareQuote">
+        <text class="action-icon">📤</text>
+        <text class="action-text">分享</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 收藏列表 -->
+  <view class="fav-section" wx:if="{{favList.length > 0}}">
+    <view class="fav-header">
+      <text class="fav-title">❤️ 我的收藏（{{favList.length}}）</text>
+      <text class="fav-toggle" bindtap="toggleFavList">{{showFavList ? '收起' : '展开'}}</text>
+    </view>
+    <view class="fav-list" wx:if="{{showFavList}}">
+      <view class="fav-item" wx:for="{{favList}}" wx:key="index">
+        <view class="fav-item-body">
+          <text class="fav-item-content">{{item.content}}</text>
+          <text class="fav-item-author">—— {{item.author}}</text>
+        </view>
+        <text class="fav-item-del" data-index="{{index}}" bindtap="onRemoveFav">✕</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 统计信息 -->
+  <view class="info-bar">
+    <text class="info-text">共收录 {{totalCount}} 条格言 · 8 个分类</text>
+  </view>
+</view>
