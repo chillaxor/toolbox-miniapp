@@ -55,6 +55,6 @@
   </view>
 
   <!-- 隐藏 canvas 用于切割（绝对定位移出视口） -->
-  <canvas canvas-id="gridcut-canvas" style="position:fixed;left:-9999px;width:300px;height:300px;"></canvas>
-  <canvas canvas-id="gridcut-piece" style="position:fixed;left:-9999px;width:200px;height:200px;"></canvas>
+  <!-- gridcut-piece: 单格输出 300x300px，与 JS 中 PIECE_PX 保持一致 -->
+  <canvas canvas-id="gridcut-piece" style="position:fixed;left:-9999px;width:300px;height:300px;"></canvas>
 </view>
