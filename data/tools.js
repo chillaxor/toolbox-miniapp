@@ -59,7 +59,7 @@ const TOOLS = [
   { id: 'truthordare', name: '真心话大冒险', category: 'fun', icon: '🎭', path: '/pages/tools/truthordare/index', description: '聚会必备真心话大冒险' },
   { id: 'newyearwish', name: '新年许愿', category: 'fun', icon: '🎋', path: '/pages/tools/newyearwish/index', description: '许下新年愿望·生成贺卡' },
   { id: 'chatbubble', name: '聊天气泡', category: 'fun', icon: '💬', path: '/pages/tools/chatbubble/index', description: '生成趣味聊天气泡截图' },
-  { id: 'idphoto', name: '证件照生成', category: 'image', icon: '📷', path: '/pages/tools/idphoto/index', description: '多尺寸证件照制作' },
+  // { id: 'idphoto', name: '证件照生成', category: 'image', icon: '📷', path: '/pages/tools/idphoto/index', description: '多尺寸证件照制作' },
   { id: 'brainage', name: '脑力测试', category: 'fun', icon: '🧠', path: '/pages/tools/brainage/index', description: '测试你的脑力年龄' },
   { id: 'hangingpicture', name: '挂画助手', category: 'life', icon: '🖼️', path: '/pages/tools/hangingpicture/index', description: '墙面画作排版规划' },
   { id: 'ruler', name: '虚拟尺子', category: 'life', icon: '📏', path: '/pages/tools/ruler/index', description: '手机屏幕变尺子测量' },
