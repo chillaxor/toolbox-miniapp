@@ -1,0 +1,169 @@
+<view class="container">
+  <!-- Header -->
+  <view class="tool-header">
+    <text class="tool-header-title">🏮 诗词飞花令</text>
+  </view>
+
+  <!-- 模式切换 -->
+  <view class="mode-tabs">
+    <view class="mode-tab {{mode === 'browse' ? 'mode-active' : ''}}" bindtap="switchToBrowse">浏览模式</view>
+    <view class="mode-tab {{mode === 'game' ? 'mode-active' : ''}}" bindtap="switchToGame">挑战模式</view>
+  </view>
+
+  <!-- 飞花令字符选择 -->
+  <scroll-view scroll-x class="char-scroll" enhanced show-scrollbar="{{false}}">
+    <view class="char-row">
+      <view
+        wx:for="{{characters}}"
+        wx:key="*this"
+        class="char-item {{selectedChar === item ? 'char-active' : ''}}"
+        bindtap="onCharSelect"
+        data-char="{{item}}"
+      >
+        <text>{{item}}</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 随机按钮 -->
+  <view class="action-row">
+    <view class="random-btn" bindtap="onRandomChar">
+      <text>🎲 随机选字</text>
+    </view>
+    <view class="poem-count" wx:if="{{selectedChar}}">
+      <text>"{{selectedChar}}" 共 {{matchingPoems.length}} 首</text>
+    </view>
+  </view>
+
+  <!-- ==================== 浏览模式 ==================== -->
+  <block wx:if="{{mode === 'browse'}}">
+    <!-- 提示：未选字 -->
+    <view class="empty-tip" wx:if="{{!selectedChar}}">
+      <text class="empty-icon">🌸</text>
+      <text class="empty-text">请选择一个飞花令字符</text>
+      <text class="empty-sub">点击上方字符或随机选字开始</text>
+    </view>
+
+    <!-- 匹配的诗词列表 -->
+    <view class="poem-list" wx:if="{{selectedChar}}">
+      <view class="poem-card" wx:for="{{matchingPoems}}" wx:key="idx" wx:for-item="poem">
+        <view class="poem-card-inner">
+          <view class="poem-line" wx:for="{{poem.matchingLines}}" wx:for-item="line" wx:key="lineIdx">
+            <text
+              wx:for="{{line.parts}}"
+              wx:for-item="part"
+              wx:key="partIdx"
+              class="{{part.type === 'hl' ? 'hl-char' : 'line-text'}}"
+            >{{part.text}}</text>
+          </view>
+          <view class="poem-meta">
+            <text class="poem-source">{{poem.dynasty}} · {{poem.author}}《{{poem.title}}》</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 无匹配 -->
+      <view class="empty-tip" wx:if="{{matchingPoems.length === 0}}">
+        <text class="empty-icon">📜</text>
+        <text class="empty-text">暂无包含"{{selectedChar}}"的诗词</text>
+      </view>
+    </view>
+  </block>
+
+  <!-- ==================== 挑战模式 ==================== -->
+  <block wx:if="{{mode === 'game'}}">
+    <!-- 游戏未开始 -->
+    <view class="game-start" wx:if="{{!gameActive && !gameOver}}">
+      <view class="game-intro-card">
+        <text class="game-intro-title">飞花令挑战</text>
+        <text class="game-intro-desc">系统随机出一个字，你需要在30秒内说出包含该字的诗句。每轮可以使用提示，但使用提示会扣分。</text>
+        <view class="start-btn" bindtap="startGame">
+          <text>开始挑战</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 游戏进行中 -->
+    <view class="game-area" wx:if="{{gameActive}}">
+      <!-- 当前挑战字 -->
+      <view class="game-char-ring">
+        <text class="game-char-text">{{gameChar}}</text>
+      </view>
+      <text class="game-char-label">请说出包含此字的诗句</text>
+
+      <!-- 倒计时 -->
+      <view class="timer-section">
+        <view class="timer-ring {{timer <= 10 ? 'timer-warn' : ''}} {{timer <= 5 ? 'timer-danger' : ''}}">
+          <text class="timer-num">{{timer}}</text>
+          <text class="timer-label">秒</text>
+        </view>
+      </view>
+
+      <!-- 游戏操作按钮 -->
+      <view class="game-btn-row">
+        <view class="game-btn hint-btn" bindtap="giveHint">
+          <text>💡 提示 ({{hintCount}})</text>
+        </view>
+        <view class="game-btn next-btn" bindtap="nextRound">
+          <text>✅ 下一轮</text>
+        </view>
+      </view>
+
+      <!-- 得分 -->
+      <view class="score-section">
+        <view class="score-item">
+          <text class="score-label">当前得分</text>
+          <text class="score-val">{{score}}</text>
+        </view>
+        <view class="score-item">
+          <text class="score-label">第 {{round}} 轮</text>
+          <text class="score-val">{{totalRounds}} 轮</text>
+        </view>
+      </view>
+
+      <!-- 提示内容 -->
+      <view class="hint-list" wx:if="{{revealedHints.length > 0}}">
+        <text class="hint-title">已揭示的诗句：</text>
+        <view class="hint-item" wx:for="{{revealedHints}}" wx:key="idx">
+          <text
+            wx:for="{{item.parts}}"
+            wx:for-item="part"
+            wx:key="partIdx"
+            class="{{part.type === 'hl' ? 'hl-char' : 'line-text'}}"
+          >{{part.text}}</text>
+          <text class="hint-meta">—— {{item.dynasty}} · {{item.author}}《{{item.title}}》</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 游戏结束 -->
+    <view class="game-over" wx:if="{{gameOver}}">
+      <view class="game-over-card">
+        <text class="game-over-title">🎉 挑战完成</text>
+        <view class="game-over-stats">
+          <view class="go-stat">
+            <text class="go-stat-num">{{score}}</text>
+            <text class="go-stat-label">总得分</text>
+          </view>
+          <view class="go-stat">
+            <text class="go-stat-num">{{totalRounds}}</text>
+            <text class="go-stat-label">总轮数</text>
+          </view>
+          <view class="go-stat">
+            <text class="go-stat-num">{{hintCount}}</text>
+            <text class="go-stat-label">使用提示</text>
+          </view>
+        </view>
+        <view class="start-btn" bindtap="startGame">
+          <text>再来一局</text>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <!-- 底部提示卡 -->
+  <view class="tip-card">
+    <text class="tip-title">💡 飞花令小知识</text>
+    <text class="tip-text">飞花令是中国古代酒令的一种，得名于唐代诗人韩翃的名句"春城无处不飞花"。行令时，每人轮流说出含有指定字的诗句，既考验诗词功底，也考验临场反应。</text>
+  </view>
+</view>

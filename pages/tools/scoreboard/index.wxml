@@ -1,0 +1,122 @@
+<view class="page">
+  <!-- Header -->
+  <view class="header">
+    <view class="header-title">计分板</view>
+    <view class="header-actions">
+      <view class="btn-add" bindtap="openAddModal" wx:if="{{players.length < 8}}">+ 添加</view>
+      <view class="btn-reset" bindtap="resetScores" wx:if="{{players.length > 0}}">重置</view>
+    </view>
+  </view>
+
+  <!-- Player count hint -->
+  <view class="player-count" wx:if="{{players.length > 0}}">
+    {{players.length}} / 8 名选手
+  </view>
+
+  <!-- Empty state -->
+  <view class="empty-state" wx:if="{{players.length === 0}}">
+    <view class="empty-icon">🏆</view>
+    <view class="empty-text">点击 + 添加选手</view>
+    <view class="empty-sub">支持 2-8 名选手同时计分</view>
+  </view>
+
+  <!-- Player list -->
+  <view class="player-list">
+    <view
+      class="player-card {{leaderIdx === index ? 'leader' : ''}}"
+      wx:for="{{players}}"
+      wx:key="index"
+      data-idx="{{index}}"
+      bindtap="openScorePopup"
+      bindlongpress="onLongPressPlayer"
+      style="--player-color: {{item.color}}"
+    >
+      <!-- Leader crown -->
+      <view class="crown" wx:if="{{leaderIdx === index}}">👑</view>
+
+      <!-- Color bar -->
+      <view class="color-bar"></view>
+
+      <!-- Player info -->
+      <view class="player-info">
+        <view class="player-name">{{item.name}}</view>
+        <view class="player-score">{{item.score}}</view>
+      </view>
+
+      <!-- Quick +/- buttons -->
+      <view class="quick-btns" catchtap="preventBubble">
+        <view class="btn-minus" data-idx="{{index}}" catchtap="adjustScore" data-delta="-1">-1</view>
+        <view class="btn-plus" data-idx="{{index}}" catchtap="adjustScore" data-delta="1">+1</view>
+      </view>
+
+      <!-- Remove button -->
+      <view class="btn-remove" data-idx="{{index}}" catchtap="removePlayer">×</view>
+    </view>
+  </view>
+
+  <!-- Add player modal -->
+  <view class="modal-overlay" wx:if="{{showAddModal}}" bindtap="closeAddModal">
+    <view class="modal-content" catchtap="preventBubble">
+      <view class="modal-title">添加选手</view>
+      <input
+        class="modal-input"
+        placeholder="输入选手名称（可留空）"
+        value="{{newPlayerName}}"
+        bindinput="onNewNameInput"
+        focus="{{showAddModal}}"
+        confirm-type="done"
+        bindconfirm="confirmAddPlayer"
+      />
+      <view class="modal-hint">留空将自动命名为"选手N"</view>
+      <view class="modal-actions">
+        <view class="modal-btn cancel" bindtap="closeAddModal">取消</view>
+        <view class="modal-btn confirm" bindtap="confirmAddPlayer">添加</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- Score adjustment popup (bottom sheet) -->
+  <view class="popup-overlay" wx:if="{{showScorePopup}}" bindtap="closeScorePopup">
+    <view class="popup-sheet" catchtap="preventBubble">
+      <view class="popup-header">
+        <text class="popup-title">{{players[selectedPlayerIdx].name}}</text>
+        <text class="popup-score">当前: {{players[selectedPlayerIdx].score}}</text>
+        <view class="popup-close" bindtap="closeScorePopup">×</view>
+      </view>
+
+      <view class="popup-section">
+        <view class="popup-label">加分</view>
+        <view class="popup-btns">
+          <view class="popup-btn add" data-delta="1" bindtap="adjustScore">+1</view>
+          <view class="popup-btn add" data-delta="2" bindtap="adjustScore">+2</view>
+          <view class="popup-btn add" data-delta="3" bindtap="adjustScore">+3</view>
+          <view class="popup-btn add" data-delta="5" bindtap="adjustScore">+5</view>
+          <view class="popup-btn add" data-delta="10" bindtap="adjustScore">+10</view>
+        </view>
+      </view>
+
+      <view class="popup-section">
+        <view class="popup-label">减分</view>
+        <view class="popup-btns">
+          <view class="popup-btn sub" data-delta="-1" bindtap="adjustScore">-1</view>
+          <view class="popup-btn sub" data-delta="-5" bindtap="adjustScore">-5</view>
+        </view>
+      </view>
+
+      <view class="popup-section">
+        <view class="popup-label">自定义</view>
+        <view class="popup-custom">
+          <input
+            class="popup-input"
+            type="number"
+            placeholder="输入数值（如 7 或 -3）"
+            value="{{customScoreInput}}"
+            bindinput="onCustomScoreInput"
+            bindconfirm="applyCustomScore"
+          />
+          <view class="popup-btn apply" bindtap="applyCustomScore">应用</view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

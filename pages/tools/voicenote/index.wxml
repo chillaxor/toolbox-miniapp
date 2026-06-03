@@ -1,0 +1,62 @@
+<view class="container">
+  <!-- 头部 -->
+  <view class="tool-header">
+    <text class="header-icon">🎙️</text>
+    <text class="header-title">语音备忘录</text>
+  </view>
+
+  <!-- 录音区域 -->
+  <view class="record-area">
+    <!-- 未录音状态 -->
+    <block wx:if="{{!isRecording}}">
+      <view class="record-btn" bindtap="toggleRecording">
+        <text class="record-btn-icon">🎤</text>
+      </view>
+      <text class="record-hint">点击录音</text>
+    </block>
+
+    <!-- 录音中状态 -->
+    <block wx:if="{{isRecording}}">
+      <view class="record-btn recording">
+        <view class="pulse-ring"></view>
+        <text class="record-btn-icon">🎤</text>
+      </view>
+      <text class="recording-timer">{{recordingTimeText}}</text>
+      <view class="stop-btn" bindtap="toggleRecording">
+        <text>停止录音</text>
+      </view>
+      <text class="recording-status">录音中...</text>
+    </block>
+  </view>
+
+  <!-- 录音列表 -->
+  <view class="list-section">
+    <view class="section-title" wx:if="{{recordings.length > 0}}">
+      <text>录音列表 ({{recordings.length}})</text>
+    </view>
+
+    <!-- 空状态 -->
+    <view class="empty-state" wx:if="{{recordings.length === 0}}">
+      <text class="empty-icon">📭</text>
+      <text class="empty-text">暂无录音，点击上方按钮开始</text>
+    </view>
+
+    <!-- 录音条目 -->
+    <view class="record-item {{playingId === item.id ? 'playing' : ''}}" wx:for="{{recordings}}" wx:key="id">
+      <view class="item-info">
+        <text class="item-name">{{item.name}}</text>
+        <text class="item-date">{{item.date}}</text>
+        <text class="item-duration">{{item.durationText}}</text>
+      </view>
+      <view class="item-actions">
+        <view class="play-btn {{playingId === item.id ? 'playing' : ''}}" bindtap="playRecording" data-id="{{item.id}}">
+          <text wx:if="{{playingId !== item.id}}">▶</text>
+          <text wx:if="{{playingId === item.id}}">⏸</text>
+        </view>
+        <view class="delete-btn" bindtap="deleteRecording" data-id="{{item.id}}">
+          <text>删除</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,152 @@
+/* ASCII艺术页面样式 */
+
+/* 风格选择器 */
+.style-selector {
+  display: flex;
+  flex-direction: row;
+  gap: 20rpx;
+  margin-top: 16rpx;
+}
+
+.style-btn {
+  flex: 1;
+  height: 80rpx;
+  border-radius: 40rpx;
+  border: 2rpx solid var(--color-border);
+  background-color: var(--color-card);
+  color: var(--color-secondary);
+  font-size: 28rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.style-btn-active {
+  background-color: #45B058;
+  border-color: #45B058;
+  color: #FFFFFF;
+  font-weight: 600;
+}
+
+/* 输入行 */
+.input-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16rpx;
+  margin-top: 16rpx;
+}
+
+.ascii-input {
+  flex: 1;
+}
+
+.btn-generate {
+  width: 160rpx;
+  height: 88rpx;
+  border-radius: 44rpx;
+  background-color: #45B058;
+  color: #FFFFFF;
+  font-size: 30rpx;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.btn-generate:active {
+  opacity: 0.85;
+  transform: scale(0.97);
+}
+
+/* 清空按钮 */
+.clear-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12rpx;
+}
+
+.clear-btn {
+  font-size: 26rpx;
+  color: var(--color-hint);
+  padding: 8rpx 16rpx;
+}
+
+.clear-btn:active {
+  color: var(--color-danger);
+}
+
+/* 结果卡片 */
+.result-card {
+  padding-bottom: 24rpx;
+}
+
+/* ASCII结果滚动区域 - 终端风格 */
+.ascii-result-scroll {
+  width: 100%;
+  min-height: 400rpx;
+  max-height: 600rpx;
+  background-color: #1a1a2e;
+  border-radius: var(--radius-md);
+  padding: 24rpx;
+  margin-top: 16rpx;
+  white-space: pre;
+  overflow: auto;
+}
+
+.ascii-result-text {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 24rpx;
+  color: #00ff88;
+  line-height: 1.4;
+  white-space: pre;
+  display: block;
+}
+
+/* 复制按钮行 */
+.copy-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20rpx;
+}
+
+.btn-copy {
+  padding: 16rpx 40rpx;
+  background-color: var(--color-border);
+  border-radius: 32rpx;
+  font-size: 26rpx;
+  color: var(--color-secondary);
+  font-weight: 500;
+}
+
+.btn-copy:active {
+  background-color: #d0d0d0;
+}
+
+/* 提示卡片 */
+.tip-card {
+  background-color: #f8fff8;
+  border: 2rpx solid #e0f5e0;
+}
+
+.tip-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--color-primary);
+  margin-bottom: 12rpx;
+  display: block;
+}
+
+.tip-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.tip-item {
+  font-size: 24rpx;
+  color: var(--color-secondary);
+  line-height: 1.8;
+}

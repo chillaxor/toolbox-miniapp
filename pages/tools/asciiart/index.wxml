@@ -1,0 +1,67 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">🔤 ASCII艺术</text>
+  </view>
+
+  <!-- 风格选择 -->
+  <view class="card">
+    <text class="form-label">选择风格</text>
+    <view class="style-selector">
+      <view
+        wx:for="{{styleOptions}}"
+        wx:key="key"
+        class="style-btn {{currentStyle === item.key ? 'style-btn-active' : ''}}"
+        data-style="{{item.key}}"
+        bindtap="onSelectStyle"
+      >
+        <text>{{item.label}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 输入区域 -->
+  <view class="card">
+    <text class="form-label">输入文本（支持A-Z、0-9、空格、中文）</text>
+    <view class="input-row">
+      <input
+        class="input-field ascii-input"
+        placeholder="请输入要转换的文本"
+        value="{{inputText}}"
+        bindinput="onInput"
+        maxlength="20"
+      />
+      <view class="btn-generate" bindtap="onGenerate">生成</view>
+    </view>
+    <view class="clear-row" wx:if="{{inputText}}">
+      <text class="clear-btn" bindtap="onClear">清空</text>
+    </view>
+  </view>
+
+  <!-- 未收录提示 -->
+  <view class="card tip-card" wx:if="{{missingTip}}" style="background:#fff3cd;border:1px solid #ffc107;">
+    <text class="tip-item" style="color:#856404;">⚠️ {{missingTip}}</text>
+  </view>
+
+  <!-- 结果展示 -->
+  <view class="card result-card" wx:if="{{result}}">
+    <text class="form-label">生成结果（拼音）</text>
+    <scroll-view scroll-x scroll-y class="ascii-result-scroll">
+      <text class="ascii-result-text">{{result}}</text>
+    </scroll-view>
+    <view class="copy-row">
+      <view class="btn-copy" bindtap="onCopy">📋 复制结果</view>
+    </view>
+  </view>
+
+  <!-- 提示卡片 -->
+  <view class="card tip-card">
+    <text class="tip-title">💡 使用说明</text>
+    <view class="tip-content">
+      <text class="tip-item">• 输入英文字母或数字，直接生成ASCII艺术字</text>
+      <text class="tip-item">• 输入中文会自动转拼音后生成，未收录的字会用?替代并提示</text>
+      <text class="tip-item">• 支持两种风格：方块风格（█）和线条风格（/|\）</text>
+      <text class="tip-item">• 生成后可一键复制到剪贴板</text>
+      <text class="tip-item">• 建议输入5个字符以内，显示效果更佳</text>
+    </view>
+  </view>
+</view>

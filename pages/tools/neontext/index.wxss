@@ -1,0 +1,408 @@
+/* pages/tools/neontext/index.wxss */
+
+page {
+  background: #1a1a2e;
+}
+
+.container {
+  min-height: 100vh;
+  background: #1a1a2e;
+}
+
+/* ===== 编辑面板 ===== */
+.edit-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* ===== 预览区域 ===== */
+.preview-area {
+  width: 100%;
+  height: 400rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #0a0a0a;
+  overflow: hidden;
+  position: relative;
+}
+
+.preview-area::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2rpx;
+  background: linear-gradient(90deg, transparent, var(--neon-color, #ff6ec7), transparent);
+  opacity: 0.3;
+}
+
+.neon-text-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 20rpx;
+}
+
+/* ===== 霓虹文字基础样式 ===== */
+.neon-text {
+  font-weight: bold;
+  letter-spacing: 4rpx;
+  line-height: 1.4;
+}
+
+/* ===== Flicker 闪烁动画 ===== */
+.neon-flicker {
+  text-shadow:
+    0 0 7rpx var(--neon-color, #ff6ec7),
+    0 0 10rpx var(--neon-color, #ff6ec7),
+    0 0 21rpx var(--neon-color, #ff6ec7),
+    0 0 42rpx var(--neon-color, #ff6ec7),
+    0 0 82rpx var(--neon-color, #ff6ec7),
+    0 0 92rpx var(--neon-color, #ff6ec7),
+    0 0 102rpx var(--neon-color, #ff6ec7),
+    0 0 151rpx var(--neon-color, #ff6ec7);
+  animation: flicker 3s infinite;
+}
+
+@keyframes flicker {
+  0%, 18%, 22%, 25%, 53%, 59%, 100% {
+    text-shadow:
+      0 0 7rpx var(--neon-color, #ff6ec7),
+      0 0 10rpx var(--neon-color, #ff6ec7),
+      0 0 21rpx var(--neon-color, #ff6ec7),
+      0 0 42rpx var(--neon-color, #ff6ec7),
+      0 0 82rpx var(--neon-color, #ff6ec7),
+      0 0 92rpx var(--neon-color, #ff6ec7),
+      0 0 102rpx var(--neon-color, #ff6ec7),
+      0 0 151rpx var(--neon-color, #ff6ec7);
+    opacity: 1;
+  }
+  20%, 24%, 55% {
+    text-shadow: none;
+    opacity: 0.4;
+  }
+  21% {
+    text-shadow:
+      0 0 5rpx var(--neon-color, #ff6ec7),
+      0 0 8rpx var(--neon-color, #ff6ec7);
+    opacity: 0.7;
+  }
+  56% {
+    text-shadow:
+      0 0 3rpx var(--neon-color, #ff6ec7);
+    opacity: 0.5;
+  }
+}
+
+/* ===== Pulse 呼吸动画 ===== */
+.neon-pulse {
+  text-shadow:
+    0 0 7rpx var(--neon-color, #ff6ec7),
+    0 0 10rpx var(--neon-color, #ff6ec7),
+    0 0 21rpx var(--neon-color, #ff6ec7),
+    0 0 42rpx var(--neon-color, #ff6ec7),
+    0 0 82rpx var(--neon-color, #ff6ec7);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    text-shadow:
+      0 0 7rpx var(--neon-color, #ff6ec7),
+      0 0 10rpx var(--neon-color, #ff6ec7),
+      0 0 21rpx var(--neon-color, #ff6ec7),
+      0 0 42rpx var(--neon-color, #ff6ec7),
+      0 0 82rpx var(--neon-color, #ff6ec7),
+      0 0 92rpx var(--neon-color, #ff6ec7),
+      0 0 102rpx var(--neon-color, #ff6ec7),
+      0 0 151rpx var(--neon-color, #ff6ec7);
+    opacity: 1;
+  }
+  50% {
+    text-shadow:
+      0 0 4rpx var(--neon-color, #ff6ec7),
+      0 0 7rpx var(--neon-color, #ff6ec7),
+      0 0 12rpx var(--neon-color, #ff6ec7),
+      0 0 20rpx var(--neon-color, #ff6ec7),
+      0 0 30rpx var(--neon-color, #ff6ec7);
+    opacity: 0.7;
+  }
+}
+
+/* ===== Rainbow 彩虹动画 ===== */
+.neon-rainbow {
+  text-shadow:
+    0 0 7rpx var(--neon-color, #ff6ec7),
+    0 0 10rpx var(--neon-color, #ff6ec7),
+    0 0 21rpx var(--neon-color, #ff6ec7),
+    0 0 42rpx var(--neon-color, #ff6ec7),
+    0 0 82rpx var(--neon-color, #ff6ec7);
+  animation: rainbow 4s linear infinite;
+}
+
+@keyframes rainbow {
+  0% {
+    color: #ff6ec7;
+    text-shadow:
+      0 0 7rpx #ff6ec7, 0 0 10rpx #ff6ec7, 0 0 21rpx #ff6ec7,
+      0 0 42rpx #ff6ec7, 0 0 82rpx #ff6ec7;
+  }
+  16% {
+    color: #ff3333;
+    text-shadow:
+      0 0 7rpx #ff3333, 0 0 10rpx #ff3333, 0 0 21rpx #ff3333,
+      0 0 42rpx #ff3333, 0 0 82rpx #ff3333;
+  }
+  33% {
+    color: #ffdd33;
+    text-shadow:
+      0 0 7rpx #ffdd33, 0 0 10rpx #ffdd33, 0 0 21rpx #ffdd33,
+      0 0 42rpx #ffdd33, 0 0 82rpx #ffdd33;
+  }
+  50% {
+    color: #39ff14;
+    text-shadow:
+      0 0 7rpx #39ff14, 0 0 10rpx #39ff14, 0 0 21rpx #39ff14,
+      0 0 42rpx #39ff14, 0 0 82rpx #39ff14;
+  }
+  66% {
+    color: #00d4ff;
+    text-shadow:
+      0 0 7rpx #00d4ff, 0 0 10rpx #00d4ff, 0 0 21rpx #00d4ff,
+      0 0 42rpx #00d4ff, 0 0 82rpx #00d4ff;
+  }
+  83% {
+    color: #bf00ff;
+    text-shadow:
+      0 0 7rpx #bf00ff, 0 0 10rpx #bf00ff, 0 0 21rpx #bf00ff,
+      0 0 42rpx #bf00ff, 0 0 82rpx #bf00ff;
+  }
+  100% {
+    color: #ff6ec7;
+    text-shadow:
+      0 0 7rpx #ff6ec7, 0 0 10rpx #ff6ec7, 0 0 21rpx #ff6ec7,
+      0 0 42rpx #ff6ec7, 0 0 82rpx #ff6ec7;
+  }
+}
+
+/* ===== Wave 波浪动画 ===== */
+.neon-wave-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
+
+.neon-wave {
+  display: inline-block;
+  text-shadow:
+    0 0 7rpx var(--neon-color, #ff6ec7),
+    0 0 10rpx var(--neon-color, #ff6ec7),
+    0 0 21rpx var(--neon-color, #ff6ec7),
+    0 0 42rpx var(--neon-color, #ff6ec7),
+    0 0 82rpx var(--neon-color, #ff6ec7);
+  animation: wave 1.6s ease-in-out infinite;
+}
+
+@keyframes wave {
+  0%, 100% {
+    text-shadow:
+      0 0 4rpx var(--neon-color, #ff6ec7),
+      0 0 7rpx var(--neon-color, #ff6ec7),
+      0 0 12rpx var(--neon-color, #ff6ec7),
+      0 0 20rpx var(--neon-color, #ff6ec7);
+    opacity: 0.6;
+    transform: translateY(0);
+  }
+  50% {
+    text-shadow:
+      0 0 7rpx var(--neon-color, #ff6ec7),
+      0 0 10rpx var(--neon-color, #ff6ec7),
+      0 0 21rpx var(--neon-color, #ff6ec7),
+      0 0 42rpx var(--neon-color, #ff6ec7),
+      0 0 82rpx var(--neon-color, #ff6ec7),
+      0 0 92rpx var(--neon-color, #ff6ec7),
+      0 0 102rpx var(--neon-color, #ff6ec7),
+      0 0 151rpx var(--neon-color, #ff6ec7);
+    opacity: 1;
+    transform: translateY(-8rpx);
+  }
+}
+
+/* ===== 控制面板 ===== */
+.control-panel {
+  flex: 1;
+  padding: 30rpx;
+  background: #16213e;
+  border-radius: 40rpx 40rpx 0 0;
+  margin-top: -20rpx;
+  position: relative;
+  z-index: 2;
+}
+
+.section {
+  margin-bottom: 36rpx;
+}
+
+.section-label {
+  font-size: 26rpx;
+  color: #a0a0b0;
+  margin-bottom: 16rpx;
+  font-weight: 500;
+}
+
+/* ===== 输入框 ===== */
+.text-input {
+  width: 100%;
+  height: 88rpx;
+  background: #0f3460;
+  border-radius: 16rpx;
+  padding: 0 24rpx;
+  font-size: 30rpx;
+  color: #e0e0e0;
+  box-sizing: border-box;
+  border: 2rpx solid rgba(255, 255, 255, 0.08);
+}
+
+.text-input:focus {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* ===== 颜色选择器 ===== */
+.color-row {
+  display: flex;
+  gap: 28rpx;
+  flex-wrap: wrap;
+}
+
+.color-dot {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  border: 4rpx solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 12rpx var(--dot-color, #ff6ec7), 0 0 24rpx var(--dot-color, #ff6ec7);
+  transition: all 0.3s ease;
+}
+
+.color-dot.active {
+  border-color: #ffffff;
+  transform: scale(1.2);
+  box-shadow: 0 0 16rpx var(--dot-color, #ff6ec7), 0 0 32rpx var(--dot-color, #ff6ec7), 0 0 48rpx var(--dot-color, #ff6ec7);
+}
+
+/* ===== 动画选择器 ===== */
+.anim-row {
+  display: flex;
+  gap: 16rpx;
+}
+
+.anim-btn {
+  flex: 1;
+  height: 72rpx;
+  line-height: 72rpx;
+  text-align: center;
+  background: #0f3460;
+  color: #a0a0b0;
+  font-size: 26rpx;
+  border-radius: 12rpx;
+  border: 2rpx solid rgba(255, 255, 255, 0.06);
+  transition: all 0.3s ease;
+}
+
+.anim-btn.active {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 0 12rpx rgba(255, 255, 255, 0.1);
+}
+
+/* ===== 字号滑块 ===== */
+.font-slider {
+  margin: 0 10rpx;
+}
+
+/* ===== 操作按钮 ===== */
+.btn-row {
+  display: flex;
+  gap: 24rpx;
+  margin-top: 40rpx;
+  padding-bottom: 40rpx;
+}
+
+.action-btn {
+  flex: 1;
+  height: 96rpx;
+  line-height: 96rpx;
+  text-align: center;
+  border-radius: 20rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+  letter-spacing: 2rpx;
+}
+
+.primary-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #ffffff;
+  box-shadow: 0 8rpx 24rpx rgba(102, 126, 234, 0.35);
+}
+
+.secondary-btn {
+  background: #0f3460;
+  color: #e0e0e0;
+  border: 2rpx solid rgba(255, 255, 255, 0.12);
+}
+
+/* ===== 全屏模式 ===== */
+.fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #0a0a0a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.fullscreen-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 40rpx;
+}
+
+.fullscreen-text {
+  word-break: break-all;
+}
+
+.fullscreen-hint {
+  position: absolute;
+  bottom: 80rpx;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.25);
+  animation: hintFade 3s ease-in-out infinite;
+}
+
+@keyframes hintFade {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 0.5; }
+}
+
+/* ===== 隐藏画布 ===== */
+.offscreen-canvas {
+  width: 750px;
+  height: 500px;
+  position: fixed;
+  left: -9999px;
+  top: -9999px;
+}

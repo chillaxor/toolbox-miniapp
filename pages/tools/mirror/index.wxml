@@ -1,0 +1,52 @@
+<view class="container">
+  <!-- 实时相机画面，通过 CSS transform 实现缩放 -->
+  <view class="camera-wrapper" style="transform: scale({{zoom}});">
+    <camera
+      class="camera"
+      device-position="{{position}}"
+      flash="off"
+      resolution="high"
+      binderror="onCameraError"
+    ></camera>
+  </view>
+
+  <!-- 冻结画面覆盖层 -->
+  <view class="frozen-overlay" wx:if="{{frozen}}">
+    <image
+      class="frozen-image"
+      src="{{capturedSrc}}"
+      mode="aspectFill"
+      style="transform: scale({{zoom}});"
+    ></image>
+    <view class="resume-btn" bindtap="onResume">
+      <text>继续</text>
+    </view>
+  </view>
+
+  <!-- 底部浮动控制栏 -->
+  <view class="control-bar" wx:if="{{!frozen}}">
+    <view class="btn-circle" bindtap="onSwitchCamera">
+      <text class="btn-icon">&#x1F504;</text>
+    </view>
+    <view class="btn-circle btn-capture" bindtap="onFreeze">
+      <text class="btn-icon">&#x2744;</text>
+    </view>
+  </view>
+
+  <!-- 缩放滑条 -->
+  <view class="zoom-bar" wx:if="{{!frozen}}">
+    <text class="zoom-label">1x</text>
+    <slider
+      class="zoom-slider"
+      min="1"
+      max="3"
+      step="0.1"
+      value="{{zoom}}"
+      activeColor="#ffffff"
+      backgroundColor="rgba(255,255,255,0.3)"
+      block-size="18"
+      bindchange="onZoomChange"
+    ></slider>
+    <text class="zoom-label">3x</text>
+  </view>
+</view>

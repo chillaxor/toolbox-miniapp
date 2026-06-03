@@ -1,0 +1,98 @@
+<!-- pages/tools/countdown2/index.wxml -->
+
+<!-- ========== 编辑模式 ========== -->
+<view class="container" wx:if="{{!isCounting}}">
+
+  <!-- 头部标题 -->
+  <view class="tool-header">
+    <text class="tool-header-title">全屏倒计时</text>
+  </view>
+
+  <!-- 时间输入卡片 -->
+  <view class="card time-input-card">
+    <view class="time-inputs">
+      <!-- 时 -->
+      <view class="time-input-group">
+        <input class="time-input" type="number" value="{{inputHours}}" bindinput="onHoursInput" maxlength="2" placeholder="0" />
+        <text class="time-input-label">时</text>
+      </view>
+      <text class="time-colon">:</text>
+      <!-- 分 -->
+      <view class="time-input-group">
+        <input class="time-input" type="number" value="{{inputMinutes}}" bindinput="onMinutesInput" maxlength="2" placeholder="0" />
+        <text class="time-input-label">分</text>
+      </view>
+      <text class="time-colon">:</text>
+      <!-- 秒 -->
+      <view class="time-input-group">
+        <input class="time-input" type="number" value="{{inputSeconds}}" bindinput="onSecondsInput" maxlength="2" placeholder="0" />
+        <text class="time-input-label">秒</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 预设时间卡片 -->
+  <view class="card">
+    <text class="section-label">快捷预设</text>
+    <view class="preset-grid">
+      <view
+        wx:for="{{presets}}"
+        wx:key="index"
+        class="preset-btn {{activePreset === index ? 'preset-btn-active' : ''}}"
+        bindtap="onPresetTap"
+        data-index="{{index}}"
+      >
+        <text>{{item.label}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 开始按钮 -->
+  <view class="start-btn-wrapper">
+    <button class="btn-primary start-btn" bindtap="onStart">开始倒计时</button>
+  </view>
+</view>
+
+<!-- ========== 倒计时模式（全屏） ========== -->
+<view class="countdown-fullscreen" wx:if="{{isCounting}}">
+
+  <!-- 时间到时的脉冲背景 -->
+  <view class="timeup-pulse-bg {{isTimeUp ? 'active' : ''}}"></view>
+
+  <!-- 圆环进度 + 时间显示 -->
+  <view class="timer-center">
+    <view class="canvas-wrapper">
+      <canvas
+        canvas-id="progressCanvas"
+        class="progress-canvas"
+        style="width: {{canvasWidth}}px; height: {{canvasHeight}}px;"
+      ></canvas>
+
+      <!-- 时间文字叠加在 canvas 上方 -->
+      <view class="time-overlay">
+        <text class="time-display {{isShortFormat ? 'time-display-short' : ''}} {{isTimeUp ? 'time-display-alert' : ''}}">{{displayTime}}</text>
+        <text class="time-status" wx:if="{{isPaused}}">已暂停</text>
+        <text class="time-status time-status-running" wx:elif="{{isRunning}}">专注中</text>
+        <text class="time-status time-status-done" wx:if="{{isTimeUp}}">时间到！</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部浮动控制栏 -->
+  <view class="control-bar">
+    <view class="control-btn control-btn-reset" bindtap="onReset">
+      <text class="control-icon">&#x21BA;</text>
+      <text class="control-label">重置</text>
+    </view>
+
+    <view class="control-btn control-btn-pause" bindtap="onPause" wx:if="{{!isTimeUp}}">
+      <text class="control-icon">{{isPaused ? '&#x25B6;' : '&#x275A;&#x275A;'}}</text>
+      <text class="control-label">{{isPaused ? '继续' : '暂停'}}</text>
+    </view>
+
+    <view class="control-btn control-btn-back" bindtap="onReset">
+      <text class="control-icon">&#x2715;</text>
+      <text class="control-label">退出</text>
+    </view>
+  </view>
+</view>

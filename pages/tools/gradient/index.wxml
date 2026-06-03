@@ -1,0 +1,124 @@
+<view class="container">
+  <!-- 标题 -->
+  <view class="header">
+    <text class="title">渐变色壁纸生成器</text>
+    <text class="subtitle">选择颜色和方向，生成专属壁纸</text>
+  </view>
+
+  <!-- 预览区域 -->
+  <view class="preview-section">
+    <view class="preview-box" style="background: {{previewGradient}}">
+      <text class="preview-label">{{color1}} → {{color2}} → {{color3}}</text>
+    </view>
+  </view>
+
+  <!-- 预设渐变 -->
+  <view class="section">
+    <view class="section-title">预设渐变</view>
+    <scroll-view scroll-x class="preset-scroll">
+      <view class="preset-list">
+        <view
+          wx:for="{{presets}}"
+          wx:key="name"
+          class="preset-item"
+          data-idx="{{index}}"
+          bindtap="applyPreset"
+        >
+          <view class="preset-thumb" style="background: linear-gradient(135deg, {{item.colors[0]}}, {{item.colors[1]}}, {{item.colors[2]}})"></view>
+          <text class="preset-name">{{item.name}}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 颜色选择 -->
+  <view class="section">
+    <view class="section-title">选择颜色</view>
+    <view class="color-slots">
+      <view
+        class="color-slot {{activeSlot === 1 ? 'slot-active' : ''}}"
+        data-slot="{{1}}"
+        bindtap="selectSlot"
+      >
+        <view class="slot-circle" style="background: {{color1}}"></view>
+        <text class="slot-label">颜色1</text>
+      </view>
+      <view
+        class="color-slot {{activeSlot === 2 ? 'slot-active' : ''}}"
+        data-slot="{{2}}"
+        bindtap="selectSlot"
+      >
+        <view class="slot-circle" style="background: {{color2}}"></view>
+        <text class="slot-label">颜色2</text>
+      </view>
+      <view
+        class="color-slot {{activeSlot === 3 ? 'slot-active' : ''}}"
+        data-slot="{{3}}"
+        bindtap="selectSlot"
+      >
+        <view class="slot-circle" style="background: {{color3}}"></view>
+        <text class="slot-label">颜色3</text>
+      </view>
+    </view>
+
+    <!-- 调色板 -->
+    <view class="palette" wx:if="{{showPalette}}">
+      <view
+        wx:for="{{palette}}"
+        wx:key="*this"
+        class="palette-item"
+        style="background: {{item}}"
+        data-color="{{item}}"
+        bindtap="pickColor"
+      ></view>
+    </view>
+  </view>
+
+  <!-- 方向选择 -->
+  <view class="section">
+    <view class="section-title">渐变方向</view>
+    <view class="direction-bar">
+      <view
+        wx:for="{{directions}}"
+        wx:key="key"
+        class="dir-btn {{direction === item.key ? 'dir-active' : ''}}"
+        data-dir="{{item.key}}"
+        bindtap="selectDirection"
+      >
+        <text class="dir-icon">{{item.label}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 生成按钮 -->
+  <view class="action-section">
+    <button
+      class="save-btn {{generating ? 'btn-disabled' : ''}}"
+      style="background: {{previewGradient}}"
+      bindtap="generateWallpaper"
+      disabled="{{generating}}"
+    >
+      <text class="btn-text">{{generating ? '生成中...' : '生成并保存壁纸'}}</text>
+    </button>
+  </view>
+
+  <!-- 提示卡片 -->
+  <view class="tip-card">
+    <text class="tip-icon">💡</text>
+    <view class="tip-content">
+      <text class="tip-title">使用提示</text>
+      <text class="tip-text">• 点击颜色槽位切换编辑对象</text>
+      <text class="tip-text">• 点击调色板选择颜色</text>
+      <text class="tip-text">• 生成壁纸分辨率为 750×1334</text>
+      <text class="tip-text">• 首次保存需授权相册权限</text>
+    </view>
+  </view>
+
+  <!-- 隐藏的 Canvas（用于生成壁纸） -->
+  <canvas
+    type="2d"
+    id="gradientCanvas"
+    canvas-id="gradientCanvas"
+    class="offscreen-canvas"
+  ></canvas>
+</view>

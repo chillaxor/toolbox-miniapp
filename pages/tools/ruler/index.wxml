@@ -1,40 +1,68 @@
-<view class="container">
-  <view class="tool-header">
-    <text class="tool-header-title">📏 虚拟尺子</text>
-  </view>
-
-  <view class="card">
-    <view class="controls">
-      <view class="unit-btn {{unit === 'cm' ? 'active' : ''}}" bindtap="switchUnit" data-unit="cm">厘米</view>
-      <view class="unit-btn {{unit === 'inch' ? 'active' : ''}}" bindtap="switchUnit" data-unit="inch">英寸</view>
+<!-- 竖屏 -->
+<view class="ruler-page portrait" wx:if="{{!isLandscape}}">
+  <!-- 尺子刻度铺满全屏 -->
+  <view class="ruler-strip vertical">
+    <view class="ruler-zero-line vertical"></view>
+    <view wx:for="{{rulerMarks}}" wx:key="position" class="mark-row vertical" style="bottom: {{item.position}}px;">
+      <view class="mark-bar vertical {{item.isMajor ? 'mark-major' : 'mark-minor'}}" style="width: {{item.size}}rpx;"></view>
+      <text class="mark-label vertical" wx:if="{{item.label !== ''}}">{{item.label}}</text>
     </view>
   </view>
 
-  <view class="ruler-container">
-    <view class="ruler-body">
-      <view class="ruler-marks">
-        <view wx:for="{{rulerMarks}}" wx:key="position" class="mark-item" style="left: {{item.position}}px;">
-          <view class="mark-line {{item.isCm ? 'mark-cm' : 'mark-mm'}}" style="height: {{item.height}}rpx;"></view>
-          <text class="mark-label" wx:if="{{item.label !== ''}}">{{item.label}}</text>
-        </view>
+  <!-- 浮动控制按钮 -->
+  <view class="float-btn" bindtap="toggleCtrl" style="top: {{statusBarHeight + 10}}px;">
+    <text>{{showCtrl ? '✕' : '⚙'}}</text>
+  </view>
+
+  <!-- 浮动控制面板 -->
+  <view class="float-panel portrait" wx:if="{{showCtrl}}" style="top: {{statusBarHeight + 60}}px;">
+    <view class="fp-device" wx:if="{{deviceInfo}}">
+      <text>{{deviceInfo}}</text>
+      <text class="fp-auto">自动识别</text>
+    </view>
+    <view class="fp-unit" bindtap="switchUnit">
+      <text class="fp-tag {{unit === 'cm' ? 'on' : ''}}">厘米</text>
+      <text class="fp-tag {{unit === 'inch' ? 'on' : ''}}">英寸</text>
+    </view>
+    <text class="fp-range">可测 ≈ {{maxDisplay}} {{unit === 'cm' ? 'cm' : 'inch'}}</text>
+    <view class="fp-cal">
+      <text class="fp-cal-label">微调</text>
+      <slider min="0" max="4000" value="2000" step="1" bindchanging="onCalibrate" block-size="14" activeColor="#C9B87A" />
+    </view>
+    <text class="fp-tip">📏 底边对齐物体起点</text>
+    <text class="fp-tip">🔄 横屏可测更长</text>
+  </view>
+</view>
+
+<!-- 横屏 -->
+<view class="ruler-page landscape" wx:if="{{isLandscape}}">
+  <!-- 尺子刻度铺满全屏底部 -->
+  <view class="ruler-strip horizontal">
+    <view class="ruler-zero-line horizontal"></view>
+    <view wx:for="{{rulerMarks}}" wx:key="position" class="mark-row horizontal" style="left: {{item.position}}px;">
+      <view class="mark-bar horizontal {{item.isMajor ? 'mark-major' : 'mark-minor'}}" style="height: {{item.size}}rpx;"></view>
+      <text class="mark-label horizontal" wx:if="{{item.label !== ''}}">{{item.label}}</text>
+    </view>
+  </view>
+
+  <!-- 浮动控制按钮 -->
+  <view class="float-btn" bindtap="toggleCtrl" style="top: {{statusBarHeight + 6}}px; right: 16rpx;">
+    <text>{{showCtrl ? '✕' : '⚙'}}</text>
+  </view>
+
+  <!-- 浮动控制面板 -->
+  <view class="float-panel landscape" wx:if="{{showCtrl}}" style="top: {{statusBarHeight + 6}}px;">
+    <view class="fp-row">
+      <text class="fp-device-text" wx:if="{{deviceInfo}}">{{deviceInfo}}</text>
+      <view class="fp-unit small" bindtap="switchUnit">
+        <text class="fp-tag small {{unit === 'cm' ? 'on' : ''}}">cm</text>
+        <text class="fp-tag small {{unit === 'inch' ? 'on' : ''}}">inch</text>
       </view>
-      <view class="ruler-edge"></view>
+      <text class="fp-range small">≈{{maxDisplay}}{{unit === 'cm' ? 'cm' : 'in'}}</text>
     </view>
-    <view class="ruler-tip">
-      <text class="tip-text">将手机左边缘对齐物体起点</text>
+    <view class="fp-row">
+      <text class="fp-cal-label">微调</text>
+      <slider min="0" max="4000" value="2000" step="1" bindchanging="onCalibrate" block-size="12" activeColor="#C9B87A" />
     </view>
-  </view>
-
-  <view class="card tip-card">
-    <text class="tip-title">⚙️ 校准</text>
-    <text class="tip-text">如果测量不准确，可以拖动滑块微调</text>
-    <slider class="calibrate-slider" min="30" max="70" value="50" bindchanging="onSliderChange" show-value />
-  </view>
-
-  <view class="card tip-card">
-    <text class="tip-title">💡 使用提示</text>
-    <text class="tip-text">• 请将手机屏幕左边缘对齐被测物体的起点</text>
-    <text class="tip-text">• 由于屏幕尺寸差异，建议先用已知长度物体校准</text>
-    <text class="tip-text">• 测量结果仅供参考</text>
   </view>
 </view>

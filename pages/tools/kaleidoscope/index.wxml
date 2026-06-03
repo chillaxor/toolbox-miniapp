@@ -1,0 +1,79 @@
+<view class="page {{fullscreen ? 'fullscreen' : ''}}">
+
+  <!-- Hidden camera source – still renders to native layer -->
+  <camera
+    class="hidden-camera"
+    device-position="{{position}}"
+    flash="off"
+    resolution="high"
+    binderror="onCameraError"
+  ></camera>
+
+  <!-- Kaleidoscope viewport -->
+  <view
+    class="viewport"
+    style="transform: rotate({{rotationDeg}}deg);"
+    bindtap="onToggleFullscreen"
+  >
+    <!-- Each segment is a camera view clipped & rotated via inline style -->
+    <block wx:for="{{segmentStyles}}" wx:key="index">
+      <view class="segment" style="{{item}}">
+        <camera
+          class="segment-camera"
+          device-position="{{position}}"
+          flash="off"
+          resolution="high"
+          binderror="onCameraError"
+        ></camera>
+      </view>
+    </block>
+
+    <!-- Centre dot decoration -->
+    <view class="centre-dot"></view>
+  </view>
+
+  <!-- Offscreen canvas used for screenshot -->
+  <canvas canvas-id="kaleidoscope-canvas" class="offscreen-canvas"></canvas>
+
+  <!-- Floating control bar -->
+  <view class="controls" wx:if="{{!fullscreen}}">
+    <!-- Segment count selector -->
+    <view class="control-group">
+      <text class="control-label">片数</text>
+      <view class="seg-buttons">
+        <view
+          wx:for="{{segmentList}}"
+          wx:key="*this"
+          class="seg-btn {{segments === item ? 'active' : ''}}"
+          data-seg="{{item}}"
+          bindtap="onSegmentChange"
+        >
+          <text>{{item}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- Action buttons row -->
+    <view class="action-row">
+      <view class="btn" bindtap="onToggleRotation">
+        <text class="btn-icon">{{rotating ? '⏸' : '▶'}}</text>
+        <text class="btn-label">旋转</text>
+      </view>
+
+      <view class="btn" bindtap="onSwitchCamera">
+        <text class="btn-icon">🔄</text>
+        <text class="btn-label">翻转</text>
+      </view>
+
+      <view class="btn" bindtap="onSave">
+        <text class="btn-icon">💾</text>
+        <text class="btn-label">保存</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- Fullscreen hint -->
+  <view class="fullscreen-hint" wx:if="{{fullscreen}}" bindtap="onToggleFullscreen">
+    <text>点击画面退出全屏</text>
+  </view>
+</view>
