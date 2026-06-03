@@ -1,5 +1,17 @@
 var storage = require('../../../utils/storage.js');
 
+var THEMES = [
+  { name: '微信绿', bg: '#95EC69', text: '#000', self: '#FFFFFF' },
+  { name: 'QQ蓝', bg: '#4A90D9', text: '#FFF', self: '#E8F0FE' },
+  { name: '粉色少女', bg: '#FFB6C1', text: '#333', self: '#FFF0F5' },
+  { name: '暗黑模式', bg: '#3A3A3C', text: '#FFF', self: '#1C1C1E' },
+  { name: '清风蓝', bg: '#B0E0E6', text: '#333', self: '#F0F8FF' },
+  { name: '暖橙', bg: '#FFD4A0', text: '#333', self: '#FFF8F0' }
+];
+
+// 导出 canvas 固定 600x600px（正方形）或跟随图片比例，最大边 800
+var EXPORT_MAX = 800;
+
 Page({
   data: {
     isFavorite: false,
@@ -60,10 +72,9 @@ Page({
 
   onLoad: function () {
     this.checkFavorite();
-    // 获取设备屏幕信息，设置合理的预览尺寸
     var sysInfo = wx.getSystemInfoSync();
     var screenW = sysInfo.windowWidth;
-    var previewW = Math.min(screenW - 48, 340); // 左右各24px内边距
+    var previewW = Math.min(screenW - 48, 340);
     this.setData({ previewW: previewW, previewH: previewW, exportW: previewW * 2, exportH: previewW * 2 });
   },
 
@@ -135,13 +146,22 @@ Page({
           h = maxH;
           previewW = Math.round(h / ratio);
         }
+        // 导出尺寸：按比例放大，最大边 EXPORT_MAX
+        var expW, expH;
+        if (info.width >= info.height) {
+          expW = Math.min(info.width, EXPORT_MAX);
+          expH = Math.round(expW * (info.height / info.width));
+        } else {
+          expH = Math.min(info.height, EXPORT_MAX);
+          expW = Math.round(expH * (info.width / info.height));
+        }
         self.setData({
           bgType: 'image',
           bgImage: filePath,
           previewW: previewW,
           previewH: h,
-          exportW: previewW * 2,
-          exportH: h * 2,
+          exportW: expW,
+          exportH: expH,
           textLayers: [],
           emojiLayers: [],
           history: []
@@ -159,7 +179,7 @@ Page({
     this.setData({
       bgType: 'color',
       bgColor: color,
-      previewH: previewW, // 纯色用正方形
+      previewH: previewW,
       exportW: previewW * 2,
       exportH: previewW * 2,
       textLayers: [],
@@ -205,7 +225,7 @@ Page({
       color: color,
       strokeColor: strokeColor,
       shadowColor: shadowColor,
-      pos: this.data.textPos   // 'top' | 'center' | 'bottom'
+      pos: this.data.textPos
     });
     this.setData({ textLayers: layers });
     wx.showToast({ title: '文字已添加', icon: 'success' });
@@ -274,7 +294,7 @@ Page({
     });
   },
 
-  // ========== 保存 ==========
+  // ========== 保存（核心修复） ==========
 
   onSave: function () {
     var self = this;
@@ -285,30 +305,49 @@ Page({
 
     wx.showLoading({ title: '合成中...' });
 
-    // 用 canvas 合成图片
     var ctx = wx.createCanvasContext('exportCanvas', self);
     var w = self.data.exportW;
     var h = self.data.exportH;
 
-    // 绘制底图
+    // Step 1：先画底图，draw() 后再叠加文字/表情
     if (self.data.bgType === 'color') {
       ctx.setFillStyle(self.data.bgColor);
       ctx.fillRect(0, 0, w, h);
-      self._drawLayers(ctx, w, h, self);
+      // 纯色不需要等图片加载，直接 draw 后叠加
+      ctx.draw(false, function () {
+        self._drawTextAndEmoji(ctx, w, h, function () {
+          ctx.draw(true, function () {         // true = 追加绘制，不清空底图
+            setTimeout(function () {
+              self._exportCanvas(w, h);
+            }, 200);
+          });
+        });
+      });
     } else {
+      // 图片底图：drawImage 后 draw，确保图片渲染完再叠加
       ctx.drawImage(self.data.bgImage, 0, 0, w, h);
-      self._drawLayers(ctx, w, h, self);
+      ctx.draw(false, function () {
+        self._drawTextAndEmoji(ctx, w, h, function () {
+          ctx.draw(true, function () {
+            setTimeout(function () {
+              self._exportCanvas(w, h);
+            }, 200);
+          });
+        });
+      });
     }
   },
 
-  _drawLayers: function (ctx, w, h, self) {
+  // 绘制文字和表情（同步绘制指令，最后调 callback）
+  _drawTextAndEmoji: function (ctx, w, h, callback) {
+    var self = this;
     var scale = w / self.data.previewW;
 
-    // 绘制文字层
+    // 文字层
     var textLayers = self.data.textLayers;
     for (var i = 0; i < textLayers.length; i++) {
       var tl = textLayers[i];
-      var fontSize = tl.size * scale;
+      var fontSize = Math.round(tl.size * scale);
       ctx.setFontSize(fontSize);
       ctx.setTextAlign('center');
       ctx.setTextBaseline('middle');
@@ -316,16 +355,16 @@ Page({
       var x = w / 2;
       var y;
       if (tl.pos === 'top') {
-        y = fontSize + 16 * scale;
+        y = fontSize + Math.round(16 * scale);
       } else if (tl.pos === 'center') {
         y = h / 2;
       } else {
-        y = h - fontSize - 16 * scale;
+        y = h - fontSize - Math.round(16 * scale);
       }
 
-      // 描边
+      // 描边（让文字更清晰）
       ctx.setStrokeStyle(tl.strokeColor);
-      ctx.setLineWidth(Math.max(2, 2 * scale));
+      ctx.setLineWidth(Math.max(2, Math.round(2 * scale)));
       ctx.strokeText(tl.content, x, y);
 
       // 填色
@@ -333,17 +372,17 @@ Page({
       ctx.fillText(tl.content, x, y);
     }
 
-    // 绘制表情层
+    // 表情层
     var emojiLayers = self.data.emojiLayers;
     for (var j = 0; j < emojiLayers.length; j++) {
       var el = emojiLayers[j];
-      var eSize = el.size * scale;
+      var eSize = Math.round(el.size * scale);
       ctx.setFontSize(eSize);
       ctx.setTextAlign('center');
       ctx.setTextBaseline('middle');
 
       var ex, ey;
-      var margin = eSize / 2 + 12 * scale;
+      var margin = eSize / 2 + Math.round(12 * scale);
       var pos = el.pos;
       if (pos === 'top-left') {
         ex = margin; ey = margin;
@@ -357,44 +396,55 @@ Page({
         ex = w / 2; ey = h / 2;
       }
 
+      ctx.setFillStyle('#000');  // emoji 不需要颜色，但 setFillStyle 要有值
       ctx.fillText(el.content, ex, ey);
     }
 
-    ctx.draw(false, function () {
-      wx.canvasToTempFilePath({
-        canvasId: 'exportCanvas',
-        fileType: 'png',
-        quality: 1,
-        success: function (res) {
-          wx.hideLoading();
-          wx.saveImageToPhotosAlbum({
-            filePath: res.tempFilePath,
-            success: function () {
-              wx.showToast({ title: '已保存到相册 🎉', icon: 'success', duration: 2000 });
-              storage.addHistory({
-                toolId: 'sticker',
-                toolName: '表情包制作',
-                category: 'image',
-                summary: '制作了一个表情包',
-                timestamp: Date.now()
-              });
-            },
-            fail: function () {
-              wx.hideLoading();
-              wx.showModal({
-                title: '保存失败',
-                content: '请在设置中授权访问相册',
-                showCancel: false
-              });
-            }
-          });
-        },
-        fail: function () {
-          wx.hideLoading();
-          wx.showToast({ title: '导出失败', icon: 'none' });
-        }
-      }, self);
-    });
+    if (callback) callback();
+  },
+
+  // 导出并保存
+  _exportCanvas: function (w, h) {
+    var self = this;
+    wx.canvasToTempFilePath({
+      canvasId: 'exportCanvas',
+      x: 0,
+      y: 0,
+      width: w,
+      height: h,
+      destWidth: w,
+      destHeight: h,
+      fileType: 'png',
+      quality: 1,
+      success: function (res) {
+        wx.hideLoading();
+        wx.saveImageToPhotosAlbum({
+          filePath: res.tempFilePath,
+          success: function () {
+            wx.showToast({ title: '已保存到相册 🎉', icon: 'success', duration: 2000 });
+            storage.addHistory({
+              toolId: 'sticker',
+              toolName: '表情包制作',
+              category: 'image',
+              summary: '制作了一个表情包',
+              timestamp: Date.now()
+            });
+          },
+          fail: function () {
+            wx.hideLoading();
+            wx.showModal({
+              title: '保存失败',
+              content: '请在设置中授权访问相册',
+              showCancel: false
+            });
+          }
+        });
+      },
+      fail: function (err) {
+        wx.hideLoading();
+        wx.showToast({ title: '导出失败: ' + (err.errMsg || ''), icon: 'none' });
+      }
+    }, self);
   },
 
   onShareAppMessage: function () {
