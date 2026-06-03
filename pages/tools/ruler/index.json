@@ -1,6 +1,5 @@
 {
   "navigationBarTitleText": "虚拟尺子",
   "navigationStyle": "custom",
-  "pageOrientation": "landscape",
   "usingComponents": {}
 }

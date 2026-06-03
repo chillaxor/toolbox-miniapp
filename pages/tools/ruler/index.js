@@ -1,214 +1,262 @@
-var PHONES = require('../../../data/phones.js');
-
-/**
- * 匹配设备物理尺寸
- */
-function matchDevice(model) {
-  if (!model) return null;
-  // 精确匹配
-  if (PHONES[model] && model !== '_default') return PHONES[model];
-  // 模糊匹配
-  var keys = Object.keys(PHONES);
-  for (var i = 0; i < keys.length; i++) {
-    var k = keys[i];
-    if (k === '_default') continue;
-    if (model.indexOf(k) >= 0 || k.indexOf(model) >= 0) {
-      return PHONES[k];
-    }
-  }
-  // 品牌默认值
-  var defaults = PHONES['_default'] || {};
-  var m = model.toLowerCase();
-  var dKeys = Object.keys(defaults);
-  for (var j = 0; j < dKeys.length; j++) {
-    if (m.indexOf(dKeys[j]) >= 0) return defaults[dKeys[j]];
-  }
-  return null;
-}
-
 Page({
   data: {
     unit: 'cm',
-    marks: [],
-    pxPerMm: 0,
-    maxDisplay: 0,
-    deviceInfo: '',
-    isLandscape: false,
-    showCtrl: false,
-    statusBarHeight: 0,
-    rulerSize: 80
+    direction: 'h',
+    cal: 100,
+    statusBarHeight: 20,
+    panelOpen: true
   },
 
-  onLoad: function () {
-    var sys = wx.getSystemInfoSync();
-    this._sys = sys;
-    this.setData({ statusBarHeight: sys.statusBarHeight || 20 });
-    this._refresh();
+  onLoad() {
+    this.resetOffset()
+    const sysInfo = wx.getWindowInfo()
+    this.setData({ statusBarHeight: sysInfo.statusBarHeight || 20 })
   },
 
-  onResize: function () {
-    this._sys = wx.getSystemInfoSync();
-    this._refresh();
+  onReady() {
+    this.initCanvas()
   },
 
-  _refresh: function () {
-    this._detectOrientation();
-    this._calibrate();
-    this._buildMarks();
+  goBack() {
+    wx.navigateBack({ delta: 1 })
   },
 
-  /**
-   * 检测横竖屏
-   */
-  _detectOrientation: function () {
-    var sys = this._sys || wx.getSystemInfoSync();
-    this.setData({ isLandscape: sys.windowWidth > sys.windowHeight });
+  togglePanel() {
+    this.setData({ panelOpen: !this.data.panelOpen })
   },
 
-  /**
-   * 校准：计算每毫米对应的CSS像素数
-   * 核心公式：pxPerMm = 屏幕CSS像素 / 物理毫米
-   *   竖屏：尺子沿屏幕高度方向 → pxPerMm = windowHeight / physH
-   *   横屏：尺子沿屏幕宽度方向 → pxPerMm = windowWidth / physH
-   *   （横屏时屏幕宽度 = 竖屏时的高度，都对应手机的长边物理尺寸）
-   */
-  _calibrate: function () {
-    var sys = this._sys || wx.getSystemInfoSync();
-    var model = sys.model || '';
-    var device = matchDevice(model);
-    var isLandscape = this.data.isLandscape;
+  resetOffset() {
+    this.offsetX = 0
+    this.offsetY = 0
+  },
 
-    var wW = sys.windowWidth;
-    var wH = sys.windowHeight;
-    var physW, physH; // 物理尺寸 mm
+  initCanvas() {
+    const query = wx.createSelectorQuery()
+    query.select('#ruler')
+      .fields({ node: true, size: true })
+      .exec((res) => {
+        if (res[0]) {
+          this.canvas = res[0].node
+          this.ctx = this.canvas.getContext('2d')
+          const dpr = wx.getWindowInfo().pixelRatio
+          const w = res[0].width
+          const h = res[0].height
+          this.canvas.width = w * dpr
+          this.canvas.height = h * dpr
+          this.ctx.scale(dpr, dpr)
+          this.canvasW = w
+          this.canvasH = h
+          this.draw()
+        }
+      })
+  },
 
-    if (device) {
-      physW = device.w;
-      physH = device.h;
-      this.setData({
-        deviceInfo: model + ' (' + physW + '×' + physH + 'mm)'
-      });
+  switchUnit(e) {
+    const unit = e.currentTarget.dataset.unit
+    this.setData({ unit })
+    this.resetOffset()
+    this.draw()
+  },
+
+  switchDir(e) {
+    const dir = e.currentTarget.dataset.dir
+    this.setData({ direction: dir })
+    this.resetOffset()
+    setTimeout(() => {
+      this.initCanvas()
+    }, 100)
+  },
+
+  decreaseCal() {
+    let cal = this.data.cal - 1
+    if (cal < 70) cal = 70
+    this.setData({ cal })
+    this.draw()
+  },
+
+  increaseCal() {
+    let cal = this.data.cal + 1
+    if (cal > 130) cal = 130
+    this.setData({ cal })
+    this.draw()
+  },
+
+  lastX: 0,
+  lastY: 0,
+  offsetX: 0,
+  offsetY: 0,
+
+  onTouchStart(e) {
+    const touch = e.touches[0]
+    this.lastX = touch.clientX
+    this.lastY = touch.clientY
+  },
+
+  onTouchMove(e) {
+    const touch = e.touches[0]
+    const dx = touch.clientX - this.lastX
+    const dy = touch.clientY - this.lastY
+    if (this.data.direction === 'h') {
+      this.offsetX += dx
     } else {
-      // 无匹配设备时，根据DPI估算
-      var dpr = sys.pixelRatio || 3;
-      var sW = sys.screenWidth;
-      var sH = sys.screenHeight;
-      var physPxW = sW * dpr;
-      // 多数手机PPI在400-480之间，取420作为估算值
-      var ppi = 420;
-      physW = (physPxW / ppi) * 25.4;
-      physH = physW * (sH / sW);
-      this.setData({
-        deviceInfo: '估算 (' + Math.round(physW) + '×' + Math.round(physH) + 'mm)'
-      });
+      this.offsetY += dy
     }
-
-    // 计算 px/mm
-    var rulerLength = isLandscape ? wW : wH;
-    var pxPerMm = rulerLength / physH;
-
-    // 应用用户微调偏移
-    var offset = wx.getStorageSync('ruler_offset') || 0;
-    pxPerMm += offset;
-
-    this.setData({
-      pxPerMm: Math.round(pxPerMm * 100) / 100,
-      rulerSize: isLandscape ? 50 : 80
-    });
+    this.lastX = touch.clientX
+    this.lastY = touch.clientY
+    this.draw()
   },
 
-  /**
-   * 生成刻度数据（所有尺寸单位均为 px）
-   * cm模式：每毫米一条刻度，5mm中刻度，10mm(1cm)大刻度
-   * inch模式：每1/8英寸一条刻度，1/4中刻度，1/2中大刻度，1英寸大刻度
-   */
-  _buildMarks: function () {
-    var pxPerMm = this.data.pxPerMm;
-    if (pxPerMm <= 0) {
-      this.setData({ marks: [], maxDisplay: 0 });
-      return;
+  onTouchEnd() {},
+
+  getPxPerUnit(unit, cal) {
+    const sysInfo = wx.getWindowInfo()
+    const screenWidth = sysInfo.windowWidth
+    const assumedPhysicalWidth = 7
+    const basePxPerCm = screenWidth / assumedPhysicalWidth
+    const calibratedPxPerCm = basePxPerCm * (cal / 100)
+    if (unit === 'cm') {
+      return calibratedPxPerCm
+    } else {
+      return calibratedPxPerCm * 2.54
     }
+  },
 
-    var isCm = this.data.unit === 'cm';
-    var isLandscape = this.data.isLandscape;
-    var sys = this._sys || wx.getSystemInfoSync();
+  draw() {
+    if (!this.ctx) return
+    const ctx = this.ctx
+    const { unit, cal, direction } = this.data
+    const isH = direction === 'h'
+    const w = this.canvasW || 300
+    const h = this.canvasH || 150
+    const length = isH ? w : h
+    const offset = isH ? this.offsetX : this.offsetY
 
-    // 每单位（cm或inch）对应的px数
-    var pxPerUnit = isCm ? pxPerMm * 10 : pxPerMm * 25.4;
+    ctx.clearRect(0, 0, w, h)
 
-    // 每单位的细分数
-    var subDiv = isCm ? 10 : 8;
+    // 尺子背景 - 木纹色
+    ctx.fillStyle = '#FDEBD0'
+    ctx.fillRect(0, 0, w, h)
 
-    // 尺子可用总长度（px）
-    var totalPx = (isLandscape ? sys.windowWidth : sys.windowHeight) - 2;
+    // 边框
+    ctx.strokeStyle = '#D4A574'
+    ctx.lineWidth = 1
+    ctx.strokeRect(0.5, 0.5, w - 1, h - 1)
 
-    var maxUnits = Math.floor(totalPx / pxPerUnit);
-    var totalSubs = maxUnits * subDiv;
+    const pxPerUnit = this.getPxPerUnit(unit, cal)
+    const minorCount = unit === 'cm' ? 10 : 8
+    const tickStep = 1 / minorCount
 
-    var marks = [];
-    for (var i = 0; i <= totalSubs; i++) {
-      var pos = i * pxPerUnit / subDiv;
-      if (pos > totalPx) break;
+    const baseLinePos = 10
+    const maxTickH = (isH ? h : w) - 30
 
-      var isMajor = (i % subDiv === 0);
-      var len;
-      var label = '';
+    const startVal = -offset / pxPerUnit
+    const endVal = startVal + length / pxPerUnit
 
-      if (isCm) {
-        var isHalf = (i % 5 === 0) && !isMajor;
-        len = isMajor ? 24 : (isHalf ? 16 : 8);
-        if (isMajor) label = String(i / subDiv);
+    // 基线
+    ctx.strokeStyle = '#5D4037'
+    ctx.lineWidth = 1.5
+    ctx.beginPath()
+    if (isH) {
+      ctx.moveTo(0, baseLinePos)
+      ctx.lineTo(w, baseLinePos)
+    } else {
+      ctx.moveTo(baseLinePos, 0)
+      ctx.lineTo(baseLinePos, h)
+    }
+    ctx.stroke()
+
+    const firstIdx = Math.floor(startVal / tickStep)
+    const lastIdx = Math.ceil(endVal / tickStep)
+
+    for (let i = firstIdx; i <= lastIdx; i++) {
+      const val = i * tickStep
+      const pos = (val - startVal) * pxPerUnit
+      if (pos < -10 || pos > length + 10) continue
+
+      const roundVal = Math.round(val * 10000)
+      const isMajor = roundVal % 10000 === 0
+      const isHalfCm = !isMajor && (roundVal % 5000 === 0)
+
+      let tickH, lw
+      if (isMajor) {
+        tickH = maxTickH * 0.75
+        lw = 1.2
+      } else if (isHalfCm) {
+        tickH = maxTickH * 0.5
+        lw = 0.9
       } else {
-        var isHalfInch = (i % 4 === 0) && !isMajor;
-        var isQuarter = (i % 2 === 0) && !isMajor && !isHalfInch;
-        len = isMajor ? 24 : (isHalfInch ? 18 : (isQuarter ? 12 : 6));
-        if (isMajor) label = String(i / subDiv);
+        tickH = maxTickH * 0.2
+        lw = 0.5
       }
 
-      marks.push({
-        pos: Math.round(pos * 10) / 10,
-        len: len,
-        label: label,
-        major: isMajor
-      });
+      ctx.lineWidth = lw
+      ctx.strokeStyle = '#5D4037'
+      ctx.beginPath()
+      if (isH) {
+        ctx.moveTo(pos, baseLinePos)
+        ctx.lineTo(pos, baseLinePos + tickH)
+      } else {
+        ctx.moveTo(baseLinePos, pos)
+        ctx.lineTo(baseLinePos + tickH, pos)
+      }
+      ctx.stroke()
+
+      if (isMajor) {
+        ctx.font = 'bold 11px Arial'
+        ctx.textAlign = 'center'
+        ctx.textBaseline = 'top'
+        ctx.fillStyle = '#4E342E'
+        const label = Math.round(val)
+        if (isH) {
+          ctx.fillText(String(label), pos, baseLinePos + tickH + 4)
+        } else {
+          ctx.save()
+          ctx.translate(baseLinePos + tickH + 4, pos)
+          ctx.rotate(-Math.PI / 2)
+          ctx.fillText(String(label), 0, 0)
+          ctx.restore()
+        }
+      }
+
+      if (isHalfCm) {
+        ctx.font = '8px Arial'
+        ctx.textAlign = 'center'
+        ctx.textBaseline = 'top'
+        ctx.fillStyle = '#795548'
+        const halfLabel = (roundVal / 10000).toString()
+        if (isH) {
+          ctx.fillText(halfLabel, pos, baseLinePos + tickH + 3)
+        } else {
+          ctx.save()
+          ctx.translate(baseLinePos + tickH + 3, pos)
+          ctx.rotate(-Math.PI / 2)
+          ctx.fillText(halfLabel, 0, 0)
+          ctx.restore()
+        }
+      }
     }
 
-    this.setData({
-      marks: marks,
-      maxDisplay: isCm ? maxUnits : maxUnits
-    });
+    // 0刻度红线
+    const zeroPos = (0 - startVal) * pxPerUnit
+    if (zeroPos >= -5 && zeroPos <= length + 5) {
+      ctx.strokeStyle = '#D32F2F'
+      ctx.lineWidth = 2
+      ctx.beginPath()
+      if (isH) {
+        ctx.moveTo(zeroPos, baseLinePos - 5)
+        ctx.lineTo(zeroPos, baseLinePos + maxTickH * 0.75 + 5)
+      } else {
+        ctx.moveTo(baseLinePos - 5, zeroPos)
+        ctx.lineTo(baseLinePos + maxTickH * 0.75 + 5, zeroPos)
+      }
+      ctx.stroke()
+    }
   },
 
-  /**
-   * 切换厘米/英寸
-   */
-  switchUnit: function () {
-    this.setData({ unit: this.data.unit === 'cm' ? 'inch' : 'cm' });
-    this._buildMarks();
-  },
-
-  /**
-   * 微调校准滑块
-   * 范围 0-4000，默认2000(无偏移)
-   * 偏移范围：±0.6 px/mm
-   */
-  onCalibrate: function (e) {
-    var val = e.detail.value;
-    var offset = (val - 2000) * 0.0003;
-    offset = Math.round(offset * 10000) / 10000;
-    wx.setStorageSync('ruler_offset', offset);
-    this._calibrate();
-    this._buildMarks();
-  },
-
-  toggleCtrl: function () {
-    this.setData({ showCtrl: !this.data.showCtrl });
-  },
-
-  onShareAppMessage: function () {
+  onShareAppMessage() {
     return {
-      title: '虚拟尺子 - 工具箱',
+      title: '虚拟尺子 - 手机测量工具',
       path: '/pages/tools/ruler/index'
-    };
+    }
   }
-});
+})
