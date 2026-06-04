@@ -26,10 +26,10 @@
   <!-- 底部浮动控制栏 -->
   <view class="control-bar" wx:if="{{!frozen}}">
     <view class="btn-circle" bindtap="onSwitchCamera">
-      <text class="btn-icon">&#x1F504;</text>
+      <text class="btn-icon">🔄</text>
     </view>
     <view class="btn-circle btn-capture" bindtap="onFreeze">
-      <text class="btn-icon">&#x2744;</text>
+      <text class="btn-icon">❄</text>
     </view>
   </view>
 

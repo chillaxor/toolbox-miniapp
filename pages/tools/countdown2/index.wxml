@@ -81,17 +81,17 @@
   <!-- 底部浮动控制栏 -->
   <view class="control-bar">
     <view class="control-btn control-btn-reset" bindtap="onReset">
-      <text class="control-icon">&#x21BA;</text>
+      <text class="control-icon">↺</text>
       <text class="control-label">重置</text>
     </view>
 
     <view class="control-btn control-btn-pause" bindtap="onPause" wx:if="{{!isTimeUp}}">
-      <text class="control-icon">{{isPaused ? '&#x25B6;' : '&#x275A;&#x275A;'}}</text>
+      <text class="control-icon">{{isPaused ? '▶' : '❚❚'}}</text>
       <text class="control-label">{{isPaused ? '继续' : '暂停'}}</text>
     </view>
 
     <view class="control-btn control-btn-back" bindtap="onReset">
-      <text class="control-icon">&#x2715;</text>
+      <text class="control-icon">✕</text>
       <text class="control-label">退出</text>
     </view>
   </view>

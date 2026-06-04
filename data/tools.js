@@ -72,7 +72,7 @@ const TOOLS = [
   { id: 'mirror', name: '镜子', category: 'life', icon: '🪞', path: '/pages/tools/mirror/index', description: '前置摄像头全屏当镜子用' },
   { id: 'voicenote', name: '语音备忘录', category: 'life', icon: '🎙️', path: '/pages/tools/voicenote/index', description: '录音·列表管理·回放' },
   { id: 'teleprompter', name: '全屏提词器', category: 'text', icon: '📜', path: '/pages/tools/teleprompter/index', description: '文字自动滚动·演讲直播必备' },
-  { id: 'kaleidoscope', name: '万花筒', category: 'fun', icon: '🔮', path: '/pages/tools/kaleidoscope/index', description: '相机实时万花筒·旋转对称效果' },
+  // { id: 'kaleidoscope', name: '万花筒', category: 'fun', icon: '🔮', path: '/pages/tools/kaleidoscope/index', description: '相机实时万花筒·旋转对称效果' },
   { id: 'countdown2', name: '全屏倒计时', category: 'date', icon: '⏱️', path: '/pages/tools/countdown2/index', description: '大数字全屏倒计时·会议煮面运动' },
   { id: 'scoreboard', name: '计分板', category: 'fun', icon: '🏆', path: '/pages/tools/scoreboard/index', description: '多人比分记录·球类桌游必备' },
   { id: 'gradient', name: '渐变色壁纸', category: 'image', icon: '🎨', path: '/pages/tools/gradient/index', description: '选颜色生成渐变壁纸·保存到相册' },
