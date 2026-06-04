@@ -12,7 +12,7 @@
   <!-- Kaleidoscope Canvas viewport -->
   <view class="viewport-wrap" bindtap="onToggleFullscreen">
     <view class="viewport">
-      <canvas canvas-id="kaleido-canvas" class="kaleido-canvas"></canvas>
+      <canvas id="kaleido-canvas" canvas-id="kaleido-canvas" class="kaleido-canvas"></canvas>
     </view>
     <!-- 装饰光圈 -->
     <view class="glow-ring"></view>

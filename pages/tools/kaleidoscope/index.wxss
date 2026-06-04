@@ -38,11 +38,12 @@ page {
 
 .hidden-camera {
   position: fixed;
-  top: -9999rpx;
-  left: -9999rpx;
+  bottom: 0;
+  left: 0;
   width: 1rpx;
   height: 1rpx;
-  opacity: 0;
+  opacity: 0.01;
+  z-index: -1;
   pointer-events: none;
 }
 
