@@ -40,10 +40,11 @@ page {
   position: fixed;
   bottom: 0;
   left: 0;
-  width: 1rpx;
-  height: 1rpx;
+  /* 原生 camera 组件必须有实际尺寸且不能 z-index 为负，否则 takePhoto 返回黑图 */
+  width: 80rpx;
+  height: 80rpx;
   opacity: 0.01;
-  z-index: -1;
+  z-index: 1;
   pointer-events: none;
 }
 
