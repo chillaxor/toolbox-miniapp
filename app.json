@@ -75,7 +75,8 @@
     "pages/tools/flowerlang/index",
     "pages/tools/acupoint/index",
     "pages/tools/answerbook/index",
-    "pages/tools/mbtitest/index"
+    "pages/tools/mbtitest/index",
+    "pages/tools/coloring/index"
   ],
   "window": {
     "backgroundTextStyle": "light",

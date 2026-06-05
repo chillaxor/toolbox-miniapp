@@ -1,0 +1,126 @@
+<view class="container">
+  <!-- 顶部：分类标签 -->
+  <scroll-view class="category-bar" scroll-x enable-flex>
+    <view
+      wx:for="{{categories}}" wx:key="id"
+      class="cat-tag {{currentCategory === item.id ? 'active' : ''}}"
+      data-id="{{item.id}}"
+      bind:tap="switchCategory"
+    >
+      <text class="cat-icon">{{item.icon}}</text>
+      <text class="cat-name">{{item.name}}</text>
+    </view>
+  </scroll-view>
+
+  <!-- 模板选择 -->
+  <scroll-view class="template-bar" scroll-x enable-flex>
+    <view
+      wx:for="{{templateList}}" wx:key="id"
+      class="tpl-thumb {{currentTemplate.id === item.id ? 'active' : ''}}"
+      data-idx="{{index}}"
+      bind:tap="onTapTemplate"
+    >
+      <canvas
+        type="2d"
+        id="tplPreview{{index}}"
+        class="tpl-canvas"
+        style="width:100rpx;height:100rpx;"
+      ></canvas>
+      <text class="tpl-name">{{item.name}}</text>
+    </view>
+  </scroll-view>
+
+  <!-- 画布区域 -->
+  <view class="canvas-area" hidden="{{!currentTemplate}}">
+    <view class="canvas-title">
+      <text class="tpl-title">{{currentTemplate.name}}</text>
+      <text class="difficulty">{{difficultyText[currentTemplate.difficulty]}}</text>
+    </view>
+    <view class="canvas-wrap" style="width:{{canvasWidth}}px; height:{{canvasHeight}}px;">
+      <canvas
+        type="2d"
+        id="mainCanvas"
+        class="main-canvas"
+        style="width:{{canvasWidth}}px; height:{{canvasHeight}}px;"
+        bind:touchstart="onCanvasTap"
+      ></canvas>
+    </view>
+  </view>
+
+  <!-- 操作栏 -->
+  <view class="action-bar" hidden="{{!currentTemplate}}">
+    <view class="action-btn" bind:tap="undo">
+      <text class="action-icon">↩</text>
+      <text class="action-text">撤销</text>
+    </view>
+    <view class="action-btn" bind:tap="redo">
+      <text class="action-icon">↪</text>
+      <text class="action-text">重做</text>
+    </view>
+    <view class="action-btn {{eraserOn ? 'eraser-on' : ''}}" bind:tap="toggleEraser">
+      <text class="action-icon">🧹</text>
+      <text class="action-text">橡皮</text>
+    </view>
+    <view class="action-btn" bind:tap="clearAll">
+      <text class="action-icon">🗑️</text>
+      <text class="action-text">清空</text>
+    </view>
+    <view class="action-btn" bind:tap="saveWork">
+      <text class="action-icon">💾</text>
+      <text class="action-text">保存</text>
+    </view>
+    <view class="action-btn" bind:tap="toggleGallery">
+      <text class="action-icon">📂</text>
+      <text class="action-text">作品</text>
+    </view>
+  </view>
+
+  <!-- 调色板 -->
+  <view class="palette-section" hidden="{{!currentTemplate}}">
+    <view class="palette-row">
+      <view
+        wx:for="{{palette}}" wx:key="*this"
+        class="color-dot {{selectedColor === item && !eraserOn ? 'active' : ''}}"
+        style="background: {{item}};"
+        data-color="{{item}}"
+        bind:tap="selectColor"
+      ></view>
+      <view class="color-dot custom-btn" bind:tap="openCustomPicker">+</view>
+    </view>
+    <view class="history-row" wx:if="{{colorHistory.length > 0}}">
+      <text class="history-label">最近使用：</text>
+      <view
+        wx:for="{{colorHistory}}" wx:key="*this"
+        class="color-dot small"
+        style="background: {{item}};"
+        data-color="{{item}}"
+        bind:tap="selectColor"
+      ></view>
+    </view>
+  </view>
+
+  <!-- 自定义颜色弹窗 -->
+  <view class="picker-mask {{showPicker ? 'show' : ''}}" bind:tap="closePicker"></view>
+  <view class="picker-popup {{showPicker ? 'show' : ''}}">
+    <view class="picker-title">自定义颜色</view>
+    <view class="picker-preview" style="background: {{customColor}};"></view>
+    <input class="picker-input" placeholder="#FF0000" value="{{customColor}}" bindinput="onCustomColorInput" />
+    <view class="picker-btns">
+      <view class="picker-btn cancel" bind:tap="closePicker">取消</view>
+      <view class="picker-btn confirm" bind:tap="confirmCustomColor">确定</view>
+    </view>
+  </view>
+
+  <!-- 作品集弹窗 -->
+  <view class="gallery-mask {{showGallery ? 'show' : ''}}" bind:tap="toggleGallery"></view>
+  <view class="gallery-popup {{showGallery ? 'show' : ''}}">
+    <view class="gallery-title">我的作品</view>
+    <scroll-view class="gallery-scroll" scroll-y>
+      <view wx:if="{{savedWorks.length === 0}}" class="empty-text">还没有保存的作品~</view>
+      <view wx:for="{{savedWorks}}" wx:key="id" class="gallery-item" data-idx="{{index}}" bind:tap="loadWork">
+        <text class="gallery-name">{{item.name}}</text>
+        <view class="gallery-delete" data-idx="{{index}}" catch:tap="deleteWork">✕</view>
+      </view>
+    </scroll-view>
+  </view>
+</view>

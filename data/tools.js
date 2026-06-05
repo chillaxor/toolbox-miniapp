@@ -84,6 +84,7 @@ const TOOLS = [
   { id: 'flowerlang', name: '花语图鉴', category: 'life', icon: '🌸', path: '/pages/tools/flowerlang/index', description: '55种花语查询·送花场景推荐' },
   { id: 'acupoint', name: '穴位图谱', category: 'life', icon: '📍', path: '/pages/tools/acupoint/index', description: '常见穴位查询·按摩养生指南' },
   { id: 'answerbook', name: '答案之书', category: 'fun', icon: '📖', path: '/pages/tools/answerbook/index', description: '心中想问题·翻开答案之书解惑' },
+  { id: 'coloring', name: '涂色本', category: 'fun', icon: '🎨', path: '/pages/tools/coloring/index', description: '创意填色·放松解压·作品保存' },
 ];
 
 /**
