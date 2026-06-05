@@ -533,6 +533,100 @@ var templates = {
         { id: 'leg_fr', points: [[60, 78], [60, 96], [70, 96], [68, 78]] },
         { id: 'tail', points: [[74, 60], [82, 54], [86, 58], [84, 62], [76, 64]] }
       ]
+    },
+    {
+      id: 'hippo', name: '河马', difficulty: 1,
+      regions: [
+        { id: 'head', points: ellipse(50, 36, 26, 20) },
+        { id: 'ear_l', points: circle(28, 18, 6) },
+        { id: 'ear_r', points: circle(72, 18, 6) },
+        { id: 'eye_l', points: circle(38, 30, 4) },
+        { id: 'eye_r', points: circle(62, 30, 4) },
+        { id: 'nose', points: ellipse(50, 42, 14, 6) },
+        { id: 'nostril_l', points: circle(44, 42, 3) },
+        { id: 'nostril_r', points: circle(56, 42, 3) },
+        { id: 'mouth', points: [[40, 50], [50, 54], [60, 50]] },
+        { id: 'body', points: ellipse(50, 72, 28, 18) },
+        { id: 'leg_fl', points: [[34, 84], [32, 96], [42, 96], [42, 84]] },
+        { id: 'leg_fr', points: [[58, 84], [58, 96], [68, 96], [66, 84]] },
+        { id: 'tooth_l', points: [[42, 50], [40, 58], [44, 54]] },
+        { id: 'tooth_r', points: [[58, 54], [60, 58], [58, 50]] }
+      ]
+    },
+    {
+      id: 'crab', name: '螃蟹', difficulty: 1,
+      regions: [
+        { id: 'body', points: ellipse(50, 56, 24, 16) },
+        { id: 'eye_stalk_l', points: [[38, 36], [34, 24], [36, 22], [40, 34]] },
+        { id: 'eye_stalk_r', points: [[60, 34], [64, 22], [66, 24], [62, 36]] },
+        { id: 'eye_l', points: circle(35, 22, 4) },
+        { id: 'eye_r', points: circle(65, 22, 4) },
+        { id: 'claw_l', points: [[24, 44], [8, 34], [6, 40], [10, 48], [24, 50]] },
+        { id: 'claw_l_top', points: [[8, 34], [4, 28], [10, 30]] },
+        { id: 'claw_r', points: [[76, 44], [92, 34], [94, 40], [90, 48], [76, 50]] },
+        { id: 'claw_r_top', points: [[92, 34], [96, 28], [90, 30]] },
+        { id: 'leg_1', points: [[28, 60], [16, 72], [18, 74], [30, 62]] },
+        { id: 'leg_2', points: [[32, 64], [22, 78], [24, 80], [34, 66]] },
+        { id: 'leg_3', points: [[68, 60], [80, 72], [82, 74], [70, 62]] },
+        { id: 'leg_4', points: [[72, 64], [82, 78], [84, 80], [74, 66]] },
+        { id: 'mouth_l', points: [[44, 56], [42, 60], [46, 60]] },
+        { id: 'mouth_r', points: [[54, 56], [56, 60], [58, 60]] }
+      ]
+    },
+    {
+      id: 'turtle', name: '海龟', difficulty: 2,
+      regions: [
+        { id: 'head', points: ellipse(28, 38, 12, 10) },
+        { id: 'eye', points: circle(22, 36, 3) },
+        { id: 'mouth', points: [[16, 40], [14, 42], [18, 42]] },
+        { id: 'shell', points: ellipse(54, 44, 26, 22) },
+        { id: 'shell_pattern_1', points: ellipse(54, 38, 10, 8) },
+        { id: 'shell_pattern_2', points: circle(44, 48, 8) },
+        { id: 'shell_pattern_3', points: circle(64, 48, 8) },
+        { id: 'shell_pattern_4', points: circle(54, 54, 7) },
+        { id: 'shell_edge', points: ellipse(54, 44, 26, 22) },
+        { id: 'flipper_fl', points: [[30, 52], [16, 64], [20, 68], [34, 58]] },
+        { id: 'flipper_fr', points: [[40, 60], [30, 76], [36, 78], [44, 64]] },
+        { id: 'flipper_bl', points: [[64, 58], [70, 76], [76, 74], [70, 56]] },
+        { id: 'flipper_br', points: [[74, 52], [84, 66], [88, 62], [78, 48]] },
+        { id: 'tail', points: [[78, 46], [86, 42], [88, 46], [82, 50]] },
+        { id: 'water', points: [[0, 84], [100, 84], [100, 100], [0, 100]] }
+      ]
+    },
+    {
+      id: 'hedgehog', name: '刺猬', difficulty: 1,
+      regions: [
+        { id: 'body', points: [[30, 60], [24, 40], [40, 32], [60, 32], [76, 40], [70, 60]] },
+        { id: 'belly', points: ellipse(50, 60, 18, 12) },
+        { id: 'head', points: circle(28, 46, 12) },
+        { id: 'eye', points: circle(24, 44, 3) },
+        { id: 'nose', points: circle(18, 48, 3) },
+        { id: 'ear', points: [[22, 36], [18, 30], [26, 34]] },
+        { id: 'spine_1', points: [[34, 32], [30, 18], [38, 26]] },
+        { id: 'spine_2', points: [[42, 30], [40, 14], [48, 24]] },
+        { id: 'spine_3', points: [[50, 28], [50, 10], [56, 24]] },
+        { id: 'spine_4', points: [[58, 30], [62, 12], [64, 26]] },
+        { id: 'spine_5', points: [[66, 34], [72, 18], [72, 30]] },
+        { id: 'spine_6', points: [[72, 40], [82, 28], [78, 40]] },
+        { id: 'foot_l', points: [[36, 68], [32, 78], [40, 78], [42, 68]] },
+        { id: 'foot_r', points: [[56, 68], [54, 78], [62, 78], [60, 68]] }
+      ]
+    },
+    {
+      id: 'swan', name: '天鹅', difficulty: 1,
+      regions: [
+        { id: 'head', points: circle(30, 18, 8) },
+        { id: 'eye', points: circle(28, 16, 2) },
+        { id: 'beak', points: [[22, 20], [18, 18], [22, 22]] },
+        { id: 'neck', points: [[28, 26], [24, 44], [30, 46], [34, 28]] },
+        { id: 'body', points: ellipse(54, 62, 26, 18) },
+        { id: 'wing', points: [[42, 50], [54, 40], [72, 46], [78, 56], [68, 64], [48, 62]] },
+        { id: 'wing_inner', points: [[46, 52], [56, 44], [68, 48], [72, 56], [64, 60], [50, 58]] },
+        { id: 'tail', points: [[78, 56], [86, 48], [90, 52], [84, 60]] },
+        { id: 'reflection', points: ellipse(54, 82, 24, 6) },
+        { id: 'water_1', points: [[0, 76], [20, 72], [40, 76]] },
+        { id: 'water_2', points: [[60, 78], [80, 74], [100, 78]] }
+      ]
     }
   ],
 
@@ -718,6 +812,99 @@ var templates = {
         { id: 'pad_2', points: ellipse(70, 84, 18, 7) },
         { id: 'water', points: [[0, 74], [100, 74], [100, 100], [0, 100]] }
       ]
+    },
+    {
+      id: 'cherry_tree', name: '桃花树', difficulty: 2,
+      regions: [
+        { id: 'trunk', points: [[44, 48], [42, 92], [58, 92], [56, 48]] },
+        { id: 'branch_l', points: [[44, 52], [22, 38], [20, 42], [42, 56]] },
+        { id: 'branch_r', points: [[56, 50], [78, 36], [80, 40], [58, 54]] },
+        { id: 'branch_t', points: [[48, 48], [38, 28], [62, 28], [52, 48]] },
+        { id: 'blossom_1', points: circle(24, 32, 10) },
+        { id: 'blossom_2', points: circle(42, 24, 12) },
+        { id: 'blossom_3', points: circle(58, 22, 11) },
+        { id: 'blossom_4', points: circle(76, 30, 10) },
+        { id: 'blossom_5', points: circle(50, 14, 10) },
+        { id: 'petal_1', points: circle(14, 60, 4) },
+        { id: 'petal_2', points: circle(86, 62, 3) },
+        { id: 'petal_3', points: circle(30, 70, 3) },
+        { id: 'root_l', points: [[42, 90], [34, 96], [38, 98], [44, 94]] },
+        { id: 'root_r', points: [[58, 94], [62, 98], [66, 96], [58, 90]] }
+      ]
+    },
+    {
+      id: 'dandelion', name: '蒲公英', difficulty: 1,
+      regions: [
+        { id: 'center', points: circle(50, 30, 8) },
+        { id: 'seed_1', points: [[50, 22], [48, 16], [50, 8], [52, 16]] },
+        { id: 'seed_2', points: [[56, 24], [62, 18], [68, 12], [64, 20]] },
+        { id: 'seed_3', points: [[58, 30], [66, 28], [74, 26], [66, 32]] },
+        { id: 'seed_4', points: [[56, 36], [64, 40], [70, 44], [62, 40]] },
+        { id: 'seed_5', points: [[50, 38], [52, 46], [50, 54], [48, 46]] },
+        { id: 'seed_6', points: [[44, 36], [36, 40], [30, 44], [38, 40]] },
+        { id: 'seed_7', points: [[42, 30], [34, 28], [26, 26], [34, 32]] },
+        { id: 'seed_8', points: [[44, 24], [38, 18], [32, 12], [36, 20]] },
+        { id: 'stem', points: [[48, 38], [46, 68], [52, 68], [54, 38]] },
+        { id: 'leaf_l', points: [[46, 56], [30, 48], [28, 54], [42, 62]] },
+        { id: 'leaf_r', points: [[54, 60], [66, 52], [72, 56], [58, 66]] },
+        { id: 'ground', points: [[20, 68], [20, 76], [80, 76], [80, 68]] }
+      ]
+    },
+    {
+      id: 'pine', name: '松树', difficulty: 1,
+      regions: [
+        { id: 'trunk', points: [[44, 64], [42, 96], [58, 96], [56, 64]] },
+        { id: 'layer_1', points: [[50, 4], [26, 28], [74, 28]] },
+        { id: 'layer_2', points: [[50, 18], [20, 46], [80, 46]] },
+        { id: 'layer_3', points: [[50, 34], [14, 64], [86, 64]] },
+        { id: 'snow_1', points: [[50, 4], [38, 16], [62, 16]] },
+        { id: 'snow_2', points: [[50, 18], [32, 34], [68, 34]] },
+        { id: 'snow_3', points: [[50, 34], [26, 52], [74, 52]] },
+        { id: 'root_l', points: [[42, 94], [32, 100], [44, 100]] },
+        { id: 'root_r', points: [[58, 94], [56, 100], [68, 100]] }
+      ]
+    },
+    {
+      id: 'clover', name: '四叶草', difficulty: 1,
+      regions: [
+        { id: 'leaf_t', points: circle(50, 26, 16) },
+        { id: 'leaf_b', points: circle(50, 54, 16) },
+        { id: 'leaf_l', points: circle(30, 40, 16) },
+        { id: 'leaf_r', points: circle(70, 40, 16) },
+        { id: 'vein_t', points: [[50, 12], [48, 30], [52, 30]] },
+        { id: 'vein_b', points: [[50, 40], [48, 64], [52, 64]] },
+        { id: 'vein_l', points: [[16, 40], [34, 38], [34, 42]] },
+        { id: 'vein_r', points: [[84, 40], [66, 38], [66, 42]] },
+        { id: 'stem', points: [[48, 66], [46, 92], [52, 92], [54, 66]] }
+      ]
+    },
+    {
+      id: 'waterlily', name: '睡莲', difficulty: 1,
+      regions: [
+        { id: 'petal_1', points: [[50, 24], [40, 16], [36, 28], [46, 36]] },
+        { id: 'petal_2', points: [[50, 24], [60, 16], [64, 28], [54, 36]] },
+        { id: 'petal_3', points: [[36, 28], [28, 36], [36, 42], [44, 34]] },
+        { id: 'petal_4', points: [[64, 28], [72, 36], [64, 42], [56, 34]] },
+        { id: 'petal_5', points: [[44, 36], [38, 46], [46, 50], [50, 40]] },
+        { id: 'petal_6', points: [[56, 36], [62, 46], [54, 50], [50, 40]] },
+        { id: 'center', points: circle(50, 34, 6) },
+        { id: 'pad_1', points: ellipse(32, 78, 22, 10) },
+        { id: 'pad_2', points: ellipse(68, 80, 20, 9) },
+        { id: 'pad_gap', points: [[46, 76], [54, 76], [54, 84], [46, 84]] },
+        { id: 'water', points: [[0, 68], [100, 68], [100, 100], [0, 100]] }
+      ]
+    },
+    {
+      id: 'ginkgo', name: '银杏叶', difficulty: 1,
+      regions: [
+        { id: 'leaf', points: [[50, 8], [28, 22], [14, 44], [18, 64], [32, 76], [50, 82], [68, 76], [82, 64], [86, 44], [72, 22]] },
+        { id: 'vein_1', points: [[50, 8], [48, 40], [52, 40]] },
+        { id: 'vein_2', points: [[50, 38], [36, 54], [38, 56]] },
+        { id: 'vein_3', points: [[50, 38], [64, 54], [62, 56]] },
+        { id: 'vein_4', points: [[50, 50], [32, 66], [34, 68]] },
+        { id: 'vein_5', points: [[50, 50], [68, 66], [66, 68]] },
+        { id: 'stem', points: [[48, 82], [46, 100], [54, 100], [52, 82]] }
+      ]
     }
   ],
 
@@ -891,6 +1078,126 @@ var templates = {
         { id: 'hill_1', points: [[0, 75], [25, 55], [50, 75]] },
         { id: 'hill_2', points: [[40, 75], [70, 50], [100, 75]] },
         { id: 'tree', points: [[72, 75], [76, 48], [80, 75]] }
+      ]
+    },
+    {
+      id: 'beach', name: '沙滩美景', difficulty: 1,
+      regions: [
+        { id: 'sky', points: [[0, 0], [100, 0], [100, 40], [0, 40]] },
+        { id: 'sun', points: circle(80, 16, 12) },
+        { id: 'sun_ray', points: star(80, 16, 16, 12, 8) },
+        { id: 'cloud_1', points: ellipse(24, 12, 14, 5) },
+        { id: 'sea', points: [[0, 40], [100, 40], [100, 60], [0, 60]] },
+        { id: 'wave_1', points: [[0, 38], [16, 42], [32, 38], [48, 42], [64, 38], [80, 42], [100, 38]] },
+        { id: 'sand', points: [[0, 60], [100, 60], [100, 100], [0, 100]] },
+        { id: 'palm_trunk', points: [[18, 40], [14, 80], [20, 80], [24, 40]] },
+        { id: 'palm_leaf_1', points: [[18, 40], [4, 28], [8, 38]] },
+        { id: 'palm_leaf_2', points: [[22, 38], [36, 26], [32, 38]] },
+        { id: 'palm_leaf_3', points: [[16, 42], [2, 46], [10, 48]] },
+        { id: 'shell_1', points: circle(60, 78, 5) },
+        { id: 'shell_2', points: star(76, 84, 4, 2) },
+        { id: 'umbrella', points: [[56, 60], [66, 42], [76, 60]] },
+        { id: 'umbrella_pole', points: [[65, 60], [65, 82], [67, 82], [67, 60]] }
+      ]
+    },
+    {
+      id: 'rain', name: '下雨天', difficulty: 1,
+      regions: [
+        { id: 'sky', points: [[0, 0], [100, 0], [100, 30], [0, 30]] },
+        { id: 'cloud_1', points: ellipse(30, 18, 18, 10) },
+        { id: 'cloud_2', points: ellipse(60, 14, 22, 12) },
+        { id: 'cloud_3', points: ellipse(80, 20, 14, 8) },
+        { id: 'ground', points: [[0, 78], [100, 78], [100, 100], [0, 100]] },
+        { id: 'puddle_1', points: ellipse(30, 86, 14, 4) },
+        { id: 'puddle_2', points: ellipse(72, 88, 10, 3) },
+        { id: 'rain_1', points: [[20, 30], [18, 44], [22, 44], [24, 30]] },
+        { id: 'rain_2', points: [[36, 32], [34, 50], [38, 50], [40, 32]] },
+        { id: 'rain_3', points: [[52, 28], [50, 46], [54, 46], [56, 28]] },
+        { id: 'rain_4', points: [[68, 30], [66, 48], [70, 48], [72, 30]] },
+        { id: 'rain_5', points: [[84, 32], [82, 52], [86, 52], [88, 32]] },
+        { id: 'umbrella', points: [[30, 52], [46, 36], [62, 52]] },
+        { id: 'umbrella_inner', points: [[34, 52], [46, 40], [58, 52]] },
+        { id: 'umbrella_handle', points: [[45, 52], [45, 72], [50, 76], [48, 72], [47, 52]] }
+      ]
+    },
+    {
+      id: 'autumn', name: '秋天落叶', difficulty: 1,
+      regions: [
+        { id: 'sky', points: [[0, 0], [100, 0], [100, 40], [0, 40]] },
+        { id: 'ground', points: [[0, 72], [100, 72], [100, 100], [0, 100]] },
+        { id: 'hill', points: [[0, 72], [30, 56], [60, 72], [80, 58], [100, 72]] },
+        { id: 'tree_trunk', points: [[44, 40], [42, 76], [58, 76], [56, 40]] },
+        { id: 'tree_crown', points: circle(50, 28, 22) },
+        { id: 'leaf_1', points: [[16, 60], [12, 54], [18, 52], [22, 58]] },
+        { id: 'leaf_2', points: [[76, 50], [72, 44], [78, 42], [82, 48]] },
+        { id: 'leaf_3', points: [[24, 76], [20, 72], [26, 70], [28, 74]] },
+        { id: 'leaf_4', points: [[68, 70], [64, 66], [70, 64], [72, 68]] },
+        { id: 'leaf_5', points: [[86, 68], [82, 62], [88, 60], [90, 66]] },
+        { id: 'sun', points: circle(82, 14, 10) },
+        { id: 'bird_1', points: [[22, 16], [26, 12], [30, 16]] },
+        { id: 'bird_2', points: [[34, 10], [38, 6], [42, 10]] }
+      ]
+    },
+    {
+      id: 'starry', name: '星空', difficulty: 2,
+      regions: [
+        { id: 'sky', points: [[0, 0], [100, 0], [100, 100], [0, 100]] },
+        { id: 'moon', points: circle(72, 22, 12) },
+        { id: 'moon_shadow', points: circle(76, 20, 10) },
+        { id: 'star_1', points: star(20, 14, 6, 3) },
+        { id: 'star_2', points: star(42, 8, 4, 2) },
+        { id: 'star_3', points: star(56, 28, 3, 1.5) },
+        { id: 'star_4', points: star(14, 36, 3, 1.5) },
+        { id: 'star_5', points: star(88, 42, 4, 2) },
+        { id: 'star_6', points: star(34, 44, 3, 1.5) },
+        { id: 'milky_way', points: [[10, 20], [20, 16], [40, 18], [60, 24], [80, 30], [90, 38], [86, 42], [78, 34], [58, 28], [38, 22], [18, 24], [8, 28]] },
+        { id: 'mountain_1', points: [[0, 82], [20, 58], [40, 82]] },
+        { id: 'mountain_2', points: [[30, 82], [55, 52], [80, 82]] },
+        { id: 'ground', points: [[0, 82], [100, 82], [100, 100], [0, 100]] },
+        { id: 'tree', points: [[82, 82], [86, 62], [90, 82]] }
+      ]
+    },
+    {
+      id: 'lighthouse', name: '灯塔', difficulty: 2,
+      regions: [
+        { id: 'sky', points: [[0, 0], [100, 0], [100, 50], [0, 50]] },
+        { id: 'sea', points: [[0, 50], [100, 50], [100, 72], [0, 72]] },
+        { id: 'rock', points: [[30, 72], [24, 82], [36, 88], [50, 86], [64, 88], [76, 82], [70, 72]] },
+        { id: 'tower', points: [[40, 16], [38, 72], [62, 72], [60, 16]] },
+        { id: 'stripe_1', points: [[40, 28], [38, 40], [62, 40], [60, 28]] },
+        { id: 'stripe_2', points: [[40, 52], [38, 64], [62, 64], [60, 52]] },
+        { id: 'light_house', points: [[36, 12], [36, 20], [64, 20], [64, 12]] },
+        { id: 'light_beam_l', points: [[36, 16], [10, 8], [10, 12], [36, 18]] },
+        { id: 'light_beam_r', points: [[64, 16], [90, 8], [90, 12], [64, 18]] },
+        { id: 'roof', points: [[38, 12], [50, 4], [62, 12]] },
+        { id: 'window_1', points: circle(50, 34, 4) },
+        { id: 'window_2', points: circle(50, 58, 4) },
+        { id: 'door', points: roundedRect(44, 64, 12, 8, 3) },
+        { id: 'wave_1', points: [[0, 68], [16, 64], [32, 68], [48, 64], [64, 68], [80, 64], [100, 68]] },
+        { id: 'cloud_1', points: ellipse(16, 10, 10, 4) }
+      ]
+    },
+    {
+      id: 'spring_fields', name: '春日田野', difficulty: 1,
+      regions: [
+        { id: 'sky', points: [[0, 0], [100, 0], [100, 50], [0, 50]] },
+        { id: 'sun', points: circle(80, 14, 12) },
+        { id: 'sun_ray', points: star(80, 14, 16, 12, 8) },
+        { id: 'cloud_1', points: ellipse(24, 10, 14, 5) },
+        { id: 'cloud_2', points: ellipse(56, 16, 10, 4) },
+        { id: 'hill_1', points: [[0, 50], [25, 32], [50, 50]] },
+        { id: 'hill_2', points: [[40, 50], [65, 36], [100, 50]] },
+        { id: 'field_1', points: [[0, 50], [30, 50], [30, 76], [0, 76]] },
+        { id: 'field_2', points: [[30, 50], [60, 50], [60, 76], [30, 76]] },
+        { id: 'field_3', points: [[60, 50], [100, 50], [100, 76], [60, 76]] },
+        { id: 'path', points: [[44, 100], [56, 100], [54, 76], [50, 68], [46, 76]] },
+        { id: 'flower_1', points: circle(14, 60, 4) },
+        { id: 'flower_2', points: circle(28, 66, 3) },
+        { id: 'flower_3', points: circle(42, 58, 4) },
+        { id: 'flower_4', points: circle(66, 62, 3) },
+        { id: 'flower_5', points: circle(82, 56, 4) },
+        { id: 'tree', points: [[84, 36], [88, 16], [92, 36]] },
+        { id: 'tree_trunk', points: [[86, 50], [86, 36], [90, 36], [90, 50]] }
       ]
     }
   ],
@@ -1087,6 +1394,95 @@ var templates = {
         { id: 'star_bg_1', points: star(20, 20, 3, 1.5) },
         { id: 'star_bg_2', points: star(80, 30, 3, 1.5) },
         { id: 'star_bg_3', points: star(15, 60, 2.5, 1.2) }
+      ]
+    },
+    {
+      id: 'robot', name: '机器人', difficulty: 1,
+      regions: [
+        { id: 'head', points: roundedRect(34, 10, 32, 24, 6) },
+        { id: 'eye_l', points: circle(42, 20, 4) },
+        { id: 'eye_l_inner', points: circle(42, 20, 2) },
+        { id: 'eye_r', points: circle(58, 20, 4) },
+        { id: 'eye_r_inner', points: circle(58, 20, 2) },
+        { id: 'mouth', points: [[42, 28], [42, 30], [58, 30], [58, 28]] },
+        { id: 'antenna', points: [[48, 10], [48, 2], [52, 2], [52, 10]] },
+        { id: 'antenna_ball', points: circle(50, 2, 3) },
+        { id: 'neck', points: [[46, 34], [46, 38], [54, 38], [54, 34]] },
+        { id: 'body', points: roundedRect(28, 38, 44, 34, 4) },
+        { id: 'body_panel', points: [[36, 44], [36, 64], [64, 64], [64, 44]] },
+        { id: 'button_1', points: circle(44, 50, 3) },
+        { id: 'button_2', points: circle(50, 50, 3) },
+        { id: 'button_3', points: circle(56, 50, 3) },
+        { id: 'arm_l', points: [[20, 42], [10, 42], [10, 64], [20, 64], [28, 54], [28, 44]] },
+        { id: 'hand_l', points: circle(10, 68, 6) },
+        { id: 'arm_r', points: [[72, 42], [80, 42], [90, 42], [90, 64], [80, 64], [72, 54], [72, 44]] },
+        { id: 'hand_r', points: circle(90, 68, 6) },
+        { id: 'leg_l', points: [[36, 72], [36, 90], [44, 90], [44, 72]] },
+        { id: 'leg_r', points: [[56, 72], [56, 90], [64, 90], [64, 72]] },
+        { id: 'foot_l', points: roundedRect(32, 90, 16, 8, 3) },
+        { id: 'foot_r', points: roundedRect(52, 90, 16, 8, 3) }
+      ]
+    },
+    {
+      id: 'snowman', name: '雪人', difficulty: 1,
+      regions: [
+        { id: 'head', points: circle(50, 32, 18) },
+        { id: 'eye_l', points: circle(44, 28, 3) },
+        { id: 'eye_r', points: circle(56, 28, 3) },
+        { id: 'nose', points: [[50, 34], [48, 38], [52, 38]] },
+        { id: 'mouth_1', points: circle(44, 42, 2) },
+        { id: 'mouth_2', points: circle(48, 44, 2) },
+        { id: 'mouth_3', points: circle(52, 44, 2) },
+        { id: 'mouth_4', points: circle(56, 42, 2) },
+        { id: 'hat_base', points: [[34, 16], [34, 20], [66, 20], [66, 16]] },
+        { id: 'hat_top', points: [[38, 16], [38, 4], [62, 4], [62, 16]] },
+        { id: 'hat_band', points: [[38, 10], [38, 14], [62, 14], [62, 10]] },
+        { id: 'scarf', points: [[36, 48], [36, 54], [64, 54], [64, 48], [56, 48], [56, 62], [60, 62], [60, 48]] },
+        { id: 'body', points: circle(50, 68, 22) },
+        { id: 'button_b1', points: circle(50, 60, 3) },
+        { id: 'button_b2', points: circle(50, 72, 3) },
+        { id: 'button_b3', points: circle(50, 84, 3) },
+        { id: 'arm_l', points: [[28, 60], [12, 50], [10, 52], [14, 46], [12, 42], [30, 58]] },
+        { id: 'arm_r', points: [[72, 60], [88, 50], [90, 52], [86, 46], [88, 42], [70, 58]] },
+        { id: 'ground', points: [[0, 92], [100, 92], [100, 100], [0, 100]] }
+      ]
+    },
+    {
+      id: 'hotair_balloon', name: '热气球', difficulty: 1,
+      regions: [
+        { id: 'balloon', points: ellipse(50, 34, 28, 26) },
+        { id: 'balloon_stripe_1', points: [[50, 8], [50, 60], [54, 60], [54, 8]] },
+        { id: 'balloon_stripe_2', points: [[34, 14], [30, 56], [34, 56], [38, 14]] },
+        { id: 'balloon_stripe_3', points: [[62, 14], [66, 56], [70, 56], [66, 14]] },
+        { id: 'basket', points: roundedRect(38, 72, 24, 14, 3) },
+        { id: 'basket_pattern', points: [[42, 76], [42, 82], [58, 82], [58, 76]] },
+        { id: 'rope_l', points: [[40, 60], [38, 72], [40, 72], [42, 60]] },
+        { id: 'rope_r', points: [[58, 60], [60, 72], [62, 72], [60, 60]] },
+        { id: 'rope_c', points: [[49, 60], [49, 72], [51, 72], [51, 60]] },
+        { id: 'cloud_1', points: ellipse(14, 20, 10, 5) },
+        { id: 'cloud_2', points: ellipse(86, 28, 8, 4) },
+        { id: 'bird_1', points: [[16, 10], [20, 6], [24, 10]] },
+        { id: 'bird_2', points: [[78, 14], [82, 10], [86, 14]] }
+      ]
+    },
+    {
+      id: 'santa', name: '圣诞老人', difficulty: 2,
+      regions: [
+        { id: 'hat', points: [[28, 22], [40, 6], [58, 10], [70, 22]] },
+        { id: 'hat_ball', points: circle(58, 6, 5) },
+        { id: 'hat_trim', points: [[28, 22], [26, 28], [74, 28], [72, 22]] },
+        { id: 'face', points: circle(50, 40, 22) },
+        { id: 'eye_l', points: circle(42, 34, 3) },
+        { id: 'eye_r', points: circle(58, 34, 3) },
+        { id: 'nose', points: circle(50, 42, 5) },
+        { id: 'cheek_l', points: circle(36, 44, 5) },
+        { id: 'cheek_r', points: circle(64, 44, 5) },
+        { id: 'mustache_l', points: [[42, 48], [32, 52], [36, 54], [44, 50]] },
+        { id: 'mustache_r', points: [[58, 50], [64, 54], [68, 52], [58, 48]] },
+        { id: 'beard', points: [[34, 52], [30, 68], [40, 76], [50, 78], [60, 76], [70, 68], [66, 52]] },
+        { id: 'body', points: [[30, 70], [26, 96], [74, 96], [70, 70]] },
+        { id: 'belt', points: [[30, 82], [30, 88], [70, 88], [70, 82]] },
+        { id: 'belt_buckle', points: [[44, 82], [44, 88], [56, 88], [56, 82]] }
       ]
     }
   ],
@@ -1290,6 +1686,75 @@ var templates = {
         r.push({ id: 'pivot', points: circle(cx, cy, 5) });
         return r;
       })()
+    },
+    {
+      id: 'opera_mask', name: '京剧脸谱', difficulty: 2,
+      regions: [
+        { id: 'face', points: ellipse(50, 48, 30, 32) },
+        { id: 'forehead', points: [[32, 24], [50, 14], [68, 24], [64, 34], [36, 34]] },
+        { id: 'eye_l', points: ellipse(38, 38, 10, 6) },
+        { id: 'eye_l_inner', points: circle(38, 38, 4) },
+        { id: 'eye_r', points: ellipse(62, 38, 10, 6) },
+        { id: 'eye_r_inner', points: circle(62, 38, 4) },
+        { id: 'nose', points: [[50, 44], [46, 52], [54, 52]] },
+        { id: 'mouth', points: [[40, 58], [38, 64], [50, 68], [62, 64], [60, 58]] },
+        { id: 'cheek_l', points: ellipse(30, 54, 8, 10) },
+        { id: 'cheek_r', points: ellipse(70, 54, 8, 10) },
+        { id: 'pattern_1', points: [[42, 20], [50, 14], [58, 20], [54, 26], [46, 26]] },
+        { id: 'pattern_2', points: [[28, 40], [22, 36], [22, 44]] },
+        { id: 'pattern_3', points: [[72, 40], [78, 36], [78, 44]] },
+        { id: 'wing_l', points: [[20, 30], [8, 22], [6, 30], [14, 38]] },
+        { id: 'wing_r', points: [[80, 30], [92, 22], [94, 30], [86, 38]] }
+      ]
+    },
+    {
+      id: 'paper_cut', name: '窗花剪纸', difficulty: 2,
+      regions: [
+        { id: 'border', points: [[10, 10], [10, 90], [90, 90], [90, 10]] },
+        { id: 'center_char', points: [[40, 36], [40, 64], [60, 64], [60, 36]] },
+        { id: 'corner_tl', points: [[10, 10], [30, 10], [20, 20], [10, 30]] },
+        { id: 'corner_tr', points: [[70, 10], [90, 10], [90, 30], [80, 20]] },
+        { id: 'corner_bl', points: [[10, 70], [20, 80], [30, 90], [10, 90]] },
+        { id: 'corner_br', points: [[80, 80], [90, 70], [90, 90], [70, 90]] },
+        { id: 'edge_t', points: [[34, 10], [42, 10], [42, 22], [34, 22]] },
+        { id: 'edge_b', points: [[34, 78], [42, 78], [42, 90], [34, 90]] },
+        { id: 'edge_l', points: [[10, 42], [22, 42], [22, 58], [10, 58]] },
+        { id: 'edge_r', points: [[78, 42], [90, 42], [90, 58], [78, 58]] }
+      ]
+    },
+    {
+      id: 'tea_set', name: '茶具', difficulty: 1,
+      regions: [
+        { id: 'teapot_body', points: ellipse(40, 48, 22, 18) },
+        { id: 'teapot_lid', points: [[26, 30], [30, 22], [50, 20], [54, 22], [54, 30]] },
+        { id: 'teapot_lid_knob', points: circle(42, 18, 4) },
+        { id: 'teapot_spout', points: [[18, 42], [6, 34], [4, 38], [8, 44], [18, 48]] },
+        { id: 'teapot_handle', points: [[62, 38], [74, 38], [74, 58], [62, 58]] },
+        { id: 'teapot_handle_inner', points: [[66, 42], [70, 42], [70, 54], [66, 54]] },
+        { id: 'cup_1', points: [[72, 62], [72, 84], [92, 84], [92, 62]] },
+        { id: 'cup_1_inner', points: [[74, 64], [74, 80], [90, 80], [90, 64]] },
+        { id: 'cup_1_handle', points: [[92, 68], [98, 68], [98, 78], [92, 78]] },
+        { id: 'saucer_1', points: ellipse(82, 86, 16, 5) },
+        { id: 'tea_steam_1', points: [[36, 14], [38, 6], [40, 14]] },
+        { id: 'tea_steam_2', points: [[44, 12], [46, 4], [48, 12]] }
+      ]
+    },
+    {
+      id: 'chess', name: '中国象棋', difficulty: 1,
+      regions: [
+        { id: 'board', points: [[8, 10], [8, 90], [92, 90], [92, 10]] },
+        { id: 'piece_1', points: circle(30, 30, 12) },
+        { id: 'piece_1_inner', points: circle(30, 30, 8) },
+        { id: 'piece_2', points: circle(70, 30, 12) },
+        { id: 'piece_2_inner', points: circle(70, 30, 8) },
+        { id: 'piece_3', points: circle(50, 50, 12) },
+        { id: 'piece_3_inner', points: circle(50, 50, 8) },
+        { id: 'piece_4', points: circle(30, 70, 12) },
+        { id: 'piece_4_inner', points: circle(30, 70, 8) },
+        { id: 'piece_5', points: circle(70, 70, 12) },
+        { id: 'piece_5_inner', points: circle(70, 70, 8) },
+        { id: 'line_h', points: [[8, 48], [92, 48], [92, 52], [8, 52]] }
+      ]
     }
   ],
 
@@ -1475,6 +1940,59 @@ var templates = {
         { id: 'seed_4', points: [[60, 58], [58, 54], [62, 54]] },
         { id: 'seed_5', points: [[38, 64], [36, 60], [40, 60]] },
         { id: 'seed_6', points: [[56, 66], [54, 62], [58, 62]] }
+      ]
+    },
+    {
+      id: 'cup_of_coffee', name: '咖啡杯', difficulty: 1,
+      regions: [
+        { id: 'cup', points: roundedRect(28, 36, 32, 36, 6) },
+        { id: 'cup_inner', points: roundedRect(32, 40, 24, 28, 4) },
+        { id: 'liquid', points: ellipse(44, 44, 10, 4) },
+        { id: 'handle', points: [[60, 44], [72, 44], [72, 60], [60, 60]] },
+        { id: 'handle_inner', points: [[64, 48], [68, 48], [68, 56], [64, 56]] },
+        { id: 'steam_1', points: [[38, 28], [40, 16], [42, 28]] },
+        { id: 'steam_2', points: [[46, 24], [48, 12], [50, 24]] },
+        { id: 'saucer', points: ellipse(44, 76, 32, 8) },
+        { id: 'latte_art', points: [[40, 44], [44, 40], [48, 44], [44, 48]] }
+      ]
+    },
+    {
+      id: 'popcorn', name: '爆米花', difficulty: 1,
+      regions: [
+        { id: 'bucket', points: [[30, 40], [36, 88], [64, 88], [70, 40]] },
+        { id: 'stripe_1', points: [[34, 52], [38, 88], [46, 88], [42, 52]] },
+        { id: 'stripe_2', points: [[50, 52], [54, 88], [62, 88], [58, 52]] },
+        { id: 'popcorn_1', points: circle(36, 32, 8) },
+        { id: 'popcorn_2', points: circle(50, 28, 9) },
+        { id: 'popcorn_3', points: circle(64, 32, 8) },
+        { id: 'popcorn_4', points: circle(42, 24, 7) },
+        { id: 'popcorn_5', points: circle(58, 24, 7) },
+        { id: 'popcorn_6', points: circle(50, 18, 8) }
+      ]
+    },
+    {
+      id: 'ice_lolly', name: '冰棍', difficulty: 1,
+      regions: [
+        { id: 'top', points: roundedRect(32, 8, 36, 24, 8) },
+        { id: 'middle', points: [[32, 32], [32, 56], [68, 56], [68, 32]] },
+        { id: 'bottom', points: [[32, 56], [32, 72], [68, 72], [68, 56]] },
+        { id: 'bite', points: circle(60, 16, 8) },
+        { id: 'drip_1', points: [[36, 72], [34, 82], [40, 82], [38, 72]] },
+        { id: 'stick', points: [[46, 72], [46, 92], [54, 92], [54, 72]] }
+      ]
+    },
+    {
+      id: 'taco', name: '墨西哥卷', difficulty: 1,
+      regions: [
+        { id: 'shell', points: [[14, 50], [50, 10], [86, 50], [76, 70], [50, 80], [24, 70]] },
+        { id: 'meat', points: [[22, 46], [50, 18], [78, 46], [72, 58], [50, 66], [28, 58]] },
+        { id: 'lettuce_1', points: [[26, 38], [30, 30], [36, 38]] },
+        { id: 'lettuce_2', points: [[44, 28], [50, 20], [56, 28]] },
+        { id: 'lettuce_3', points: [[64, 30], [70, 34], [68, 40]] },
+        { id: 'tomato_1', points: circle(38, 44, 5) },
+        { id: 'tomato_2', points: circle(54, 36, 5) },
+        { id: 'cheese', points: [[42, 50], [58, 42], [60, 50], [44, 56]] },
+        { id: 'sauce', points: circle(50, 52, 4) }
       ]
     }
   ]
