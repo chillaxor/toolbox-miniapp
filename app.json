@@ -76,7 +76,11 @@
     "pages/tools/acupoint/index",
     "pages/tools/answerbook/index",
     "pages/tools/mbtitest/index",
-    "pages/tools/coloring/index"
+    "pages/tools/coloring/index",
+    "pages/tools/paper/index",
+    "pages/tools/textpaper/index",
+    "pages/tools/fireworks/index",
+    "pages/tools/z2h/index"
   ],
   "window": {
     "backgroundTextStyle": "light",

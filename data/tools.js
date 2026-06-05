@@ -85,6 +85,10 @@ const TOOLS = [
   { id: 'acupoint', name: '穴位图谱', category: 'life', icon: '📍', path: '/pages/tools/acupoint/index', description: '常见穴位查询·按摩养生指南' },
   { id: 'answerbook', name: '答案之书', category: 'fun', icon: '📖', path: '/pages/tools/answerbook/index', description: '心中想问题·翻开答案之书解惑' },
   { id: 'coloring', name: '涂色本', category: 'fun', icon: '🎨', path: '/pages/tools/coloring/index', description: '创意填色·放松解压·作品保存' },
+  { id: 'paper', name: '打印稿纸', category: 'life', icon: '📄', path: '/pages/tools/paper/index', description: '自定义横线方格田字格·导出打印' },
+  { id: 'textpaper', name: '文字填稿纸', category: 'life', icon: '✍️', path: '/pages/tools/textpaper/index', description: '粘贴文字自动填入稿纸格子·分页导出' },
+  { id: 'fireworks', name: '烟花特效', category: 'fun', icon: '🎆', path: '/pages/tools/fireworks/index', description: '全屏烟花燃放·12种类型·点击发射' },
+  { id: 'z2h', name: '字帖生成器', category: 'life', icon: '✍️', path: '/pages/tools/z2h/index', description: '自定义描红字帖·汉字拼音数字英文控笔' },
 ];
 
 /**

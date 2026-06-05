@@ -1,0 +1,134 @@
+<view class="container">
+  <!-- 顶部标题 -->
+  <view class="header">
+    <text class="title">字帖生成器</text>
+    <text class="subtitle">A4纸张满页 · 支持汉字/拼音/数字/英文/控笔</text>
+  </view>
+
+  <!-- 品类选择 -->
+  <view class="section">
+    <view class="section-title">字帖类型</view>
+    <scroll-view scroll-x class="type-scroll">
+      <view class="type-list">
+        <view class="type-item {{currentType === 'hanzi' ? 'active' : ''}}" bindtap="switchType" data-type="hanzi">
+          <text class="type-icon">字</text>
+          <text class="type-label">汉字</text>
+        </view>
+        <view class="type-item {{currentType === 'pinyin' ? 'active' : ''}}" bindtap="switchType" data-type="pinyin">
+          <text class="type-icon">拼</text>
+          <text class="type-label">拼音</text>
+        </view>
+        <view class="type-item {{currentType === 'number' ? 'active' : ''}}" bindtap="switchType" data-type="number">
+          <text class="type-icon">数</text>
+          <text class="type-label">数字</text>
+        </view>
+        <view class="type-item {{currentType === 'english' ? 'active' : ''}}" bindtap="switchType" data-type="english">
+          <text class="type-icon">A</text>
+          <text class="type-label">英文</text>
+        </view>
+        <view class="type-item {{currentType === 'line' ? 'active' : ''}}" bindtap="switchType" data-type="line">
+          <text class="type-icon">〰</text>
+          <text class="type-label">控笔</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 内容输入 -->
+  <view class="section" wx:if="{{currentType !== 'line'}}">
+    <view class="section-title">练习内容</view>
+    <textarea class="input-area" placeholder="{{inputPlaceholder}}" value="{{inputText}}" bindinput="onInputChange" maxlength="500" auto-height />
+    <view class="char-count">{{inputText.length}}/500</view>
+  </view>
+
+  <!-- 格子类型 -->
+  <view class="section">
+    <view class="section-title">格子类型</view>
+    <view class="option-row">
+      <view class="option-btn {{gridType === 'tian' ? 'active' : ''}}" bindtap="switchGrid" data-grid="tian">田字格</view>
+      <view class="option-btn {{gridType === 'mi' ? 'active' : ''}}" bindtap="switchGrid" data-grid="mi">米字格</view>
+      <view class="option-btn {{gridType === 'fang' ? 'active' : ''}}" bindtap="switchGrid" data-grid="fang">方格</view>
+    </view>
+  </view>
+
+  <!-- 配置参数 -->
+  <view class="section">
+    <view class="section-title">配置参数</view>
+    
+    <view class="config-item">
+      <text class="config-label">描红次数</text>
+      <slider class="config-slider" min="1" max="20" step="1" value="{{repeatCount}}" show-value bindchange="onRepeatChange" />
+    </view>
+    
+    <view class="config-item">
+      <text class="config-label">格子大小 (mm)</text>
+      <slider class="config-slider" min="10" max="25" step="1" value="{{cellSizeMM}}" show-value bindchange="onCellSizeMMChange" />
+    </view>
+
+    <view class="config-item">
+      <text class="config-label">行间距 (mm)</text>
+      <slider class="config-slider" min="1" max="10" step="1" value="{{lineSpacingMM}}" show-value bindchange="onLineSpacingMMChange" />
+    </view>
+  </view>
+
+  <!-- 附加选项 -->
+  <view class="section">
+    <view class="section-title">附加选项</view>
+    
+    <view class="switch-item" wx:if="{{currentType !== 'english' && currentType !== 'number' && currentType !== 'line'}}">
+      <text class="switch-label">标注拼音</text>
+      <switch checked="{{showPinyin}}" bindchange="onPinyinToggle" color="#e74c3c" />
+    </view>
+
+    <view class="config-item">
+      <text class="config-label">描红颜色</text>
+      <view class="color-row">
+        <view class="color-dot {{traceColor === '#dddddd' ? 'active' : ''}}" style="background:#dddddd" bindtap="setTraceColor" data-color="#dddddd"></view>
+        <view class="color-dot {{traceColor === '#aaaaaa' ? 'active' : ''}}" style="background:#aaaaaa" bindtap="setTraceColor" data-color="#aaaaaa"></view>
+        <view class="color-dot {{traceColor === '#e74c3c' ? 'active' : ''}}" style="background:#e74c3c" bindtap="setTraceColor" data-color="#e74c3c"></view>
+        <view class="color-dot {{traceColor === '#3498db' ? 'active' : ''}}" style="background:#3498db" bindtap="setTraceColor" data-color="#3498db"></view>
+        <view class="color-dot {{traceColor === '#2ecc71' ? 'active' : ''}}" style="background:#2ecc71" bindtap="setTraceColor" data-color="#2ecc71"></view>
+      </view>
+    </view>
+
+    <view class="config-item">
+      <text class="config-label">格子颜色</text>
+      <view class="color-row">
+        <view class="color-dot {{gridColor === '#cccccc' ? 'active' : ''}}" style="background:#cccccc" bindtap="setGridColor" data-color="#cccccc"></view>
+        <view class="color-dot {{gridColor === '#999999' ? 'active' : ''}}" style="background:#999999" bindtap="setGridColor" data-color="#999999"></view>
+        <view class="color-dot {{gridColor === '#e74c3c' ? 'active' : ''}}" style="background:#e74c3c" bindtap="setGridColor" data-color="#e74c3c"></view>
+        <view class="color-dot {{gridColor === '#3498db' ? 'active' : ''}}" style="background:#3498db" bindtap="setGridColor" data-color="#3498db"></view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 生成按钮 -->
+  <view class="action-bar">
+    <button class="btn-generate" bindtap="onGenerate">生成字帖</button>
+  </view>
+
+  <!-- Canvas 预览区 -->
+  <view class="section preview-section" wx:if="{{hasGenerated}}">
+    <view class="section-title">预览 · {{layoutInfo}}</view>
+    <view class="canvas-wrapper">
+      <canvas canvas-id="paperCanvas" class="paper-canvas" style="width:{{canvasWidth}}px;height:{{canvasHeight}}px;" />
+    </view>
+    
+    <view class="action-bar">
+      <button class="btn-secondary" bindtap="onSaveImage">保存图片</button>
+      <button class="btn-primary" open-type="share">分享</button>
+    </view>
+  </view>
+
+  <!-- 快捷模板 -->
+  <view class="section">
+    <view class="section-title">常用模板</view>
+    <view class="template-list">
+      <view class="template-item" bindtap="useTemplate" data-text="天地人你我他" data-type="hanzi">天地人你我他</view>
+      <view class="template-item" bindtap="useTemplate" data-text="一二三四五六七八九十" data-type="number">一到十</view>
+      <view class="template-item" bindtap="useTemplate" data-text="ABCDEFGHIJKLMNOPQRSTUVWXYZ" data-type="english">A-Z字母</view>
+      <view class="template-item" bindtap="useTemplate" data-text="春眠不觉晓处处闻啼鸟夜来风雨声花落知多少" data-type="hanzi">春晓</view>
+      <view class="template-item" bindtap="useTemplate" data-text="床前明月光疑是地上霜举头望明月低头思故乡" data-type="hanzi">静夜思</view>
+    </view>
+  </view>
+</view>

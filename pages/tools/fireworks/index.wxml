@@ -1,0 +1,154 @@
+<view class="page {{isFullscreen ? 'fullscreen' : ''}}">
+  <!-- 全屏 Canvas -->
+  <canvas
+    type="2d"
+    id="fireworksCanvas"
+    class="fireworks-canvas"
+    bindtap="onTapCanvas"
+    disable-scroll="true"
+  ></canvas>
+
+  <!-- 顶部栏 -->
+  <view class="top-bar" wx:if="{{!isFullscreen}}">
+    <view class="fav-btn {{isFavorite ? 'active' : ''}}" bindtap="toggleFavorite">
+      <text>{{isFavorite ? '★' : '☆'}}</text>
+    </view>
+    <view class="panel-toggle" bindtap="togglePanel">
+      <text>⚙</text>
+    </view>
+  </view>
+
+  <!-- 控制面板 -->
+  <view class="control-panel {{showPanel && !isFullscreen ? 'show' : 'hide'}}">
+    <view class="panel-header">
+      <text class="panel-title">🎆 烟花配置</text>
+      <view class="panel-actions">
+        <view class="panel-btn" bindtap="resetDefaults">
+          <text>恢复默认</text>
+        </view>
+        <view class="panel-btn" bindtap="toggleFullscreen">
+          <text>全屏</text>
+        </view>
+      </view>
+    </view>
+
+    <scroll-view scroll-y class="panel-scroll">
+      <!-- 烟花类型 -->
+      <view class="config-group">
+        <view class="config-label">🎇 烟花类型</view>
+        <view class="type-grid">
+          <view
+            wx:for="{{types}}"
+            wx:key="key"
+            class="type-item {{config.type === item.key ? 'active' : ''}}"
+            bindtap="setType"
+            data-key="{{item.key}}"
+          >
+            <text class="type-name">{{item.nameCn}}</text>
+            <text class="type-en">{{item.name}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 烟花尺寸 -->
+      <view class="config-group">
+        <view class="config-label">📏 烟花尺寸（英寸）</view>
+        <view class="option-row">
+          <view
+            wx:for="{{sizeOptions}}"
+            wx:key="*this"
+            class="option-chip {{config.size === item ? 'active' : ''}}"
+            bindtap="setSize"
+            data-val="{{item}}"
+          >
+            <text>{{item}}"</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 画质 -->
+      <view class="config-group">
+        <view class="config-label">🎨 画质</view>
+        <view class="option-row">
+          <view
+            wx:for="{{qualityOptions}}"
+            wx:key="*this"
+            class="option-chip {{config.quality === item ? 'active' : ''}}"
+            bindtap="setQuality"
+            data-val="{{item}}"
+          >
+            <text>{{qualityLabel[item]}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 天空亮度 -->
+      <view class="config-group">
+        <view class="config-label">🌌 天空亮度</view>
+        <view class="option-row">
+          <view
+            wx:for="{{skyOptions}}"
+            wx:key="*this"
+            class="option-chip {{config.sky === item ? 'active' : ''}}"
+            bindtap="setSky"
+            data-val="{{item}}"
+          >
+            <text>{{skyLabel[item]}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 画面缩放 -->
+      <view class="config-group">
+        <view class="config-label">🔍 画面缩放</view>
+        <view class="option-row">
+          <view
+            wx:for="{{zoomOptions}}"
+            wx:key="*this"
+            class="option-chip {{config.zoom === item ? 'active' : ''}}"
+            bindtap="setZoom"
+            data-val="{{item}}"
+          >
+            <text>{{item}}%</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 开关选项 -->
+      <view class="config-group">
+        <view class="config-label">⚡ 功能开关</view>
+        <view class="switch-list">
+          <view class="switch-item" bindtap="toggleAutoFire">
+            <text class="switch-text">自动燃放</text>
+            <view class="switch-indicator {{config.autoFire ? 'on' : ''}}">
+              <view class="switch-dot"></view>
+            </view>
+          </view>
+          <view class="switch-item" bindtap="toggleMultiFire">
+            <text class="switch-text">多发同放</text>
+            <view class="switch-indicator {{config.multiFire ? 'on' : ''}}">
+              <view class="switch-dot"></view>
+            </view>
+          </view>
+          <view class="switch-item" bindtap="toggleRetainSparks">
+            <text class="switch-text">保留火花</text>
+            <view class="switch-indicator {{config.retainSparks ? 'on' : ''}}">
+              <view class="switch-dot"></view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 全屏时隐藏面板按钮 -->
+  <view class="fullscreen-exit" wx:if="{{isFullscreen}}" bindtap="toggleFullscreen">
+    <text>✕</text>
+  </view>
+
+  <!-- 底部寄语 -->
+  <view class="footer" wx:if="{{!isFullscreen}}">
+    <text class="footer-text">希望你所有的不开心，都可以在声声炮竹中结束 🎆</text>
+    <text class="footer-copy">点击画布发射烟花 · Fireworks</text>
+  </view>
+</view>

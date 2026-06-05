@@ -1,0 +1,272 @@
+<view class="page-container">
+  <!-- 顶部操作栏 -->
+  <view class="top-bar">
+    <view class="fav-btn {{isFavorite ? 'active' : ''}}" bindtap="toggleFavorite">
+      <text>{{isFavorite ? '★' : '☆'}}</text>
+    </view>
+    <view class="share-btn" bindtap="onShare">
+      <text>分享</text>
+    </view>
+  </view>
+
+  <!-- Canvas 预览区 -->
+  <view class="preview-area">
+    <canvas
+      canvas-id="textPaperCanvas"
+      class="paper-canvas"
+      style="width:{{canvasWidth}}px;height:{{canvasHeight}}px;"
+    ></canvas>
+  </view>
+
+  <!-- 多页翻页 -->
+  <view class="page-nav" wx:if="{{totalPages > 1}}">
+    <view class="page-btn {{currentPage <= 1 ? 'disabled' : ''}}" bindtap="prevPage">
+      <text>‹ 上一页</text>
+    </view>
+    <text class="page-info">{{currentPage}} / {{totalPages}}</text>
+    <view class="page-btn {{currentPage >= totalPages ? 'disabled' : ''}}" bindtap="nextPage">
+      <text>下一页 ›</text>
+    </view>
+  </view>
+
+  <!-- 文字输入区 -->
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">📝 文字内容</text>
+      <text class="char-count" wx:if="{{textConfig.text.length > 0}}">{{textConfig.text.length}}字 · {{totalPages}}页</text>
+    </view>
+    <view class="textarea-wrap">
+      <textarea
+        class="text-input"
+        placeholder="粘贴或输入文字，支持多段落…"
+        value="{{textConfig.text}}"
+        bindinput="onTextInput"
+        maxlength="{{10000}}"
+        auto-height
+        show-confirm-bar="{{false}}"
+      ></textarea>
+    </view>
+    <view class="quick-actions">
+      <view class="quick-btn" bindtap="clearText">
+        <text>清空文字</text>
+      </view>
+      <view class="quick-btn" bindtap="insertSample">
+        <text>插入示例</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 稿纸配置 -->
+  <view class="config-panel">
+    <view class="config-header" bindtap="togglePaperConfig">
+      <text class="config-title">📋 稿纸配置</text>
+      <text class="config-arrow {{paperConfigOpen ? 'open' : ''}}">›</text>
+    </view>
+
+    <view class="config-body" wx:if="{{paperConfigOpen}}">
+      <!-- 纸张类型 -->
+      <view class="config-group">
+        <view class="config-label">📄 纸张类型</view>
+        <view class="option-row">
+          <view
+            wx:for="{{paperTypes}}"
+            wx:key="key"
+            class="option-item {{paperConfig.paperType === item.key ? 'active' : ''}}"
+            bindtap="setPaperType"
+            data-key="{{item.key}}"
+          >
+            <text class="option-icon">{{item.icon}}</text>
+            <text class="option-text">{{item.name}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 纸张尺寸 -->
+      <view class="config-group">
+        <view class="config-label">📐 纸张尺寸</view>
+        <view class="option-row">
+          <view
+            wx:for="{{paperSizes}}"
+            wx:key="key"
+            class="option-item {{paperConfig.paperSize === item.key ? 'active' : ''}}"
+            bindtap="setPaperSize"
+            data-key="{{item.key}}"
+          >
+            <text class="option-text">{{item.name}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 线条颜色 -->
+      <view class="config-group" wx:if="{{paperConfig.paperType !== 'blank'}}">
+        <view class="config-label">🎨 线条颜色</view>
+        <view class="color-row">
+          <view
+            wx:for="{{lineColors}}"
+            wx:key="*this"
+            class="color-dot {{paperConfig.lineColor === item ? 'active' : ''}}"
+            style="background:{{item}};"
+            bindtap="setLineColor"
+            data-color="{{item}}"
+          ></view>
+        </view>
+      </view>
+
+      <!-- 行距/格距 -->
+      <view class="config-group">
+        <view class="config-label">↕ {{paperConfig.paperType === 'tianzige' ? '格子大小' : '行距'}} (mm)</view>
+        <view class="slider-row">
+          <slider
+            min="{{6}}"
+            max="{{25}}"
+            step="{{1}}"
+            value="{{paperConfig.lineSpacing}}"
+            activeColor="#333333"
+            bindchanging="onLineSpacingChange"
+            bindchange="onLineSpacingChange"
+          />
+          <text class="slider-value">{{paperConfig.lineSpacing}}mm</text>
+        </view>
+      </view>
+
+      <!-- 页面边距 -->
+      <view class="config-group">
+        <view class="config-label">⬜ 页面边距 (mm)</view>
+        <view class="margin-grid">
+          <view class="margin-item">
+            <text class="margin-label">上</text>
+            <input type="number" value="{{paperConfig.marginTop}}" bindinput="setMargin" data-dir="marginTop" class="margin-input" />
+          </view>
+          <view class="margin-item">
+            <text class="margin-label">下</text>
+            <input type="number" value="{{paperConfig.marginBottom}}" bindinput="setMargin" data-dir="marginBottom" class="margin-input" />
+          </view>
+          <view class="margin-item">
+            <text class="margin-label">左</text>
+            <input type="number" value="{{paperConfig.marginLeft}}" bindinput="setMargin" data-dir="marginLeft" class="margin-input" />
+          </view>
+          <view class="margin-item">
+            <text class="margin-label">右</text>
+            <input type="number" value="{{paperConfig.marginRight}}" bindinput="setMargin" data-dir="marginRight" class="margin-input" />
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 文字配置 -->
+  <view class="config-panel">
+    <view class="config-header" bindtap="toggleTextConfig">
+      <text class="config-title">✏️ 文字配置</text>
+      <text class="config-arrow {{textConfigOpen ? 'open' : ''}}">›</text>
+    </view>
+
+    <view class="config-body" wx:if="{{textConfigOpen}}">
+      <!-- 字体 -->
+      <view class="config-group">
+        <view class="config-label">🔤 字体</view>
+        <view class="option-row">
+          <view class="option-item {{textConfig.fontType === 'kaiti' ? 'active' : ''}}" bindtap="setFontType" data-font="kaiti">
+            <text class="option-text" style="font-family:KaiTi,楷体;">楷体</text>
+          </view>
+          <view class="option-item {{textConfig.fontType === 'songti' ? 'active' : ''}}" bindtap="setFontType" data-font="songti">
+            <text class="option-text" style="font-family:SimSun,宋体;">宋体</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 字号 -->
+      <view class="config-group">
+        <view class="config-label">📏 字号</view>
+        <view class="slider-row">
+          <slider
+            min="{{12}}"
+            max="{{24}}"
+            step="{{1}}"
+            value="{{textConfig.fontSize}}"
+            activeColor="#333333"
+            bindchanging="onFontSizeChange"
+            bindchange="onFontSizeChange"
+          />
+          <text class="slider-value">{{textConfig.fontSize}}px</text>
+        </view>
+      </view>
+
+      <!-- 每格字数 -->
+      <view class="config-group">
+        <view class="config-label">📝 每格字数</view>
+        <view class="option-row">
+          <view class="option-item {{textConfig.charsPerCell === 1 ? 'active' : ''}}" bindtap="setCharsPerCell" data-value="1">
+            <text class="option-text">1字/格</text>
+          </view>
+          <view class="option-item {{textConfig.charsPerCell === 2 ? 'active' : ''}}" bindtap="setCharsPerCell" data-value="2">
+            <text class="option-text">2字/格</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 对齐方式 -->
+      <view class="config-group">
+        <view class="config-label">↔ 对齐方式</view>
+        <view class="option-row">
+          <view class="option-item {{textConfig.textAlign === 'center' ? 'active' : ''}}" bindtap="setTextAlign" data-align="center">
+            <text class="option-text">居中</text>
+          </view>
+          <view class="option-item {{textConfig.textAlign === 'left' ? 'active' : ''}}" bindtap="setTextAlign" data-align="left">
+            <text class="option-text">靠左</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 首行缩进 -->
+      <view class="config-group">
+        <view class="config-label">➡️ 首行缩进</view>
+        <view class="slider-row">
+          <slider
+            min="{{0}}"
+            max="{{8}}"
+            step="{{1}}"
+            value="{{textConfig.indent}}"
+            activeColor="#333333"
+            bindchanging="onIndentChange"
+            bindchange="onIndentChange"
+          />
+          <text class="slider-value">{{textConfig.indent}}格</text>
+        </view>
+      </view>
+
+      <!-- 段落间距 -->
+      <view class="config-group">
+        <view class="config-label">↕ 段落间距</view>
+        <view class="slider-row">
+          <slider
+            min="{{0}}"
+            max="{{3}}"
+            step="{{1}}"
+            value="{{textConfig.paragraphSpace}}"
+            activeColor="#333333"
+            bindchanging="onParagraphSpaceChange"
+            bindchange="onParagraphSpaceChange"
+          />
+          <text class="slider-value">{{textConfig.paragraphSpace}}行</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部操作栏 -->
+  <view class="bottom-bar">
+    <view class="action-btn secondary" bindtap="exportSinglePage">
+      <text>📤 导出当前页</text>
+    </view>
+    <view class="action-btn primary" bindtap="exportAllPages">
+      <text>📄 导出全部页</text>
+    </view>
+  </view>
+
+  <!-- 隐藏的导出画布 -->
+  <canvas canvas-id="exportCanvas" style="position:fixed;left:-9999px;top:-9999px;width:794px;height:1123px;"></canvas>
+
+  <!-- 底部占位 -->
+  <view style="height:160rpx;"></view>
+</view>

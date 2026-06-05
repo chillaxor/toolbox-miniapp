@@ -1,0 +1,272 @@
+<view class="page-container">
+  <!-- 顶部操作栏 -->
+  <view class="top-bar">
+    <view class="fav-btn {{isFavorite ? 'active' : ''}}" bindtap="toggleFavorite">
+      <text>{{isFavorite ? '★' : '☆'}}</text>
+    </view>
+    <view class="share-btn" bindtap="onShare">
+      <text>分享</text>
+    </view>
+  </view>
+
+  <!-- Canvas 预览区 -->
+  <view class="preview-area">
+    <canvas
+      canvas-id="paperCanvas"
+      class="paper-canvas"
+      style="width:{{canvasWidth}}px;height:{{canvasHeight}}px;"
+    ></canvas>
+  </view>
+
+  <!-- 多页翻页 -->
+  <view class="page-nav" wx:if="{{config.pageCount > 1}}">
+    <view class="page-btn {{currentPage <= 1 ? 'disabled' : ''}}" bindtap="prevPage">
+      <text>‹ 上一页</text>
+    </view>
+    <text class="page-info">{{currentPage}} / {{config.pageCount}}</text>
+    <view class="page-btn {{currentPage >= config.pageCount ? 'disabled' : ''}}" bindtap="nextPage">
+      <text>下一页 ›</text>
+    </view>
+  </view>
+
+  <!-- 快捷模板 -->
+  <view class="section">
+    <view class="section-title">快捷模板</view>
+    <scroll-view scroll-x class="template-scroll">
+      <view class="template-list">
+        <view
+          wx:for="{{presetTemplates}}"
+          wx:key="id"
+          class="template-chip {{activePreset === index ? 'active' : ''}}"
+          bindtap="applyPreset"
+          data-index="{{index}}"
+        >
+          <text class="template-icon">{{index === 0 ? '📝' : index === 1 ? '田' : index === 2 ? '📓' : '✏️'}}</text>
+          <text class="template-name">{{item.name}}</text>
+        </view>
+        <!-- 用户自定义模板 -->
+        <view
+          wx:for="{{userTemplates}}"
+          wx:key="id"
+          class="template-chip user-tpl"
+          bindtap="applyUserTemplate"
+          data-index="{{index}}"
+          bindlongpress="deleteUserTemplate"
+          data-id="{{item.id}}"
+        >
+          <text class="template-icon">⭐</text>
+          <text class="template-name">{{item.name}}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 配置面板 -->
+  <view class="config-panel">
+    <view class="config-header" bindtap="toggleConfigPanel">
+      <text class="config-title">📋 稿纸配置</text>
+      <text class="config-arrow {{configPanelOpen ? 'open' : ''}}">›</text>
+    </view>
+
+    <view class="config-body" wx:if="{{configPanelOpen}}">
+      <!-- 纸张类型 -->
+      <view class="config-group">
+        <view class="config-label">📄 纸张类型</view>
+        <view class="option-row">
+          <view
+            wx:for="{{paperTypes}}"
+            wx:key="key"
+            class="option-item {{config.paperType === item.key ? 'active' : ''}}"
+            bindtap="setPaperType"
+            data-key="{{item.key}}"
+          >
+            <text class="option-icon">{{item.icon}}</text>
+            <text class="option-text">{{item.name}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 纸张尺寸 -->
+      <view class="config-group">
+        <view class="config-label">📐 纸张尺寸</view>
+        <view class="option-row">
+          <view
+            wx:for="{{paperSizes}}"
+            wx:key="key"
+            class="option-item {{config.paperSize === item.key ? 'active' : ''}}"
+            bindtap="setPaperSize"
+            data-key="{{item.key}}"
+          >
+            <text class="option-text">{{item.name}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 线条颜色 -->
+      <view class="config-group" wx:if="{{config.paperType !== 'blank'}}">
+        <view class="config-label">🎨 线条颜色</view>
+        <view class="color-row">
+          <view
+            wx:for="{{lineColors}}"
+            wx:key="*this"
+            class="color-dot {{config.lineColor === item ? 'active' : ''}}"
+            style="background:{{item}};"
+            bindtap="setLineColor"
+            data-color="{{item}}"
+          ></view>
+        </view>
+      </view>
+
+      <!-- 线条样式（仅横线/方格） -->
+      <view class="config-group" wx:if="{{config.paperType === 'lined' || config.paperType === 'grid'}}">
+        <view class="config-label">─ 线条样式</view>
+        <view class="option-row">
+          <view class="option-item {{config.lineStyle === 'solid' ? 'active' : ''}}" bindtap="setLineStyle" data-style="solid">
+            <text class="option-text">━━ 实线</text>
+          </view>
+          <view class="option-item {{config.lineStyle === 'dashed' ? 'active' : ''}}" bindtap="setLineStyle" data-style="dashed">
+            <text class="option-text">- - 虚线</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 行距/格距 -->
+      <view class="config-group">
+        <view class="config-label">↕ {{config.paperType === 'tianzige' ? '格子大小' : '行距'}} (mm)</view>
+        <view class="slider-row">
+          <slider
+            min="{{4}}"
+            max="{{25}}"
+            step="{{1}}"
+            value="{{config.lineSpacing}}"
+            activeColor="#333333"
+            bindchanging="onLineSpacingChange"
+            bindchange="onLineSpacingChange"
+          />
+          <text class="slider-value">{{config.lineSpacing}}mm</text>
+        </view>
+      </view>
+
+      <!-- 线条粗细 -->
+      <view class="config-group" wx:if="{{config.paperType !== 'blank' && config.paperType !== 'dotted'}}">
+        <view class="config-label">✏️ 线条粗细</view>
+        <view class="option-row">
+          <view
+            wx:for="{{lineWidths}}"
+            wx:key="*this"
+            class="option-item {{config.lineWidth === item ? 'active' : ''}}"
+            bindtap="setLineWidth"
+            data-width="{{item}}"
+          >
+            <text class="option-text">{{item}}px</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 页面边距 -->
+      <view class="config-group">
+        <view class="config-label">⬜ 页面边距 (mm)</view>
+        <view class="margin-grid">
+          <view class="margin-item">
+            <text class="margin-label">上</text>
+            <input type="number" value="{{config.marginTop}}" bindinput="setMargin" data-dir="marginTop" class="margin-input" />
+          </view>
+          <view class="margin-item">
+            <text class="margin-label">下</text>
+            <input type="number" value="{{config.marginBottom}}" bindinput="setMargin" data-dir="marginBottom" class="margin-input" />
+          </view>
+          <view class="margin-item">
+            <text class="margin-label">左</text>
+            <input type="number" value="{{config.marginLeft}}" bindinput="setMargin" data-dir="marginLeft" class="margin-input" />
+          </view>
+          <view class="margin-item">
+            <text class="margin-label">右</text>
+            <input type="number" value="{{config.marginRight}}" bindinput="setMargin" data-dir="marginRight" class="margin-input" />
+          </view>
+        </view>
+      </view>
+
+      <!-- 背景色 -->
+      <view class="config-group">
+        <view class="config-label">🖼 背景色</view>
+        <view class="color-row">
+          <view
+            wx:for="{{bgColors}}"
+            wx:key="*this"
+            class="color-dot {{config.bgColor === item ? 'active' : ''}}"
+            style="background:{{item}};"
+            bindtap="setBgColor"
+            data-color="{{item}}"
+          ></view>
+        </view>
+      </view>
+
+      <!-- 水印 -->
+      <view class="config-group">
+        <view class="config-label">💧 水印</view>
+        <view class="switch-row">
+          <text class="switch-label">开启水印</text>
+          <switch checked="{{config.watermark}}" bindchange="toggleWatermark" color="#333333" />
+        </view>
+        <view wx:if="{{config.watermark}}" class="watermark-config">
+          <input
+            class="text-input"
+            placeholder="水印文字"
+            value="{{config.watermarkText}}"
+            bindinput="setWatermarkText"
+          />
+          <view class="color-row" style="margin-top:12rpx;">
+            <view
+              wx:for="{{watermarkColors}}"
+              wx:key="*this"
+              class="color-dot small {{config.watermarkColor === item ? 'active' : ''}}"
+              style="background:{{item}};"
+              bindtap="setWatermarkColor"
+              data-color="{{item}}"
+            ></view>
+          </view>
+          <view class="slider-row" style="margin-top:12rpx;">
+            <text class="slider-label">字号</text>
+            <slider
+              min="{{12}}"
+              max="{{48}}"
+              step="{{2}}"
+              value="{{config.watermarkSize}}"
+              activeColor="#333333"
+              bindchanging="onWatermarkSizeChange"
+              bindchange="onWatermarkSizeChange"
+              style="flex:1;"
+            />
+            <text class="slider-value">{{config.watermarkSize}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 页数 -->
+      <view class="config-group">
+        <view class="config-label">📄 页数设置</view>
+        <view class="page-count-row">
+          <view class="count-btn" bindtap="decreasePageCount">-</view>
+          <text class="count-value">{{config.pageCount}}</text>
+          <view class="count-btn" bindtap="increasePageCount">+</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部操作栏 -->
+  <view class="bottom-bar">
+    <view class="action-btn secondary" bindtap="saveTemplate">
+      <text>⭐ 保存模板</text>
+    </view>
+    <view class="action-btn primary" bindtap="exportImage">
+      <text>📤 导出图片</text>
+    </view>
+  </view>
+
+  <!-- 隐藏的导出画布 -->
+  <canvas canvas-id="exportCanvas" style="position:fixed;left:-9999px;top:-9999px;width:794px;height:1123px;"></canvas>
+
+  <!-- 底部占位 -->
+  <view style="height:140rpx;"></view>
+</view>
