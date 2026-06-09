@@ -89,6 +89,10 @@ const TOOLS = [
   { id: 'textpaper', name: '文字填稿纸', category: 'life', icon: '✍️', path: '/pages/tools/textpaper/index', description: '粘贴文字自动填入稿纸格子·分页导出' },
   { id: 'fireworks', name: '烟花特效', category: 'fun', icon: '🎆', path: '/pages/tools/fireworks/index', description: '全屏烟花燃放·12种类型·点击发射' },
   { id: 'z2h', name: '字帖生成器', category: 'life', icon: '✍️', path: '/pages/tools/z2h/index', description: '自定义描红字帖·汉字拼音数字英文控笔' },
+  { id: 'cheesytalk', name: '土味情话', category: 'fun', icon: '💕', path: '/pages/tools/cheesytalk/index', description: '随机土味情话·收藏·分享给TA' },
+  // { id: 'babyname', name: '起名', category: 'life', icon: '👶', path: '/pages/tools/babyname/index', description: '输入姓氏·智能推荐名字' },
+  { id: 'mbtitest', name: 'MBTI性格', category: 'fun', icon: '🧬', path: '/pages/tools/mbtitest/index', description: '专业MBTI·16型人格分析' },
+  { id: 'game2048', name: '2048', category: 'fun', icon: '🔢', path: '/pages/tools/game2048/index', description: '经典2048数字合并·滑动挑战' },
 ];
 
 /**

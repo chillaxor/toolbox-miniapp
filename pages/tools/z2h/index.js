@@ -14,12 +14,16 @@ Page({
     repeatCount: 5,
     cellSizeMM: 15,        // 格子尺寸 mm
     lineSpacingMM: 3,      // 行间距 mm
+    emptyLineInterval: 0,  // 每N行插入空行（0=不插入）
     showPinyin: false,
-    traceColor: '#dddddd',
-    gridColor: '#cccccc',
+    traceColor: '#e0e0e0',
+    gridColor: '#d5d5d5',
     hasGenerated: false,
-    canvasWidth: 350,      // 屏幕显示宽度（会被缩放）
-    canvasHeight: 483,     // 按 A4 比例 210:297 计算
+    canvasWidth: A4_PX_W,  // canvas 实际像素（A4 at 72dpi）
+    canvasHeight: A4_PX_H,
+    displayWidth: 350,     // 屏幕显示宽度
+    displayHeight: 483,    // 按 A4 比例计算
+    canvasScale: 0.588,    // 缩放比例
     layoutInfo: '',        // 布局信息文字
     a4PxW: A4_PX_W,
     a4PxH: A4_PX_H
@@ -69,6 +73,9 @@ Page({
   },
   onLineSpacingMMChange: function (e) {
     this.setData({ lineSpacingMM: e.detail.value });
+  },
+  onEmptyLineIntervalChange: function (e) {
+    this.setData({ emptyLineInterval: e.detail.value });
   },
 
   // 拼音开关
@@ -120,7 +127,8 @@ Page({
       repeatCount: this.data.repeatCount,
       lineSpacingMM: this.data.lineSpacingMM,
       marginMM: z2hUtil.PAGE_MARGIN_MM,
-      gridType: this.data.gridType
+      gridType: this.data.gridType,
+      emptyLineInterval: this.data.emptyLineInterval
     };
 
     var result = z2hUtil.generatePaperData(options);
@@ -136,14 +144,18 @@ Page({
     this._layout = layout;
     layout.type = type;
 
-    // 屏幕显示：按宽度 350px 等比缩放 A4
-    var displayW = Math.min(this._screenWidth - 40, 350);
-    var displayH = Math.round(displayW * A4_PX_H / A4_PX_W);
+    // Canvas 保持 A4 像素尺寸（渲染质量），scroll-view 滚动查看
+    var scale = Math.min((this._screenWidth - 60) / A4_PX_W, 1);
+    var displayW = Math.round(A4_PX_W * scale);
+    var displayH = Math.round(A4_PX_H * scale);
 
     this.setData({
       hasGenerated: true,
-      canvasWidth: displayW,
-      canvasHeight: displayH,
+      canvasWidth: A4_PX_W,
+      canvasHeight: A4_PX_H,
+      displayWidth: displayW,
+      displayHeight: displayH,
+      canvasScale: scale,
       layoutInfo: layout.cols + '列 × ' + layout.rows + '行，格子' + this.data.cellSizeMM + 'mm'
     }, function () {
       that._renderCanvas();
@@ -170,15 +182,13 @@ Page({
     wx.showLoading({ title: '生成高清图片中...' });
 
     setTimeout(function () {
-      // 导出 A4 原始尺寸的高清图
+      // 导出整个 canvas 为图片
       wx.canvasToTempFilePath({
         canvasId: 'paperCanvas',
-        x: 0,
-        y: 0,
-        width: A4_PX_W,
-        height: A4_PX_H,
         destWidth: A4_PX_W * 2,
         destHeight: A4_PX_H * 2,
+        fileType: 'png',
+        quality: 1,
         success: function (res) {
           that._saveToAlbum(res.tempFilePath);
         },

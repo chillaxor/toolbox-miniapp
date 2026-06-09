@@ -356,15 +356,30 @@ function generatePaperData(options) {
     return { rows: rows, layout: layout };
   }
 
+  // 空行间隔配置
+  var emptyLineInterval = options.emptyLineInterval || 0;
+  var contentRowCount = 0;
+
   // 循环重复内容直到填满整页
   var queueIdx = 0;
   while (rows.length < maxRows) {
+    // 按间隔插入空行
+    if (emptyLineInterval > 0 && contentRowCount > 0 && contentRowCount % emptyLineInterval === 0) {
+      var emptyRow = [];
+      for (var ec = 0; ec < cols; ec++) {
+        emptyRow.push({ char: '', pinyin: '' });
+      }
+      rows.push(emptyRow);
+      if (rows.length >= maxRows) break;
+    }
+
     var currentRow = [];
     for (var c = 0; c < cols; c++) {
       currentRow.push(cellQueue[queueIdx % cellQueue.length]);
       queueIdx++;
     }
     rows.push(currentRow);
+    contentRowCount++;
   }
 
   return { rows: rows, layout: layout };

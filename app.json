@@ -80,7 +80,10 @@
     "pages/tools/paper/index",
     "pages/tools/textpaper/index",
     "pages/tools/fireworks/index",
-    "pages/tools/z2h/index"
+    "pages/tools/z2h/index",
+    "pages/tools/cheesytalk/index",
+    "pages/tools/babyname/index",
+    "pages/tools/game2048/index"
   ],
   "window": {
     "backgroundTextStyle": "light",

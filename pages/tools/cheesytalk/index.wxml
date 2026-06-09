@@ -1,0 +1,59 @@
+<!-- pages/tools/cheesytalk/index.wxml -->
+<view class="container">
+  <!-- 主内容 -->
+  <view class="main-card">
+    <view class="tag-badge">{{currentTag}}</view>
+    <view class="line-text">{{currentLine}}</view>
+    <view class="line-count">{{totalNum}} 条情话</view>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="action-row">
+    <view class="action-btn" bindtap="nextLine">
+      <text class="action-icon">🎲</text>
+      <text class="action-label">换一句</text>
+    </view>
+    <view class="action-btn" bindtap="copyLine">
+      <text class="action-icon">📋</text>
+      <text class="action-label">复制</text>
+    </view>
+    <view class="action-btn" bindtap="addFavorite">
+      <text class="action-icon">❤️</text>
+      <text class="action-label">收藏</text>
+    </view>
+    <button class="action-btn share-btn-reset" open-type="share">
+      <text class="action-icon">📤</text>
+      <text class="action-label">分享</text>
+    </button>
+  </view>
+
+  <!-- 分类标签 -->
+  <view class="tags-row">
+    <view class="tag-item {{activeTag === item ? 'tag-active' : ''}}" 
+      wx:for="{{tags}}" wx:key="index" 
+      data-tag="{{item}}" bindtap="filterTag">
+      {{item}}
+    </view>
+  </view>
+
+  <!-- 收藏面板切换 -->
+  <view class="fav-toggle" bindtap="toggleFavPanel">
+    <text>❤️ 我的收藏 ({{favorites.length}})</text>
+    <text class="fav-arrow">{{showFavPanel ? '▲' : '▼'}}</text>
+  </view>
+
+  <!-- 收藏列表 -->
+  <view class="fav-panel" wx:if="{{showFavPanel}}">
+    <view class="fav-empty" wx:if="{{favorites.length === 0}}">还没有收藏哦~</view>
+    <view class="fav-item" wx:for="{{favorites}}" wx:key="index">
+      <view class="fav-line">
+        <text class="fav-tag">{{item.tag}}</text>
+        <text class="fav-text">{{item.line}}</text>
+      </view>
+      <view class="fav-actions">
+        <text class="fav-act-btn" data-line="{{item.line}}" catchtap="copyFavLine">📋</text>
+        <text class="fav-act-btn" data-idx="{{index}}" catchtap="removeFav">🗑️</text>
+      </view>
+    </view>
+  </view>
+</view>

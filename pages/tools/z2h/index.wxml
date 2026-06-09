@@ -69,6 +69,11 @@
       <text class="config-label">行间距 (mm)</text>
       <slider class="config-slider" min="1" max="10" step="1" value="{{lineSpacingMM}}" show-value bindchange="onLineSpacingMMChange" />
     </view>
+
+    <view class="config-item">
+      <text class="config-label">空行间隔（每N行插入空行）</text>
+      <slider class="config-slider" min="0" max="5" step="1" value="{{emptyLineInterval}}" show-value bindchange="onEmptyLineIntervalChange" />
+    </view>
   </view>
 
   <!-- 附加选项 -->
@@ -83,8 +88,8 @@
     <view class="config-item">
       <text class="config-label">描红颜色</text>
       <view class="color-row">
-        <view class="color-dot {{traceColor === '#dddddd' ? 'active' : ''}}" style="background:#dddddd" bindtap="setTraceColor" data-color="#dddddd"></view>
-        <view class="color-dot {{traceColor === '#aaaaaa' ? 'active' : ''}}" style="background:#aaaaaa" bindtap="setTraceColor" data-color="#aaaaaa"></view>
+        <view class="color-dot {{traceColor === '#e0e0e0' ? 'active' : ''}}" style="background:#e0e0e0" bindtap="setTraceColor" data-color="#e0e0e0"></view>
+        <view class="color-dot {{traceColor === '#cccccc' ? 'active' : ''}}" style="background:#cccccc" bindtap="setTraceColor" data-color="#cccccc"></view>
         <view class="color-dot {{traceColor === '#e74c3c' ? 'active' : ''}}" style="background:#e74c3c" bindtap="setTraceColor" data-color="#e74c3c"></view>
         <view class="color-dot {{traceColor === '#3498db' ? 'active' : ''}}" style="background:#3498db" bindtap="setTraceColor" data-color="#3498db"></view>
         <view class="color-dot {{traceColor === '#2ecc71' ? 'active' : ''}}" style="background:#2ecc71" bindtap="setTraceColor" data-color="#2ecc71"></view>
@@ -94,8 +99,8 @@
     <view class="config-item">
       <text class="config-label">格子颜色</text>
       <view class="color-row">
-        <view class="color-dot {{gridColor === '#cccccc' ? 'active' : ''}}" style="background:#cccccc" bindtap="setGridColor" data-color="#cccccc"></view>
-        <view class="color-dot {{gridColor === '#999999' ? 'active' : ''}}" style="background:#999999" bindtap="setGridColor" data-color="#999999"></view>
+        <view class="color-dot {{gridColor === '#d5d5d5' ? 'active' : ''}}" style="background:#d5d5d5" bindtap="setGridColor" data-color="#d5d5d5"></view>
+        <view class="color-dot {{gridColor === '#bbbbbb' ? 'active' : ''}}" style="background:#bbbbbb" bindtap="setGridColor" data-color="#bbbbbb"></view>
         <view class="color-dot {{gridColor === '#e74c3c' ? 'active' : ''}}" style="background:#e74c3c" bindtap="setGridColor" data-color="#e74c3c"></view>
         <view class="color-dot {{gridColor === '#3498db' ? 'active' : ''}}" style="background:#3498db" bindtap="setGridColor" data-color="#3498db"></view>
       </view>
@@ -110,9 +115,11 @@
   <!-- Canvas 预览区 -->
   <view class="section preview-section" wx:if="{{hasGenerated}}">
     <view class="section-title">预览 · {{layoutInfo}}</view>
-    <view class="canvas-wrapper">
-      <canvas canvas-id="paperCanvas" class="paper-canvas" style="width:{{canvasWidth}}px;height:{{canvasHeight}}px;" />
-    </view>
+    <scroll-view class="canvas-scroll" scroll-x scroll-y>
+      <view class="canvas-wrapper" style="width:{{canvasWidth}}px;height:{{canvasHeight}}px;">
+        <canvas canvas-id="paperCanvas" class="paper-canvas" style="width:{{canvasWidth}}px;height:{{canvasHeight}}px;" />
+      </view>
+    </scroll-view>
     
     <view class="action-bar">
       <button class="btn-secondary" bindtap="onSaveImage">保存图片</button>

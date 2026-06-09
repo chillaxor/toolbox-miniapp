@@ -1,0 +1,36 @@
+var COLORS = {
+  'v0': '#cdc1b4',
+  'v2': '#eee4da',
+  'v4': '#ede0c8',
+  'v8': '#f2b179',
+  'v16': '#f59563',
+  'v32': '#f67c5f',
+  'v64': '#f65e3b',
+  'v128': '#edcf72',
+  'v256': '#edcc61',
+  'v512': '#edc850',
+  'v1024': '#edc53f',
+  'v2048': '#edc22e'
+};
+
+function getTileColor(val) {
+  var key = 'v' + val;
+  return COLORS[key] || '#3c3a32';
+}
+
+function getTileTextColor(val) {
+  if (val <= 4) return '#776e65';
+  return '#f9f6f2';
+}
+
+function getTileFontSize(val) {
+  if (val >= 1024) return '28rpx';
+  if (val >= 128) return '34rpx';
+  return '44rpx';
+}
+
+module.exports = {
+  getTileColor: getTileColor,
+  getTileTextColor: getTileTextColor,
+  getTileFontSize: getTileFontSize
+};
