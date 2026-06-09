@@ -1,5 +1,5 @@
 /**
- * 诗词飞花令 - 浏览与游戏模式
+ * 诗词飞花令 - 浏览与挑战模式
  * 内置 90+ 首经典诗词数据
  */
 
@@ -181,7 +181,7 @@ Page({
     mode: 'browse',
     selectedChar: '',
     matchingPoems: [],
-    // 游戏模式
+    // 挑战模式
     gameActive: false,
     gameOver: false,
     gameChar: '',
@@ -191,7 +191,7 @@ Page({
     totalRounds: 10,
     hintCount: 0,
     revealedHints: [],
-    // 内部数据：当前游戏字对应的所有匹配诗词
+    // 内部数据：当前挑战字对应的所有匹配诗词
     _gameMatches: [],
     _hintIndex: 0
   },
@@ -237,7 +237,7 @@ Page({
     });
   },
 
-  // ==================== 游戏模式 ====================
+  // ==================== 挑战模式 ====================
   startGame: function () {
     this.clearTimer();
     var charIdx = Math.floor(Math.random() * feihualing.length);
@@ -326,7 +326,7 @@ Page({
     var newScore = this.data.score + roundScore;
 
     if (curRound >= total) {
-      // 游戏结束
+      // 挑战结束
       this.setData({
         gameActive: false,
         gameOver: true,

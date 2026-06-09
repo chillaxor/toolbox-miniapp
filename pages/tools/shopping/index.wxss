@@ -1,0 +1,427 @@
+.diff-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+  margin-top: 16rpx;
+}
+
+.mode-btns {
+  display: flex;
+  gap: 16rpx;
+  margin-top: 16rpx;
+}
+
+.mode-btn {
+  flex: 1;
+  height: 88rpx;
+  line-height: 88rpx;
+  text-align: center;
+  font-size: 30rpx;
+  font-weight: 600;
+  background: #F5F5F5;
+  color: #666;
+  border-radius: 12rpx;
+  border: 2rpx solid #E5E5E5;
+}
+
+.mode-active {
+  background: #FF6B35;
+  color: #fff;
+  border-color: #FF6B35;
+}
+
+.mode-desc {
+  display: block;
+  font-size: 24rpx;
+  color: #999;
+  margin-top: 16rpx;
+  text-align: center;
+}
+
+.diff-btn {
+  height: 88rpx;
+  line-height: 88rpx;
+  text-align: center;
+  font-size: 30rpx;
+  font-weight: 600;
+  background: #F5F5F5;
+  color: #666;
+  border-radius: 12rpx;
+  border: 2rpx solid #E5E5E5;
+}
+
+.diff-active {
+  background: #FF6B35;
+  color: #fff;
+  border-color: #FF6B35;
+}
+
+.rules-card {
+  margin-top: 24rpx;
+}
+
+.rule-text {
+  display: block;
+  font-size: 28rpx;
+  color: #666;
+  line-height: 52rpx;
+}
+
+.best-info {
+  display: flex;
+  justify-content: space-between;
+  padding: 24rpx 0;
+}
+
+.best-label {
+  font-size: 28rpx;
+  color: #999;
+}
+
+.start-btn {
+  width: 100%;
+  height: 96rpx;
+  line-height: 96rpx;
+  text-align: center;
+  background: linear-gradient(135deg, #FF6B35, #F7C948);
+  color: #fff;
+  font-size: 36rpx;
+  font-weight: 700;
+  border-radius: 48rpx;
+  margin-top: 32rpx;
+}
+
+.timer-bar {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  padding: 16rpx 24rpx;
+  background: #FFF8E1;
+  border-radius: 16rpx;
+  margin: 16rpx 0;
+  animation: none;
+}
+
+.timer-danger {
+  background: #FFEBEE;
+  animation: timerPulse 1s infinite;
+}
+
+@keyframes timerPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.timer-icon {
+  font-size: 36rpx;
+}
+
+.timer-text {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #FF6B35;
+  min-width: 80rpx;
+}
+
+.timer-danger .timer-text {
+  color: #E74C3C;
+}
+
+.timer-bar-bg {
+  flex: 1;
+  height: 12rpx;
+  background: #E0E0E0;
+  border-radius: 6rpx;
+  overflow: hidden;
+}
+
+.timer-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #27AE60, #F7C948);
+  border-radius: 6rpx;
+  transition: width 1s linear;
+}
+
+.timer-danger .timer-bar-fill {
+  background: linear-gradient(90deg, #E74C3C, #FF6B35);
+}
+
+.budget-bar {
+  padding: 24rpx;
+}
+
+.budget-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+
+.budget-row:last-of-type {
+  margin-bottom: 16rpx;
+}
+
+.budget-label {
+  font-size: 28rpx;
+  color: #666;
+}
+
+.budget-value {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #333;
+}
+
+.budget-spent {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #FF6B35;
+}
+
+.budget-remain {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #27AE60;
+}
+
+.budget-low {
+  color: #E74C3C;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 16rpx;
+  background: #F0F0F0;
+  border-radius: 8rpx;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #27AE60, #F7C948);
+  border-radius: 8rpx;
+  transition: width 0.3s ease;
+}
+
+.progress-warn {
+  background: linear-gradient(90deg, #F7C948, #E74C3C);
+}
+
+.group-header-row {
+  padding: 20rpx 0 8rpx 0;
+  border-bottom: 2rpx solid #FFE0CC;
+  margin-top: 8rpx;
+}
+
+.group-header-row:first-child {
+  margin-top: 0;
+}
+
+.group-header-text {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #FF6B35;
+}
+
+.item-row {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #F5F5F5;
+}
+
+.item-row:last-child {
+  border-bottom: none;
+}
+
+.item-emoji {
+  font-size: 48rpx;
+  margin-right: 16rpx;
+  width: 64rpx;
+  text-align: center;
+}
+
+.item-info {
+  flex: 1;
+}
+
+.item-name {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #333;
+  display: block;
+}
+
+.item-price {
+  font-size: 26rpx;
+  color: #FF6B35;
+  display: block;
+  margin-top: 4rpx;
+}
+
+.item-controls {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.ctrl-btn {
+  width: 56rpx;
+  height: 56rpx;
+  line-height: 56rpx;
+  text-align: center;
+  border-radius: 50%;
+  font-size: 36rpx;
+  font-weight: 700;
+}
+
+.ctrl-minus {
+  background: #F5F5F5;
+  color: #666;
+}
+
+.ctrl-minus.ctrl-disabled {
+  opacity: 0.3;
+}
+
+.ctrl-plus {
+  background: #FF6B35;
+  color: #fff;
+}
+
+.ctrl-num {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #333;
+  min-width: 48rpx;
+  text-align: center;
+}
+
+.checkout-btn {
+  width: 100%;
+  height: 96rpx;
+  line-height: 96rpx;
+  text-align: center;
+  background: linear-gradient(135deg, #FF6B35, #E74C3C);
+  color: #fff;
+  font-size: 34rpx;
+  font-weight: 700;
+  border-radius: 48rpx;
+  margin-top: 32rpx;
+  position: sticky;
+  bottom: 32rpx;
+}
+
+.receipt {
+  padding: 32rpx;
+  background: #FFFDF5;
+  border: 2rpx dashed #E5E5E5;
+}
+
+.receipt-header {
+  text-align: center;
+  margin-bottom: 16rpx;
+}
+
+.receipt-title {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: #333;
+  display: block;
+}
+
+.receipt-date {
+  font-size: 24rpx;
+  color: #999;
+  display: block;
+  margin-top: 8rpx;
+}
+
+.receipt-divider {
+  height: 2rpx;
+  border-top: 2rpx dashed #DDD;
+  margin: 20rpx 0;
+}
+
+.receipt-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10rpx 0;
+}
+
+.rr-name {
+  font-size: 28rpx;
+  color: #333;
+}
+
+.rr-price {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.receipt-total {
+  padding: 16rpx 0;
+}
+
+.rr-total-price {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #FF6B35;
+}
+
+.rr-change {
+  color: #27AE60;
+  font-weight: 700;
+  font-size: 32rpx;
+}
+
+.receipt-summary {
+  text-align: center;
+  margin-top: 16rpx;
+}
+
+.summary-text {
+  font-size: 28rpx;
+  color: #666;
+  display: block;
+  margin-bottom: 12rpx;
+}
+
+.summary-score {
+  font-size: 56rpx;
+  font-weight: 700;
+  color: #FF6B35;
+  display: block;
+}
+
+.result-actions {
+  display: flex;
+  gap: 24rpx;
+  margin-top: 32rpx;
+}
+
+.restart-btn {
+  flex: 1;
+  height: 88rpx;
+  line-height: 88rpx;
+  text-align: center;
+  background: #FF6B35;
+  color: #fff;
+  font-size: 30rpx;
+  font-weight: 600;
+  border-radius: 44rpx;
+}
+
+.back-btn {
+  flex: 1;
+  height: 88rpx;
+  line-height: 88rpx;
+  text-align: center;
+  background: #F5F5F5;
+  color: #666;
+  font-size: 30rpx;
+  font-weight: 600;
+  border-radius: 44rpx;
+}

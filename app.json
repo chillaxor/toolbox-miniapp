@@ -83,7 +83,12 @@
     "pages/tools/z2h/index",
     "pages/tools/cheesytalk/index",
     "pages/tools/babyname/index",
-    "pages/tools/game2048/index"
+    "pages/tools/game2048/index",
+    "pages/tools/guessnumber/index",
+    "pages/tools/whoisspy/index",
+    "pages/tools/whackmole/index",
+    "pages/tools/gomoku/index",
+    "pages/tools/shopping/index"
   ],
   "window": {
     "backgroundTextStyle": "light",

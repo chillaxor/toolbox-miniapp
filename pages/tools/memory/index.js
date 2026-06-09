@@ -74,7 +74,7 @@ Page({
       }
       this.setData({
         state: 'gameover', score: score, bestScore: best, activeCell: -1,
-        message: '游戏结束！得分: ' + score
+        message: '挑战结束！得分: ' + score
       });
       storage.addHistory({
         toolId: 'memory', toolName: '记忆力训练', category: 'fun',

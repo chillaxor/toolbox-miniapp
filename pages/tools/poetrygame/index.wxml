@@ -72,7 +72,7 @@
 
   <!-- ==================== 挑战模式 ==================== -->
   <block wx:if="{{mode === 'game'}}">
-    <!-- 游戏未开始 -->
+    <!-- 挑战未开始 -->
     <view class="game-start" wx:if="{{!gameActive && !gameOver}}">
       <view class="game-intro-card">
         <text class="game-intro-title">飞花令挑战</text>
@@ -83,7 +83,7 @@
       </view>
     </view>
 
-    <!-- 游戏进行中 -->
+    <!-- 挑战进行中 -->
     <view class="game-area" wx:if="{{gameActive}}">
       <!-- 当前挑战字 -->
       <view class="game-char-ring">
@@ -99,7 +99,7 @@
         </view>
       </view>
 
-      <!-- 游戏操作按钮 -->
+      <!-- 挑战操作按钮 -->
       <view class="game-btn-row">
         <view class="game-btn hint-btn" bindtap="giveHint">
           <text>💡 提示 ({{hintCount}})</text>
@@ -136,7 +136,7 @@
       </view>
     </view>
 
-    <!-- 游戏结束 -->
+    <!-- 挑战结束 -->
     <view class="game-over" wx:if="{{gameOver}}">
       <view class="game-over-card">
         <text class="game-over-title">🎉 挑战完成</text>

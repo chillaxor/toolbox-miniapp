@@ -1,0 +1,30 @@
+<view class="container">
+  <view class="header">
+    <view class="turn-info">
+      <view class="piece-indicator {{currentPlayer === 'black' ? 'black-piece' : 'white-piece'}}"></view>
+      <text class="turn-text">{{gameOver ? (winner ? (winner === 'black' ? '黑棋胜！' : '白棋胜！') : '平局！') : (currentPlayer === 'black' ? '黑棋落子' : '白棋落子')}}</text>
+    </view>
+    <view class="score-bar">
+      <view class="score-item">
+        <view class="piece-dot black-dot"></view>
+        <text class="score-num">{{blackScore}}</text>
+      </view>
+      <text class="score-vs">VS</text>
+      <view class="score-item">
+        <text class="score-num">{{whiteScore}}</text>
+        <view class="piece-dot white-dot"></view>
+      </view>
+    </view>
+  </view>
+
+  <scroll-view scroll-x scroll-y class="board-scroll">
+    <view class="board" style="width:{{boardSize}}px;height:{{boardSize}}px;">
+      <canvas canvas-id="boardCanvas" class="board-canvas" style="width:{{boardSize}}px;height:{{boardSize}}px;" bindtap="onBoardTap"></canvas>
+    </view>
+  </scroll-view>
+
+  <view class="actions">
+    <button class="btn btn-undo" bindtap="onUndo" disabled="{{history.length === 0 || gameOver}}">悔棋</button>
+    <button class="btn btn-restart" bindtap="onRestart">重新开始</button>
+  </view>
+</view>

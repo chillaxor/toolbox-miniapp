@@ -1,0 +1,133 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">谁是卧底</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <!-- 设置阶段 -->
+  <view wx:if="{{state === 'setup'}}">
+    <view class="card">
+      <text class="card-title">玩家人数</text>
+      <view class="count-btns">
+        <view class="count-btn {{playerCount === item ? 'count-active' : ''}}" wx:for="{{[4,5,6,7,8,9,10,11,12]}}" wx:key="*this" data-count="{{item}}" bindtap="onPlayerCountChange">{{item}}</view>
+      </view>
+    </view>
+
+    <view class="card" style="margin-top: 24rpx;">
+      <text class="card-title">卧底人数</text>
+      <view class="count-btns">
+        <view class="count-btn {{spyCount === item ? 'count-active' : ''}}" wx:for="{{[1,2,3]}}" wx:key="*this" data-count="{{item}}" bindtap="onSpyCountChange" wx:if="{{item < Math.floor(playerCount / 2)}}">{{item}}</view>
+      </view>
+    </view>
+
+    <view class="card rule-card" style="margin-top: 24rpx;">
+      <text class="card-title">规则说明</text>
+      <text class="rule-text">1. 所有玩家依次查看自己的词语</text>
+      <text class="rule-text">2. 平民拿到相同的词，卧底拿到相似的词</text>
+      <text class="rule-text">3. 每轮每人用一句话描述自己的词（不能直接说出）</text>
+      <text class="rule-text">4. 每轮结束后投票淘汰疑似卧底的人</text>
+      <text class="rule-text">5. 卧底全部出局则平民获胜，卧底存活到最后一轮则卧底获胜</text>
+    </view>
+
+    <button class="start-btn" bindtap="startGame">🎮 开始挑战</button>
+  </view>
+
+  <!-- 查看身份阶段 -->
+  <view wx:if="{{state === 'viewing'}}">
+    <view class="card viewing-card">
+      <text class="viewing-player">玩家 {{players[currentPlayer].id}}</text>
+      <text class="viewing-hint">请将手机递给该玩家</text>
+
+      <view wx:if="{{!viewingRevealed}}" class="reveal-area">
+        <text class="reveal-emoji">❓</text>
+        <text class="reveal-text">点击下方查看你的词语</text>
+        <view class="reveal-btn" bindtap="onReveal">👀 查看词语</view>
+      </view>
+
+      <view wx:if="{{viewingRevealed}}" class="reveal-area">
+        <text class="reveal-emoji">{{players[currentPlayer].isSpy ? '🕵️' : '👥'}}</text>
+        <text class="word-text">{{players[currentPlayer].word}}</text>
+        <text class="role-text {{players[currentPlayer].isSpy ? 'spy-text' : 'civilian-text'}}">{{players[currentPlayer].isSpy ? '你是卧底！' : '你是平民'}}</text>
+      </view>
+
+      <view class="progress-bar">
+        <text class="progress-text">{{currentPlayer + 1}} / {{playerCount}}</text>
+      </view>
+
+      <view class="next-btn" bindtap="onNextPlayer">
+        {{currentPlayer + 1 >= playerCount ? '✅ 全部查看完毕，开始讨论' : '➡️ 下一位玩家'}}
+      </view>
+    </view>
+  </view>
+
+  <!-- 讨论阶段 -->
+  <view wx:if="{{state === 'playing'}}">
+    <view class="card">
+      <view class="round-header">
+        <text class="round-title">第 {{round}} 轮讨论</text>
+      </view>
+      <text class="discuss-hint">请每位玩家用一句话描述自己的词语</text>
+      <text class="discuss-hint">注意不能直接说出词语！</text>
+      <view class="action-btns">
+        <view class="action-btn primary-btn" bindtap="onStartVoting">🗳️ 开始投票</view>
+        <view class="action-btn secondary-btn" bindtap="onShowWords">👀 揭晓词语</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 投票阶段 -->
+  <view wx:if="{{state === 'voting'}}">
+    <view class="card">
+      <text class="card-title">投票淘汰</text>
+      <text class="vote-hint">点击你认为是卧底的玩家</text>
+      <view class="vote-list">
+        <view class="vote-item" wx:for="{{players}}" wx:key="id" data-id="{{item.id}}" bindtap="onVote">
+          <text class="vote-player">玩家 {{item.id}}</text>
+          <text class="vote-count" wx:if="{{votes[item.id] > 0}}">{{votes[item.id]}} 票</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 结果阶段 -->
+  <view wx:if="{{state === 'result'}}">
+    <view class="card result-card">
+      <text class="result-title">玩家 {{votedPlayer}} 被淘汰</text>
+      <view class="result-info">
+        <view class="result-item" wx:for="{{players}}" wx:key="id">
+          <text class="ri-name">玩家 {{item.id}}</text>
+          <text class="ri-role {{item.isSpy ? 'ri-spy' : 'ri-civilian'}}">{{item.isSpy ? '🕵️ 卧底' : '👥 平民'}}</text>
+        </view>
+      </view>
+      <view class="result-words">
+        <text class="rw-label">平民词：</text><text class="rw-word">{{civilianWord}}</text>
+        <text class="rw-label" style="margin-left: 32rpx;">卧底词：</text><text class="rw-word">{{spyWord}}</text>
+      </view>
+      <view class="action-btns" style="margin-top: 32rpx;">
+        <view class="action-btn primary-btn" bindtap="onNewRound">🔄 下一轮</view>
+        <view class="action-btn secondary-btn" bindtap="onRestart">🏠 重新开始</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 揭晓词语 -->
+  <view wx:if="{{state === 'showwords'}}">
+    <view class="card result-card">
+      <text class="result-title">🎯 词语揭晓</text>
+      <view class="showwords-info">
+        <view class="sw-item">
+          <text class="sw-label">👥 平民词</text>
+          <text class="sw-word">{{civilianWord}}</text>
+        </view>
+        <view class="sw-item">
+          <text class="sw-label">🕵️ 卧底词</text>
+          <text class="sw-word">{{spyWord}}</text>
+        </view>
+      </view>
+      <view class="action-btns" style="margin-top: 32rpx;">
+        <view class="action-btn primary-btn" bindtap="onNewRound">🔄 下一轮</view>
+        <view class="action-btn secondary-btn" bindtap="onRestart">🏠 重新开始</view>
+      </view>
+    </view>
+  </view>
+</view>

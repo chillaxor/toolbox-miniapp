@@ -54,7 +54,7 @@ Page({
     this.setData({ isFavorite: fav });
   },
 
-  // ---------- 游戏逻辑 ----------
+  // ---------- 挑战逻辑 ----------
 
   newPuzzle: function () {
     var nums = math24.generateNumbers();

@@ -1,0 +1,148 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">超市购物</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <!-- 选择难度 -->
+  <view wx:if="{{phase === 'select'}}">
+    <view class="card">
+      <text class="card-title">选择预算</text>
+      <view class="diff-btns">
+        <view class="diff-btn {{difficulty === 'easy' ? 'diff-active' : ''}}" data-diff="easy" bindtap="onDifficultyChange">🛒 简单(30元)</view>
+        <view class="diff-btn {{difficulty === 'normal' ? 'diff-active' : ''}}" data-diff="normal" bindtap="onDifficultyChange">🏪 普通(80元)</view>
+        <view class="diff-btn {{difficulty === 'hard' ? 'diff-active' : ''}}" data-diff="hard" bindtap="onDifficultyChange">🏬 困难(150元)</view>
+      </view>
+    </view>
+
+    <view class="card">
+      <text class="card-title">选择模式</text>
+      <view class="mode-btns">
+        <view class="mode-btn {{gameMode === 'free' ? 'mode-active' : ''}}" data-mode="free" bindtap="onGameModeChange">🛒 自由购物</view>
+        <view class="mode-btn {{gameMode === 'timed' ? 'mode-active' : ''}}" data-mode="timed" bindtap="onGameModeChange">⏰ 限时抢购</view>
+      </view>
+      <text class="mode-desc" wx:if="{{gameMode === 'free'}}">无时间限制，慢慢挑选心仪的商品</text>
+      <text class="mode-desc" wx:if="{{gameMode === 'timed'}}">倒计时挑战！简单60秒 · 普通90秒 · 困难120秒</text>
+    </view>
+
+    <view class="rules-card card">
+      <text class="card-title">📋 购物规则</text>
+      <text class="rule-text">1. 你有固定预算去超市购物</text>
+      <text class="rule-text" wx:if="{{gameMode === 'free'}}">2. 自由挑选商品放入购物车，没有时间限制</text>
+      <text class="rule-text" wx:if="{{gameMode === 'timed'}}">2. 限时抢购！在倒计时结束前挑选商品</text>
+      <text class="rule-text">3. 不能超过预算金额</text>
+      <text class="rule-text">4. 买的越多、花的越接近预算，分数越高</text>
+    </view>
+
+    <view class="best-info" wx:if="{{totalGames > 0}}">
+      <text class="best-label">已玩 {{totalGames}} 次</text>
+      <text class="best-label">🏆 最佳 {{bestScore}} 分</text>
+    </view>
+
+    <view class="start-btn" bindtap="startGame">开始购物 🛍️</view>
+  </view>
+
+  <!-- 购物中 -->
+  <view wx:if="{{phase === 'shopping'}}">
+    <!-- 倒计时(仅限时模式) -->
+    <view wx:if="{{gameMode === 'timed'}}" class="timer-bar {{timeWarning ? 'timer-danger' : ''}}">
+      <text class="timer-icon">⏰</text>
+      <text class="timer-text">{{timeLeft}}秒</text>
+      <view class="timer-bar-bg">
+        <view class="timer-bar-fill" style="width: {{timeLeft / (difficulty === 'easy' ? 60 : difficulty === 'normal' ? 90 : 120) * 100}}%"></view>
+      </view>
+    </view>
+
+    <!-- 预算状态栏 -->
+    <view class="budget-bar card">
+      <view class="budget-row">
+        <text class="budget-label">💰 预算</text>
+        <text class="budget-value">¥{{budget}}</text>
+      </view>
+      <view class="budget-row">
+        <text class="budget-label">🛒 已花</text>
+        <text class="budget-spent">¥{{totalSpent}}</text>
+      </view>
+      <view class="budget-row">
+        <text class="budget-label">💵 剩余</text>
+        <text class="budget-remain {{budget - totalSpent <= 5 ? 'budget-low' : ''}}">¥{{budget - totalSpent}}</text>
+      </view>
+      <view class="progress-bar">
+        <view class="progress-fill {{totalSpent / budget >= 0.9 ? 'progress-warn' : ''}}" style="width: {{totalSpent / budget * 100}}%"></view>
+      </view>
+    </view>
+
+    <!-- 商品列表 -->
+    <view class="card">
+      <text class="card-title">🏬 超市货架</text>
+      <block wx:for="{{shopItems}}" wx:key="id">
+        <view wx:if="{{item.showGroup}}" class="group-header-row">
+          <text class="group-header-text">{{item.groupEmoji}} {{item.group}}</text>
+        </view>
+        <view class="item-row">
+          <text class="item-emoji">{{item.emoji}}</text>
+          <view class="item-info">
+            <text class="item-name">{{item.name}}</text>
+            <text class="item-price">¥{{item.price}}</text>
+          </view>
+          <view class="item-controls">
+            <view class="ctrl-btn ctrl-minus {{item.quantity <= 0 ? 'ctrl-disabled' : ''}}" data-id="{{item.id}}" bindtap="removeItem">−</view>
+            <text class="ctrl-num">{{item.quantity}}</text>
+            <view class="ctrl-btn ctrl-plus" data-id="{{item.id}}" bindtap="addItem">+</view>
+          </view>
+        </view>
+      </block>
+    </view>
+
+    <!-- 结算按钮 -->
+    <view class="checkout-btn" bindtap="checkout">
+      💳 去结算 ({{totalSpent}}元)
+    </view>
+  </view>
+
+  <!-- 小票 -->
+  <view wx:if="{{phase === 'receipt'}}">
+    <view class="receipt card">
+      <view class="receipt-header">
+        <text class="receipt-title">🧾 购物小票</text>
+        <text class="receipt-date">超市购物</text>
+      </view>
+
+      <view class="receipt-divider"></view>
+
+      <block wx:for="{{cart}}" wx:key="name">
+        <view class="receipt-row">
+          <text class="rr-name">{{item.emoji}} {{item.name}} x{{item.quantity}}</text>
+          <text class="rr-price">¥{{item.subtotal}}</text>
+        </view>
+      </block>
+
+      <view class="receipt-divider"></view>
+
+      <view class="receipt-row receipt-total">
+        <text class="rr-name">合计</text>
+        <text class="rr-price rr-total-price">¥{{totalSpent}}</text>
+      </view>
+      <view class="receipt-row">
+        <text class="rr-name">预算</text>
+        <text class="rr-price">¥{{budget}}</text>
+      </view>
+      <view class="receipt-row">
+        <text class="rr-name">找零</text>
+        <text class="rr-price rr-change">¥{{change}}</text>
+      </view>
+
+      <view class="receipt-divider"></view>
+
+      <view class="receipt-summary">
+        <text class="summary-text">买了 {{itemCount}} 件商品</text>
+        <text class="summary-score">得分 {{score}} 分</text>
+      </view>
+    </view>
+
+    <view class="result-actions">
+      <view class="restart-btn" bindtap="playAgain">再来一次 🛒</view>
+      <view class="back-btn" bindtap="goBack">换个难度 🔄</view>
+    </view>
+  </view>
+</view>

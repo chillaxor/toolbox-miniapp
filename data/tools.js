@@ -93,6 +93,11 @@ const TOOLS = [
   // { id: 'babyname', name: '起名', category: 'life', icon: '👶', path: '/pages/tools/babyname/index', description: '输入姓氏·智能推荐名字' },
   { id: 'mbtitest', name: 'MBTI性格', category: 'fun', icon: '🧬', path: '/pages/tools/mbtitest/index', description: '专业MBTI·16型人格分析' },
   { id: 'game2048', name: '2048', category: 'fun', icon: '🔢', path: '/pages/tools/game2048/index', description: '经典2048数字合并·滑动挑战' },
+  { id: 'guessnumber', name: '猜数字', category: 'fun', icon: '🔢', path: '/pages/tools/guessnumber/index', description: '猜数字大小·越猜越接近答案' },
+  { id: 'whoisspy', name: '谁是卧底', category: 'fun', icon: '🕵️', path: '/pages/tools/whoisspy/index', description: '聚会派对·词语卧底桌游' },
+  { id: 'whackmole', name: '打地鼠', category: 'fun', icon: '🔨', path: '/pages/tools/whackmole/index', description: '限时打地鼠·考验手速' },
+  { id: 'gomoku', name: '五子棋', category: 'fun', icon: '⚫', path: '/pages/tools/gomoku/index', description: '经典五子棋·双人对战' },
+  { id: 'shopping', name: '模拟超市购物', category: 'fun', icon: '🛒', path: '/pages/tools/shopping/index', description: '给预算选商品·学习理财找零' },
 ];
 
 /**

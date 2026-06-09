@@ -28,7 +28,7 @@
       <text class="intro-desc">观察方块闪烁的顺序，然后按相同顺序点击复现</text>
       <text class="intro-desc">每轮会在序列末尾新增一个</text>
     </view>
-    <button class="btn-primary" style="background: var(--color-text); margin-top: 24rpx;" bindtap="onStartGame">开始游戏</button>
+    <button class="btn-primary" style="background: var(--color-text); margin-top: 24rpx;" bindtap="onStartGame">开始挑战</button>
   </view>
 
   <!-- 状态提示 -->
@@ -44,7 +44,7 @@
     </view>
   </view>
 
-  <!-- 游戏结束 -->
+  <!-- 挑战结束 -->
   <view class="card" wx:if="{{state === 'gameover'}}">
     <view class="result-box">
       <text class="result-score">🏆 得分: {{score}}</text>
