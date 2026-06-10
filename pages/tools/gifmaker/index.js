@@ -191,65 +191,55 @@ Page({
 
     function processFrame(idx) {
       if (idx >= total) {
-        // 所有帧处理完成，编码
         doEncode();
         return;
       }
 
       var frame = that.data.frames[idx];
-      var query = wx.createSelectorQuery();
-      query.select('#exportCanvas')
-        .fields({ node: true, size: true })
-        .exec(function (res) {
-          // 使用临时canvas方案：创建离屏canvas不现实，改用getImageInfo+draw
-          // 直接用主canvas（隐藏的）
-          var canvasId = 'exportCanvas';
 
-          // 由于小程序限制，改用另一种方式：直接获取图片数据
-          wx.getImageInfo({
-            src: frame.tempPath,
-            success: function (info) {
-              var ratio = info.height / info.width;
-              var targetH = Math.round(targetW * ratio);
-              if (targetH % 2 !== 0) targetH += 1;
+      wx.getImageInfo({
+        src: frame.tempPath,
+        success: function (info) {
+          var ratio = info.height / info.width;
+          var targetH = Math.round(targetW * ratio);
+          if (targetH % 2 !== 0) targetH += 1;
 
-              var ctx = wx.createCanvasContext(canvasId);
-              ctx.drawImage(frame.tempPath, 0, 0, targetW, targetH);
-              ctx.draw(false, function () {
-                // 等一下让canvas渲染完成
-                setTimeout(function () {
-                  wx.canvasGetImageData({
-                    canvasId: canvasId,
-                    x: 0, y: 0,
-                    width: targetW,
-                    height: targetH,
-                    success: function (imgRes) {
-                      encoder.addFrame(new Uint8ClampedArray(imgRes.data));
-                      processedCount++;
-                      that.setData({ progress: Math.round(processedCount / total * 80) });
-                      processFrame(idx + 1);
-                    },
-                    fail: function () {
-                      // canvas get失败时用纯色替代
-                      var blank = new Uint8ClampedArray(targetW * targetH * 4);
-                      for (var p = 0; p < targetW * targetH; p++) {
-                        blank[p * 4] = 200; blank[p * 4 + 1] = 200;
-                        blank[p * 4 + 2] = 200; blank[p * 4 + 3] = 255;
-                      }
-                      encoder.addFrame(blank);
-                      processedCount++;
-                      that.setData({ progress: Math.round(processedCount / total * 80) });
-                      processFrame(idx + 1);
-                    }
-                  });
-                }, 200);
+          var ctx = wx.createCanvasContext('exportCanvas', that);
+          ctx.drawImage(frame.tempPath, 0, 0, targetW, targetH);
+          ctx.draw(false, function () {
+            setTimeout(function () {
+              wx.canvasGetImageData({
+                canvasId: 'exportCanvas',
+                x: 0, y: 0,
+                width: targetW,
+                height: targetH,
+                success: function (imgRes) {
+                  encoder.addFrame(new Uint8ClampedArray(imgRes.data));
+                  processedCount++;
+                  that.setData({ progress: Math.round(processedCount / total * 80) });
+                  processFrame(idx + 1);
+                },
+                fail: function (err) {
+                  console.error('canvasGetImageData失败:', err);
+                  var blank = new Uint8ClampedArray(targetW * targetH * 4);
+                  for (var p = 0; p < targetW * targetH; p++) {
+                    blank[p * 4] = 200; blank[p * 4 + 1] = 200;
+                    blank[p * 4 + 2] = 200; blank[p * 4 + 3] = 255;
+                  }
+                  encoder.addFrame(blank);
+                  processedCount++;
+                  that.setData({ progress: Math.round(processedCount / total * 80) });
+                  processFrame(idx + 1);
+                }
               });
-            },
-            fail: function () {
-              processFrame(idx + 1);
-            }
+            }, 300);
           });
-        });
+        },
+        fail: function (err) {
+          console.error('getImageInfo失败:', err);
+          processFrame(idx + 1);
+        }
+      });
     }
 
     function doEncode() {

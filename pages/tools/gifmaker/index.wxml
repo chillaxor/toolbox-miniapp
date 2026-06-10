@@ -90,11 +90,9 @@
     <text class="tip-text">💡 选择2-30张图片即可制作GIF动图</text>
   </view>
 
-  <!-- 隐藏的导出canvas -->
+  <!-- 隐藏的导出canvas（足够大以容纳任意输出尺寸） -->
   <canvas 
-    canvas-id="exportCanvas" 
-    type="2d"
-    id="exportCanvas"
-    style="position:fixed;left:-9999px;top:-9999px;width:1px;height:1px"
+    canvas-id="exportCanvas"
+    style="position:fixed;left:-9999px;top:-9999px;width:660px;height:660px"
   />
 </view>
