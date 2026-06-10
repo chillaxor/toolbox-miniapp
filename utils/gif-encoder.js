@@ -2,13 +2,12 @@
  * 纯JS GIF89a编码器
  * 支持多帧动画GIF生成
  */
-
 function GifEncoder(width, height) {
   this.width = width;
   this.height = height;
   this.frames = [];
-  this.delay = 200; // 默认帧间隔ms
-  this.repeat = 0; // 0=无限循环
+  this.delay = 200;
+  this.repeat = 0;
 }
 
 GifEncoder.prototype.setDelay = function (ms) {
@@ -19,125 +18,146 @@ GifEncoder.prototype.setRepeat = function (count) {
   this.repeat = count;
 };
 
-/**
- * 添加一帧，imageData为Uint8ClampedArray(RGBA)
- */
 GifEncoder.prototype.addFrame = function (imageData) {
   this.frames.push(imageData);
 };
 
-/**
- * 编码输出GIF ArrayBuffer
- */
 GifEncoder.prototype.encode = function () {
-  var buffers = [];
-  var w = this.width, h = this.height;
-  var frameCount = this.frames.length;
-  var delayCs = Math.round(this.delay / 10); // 转换为1/100秒
+  var self = this;
+  var w = self.width, h = self.height;
+  var delayCs = Math.round(self.delay / 10);
+  var out = new ByteArray(w * h * 4 + 4096);
 
-  // Header
-  buffers.push(strToBytes('GIF89a'));
+  // GIF89a Header
+  out.writeString('GIF89a');
 
   // Logical Screen Descriptor
-  var lsd = new Uint8Array(7);
-  lsd[0] = w & 0xFF;
-  lsd[1] = (w >> 8) & 0xFF;
-  lsd[2] = h & 0xFF;
-  lsd[3] = (h >> 8) & 0xFF;
-  lsd[4] = 0xF7; // GCT flag=0, color res=7, sort=0, GCT size=7(256 colors)
-  lsd[5] = 0; // bg color index
-  lsd[6] = 0; // pixel aspect ratio
-  buffers.push(lsd);
+  out.writeShort(w);
+  out.writeShort(h);
+  out.writeByte(0x00); // no GCT
+  out.writeByte(0x00); // bg color
+  out.writeByte(0x00); // pixel aspect
 
-  // Netscape Application Extension (for looping)
-  if (this.repeat >= 0) {
-    buffers.push(new Uint8Array([0x21, 0xFF, 0x0B]));
-    buffers.push(strToBytes('NETSCAPE2.0'));
-    buffers.push(new Uint8Array([0x03, 0x01]));
-    var rep = this.repeat;
-    buffers.push(new Uint8Array([rep & 0xFF, (rep >> 8) & 0xFF, 0x00]));
-  }
+  // Netscape Extension (looping)
+  out.writeByte(0x21);
+  out.writeByte(0xFF);
+  out.writeByte(0x0B);
+  out.writeString('NETSCAPE2.0');
+  out.writeByte(0x03);
+  out.writeByte(0x01);
+  out.writeShort(self.repeat);
+  out.writeByte(0x00);
 
-  // 编码每一帧
-  for (var f = 0; f < frameCount; f++) {
-    var pixels = this.frames[f];
-    var quant = medianCut(pixels, w * h);
+  for (var f = 0; f < self.frames.length; f++) {
+    var pixels = self.frames[f];
+    var quant = quantize(pixels, w * h);
     var palette = quant.palette;
     var indexed = quant.indexed;
-    var colorTableSize = quant.tableSize;
+    var colorTableBits = quant.bits;
+    var colorTableSize = 1 << colorTableBits;
 
     // Graphic Control Extension
-    buffers.push(new Uint8Array([0x21, 0xF9, 0x04, 0x00]));
-    buffers.push(new Uint8Array([delayCs & 0xFF, (delayCs >> 8) & 0xFF]));
-    buffers.push(new Uint8Array([0x00, 0x00]));
+    out.writeByte(0x21);
+    out.writeByte(0xF9);
+    out.writeByte(0x04);
+    out.writeByte(0x00); // disposal=0, no transparency
+    out.writeShort(delayCs);
+    out.writeByte(0x00); // transparent color index
+    out.writeByte(0x00); // block terminator
 
     // Image Descriptor
-    var id = new Uint8Array(10);
-    id[0] = 0x2C;
-    id[1] = 0; id[2] = 0; // left
-    id[3] = 0; id[4] = 0; // top
-    id[5] = w & 0xFF; id[6] = (w >> 8) & 0xFF;
-    id[7] = h & 0xFF; id[8] = (h >> 8) & 0xFF;
-    id[9] = 0x80 | (colorTableSize - 1); // local color table, size
-    buffers.push(id);
+    out.writeByte(0x2C);
+    out.writeShort(0); // left
+    out.writeShort(0); // top
+    out.writeShort(w);
+    out.writeShort(h);
+    out.writeByte(0x80 | (colorTableBits - 1)); // local color table flag + size
 
     // Local Color Table
-    var lct = new Uint8Array(3 * (1 << colorTableSize));
-    for (var i = 0; i < palette.length; i++) {
-      lct[i * 3] = palette[i][0];
-      lct[i * 3 + 1] = palette[i][1];
-      lct[i * 3 + 2] = palette[i][2];
+    for (var i = 0; i < colorTableSize; i++) {
+      if (i < palette.length) {
+        out.writeByte(palette[i][0]);
+        out.writeByte(palette[i][1]);
+        out.writeByte(palette[i][2]);
+      } else {
+        out.writeByte(0);
+        out.writeByte(0);
+        out.writeByte(0);
+      }
     }
-    buffers.push(lct);
 
     // LZW Image Data
-    var minCodeSize = colorTableSize;
+    var minCodeSize = colorTableBits;
     if (minCodeSize < 2) minCodeSize = 2;
-    var lzwData = lzwEncode(indexed, minCodeSize);
-    buffers.push(lzwData);
+    out.writeByte(minCodeSize);
+    var lzwBlocks = lzwEncode(indexed, minCodeSize);
+    for (var b = 0; b < lzwBlocks.length; b++) {
+      out.writeByte(lzwBlocks[b]);
+    }
   }
 
   // Trailer
-  buffers.push(new Uint8Array([0x3B]));
+  out.writeByte(0x3B);
 
-  // 合并所有buffer
-  var totalLen = 0;
-  for (var i = 0; i < buffers.length; i++) {
-    totalLen += buffers[i].length;
-  }
-  var result = new Uint8Array(totalLen);
-  var offset = 0;
-  for (var i = 0; i < buffers.length; i++) {
-    result.set(buffers[i], offset);
-    offset += buffers[i].length;
-  }
-  return result.buffer;
+  return out.getBuffer();
 };
 
-function strToBytes(str) {
-  var arr = new Uint8Array(str.length);
-  for (var i = 0; i < str.length; i++) {
-    arr[i] = str.charCodeAt(i);
-  }
-  return arr;
+// ========== ByteArray 工具 ==========
+
+function ByteArray(initSize) {
+  this.data = new Uint8Array(initSize);
+  this.pos = 0;
 }
 
-/**
- * 中位切分色彩量化 → 256色
- */
-function medianCut(pixels, pixelCount) {
+ByteArray.prototype.ensure = function (need) {
+  if (this.pos + need > this.data.length) {
+    var newSize = Math.max(this.data.length * 2, this.pos + need + 1024);
+    var newData = new Uint8Array(newSize);
+    newData.set(this.data);
+    this.data = newData;
+  }
+};
+
+ByteArray.prototype.writeByte = function (b) {
+  this.ensure(1);
+  this.data[this.pos++] = b & 0xFF;
+};
+
+ByteArray.prototype.writeShort = function (s) {
+  this.writeByte(s & 0xFF);
+  this.writeByte((s >> 8) & 0xFF);
+};
+
+ByteArray.prototype.writeString = function (str) {
+  this.ensure(str.length);
+  for (var i = 0; i < str.length; i++) {
+    this.data[this.pos++] = str.charCodeAt(i);
+  }
+};
+
+ByteArray.prototype.writeBytes = function (arr) {
+  this.ensure(arr.length);
+  this.data.set(arr, this.pos);
+  this.pos += arr.length;
+};
+
+ByteArray.prototype.getBuffer = function () {
+  return this.data.buffer.slice(0, this.pos);
+};
+
+// ========== 色彩量化（中位切分 → 256色） ==========
+
+function quantize(pixels, pixelCount) {
   var colorMap = {};
   var colors = [];
-  var i, r, g, b, key;
+  var step = pixelCount > 20000 ? 4 : pixelCount > 5000 ? 2 : 1;
 
-  // 采样（大图跳像素加速）
-  var step = pixelCount > 30000 ? 2 : 1;
-  for (i = 0; i < pixelCount; i += step) {
+  for (var i = 0; i < pixelCount; i += step) {
     var idx = i * 4;
-    r = pixels[idx] >> 3 << 3;
-    g = pixels[idx + 1] >> 3 << 3;
-    b = pixels[idx + 2] >> 3 << 3;
-    key = (r << 16) | (g << 8) | b;
+    var r = pixels[idx] & 0xF8;
+    var g = pixels[idx + 1] & 0xF8;
+    var b = pixels[idx + 2] & 0xF8;
+    var key = (r << 16) | (g << 8) | b;
     if (!colorMap[key]) {
       colorMap[key] = { r: r, g: g, b: b, count: 0 };
       colors.push(colorMap[key]);
@@ -145,30 +165,25 @@ function medianCut(pixels, pixelCount) {
     colorMap[key].count++;
   }
 
-  // 如果颜色少于256，直接用
-  var maxColors = Math.min(colors.length, 256);
-  var tableBits = 2;
-  while ((1 << tableBits) < maxColors) tableBits++;
-  var tableSize = 1 << tableBits;
-
-  var palette = [];
-  var colorIndex = {};
+  var palette;
+  var colorIdxMap = {};
 
   if (colors.length <= 256) {
-    for (i = 0; i < colors.length; i++) {
-      colorIndex[(colors[i].r << 16) | (colors[i].g << 8) | colors[i].b] = i;
-      palette.push([colors[i].r, colors[i].g, colors[i].b]);
+    palette = [];
+    for (var i = 0; i < colors.length; i++) {
+      var c = colors[i];
+      palette.push([c.r, c.g, c.b]);
+      colorIdxMap[(c.r << 16) | (c.g << 8) | c.b] = i;
     }
   } else {
     // 中位切分
     var buckets = [colors];
-    while (buckets.length < maxColors) {
-      // 找最长的桶
+    while (buckets.length < 256) {
       var maxRange = -1, maxIdx = 0;
-      for (i = 0; i < buckets.length; i++) {
-        var range = getRange(buckets[i]);
-        if (range.maxRange > maxRange && buckets[i].length > 1) {
-          maxRange = range.maxRange;
+      for (var i = 0; i < buckets.length; i++) {
+        var r = bucketRange(buckets[i]);
+        if (r.max > maxRange && buckets[i].length > 1) {
+          maxRange = r.max;
           maxIdx = i;
         }
       }
@@ -178,37 +193,39 @@ function medianCut(pixels, pixelCount) {
       buckets.push(split[0], split[1]);
     }
 
-    // 从每个桶取平均色
-    for (i = 0; i < buckets.length; i++) {
-      var avg = getAverage(buckets[i]);
+    palette = [];
+    for (var i = 0; i < buckets.length; i++) {
+      var avg = bucketAvg(buckets[i]);
       palette.push([avg.r, avg.g, avg.b]);
       for (var j = 0; j < buckets[i].length; j++) {
-        var c = buckets[i][j];
-        colorIndex[(c.r << 16) | (c.g << 8) | c.b] = i;
+        var bc = buckets[i][j];
+        colorIdxMap[(bc.r << 16) | (bc.g << 8) | bc.b] = i;
       }
     }
   }
 
+  var bits = 2;
+  while ((1 << bits) < palette.length) bits++;
+
   // 生成索引图
   var indexed = new Uint8Array(pixelCount);
-  for (i = 0; i < pixelCount; i++) {
+  for (var i = 0; i < pixelCount; i++) {
     var idx = i * 4;
-    r = pixels[idx] >> 3 << 3;
-    g = pixels[idx + 1] >> 3 << 3;
-    b = pixels[idx + 2] >> 3 << 3;
-    key = (r << 16) | (g << 8) | b;
-    indexed[i] = colorIndex[key] !== undefined ? colorIndex[key] : findNearest(palette, r, g, b);
+    var r = pixels[idx] & 0xF8;
+    var g = pixels[idx + 1] & 0xF8;
+    var b = pixels[idx + 2] & 0xF8;
+    var key = (r << 16) | (g << 8) | b;
+    if (colorIdxMap[key] !== undefined) {
+      indexed[i] = colorIdxMap[key];
+    } else {
+      indexed[i] = nearestColor(palette, r, g, b);
+    }
   }
 
-  // 确保palette长度为tableSize
-  while (palette.length < tableSize) {
-    palette.push([0, 0, 0]);
-  }
-
-  return { palette: palette, indexed: indexed, tableSize: tableBits };
+  return { palette: palette, indexed: indexed, bits: bits };
 }
 
-function getRange(bucket) {
+function bucketRange(bucket) {
   var rMin = 255, rMax = 0, gMin = 255, gMax = 0, bMin = 255, bMax = 0;
   for (var i = 0; i < bucket.length; i++) {
     var c = bucket[i];
@@ -217,21 +234,21 @@ function getRange(bucket) {
     if (c.b < bMin) bMin = c.b; if (c.b > bMax) bMax = c.b;
   }
   var rr = rMax - rMin, gg = gMax - gMin, bb = bMax - bMin;
-  var maxR = rr, channel = 'r';
-  if (gg > maxR) { maxR = gg; channel = 'g'; }
-  if (bb > maxR) { maxR = bb; channel = 'b'; }
-  return { maxRange: maxR, channel: channel };
+  var max = rr, ch = 'r';
+  if (gg > max) { max = gg; ch = 'g'; }
+  if (bb > max) { max = bb; ch = 'b'; }
+  return { max: max, ch: ch };
 }
 
 function splitBucket(bucket) {
-  var info = getRange(bucket);
-  var ch = info.channel;
+  var info = bucketRange(bucket);
+  var ch = info.ch;
   bucket.sort(function (a, b) { return a[ch] - b[ch]; });
   var mid = Math.floor(bucket.length / 2);
   return [bucket.slice(0, mid), bucket.slice(mid)];
 }
 
-function getAverage(bucket) {
+function bucketAvg(bucket) {
   var rSum = 0, gSum = 0, bSum = 0, wSum = 0;
   for (var i = 0; i < bucket.length; i++) {
     var c = bucket[i];
@@ -241,10 +258,14 @@ function getAverage(bucket) {
     bSum += c.b * w;
     wSum += w;
   }
-  return { r: Math.round(rSum / wSum), g: Math.round(gSum / wSum), b: Math.round(bSum / wSum) };
+  return {
+    r: Math.round(rSum / wSum),
+    g: Math.round(gSum / wSum),
+    b: Math.round(bSum / wSum)
+  };
 }
 
-function findNearest(palette, r, g, b) {
+function nearestColor(palette, r, g, b) {
   var minDist = Infinity, minIdx = 0;
   for (var i = 0; i < palette.length; i++) {
     var dr = r - palette[i][0], dg = g - palette[i][1], db = b - palette[i][2];
@@ -254,104 +275,99 @@ function findNearest(palette, r, g, b) {
   return minIdx;
 }
 
-/**
- * LZW编码
- */
+// ========== LZW编码（正确的GIF LZW实现） ==========
+
 function lzwEncode(indexed, minCodeSize) {
   var clearCode = 1 << minCodeSize;
   var eoiCode = clearCode + 1;
+
   var codeSize = minCodeSize + 1;
   var nextCode = eoiCode + 1;
   var codeLimit = 1 << codeSize;
 
-  var dict = {};
-  for (var i = 0; i < clearCode; i++) {
-    dict[String.fromCharCode(i)] = i;
-  }
+  // 使用数组做字典树，性能更好
+  var dict = new Map();
+  resetDict();
 
-  var bits = [];
-  var curBits = codeSize;
-  var buf = 0, bufBits = 0;
+  var buffer = 0;
+  var bufferBits = 0;
+  var output = [];
 
-  function writeCode(code) {
-    buf |= (code << bufBits);
-    bufBits += curBits;
-    while (bufBits >= 8) {
-      bits.push(buf & 0xFF);
-      buf >>= 8;
-      bufBits -= 8;
+  function writeBits(code, numBits) {
+    buffer |= (code << bufferBits);
+    bufferBits += numBits;
+    while (bufferBits >= 8) {
+      output.push(buffer & 0xFF);
+      buffer >>= 8;
+      bufferBits -= 8;
     }
   }
 
-  writeCode(clearCode);
-
-  var curCodeSize = minCodeSize + 1;
-  var curLimit = 1 << curCodeSize;
-  var dictSize = eoiCode + 1;
-  var maxDictSize = 4096;
-
-  // 初始化字典
-  var localDict = {};
-  for (i = 0; i < clearCode; i++) {
-    localDict[String.fromCharCode(i)] = i;
+  function resetDict() {
+    dict = new Map();
+    for (var i = 0; i < clearCode; i++) {
+      dict.set(i.toString(), i);
+    }
+    nextCode = eoiCode + 1;
+    codeSize = minCodeSize + 1;
+    codeLimit = 1 << codeSize;
   }
-  dictSize = eoiCode + 1;
 
-  var w = String.fromCharCode(indexed[0]);
+  // 写入Clear Code
+  writeBits(clearCode, codeSize);
 
-  for (i = 1; i < indexed.length; i++) {
-    var k = String.fromCharCode(indexed[i]);
-    var wk = w + k;
-    if (localDict[wk] !== undefined) {
-      w = wk;
+  var indexBuffer = indexed[0].toString();
+
+  for (var i = 1; i < indexed.length; i++) {
+    var k = indexed[i].toString();
+    var combined = indexBuffer + ',' + k;
+
+    if (dict.has(combined)) {
+      indexBuffer = combined;
     } else {
-      writeCode(localDict[w]);
-      if (dictSize < maxDictSize) {
-        localDict[wk] = dictSize++;
-        if (dictSize > curLimit && curCodeSize < 12) {
-          curCodeSize++;
-          curLimit = 1 << curCodeSize;
+      writeBits(dict.get(indexBuffer), codeSize);
+
+      if (nextCode < 4096) {
+        dict.set(combined, nextCode);
+        nextCode++;
+        if (nextCode > codeLimit && codeSize < 12) {
+          codeSize++;
+          codeLimit = 1 << codeSize;
         }
       } else {
-        // 字典满了，写clear code重置
-        writeCode(clearCode);
-        localDict = {};
-        for (var j = 0; j < clearCode; j++) {
-          localDict[String.fromCharCode(j)] = j;
-        }
-        dictSize = eoiCode + 1;
-        curCodeSize = minCodeSize + 1;
-        curLimit = 1 << curCodeSize;
+        // 字典满了，输出Clear Code并重置
+        writeBits(clearCode, codeSize);
+        resetDict();
       }
-      w = k;
+
+      indexBuffer = k;
     }
   }
 
-  writeCode(localDict[w]);
-  writeCode(eoiCode);
+  // 输出最后一个code
+  writeBits(dict.get(indexBuffer), codeSize);
 
-  if (bufBits > 0) {
-    bits.push(buf & 0xFF);
+  // 输出EOI
+  writeBits(eoiCode, codeSize);
+
+  // 刷新剩余位
+  if (bufferBits > 0) {
+    output.push(buffer & 0xFF);
   }
 
-  // 分成子块（每块最多255字节）
-  var subBlocks = [];
+  // 分成子块
+  var result = [];
   var pos = 0;
-  while (pos < bits.length) {
-    var blockSize = Math.min(255, bits.length - pos);
-    subBlocks.push(blockSize);
-    for (var s = 0; s < blockSize; s++) {
-      subBlocks.push(bits[pos + s]);
+  while (pos < output.length) {
+    var blockSize = Math.min(255, output.length - pos);
+    result.push(blockSize);
+    for (var j = 0; j < blockSize; j++) {
+      result.push(output[pos + j]);
     }
     pos += blockSize;
   }
-  subBlocks.push(0); // 块终止符
+  result.push(0); // 块终止符
 
-  var result = new Uint8Array(1 + subBlocks.length);
-  result[0] = minCodeSize;
-  for (i = 0; i < subBlocks.length; i++) {
-    result[i + 1] = subBlocks[i];
-  }
   return result;
 }
 
