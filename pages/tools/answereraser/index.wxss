@@ -1,0 +1,178 @@
+.image-picker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300rpx;
+  border-radius: 12rpx;
+  background-color: #F8F9FA;
+  padding: 48rpx;
+}
+
+.picker-icon {
+  font-size: 80rpx;
+  margin-bottom: 16rpx;
+}
+
+.picker-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: var(--color-primary);
+  margin-bottom: 8rpx;
+}
+
+.picker-desc {
+  font-size: 24rpx;
+  color: var(--color-hint);
+}
+
+.canvas-card {
+  padding: 24rpx;
+}
+
+.draw-canvas {
+  width: 100%;
+  border-radius: 8rpx;
+  border: 2rpx solid var(--color-border);
+  touch-action: none;
+}
+
+.toolbar {
+  margin-top: 24rpx;
+}
+
+.tool-group {
+  display: flex;
+  justify-content: space-around;
+  padding: 12rpx 0;
+}
+
+.tool-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12rpx 16rpx;
+  border-radius: 12rpx;
+  min-width: 80rpx;
+  transition: background 0.2s;
+}
+
+.tool-btn.active {
+  background-color: #E8F5E9;
+}
+
+.tool-icon {
+  font-size: 36rpx;
+  margin-bottom: 4rpx;
+}
+
+.tool-label {
+  font-size: 22rpx;
+  color: var(--color-secondary);
+}
+
+.tool-btn.active .tool-label {
+  color: #45B058;
+  font-weight: 600;
+}
+
+.brush-size-row {
+  display: flex;
+  align-items: center;
+  padding: 12rpx 0;
+  margin-top: 8rpx;
+}
+
+.size-label {
+  font-size: 24rpx;
+  color: var(--color-secondary);
+  flex-shrink: 0;
+  margin-right: 16rpx;
+}
+
+.size-slider {
+  flex: 1;
+}
+
+.btn-export {
+  margin-bottom: 0;
+}
+
+.section-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--color-primary);
+  display: block;
+  margin-bottom: 20rpx;
+}
+
+.step-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.step-item {
+  display: flex;
+  align-items: flex-start;
+}
+
+.step-num {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #45B058 0%, #388E3C 100%);
+  color: #FFFFFF;
+  font-size: 26rpx;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.step-content {
+  margin-left: 20rpx;
+  flex: 1;
+}
+
+.step-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--color-primary);
+  display: block;
+}
+
+.step-desc {
+  font-size: 24rpx;
+  color: var(--color-hint);
+  display: block;
+  margin-top: 4rpx;
+}
+
+.tips-card {
+  margin-bottom: 48rpx;
+}
+
+.tip-item {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 12rpx;
+}
+
+.tip-item:last-child {
+  margin-bottom: 0;
+}
+
+.tip-dot {
+  color: #45B058;
+  font-size: 28rpx;
+  margin-right: 12rpx;
+  line-height: 1.6;
+}
+
+.tip-text {
+  font-size: 24rpx;
+  color: var(--color-secondary);
+  line-height: 1.6;
+}

@@ -1,0 +1,288 @@
+<view class="container">
+  <!-- 顶部标签切换 -->
+  <view class="tabs">
+    <view class="tab {{currentTab === 'initials' ? 'active' : ''}}" bindtap="switchTab" data-tab="initials">
+      <text class="tab-icon">🅱️</text>
+      <text class="tab-text">声母</text>
+    </view>
+    <view class="tab {{currentTab === 'finals' ? 'active' : ''}}" bindtap="switchTab" data-tab="finals">
+      <text class="tab-icon">🅰️</text>
+      <text class="tab-text">韵母</text>
+    </view>
+    <view class="tab {{currentTab === 'whole' ? 'active' : ''}}" bindtap="switchTab" data-tab="whole">
+      <text class="tab-icon">📝</text>
+      <text class="tab-text">整体认读</text>
+    </view>
+    <view class="tab {{currentTab === 'tones' ? 'active' : ''}}" bindtap="switchTab" data-tab="tones">
+      <text class="tab-icon">🎵</text>
+      <text class="tab-text">声调</text>
+    </view>
+    <view class="tab {{currentTab === 'practice' ? 'active' : ''}}" bindtap="switchTab" data-tab="practice">
+      <text class="tab-icon">🎯</text>
+      <text class="tab-text">练习</text>
+    </view>
+  </view>
+
+  <!-- 声母表 -->
+  <view class="content" wx:if="{{currentTab === 'initials'}}">
+    <view class="group-section" wx:for="{{initialGroups}}" wx:key="title">
+      <view class="group-title">{{item.title}}</view>
+      <view class="pinyin-grid">
+        <view class="pinyin-cell {{selectedPinyin === p ? 'selected' : ''}}" 
+              wx:for="{{item.items}}" wx:for-item="p" wx:key="*this"
+              bindtap="selectPinyin" data-pinyin="{{p}}" data-type="initial">
+          <text class="pinyin-text">{{p}}</text>
+        </view>
+      </view>
+    </view>
+    <!-- 选中详情 -->
+    <view class="detail-card" wx:if="{{selectedType === 'initial' && selectedPinyin}}">
+      <view class="detail-emoji">{{selectedExample.emoji}}</view>
+      <view class="detail-pinyin">{{selectedPinyin}}</view>
+      <view class="detail-word">例字：{{selectedExample.word}} ({{selectedExample.pinyin}})</view>
+      <button class="speak-btn" bindtap="speakPinyin" data-text="{{selectedPinyin}}">
+        <text>🔊 点击发音</text>
+      </button>
+    </view>
+  </view>
+
+  <!-- 韵母表 -->
+  <view class="content" wx:if="{{currentTab === 'finals'}}">
+    <view class="group-section" wx:for="{{finalGroups}}" wx:key="title">
+      <view class="group-title">{{item.title}}</view>
+      <view class="pinyin-grid">
+        <view class="pinyin-cell {{selectedPinyin === f ? 'selected' : ''}}" 
+              wx:for="{{item.items}}" wx:for-item="f" wx:key="*this"
+              bindtap="selectPinyin" data-pinyin="{{f}}" data-type="final">
+          <text class="pinyin-text">{{f}}</text>
+        </view>
+      </view>
+    </view>
+    <!-- 选中详情 -->
+    <view class="detail-card" wx:if="{{selectedType === 'final' && selectedPinyin}}">
+      <view class="detail-emoji">{{selectedExample.emoji}}</view>
+      <view class="detail-pinyin">{{selectedPinyin}}</view>
+      <view class="detail-word">例字：{{selectedExample.word}} ({{selectedExample.pinyin}})</view>
+      <button class="speak-btn" bindtap="speakPinyin" data-text="{{selectedPinyin}}">
+        <text>🔊 点击发音</text>
+      </button>
+    </view>
+  </view>
+
+  <!-- 整体认读音节 -->
+  <view class="content" wx:if="{{currentTab === 'whole'}}">
+    <view class="group-section">
+      <view class="group-title">整体认读音节（共16个，不用拼，直接读）</view>
+      <view class="pinyin-grid">
+        <view class="pinyin-cell whole-cell {{selectedPinyin === s ? 'selected' : ''}}" 
+              wx:for="{{wholeSyllables}}" wx:for-item="s" wx:key="*this"
+              bindtap="selectPinyin" data-pinyin="{{s}}" data-type="whole">
+          <text class="pinyin-text">{{s}}</text>
+        </view>
+      </view>
+    </view>
+    <!-- 选中详情 -->
+    <view class="detail-card" wx:if="{{selectedType === 'whole' && selectedPinyin}}">
+      <view class="detail-emoji">{{selectedExample.emoji}}</view>
+      <view class="detail-pinyin">{{selectedPinyin}}</view>
+      <view class="detail-word">例字：{{selectedExample.word}} ({{selectedExample.pinyin}})</view>
+      <button class="speak-btn" bindtap="speakPinyin" data-text="{{selectedPinyin}}">
+        <text>🔊 点击发音</text>
+      </button>
+    </view>
+  </view>
+
+  <!-- 声调学习 -->
+  <view class="content" wx:if="{{currentTab === 'tones'}}">
+    <view class="tones-section">
+      <view class="group-title">四声声调</view>
+      <view class="tone-list">
+        <view class="tone-item tone-{{item.tone}}" wx:for="{{tones}}" wx:key="tone" 
+              bindtap="playTone" data-tone="{{item.tone}}">
+          <view class="tone-left">
+            <text class="tone-symbol">{{item.symbol}}</text>
+            <text class="tone-name">{{item.name}}</text>
+          </view>
+          <view class="tone-right">
+            <text class="tone-desc">{{item.desc}}</text>
+            <text class="tone-example">例：{{toneExamples[index]}}</text>
+          </view>
+          <view class="tone-play">🔊</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="tones-section" style="margin-top: 30rpx;">
+      <view class="group-title">声调标注位置规则</view>
+      <view class="rule-cards">
+        <view class="rule-card">
+          <view class="rule-title">📌 有 a 标 a</view>
+          <view class="rule-example">如：bā、mā、huā</view>
+        </view>
+        <view class="rule-card">
+          <view class="rule-title">📌 没 a 标 o e</view>
+          <view class="rule-example">如：bó、gē、lè</view>
+        </view>
+        <view class="rule-card">
+          <view class="rule-title">📌 i u 并列标后面</view>
+          <view class="rule-example">如：liú、guì、duì</view>
+        </view>
+        <view class="rule-card">
+          <view class="rule-title">📌 i 上标调去掉点</view>
+          <view class="rule-example">如：jī → 不是 jī̊</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="tones-section" style="margin-top: 30rpx;">
+      <view class="group-title">声调手势练习</view>
+      <view class="gesture-list">
+        <view class="gesture-item">
+          <text class="gesture-emoji">👆</text>
+          <text class="gesture-text">第一声：手平伸向前 → "ā"</text>
+        </view>
+        <view class="gesture-item">
+          <text class="gesture-emoji">↗️</text>
+          <text class="gesture-text">第二声：手从低往高扬 → "á"</text>
+        </view>
+        <view class="gesture-item">
+          <text class="gesture-emoji">✌️</text>
+          <text class="gesture-text">第三声：手先下再上 → "ǎ"</text>
+        </view>
+        <view class="gesture-item">
+          <text class="gesture-emoji">👇</text>
+          <text class="gesture-text">第四声：手从高往下砍 → "à"</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 练习模式 -->
+  <view class="content" wx:if="{{currentTab === 'practice'}}">
+    <!-- 练习模式选择 -->
+    <view class="practice-modes" wx:if="{{!practiceStarted}}">
+      <view class="group-title">选择练习模式</view>
+      <view class="mode-cards">
+        <view class="mode-card" bindtap="startPractice" data-mode="identify">
+          <view class="mode-icon">👁️</view>
+          <view class="mode-name">看拼音选汉字</view>
+          <view class="mode-desc">显示拼音，选出正确的汉字</view>
+        </view>
+        <view class="mode-card" bindtap="startPractice" data-mode="listen">
+          <view class="mode-icon">👂</view>
+          <view class="mode-name">听音选拼音</view>
+          <view class="mode-desc">听发音，选出正确的拼音</view>
+        </view>
+        <view class="mode-card" bindtap="startPractice" data-mode="tone">
+          <view class="mode-icon">🎵</view>
+          <view class="mode-name">声调标注</view>
+          <view class="mode-desc">给拼音选择正确的声调</view>
+        </view>
+        <view class="mode-card" bindtap="startPractice" data-mode="match">
+          <view class="mode-icon">🔗</view>
+          <view class="mode-name">拼音连线</view>
+          <view class="mode-desc">将拼音与对应汉字连线</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 练习题目 -->
+    <view class="practice-area" wx:if="{{practiceStarted}}">
+      <view class="practice-header">
+        <view class="practice-progress">第 {{currentQuestion + 1}} / {{totalQuestions}} 题</view>
+        <view class="practice-score">得分：{{score}}</view>
+        <view class="practice-close" bindtap="closePractice">✕</view>
+      </view>
+      
+      <!-- 进度条 -->
+      <view class="progress-bar">
+        <view class="progress-fill" style="width: {{(currentQuestion + 1) / totalQuestions * 100}}%"></view>
+      </view>
+
+      <!-- 识别模式 -->
+      <view class="question-area" wx:if="{{practiceMode === 'identify'}}">
+        <view class="question-pinyin">{{questionData.pinyin}}</view>
+        <view class="question-tip">选出正确的汉字</view>
+        <view class="options-grid">
+          <view class="option-item {{item === questionData.answer && showResult ? 'correct' : ''}} {{selectedOption === item && item !== questionData.answer && showResult ? 'wrong' : ''}}"
+                wx:for="{{questionData.options}}" wx:key="*this"
+                bindtap="selectOption" data-option="{{item}}">
+            <text class="option-text">{{item}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 听音模式 -->
+      <view class="question-area" wx:if="{{practiceMode === 'listen'}}">
+        <view class="question-speaker" bindtap="speakPinyin" data-text="{{questionData.pinyin}}">
+          <text class="speaker-icon">🔊</text>
+          <text class="speaker-tip">点击播放发音</text>
+        </view>
+        <view class="question-tip">选出你听到的拼音</view>
+        <view class="options-grid">
+          <view class="option-item {{item === questionData.answer && showResult ? 'correct' : ''}} {{selectedOption === item && item !== questionData.answer && showResult ? 'wrong' : ''}}"
+                wx:for="{{questionData.options}}" wx:key="*this"
+                bindtap="selectOption" data-option="{{item}}">
+            <text class="option-text option-pinyin">{{item}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 声调模式 -->
+      <view class="question-area" wx:if="{{practiceMode === 'tone'}}">
+        <view class="question-pinyin">{{questionData.base}}</view>
+        <view class="question-tip">选择正确的声调</view>
+        <view class="options-grid tone-options">
+          <view class="option-item tone-opt {{item.mark === questionData.answer && showResult ? 'correct' : ''}} {{selectedOption === item.mark && item.mark !== questionData.answer && showResult ? 'wrong' : ''}}"
+                wx:for="{{questionData.options}}" wx:key="mark"
+                bindtap="selectOption" data-option="{{item.mark}}">
+            <text class="option-text">{{item.mark}}</text>
+            <text class="option-sub">{{item.name}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 连线模式 -->
+      <view class="question-area" wx:if="{{practiceMode === 'match'}}">
+        <view class="question-tip">将拼音和对应的汉字配对</view>
+        <view class="match-area">
+          <view class="match-col">
+            <view class="match-item {{item.selected ? 'match-selected' : ''}} {{item.matched ? 'match-done' : ''}}" 
+                  wx:for="{{matchPinyins}}" wx:key="text"
+                  bindtap="selectMatch" data-type="pinyin" data-index="{{index}}">
+              <text>{{item.text}}</text>
+            </view>
+          </view>
+          <view class="match-col">
+            <view class="match-item {{item.selected ? 'match-selected' : ''}} {{item.matched ? 'match-done' : ''}}" 
+                  wx:for="{{matchWords}}" wx:key="text"
+                  bindtap="selectMatch" data-type="word" data-index="{{index}}">
+              <text>{{item.text}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 结果反馈 -->
+      <view class="result-feedback {{showResult ? 'show' : ''}}" wx:if="{{showResult}}">
+        <view class="result-icon">{{isCorrect ? '✅' : '❌'}}</view>
+        <view class="result-text">{{isCorrect ? '回答正确！' : '回答错误，正确答案是：' + correctAnswer}}</view>
+        <button class="next-btn" bindtap="nextQuestion">
+          {{currentQuestion < totalQuestions - 1 ? '下一题' : '查看结果'}}
+        </button>
+      </view>
+
+      <!-- 练习结束 -->
+      <view class="practice-result" wx:if="{{practiceFinished}}">
+        <view class="result-emoji">{{score >= 80 ? '🎉' : score >= 60 ? '😊' : '💪'}}</view>
+        <view class="result-title">{{score >= 80 ? '太棒了！' : score >= 60 ? '不错哦！' : '继续加油！'}}</view>
+        <view class="result-score">得分：{{score}} 分</view>
+        <view class="result-detail">答对 {{correctCount}} / {{totalQuestions}} 题</view>
+        <view class="result-buttons">
+          <button class="retry-btn" bindtap="retryPractice">再来一轮</button>
+          <button class="back-btn" bindtap="closePractice">返回选择</button>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

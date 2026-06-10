@@ -1,0 +1,100 @@
+<view class="container">
+  <!-- 顶部区域 -->
+  <view class="preview-area">
+    <canvas 
+      canvas-id="previewCanvas"
+      style="width:{{canvasW}}px;height:{{canvasH}}px"
+      wx:if="{{previewing && frames.length > 0}}"
+    />
+    <view class="empty-box" wx:if="{{frames.length === 0}}" bindtap="chooseImages">
+      <text class="empty-icon">🎞️</text>
+      <text class="empty-hint">点击选择图片</text>
+      <text class="empty-sub">支持2-30张图片制作GIF</text>
+    </view>
+    <view class="empty-box" wx:if="{{frames.length > 0 && !previewing}}" bindtap="chooseImages">
+      <text class="empty-icon">📷</text>
+      <text class="empty-hint">继续添加图片</text>
+    </view>
+  </view>
+
+  <!-- 帧列表 -->
+  <scroll-view scroll-x class="frame-list" wx:if="{{frames.length > 0}}">
+    <view 
+      wx:for="{{frames}}" 
+          wx:key="index"
+          class="frame-item {{currentFrame === index ? 'active' : ''}}"
+          bindtap="selectFrame"
+          data-index="{{index}}"
+      >
+        <image src="{{item.tempPath}}" mode="aspectFill" class="frame-thumb"/>
+        <text class="frame-idx">{{index + 1}}</text>
+        <view class="frame-del" catchtap="deleteFrame" data-index="{{index}}">×</view>
+      </view>
+      <view class="frame-add" bindtap="chooseImages" wx:if="{{frames.length < 30}}">
+        <text class="add-icon">+</text>
+      </view>
+  </scroll-view>
+
+  <!-- 设置面板 -->
+  <view class="panel" wx:if="{{frames.length > 0}}">
+    <!-- 播放控制 -->
+    <view class="ctrl-row">
+      <button class="btn-sm" bindtap="togglePreview">
+        {{previewing ? '⏸ 暂停' : '▶ 播放预览'}}
+      </button>
+    </view>
+
+    <!-- 帧率控制 -->
+    <view class="slider-row">
+      <text class="slider-label">播放速度</text>
+      <slider
+        min="100" max="2000" step="100"
+        value="{{delay}}"
+        bindchanging="onDelayChange"
+        bindchange="onDelayChange"
+        activeColor="#9B59B6"
+      />
+      <text class="slider-val">{{delay}}ms/帧 ({{fps}}fps)</text>
+    </view>
+
+    <!-- 尺寸选择 -->
+    <view class="size-row">
+      <text class="slider-label">输出宽度</text>
+      <view class="size-btns">
+        <view 
+          wx:for="{{sizeOptions}}" 
+              wx:key="value"
+              class="size-btn {{outputWidth === item.value ? 'active' : ''}}"
+              bindtap="selectSize"
+              data-value="{{item.value}}"
+          >
+            {{item.label}}
+          </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 导出按钮 -->
+  <view class="bottom-bar" wx:if="{{frames.length >= 2}}">
+    <button 
+      class="btn-export {{generating ? 'disabled' : ''}}" 
+      bindtap="exportGif"
+      disabled="{{generating}}"
+    >
+      {{generating ? '⏳ 生成中...' + progress + '%': '🎞️ 生成GIF并保存'}}
+    </button>
+  </view>
+
+  <!-- 提示 -->
+  <view class="tips" wx:if="{{frames.length < 2}}">
+    <text class="tip-text">💡 选择2-30张图片即可制作GIF动图</text>
+  </view>
+
+  <!-- 隐藏的导出canvas -->
+  <canvas 
+    canvas-id="exportCanvas" 
+    type="2d"
+    id="exportCanvas"
+    style="position:fixed;left:-9999px;top:-9999px;width:1px;height:1px"
+  />
+</view>

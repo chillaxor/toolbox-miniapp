@@ -1,0 +1,147 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">生字听写机</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <!-- 年级选择页 -->
+  <view wx:if="{{page === 'select'}}">
+    <view class="card">
+      <text class="card-title">选择年级</text>
+      <view class="grade-grid">
+        <view class="grade-item" wx:for="{{gradeList}}" wx:key="key"
+              data-grade="{{item.key}}" bindtap="onGradeSelect">
+          <text class="grade-name">{{item.name}}</text>
+          <text class="grade-count">{{item.count}}字</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="card" style="margin-top: 24rpx;">
+      <text class="card-title">💡 使用提示</text>
+      <text class="tip-text">• 选择年级后随机打乱顺序听写</text>
+      <text class="tip-text">• 可显示拼音/笔画提示辅助记忆</text>
+      <text class="tip-text">• 听写结束后可单独复习错字</text>
+      <text class="tip-text">• 建议配合家长使用，效果更佳</text>
+    </view>
+  </view>
+
+  <!-- 听写练习页 -->
+  <view wx:if="{{page === 'practice'}}">
+    <view class="progress-bar">
+      <text class="progress-text">{{currentIndex + 1}} / {{totalWords}}</text>
+      <view class="progress-track">
+        <view class="progress-fill" style="width: {{(currentIndex + 1) / totalWords * 100}}%;"></view>
+      </view>
+    </view>
+
+    <view class="practice-controls">
+      <view class="control-btn" bindtap="onReplay">
+        <text>🔊 重听</text>
+      </view>
+      <view class="control-btn {{autoPlay ? 'control-active' : ''}}" bindtap="onToggleAutoPlay">
+        <text>{{autoPlay ? '⏸️ 暂停' : '▶️ 播放'}}</text>
+      </view>
+    </view>
+
+    <view class="word-card">
+      <text wx:if="{{pinyinHint}}" class="word-pinyin">{{currentWord.pinyin}}</text>
+      <text wx:if="{{strokeHint}}" class="word-stroke">笔画：{{currentWord.stroke}}</text>
+      
+      <view class="word-answer-area" wx:if="{{showAnswer}}">
+        <text class="word-answer">{{currentWord.word}}</text>
+      </view>
+      <view class="word-answer-area" wx:else>
+        <text class="word-placeholder">?</text>
+      </view>
+
+      <view class="hint-btns">
+        <button class="hint-btn {{pinyinHint ? 'hint-active' : ''}}" bindtap="onTogglePinyin">
+          {{pinyinHint ? '隐藏拼音' : '显示拼音'}}
+        </button>
+        <button class="hint-btn {{strokeHint ? 'hint-active' : ''}}" bindtap="onToggleStroke">
+          {{strokeHint ? '隐藏笔画' : '显示笔画'}}
+        </button>
+        <button class="hint-btn" bindtap="onShowAnswer" wx:if="{{!showAnswer}}">看答案</button>
+      </view>
+    </view>
+
+    <view class="judge-btns">
+      <button class="judge-btn judge-wrong" bindtap="onDontKnow">
+        <text>❌ 不会</text>
+      </button>
+      <button class="judge-btn judge-correct" bindtap="onKnow">
+        <text>✅ 会写</text>
+      </button>
+    </view>
+
+    <view class="score-bar">
+      <view class="score-correct">
+        <text class="score-num">{{correctNum}}</text>
+        <text class="score-label">对</text>
+      </view>
+      <view class="score-wrong">
+        <text class="score-num">{{wrongNum}}</text>
+        <text class="score-label">错</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 结果页 -->
+  <view wx:if="{{page === 'result'}}">
+    <view class="result-emoji">
+      <text wx:if="{{resultSummary.accuracy >= 90}}">🎉</text>
+      <text wx:elif="{{resultSummary.accuracy >= 70}}">💪</text>
+      <text wx:else>📚</text>
+    </view>
+    <text class="result-title" wx:if="{{resultSummary.accuracy >= 90}}">听写完成！太棒了！</text>
+    <text class="result-title" wx:elif="{{resultSummary.accuracy >= 70}}">听写完成！继续加油！</text>
+    <text class="result-title" wx:else>听写完成！多练习哦！</text>
+
+    <view class="result-stats">
+      <view class="stat-item">
+        <text class="stat-value">{{resultSummary.total}}</text>
+        <text class="stat-label">总字数</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-value" style="color: #27AE60;">{{resultSummary.correct}}</text>
+        <text class="stat-label">会写</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-value" style="color: #E74C3C;">{{resultSummary.wrong}}</text>
+        <text class="stat-label">不会</text>
+      </view>
+    </view>
+
+    <view class="result-detail">
+      <view class="detail-row">
+        <text class="detail-label">正确率</text>
+        <view class="detail-bar-wrap">
+          <view class="detail-bar" style="width: {{resultSummary.accuracy}}%; background-color: {{resultSummary.accuracy >= 80 ? '#27AE60' : resultSummary.accuracy >= 60 ? '#F39C12' : '#E74C3C'}};"></view>
+        </view>
+        <text class="detail-value">{{resultSummary.accuracy}}%</text>
+      </view>
+      <view class="detail-row">
+        <text class="detail-label">年级</text>
+        <text class="detail-value">{{resultSummary.grade}}</text>
+      </view>
+    </view>
+
+    <view class="card" wx:if="{{resultSummary.wrongWords.length > 0}}" style="margin-top: 24rpx;">
+      <text class="card-title">错字回顾</text>
+      <view class="wrong-list">
+        <view class="wrong-item" wx:for="{{resultSummary.wrongWords}}" wx:key="word">
+          <text class="wrong-word">{{item.word}}</text>
+          <text class="wrong-pinyin">{{item.pinyin}}</text>
+          <text class="wrong-stroke">{{item.stroke}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="btn-group">
+      <button class="btn-primary" style="background-color: #45B058;" bindtap="onRetryWrong" wx:if="{{resultSummary.wrongWords.length > 0}}">再练错字</button>
+      <button class="btn-primary" style="background-color: #45B058;" bindtap="onRestart">重新听写</button>
+      <button class="btn-secondary" bindtap="onBackSelect">换年级</button>
+    </view>
+  </view>
+</view>

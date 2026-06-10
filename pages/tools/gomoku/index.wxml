@@ -19,7 +19,7 @@
 
   <scroll-view scroll-x scroll-y class="board-scroll">
     <view class="board" style="width:{{boardSize}}px;height:{{boardSize}}px;">
-      <canvas canvas-id="boardCanvas" class="board-canvas" style="width:{{boardSize}}px;height:{{boardSize}}px;" bindtap="onBoardTap"></canvas>
+      <canvas canvas-id="boardCanvas" class="board-canvas" style="width:{{boardSize}}px;height:{{boardSize}}px;" bindtouchstart="onBoardTap"></canvas>
     </view>
   </scroll-view>
 

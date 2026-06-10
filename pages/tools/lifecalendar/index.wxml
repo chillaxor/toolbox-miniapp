@@ -1,0 +1,113 @@
+<view class="container">
+  <!-- 输入生日 -->
+  <view class="input-area" wx:if="{{!generated}}">
+    <view class="input-title">📅 人生日历</view>
+    <view class="input-desc">输入你的生日，看看你的人生进度</view>
+    
+    <view class="input-row">
+      <text class="row-label">出生日期</text>
+      <picker mode="date" value="{{birthDate}}" start="1920-01-01" end="{{today}}" bindchange="onDateChange">
+        <view class="date-picker {{birthDate?'has-val':''}}">{{birthDate || '请选择出生日期'}}</view>
+      </picker>
+    </view>
+
+    <view class="input-row">
+      <text class="row-label">预期寿命</text>
+      <view class="life-btns">
+        <view class="lbtn {{lifeYears===60?'active':''}}" bindtap="setLife" data-v="60">60岁</view>
+        <view class="lbtn {{lifeYears===70?'active':''}}" bindtap="setLife" data-v="70">70岁</view>
+        <view class="lbtn {{lifeYears===80?'active':''}}" bindtap="setLife" data-v="80">80岁</view>
+        <view class="lbtn {{lifeYears===90?'active':''}}" bindtap="setLife" data-v="90">90岁</view>
+        <view class="lbtn {{lifeYears===100?'active':''}}" bindtap="setLife" data-v="100">100岁</view>
+      </view>
+    </view>
+
+    <button class="gen-btn" bindtap="generate">查看我的人生日历</button>
+  </view>
+
+  <!-- 日历结果 -->
+  <view class="result-area" wx:if="{{generated}}">
+    <!-- 概览数据 -->
+    <view class="overview">
+      <view class="ov-item">
+        <text class="ov-num">{{ageYears}}</text>
+        <text class="ov-label">已活年数</text>
+      </view>
+      <view class="ov-item highlight">
+        <text class="ov-num">{{weeksLived}}</text>
+        <text class="ov-label">已过周数</text>
+      </view>
+      <view class="ov-item">
+        <text class="ov-num">{{weeksLeft}}</text>
+        <text class="ov-label">剩余周数</text>
+      </view>
+    </view>
+
+    <!-- 进度条 -->
+    <view class="progress-section">
+      <view class="prog-header">
+        <text class="prog-title">人生进度</text>
+        <text class="prog-pct">{{lifePercent}}%</text>
+      </view>
+      <view class="prog-bar-bg">
+        <view class="prog-bar-fill" style="width:{{lifePercent}}%"></view>
+      </view>
+    </view>
+
+    <!-- 更多数据 -->
+    <view class="more-stats">
+      <view class="ms-item">
+        <text class="ms-icon">🎂</text>
+        <text class="ms-text">已过 {{daysLived}} 天</text>
+      </view>
+      <view class="ms-item">
+        <text class="ms-icon">⏰</text>
+        <text class="ms-text">已过 {{hoursLived}} 小时</text>
+      </view>
+      <view class="ms-item">
+        <text class="ms-icon">🗓️</text>
+        <text class="ms-text">距离下一个生日还有 {{daysToNext}} 天</text>
+      </view>
+      <view class="ms-item">
+        <text class="ms-icon">🌟</text>
+        <text class="ms-text">星座：{{zodiac}}</text>
+      </view>
+    </view>
+
+    <!-- 格子日历 -->
+    <view class="cal-section">
+      <view class="cal-title">每个格子代表一周（共{{totalWeeks}}周 / {{lifeYears}}年）</view>
+      
+      <!-- 年代标记 -->
+      <view class="year-marks">
+        <text class="ym" wx:for="{{yearMarks}}" wx:key="year" style="left:{{item.pos}}%">{{item.year}}</text>
+      </view>
+
+      <!-- 格子 -->
+      <scroll-view class="cal-grid-wrap" scroll-x="true" enhanced="true" show-scrollbar="false">
+        <view class="cal-grid" style="width:{{gridWidth}}rpx">
+          <view class="cal-row" wx:for="{{gridRows}}" wx:key="index">
+            <view class="cal-row-label">{{item.yearLabel}}</view>
+            <view class="cal-dot {{dot.s===1?'lived':dot.s===2?'current':'future'}}" 
+                  wx:for="{{item.dots}}" wx:for-item="dot" wx:key="index"
+                  data-year="{{dot.y}}" data-week="{{dot.w}}" bindtap="onDotTap">
+            </view>
+          </view>
+        </view>
+      </scroll-view>
+
+      <view class="cal-legend">
+        <view class="leg-item"><view class="leg-dot lived"></view><text>已度过</text></view>
+        <view class="leg-item"><view class="leg-dot current"></view><text>当前周</text></view>
+        <view class="leg-item"><view class="leg-dot future"></view><text>未来</text></view>
+      </view>
+    </view>
+
+    <!-- 提示语 -->
+    <view class="inspire-quote">
+      <text>"{{quote}}"</text>
+    </view>
+
+    <button class="reset-btn" bindtap="reset">重新输入</button>
+  </view>
+</view>

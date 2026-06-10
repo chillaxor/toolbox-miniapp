@@ -8,7 +8,8 @@ const CATEGORIES = {
   DATE_TIME: { id: 'date', name: '日期时间', color: '#4ECDC4', bgColor: '#D8F5F3' },
   TEXT_PROC: { id: 'text', name: '文本处理', color: '#45B058', bgColor: '#D9F0DC' },
   IMAGE_TOOL: { id: 'image', name: '图片工具', color: '#9B59B6', bgColor: '#EFD9F7' },
-  FUN_RANDOM: { id: 'fun', name: '趣味随机', color: '#E74C3C', bgColor: '#FDE8E8' }
+  FUN_RANDOM: { id: 'fun', name: '趣味随机', color: '#E74C3C', bgColor: '#FDE8E8' },
+  STUDY: { id: 'study', name: '学习教育', color: '#2196F3', bgColor: '#E3F2FD' }
 };
 
 const TOOLS = [
@@ -25,6 +26,9 @@ const TOOLS = [
   { id: 'jsonformat', name: 'JSON格式化', category: 'text', icon: '📋', path: '/pages/tools/jsonformat/index', description: 'JSON美化/压缩' },
   { id: 'base64', name: 'Base64编解', category: 'text', icon: '🔐', path: '/pages/tools/base64/index', description: '文本编解码' },
   { id: 'imgcompress', name: '图片压缩', category: 'image', icon: '🖼️', path: '/pages/tools/imgcompress/index', description: '压缩图片体积' },
+  { id: 'pdf2img', name: 'PDF转图片', category: 'image', icon: '📄', path: '/pages/tools/pdf2img/index', description: 'PDF文件转图片预览保存' },
+  { id: 'answereraser', name: '答案遮挡器', category: 'image', icon: '✏️', path: '/pages/tools/answereraser/index', description: '试卷图片涂抹遮挡答案·导出保存' },
+  { id: 'gifmaker', name: 'GIF制作器', category: 'image', icon: '🎞️', path: '/pages/tools/gifmaker/index', description: '多图合成GIF动图·调速·保存分享' },
   { id: 'imgbase64', name: '图转Base64', category: 'image', icon: '🔄', path: '/pages/tools/imgbase64/index', description: '图片转字符串' },
   { id: 'qrcode', name: '二维码生成', category: 'image', icon: '📱', path: '/pages/tools/qrcode/index', description: '文本/URL生成二维码' },
   { id: 'loan', name: '贷款计算器', category: 'life', icon: '🏦', path: '/pages/tools/loan/index', description: '房贷/车贷月供计算' },
@@ -97,7 +101,22 @@ const TOOLS = [
   { id: 'whoisspy', name: '谁是卧底', category: 'fun', icon: '🕵️', path: '/pages/tools/whoisspy/index', description: '聚会派对·词语卧底桌游' },
   { id: 'whackmole', name: '打地鼠', category: 'fun', icon: '🔨', path: '/pages/tools/whackmole/index', description: '限时打地鼠·考验手速' },
   { id: 'gomoku', name: '五子棋', category: 'fun', icon: '⚫', path: '/pages/tools/gomoku/index', description: '经典五子棋·双人对战' },
+  { id: 'snake', name: '贪吃蛇', category: 'fun', icon: '🐍', path: '/pages/tools/snake/index', description: '经典贪吃蛇·滑动/按键操控·速度可调' },
   { id: 'shopping', name: '模拟超市购物', category: 'fun', icon: '🛒', path: '/pages/tools/shopping/index', description: '给预算选商品·学习理财找零' },
+  { id: 'growth-tracker', name: '身高体重记录', category: 'life', icon: '📏', path: '/pages/tools/growth-tracker/index', description: '定期记录身高体重·生长曲线·标准对比' },
+  { id: 'multiplication', name: '乘法口诀表', category: 'study', icon: '✖️', path: '/pages/tools/multiplication/index', description: '背诵九九乘法表·抽查练习·速度测试' },
+  { id: 'mental-math', name: '口算心算', category: 'study', icon: '🧮', path: '/pages/tools/mental-math/index', description: '加减乘除口算练习·难度可调·计时挑战' },
+  { id: 'dictation', name: '听写练习', category: 'study', icon: '🎧', path: '/pages/tools/dictation/index', description: '输入文字语音朗读·跟写跟读·学习助手' },
+  { id: 'poetry', name: '古诗文背诵', category: 'study', icon: '📜', path: '/pages/tools/poetry/index', description: '古诗文填空背诵·逐句过关·看提示想诗句' },
+  { id: 'idiom-stories', name: '成语故事', category: 'study', icon: '📚', path: '/pages/tools/idiom-stories/index', description: '经典成语故事阅读·拼音释义·学习收藏' },
+  { id: 'math27', name: '算27点', category: 'study', icon: '🎯', path: '/pages/tools/math27/index', description: '4个数字算出27·数学运算训练' },
+  { id: 'pinyin-learn', name: '拼音学习', category: 'study', icon: '🅰️', path: '/pages/tools/pinyin-learn/index', description: '声母韵母整体认读·发音练习·声调标注' },
+  { id: 'alpha-learn', name: '英语字母卡', category: 'study', icon: '🔤', path: '/pages/tools/alpha-learn/index', description: '26个字母学习·大小写配对·首字母练习' },
+  { id: 'focus-game', name: '专注力游戏', category: 'study', icon: '🎯', path: '/pages/tools/focus-game/index', description: '舒尔特方格·找不同·颜色干扰·记忆翻牌' },
+  { id: 'stacking', name: '叠叠乐', category: 'fun', icon: '🏗️', path: '/pages/tools/stacking/index', description: '方块下落对齐·越高越难·完美连击加分' },
+  { id: 'cardmatch', name: '翻牌配对', category: 'fun', icon: '🃏', path: '/pages/tools/cardmatch/index', description: '翻转卡牌找到相同图案·计时计步·难度递增' },
+  { id: 'pomodoro', name: '番茄钟', category: 'life', icon: '🍅', path: '/pages/tools/pomodoro/index', description: '25分钟专注+5分钟休息·白噪音·每日统计' },
+  { id: 'lifecalendar', name: '人生日历', category: 'life', icon: '📅', path: '/pages/tools/lifecalendar/index', description: '输入生日·可视化已过/剩余周数·珍惜时间' },
 ];
 
 /**
@@ -150,7 +169,8 @@ function getCategoryList() {
     CATEGORIES.DATE_TIME,
     CATEGORIES.TEXT_PROC,
     CATEGORIES.IMAGE_TOOL,
-    CATEGORIES.FUN_RANDOM
+    CATEGORIES.FUN_RANDOM,
+    CATEGORIES.STUDY
   ];
 }
 

@@ -1,0 +1,214 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20rpx;
+  background: #1a1a2e;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* 顶部信息栏 */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 16rpx 0;
+  margin-bottom: 20rpx;
+}
+
+.header-left,
+.header-right {
+  width: 80rpx;
+  display: flex;
+  justify-content: center;
+}
+
+.header-center {
+  display: flex;
+  gap: 40rpx;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stat-label {
+  font-size: 22rpx;
+  color: #8a8a9a;
+}
+
+.stat-value {
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #e0e0e0;
+}
+
+.fav-btn {
+  width: 60rpx;
+  height: 60rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36rpx;
+  color: #666;
+}
+
+.fav-btn.active {
+  color: #ffd700;
+}
+
+.speed-btn {
+  width: 60rpx;
+  height: 60rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #2a2a4a;
+  border-radius: 50%;
+}
+
+.speed-icon {
+  font-size: 32rpx;
+}
+
+/* 游戏区域 */
+.game-area {
+  position: relative;
+  background: #16213e;
+  border: 4rpx solid #0f3460;
+  border-radius: 16rpx;
+  overflow: hidden;
+  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.3);
+}
+
+.game-canvas {
+  display: block;
+}
+
+/* 覆盖层 */
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.overlay-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24rpx;
+}
+
+.overlay-title {
+  font-size: 56rpx;
+  font-weight: bold;
+  color: #fff;
+}
+
+.overlay-score {
+  font-size: 40rpx;
+  color: #e94560;
+  font-weight: bold;
+}
+
+.overlay-best {
+  font-size: 36rpx;
+  color: #ffd700;
+  font-weight: bold;
+}
+
+.start-btn {
+  background: linear-gradient(135deg, #e94560, #0f3460);
+  padding: 24rpx 80rpx;
+  border-radius: 50rpx;
+  margin-top: 16rpx;
+}
+
+.start-btn text {
+  color: #fff;
+  font-size: 34rpx;
+  font-weight: bold;
+}
+
+.overlay-hint {
+  font-size: 26rpx;
+  color: #8a8a9a;
+  margin-top: 16rpx;
+}
+
+/* 虚拟方向键 */
+.controls {
+  margin-top: 30rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10rpx;
+}
+
+.ctrl-row {
+  display: flex;
+  gap: 10rpx;
+}
+
+.ctrl-row.middle {
+  display: flex;
+  gap: 10rpx;
+}
+
+.ctrl-btn {
+  width: 110rpx;
+  height: 110rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #2a2a4a;
+  border-radius: 20rpx;
+  border: 2rpx solid #3a3a5a;
+}
+
+.ctrl-btn text {
+  font-size: 44rpx;
+  color: #e0e0e0;
+}
+
+.ctrl-btn:active {
+  background: #0f3460;
+  border-color: #e94560;
+}
+
+.ctrl-btn.center {
+  background: transparent;
+  border: none;
+}
+
+.ctrl-btn.center text {
+  font-size: 56rpx;
+}
+
+/* 暂停按钮 */
+.pause-bar {
+  margin-top: 20rpx;
+}
+
+.pause-btn {
+  background: #2a2a4a;
+  padding: 16rpx 60rpx;
+  border-radius: 40rpx;
+  border: 2rpx solid #3a3a5a;
+}
+
+.pause-btn text {
+  color: #e0e0e0;
+  font-size: 30rpx;
+}

@@ -1,0 +1,139 @@
+<!-- 专注力游戏 -->
+<view class="page">
+
+  <!-- 顶部模式选择 -->
+  <scroll-view scroll-x class="mode-scroll" enhanced show-scrollbar="{{false}}">
+    <view class="mode-list">
+      <view wx:for="{{modes}}" wx:key="id"
+        class="mode-item {{currentMode===item.id?'active':''}}"
+        bind:tap="switchMode" data-id="{{item.id}}">
+        <text class="mode-icon">{{item.icon}}</text>
+        <text class="mode-name">{{item.name}}</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- ==================== 舒尔特方格 ==================== -->
+  <block wx:if="{{currentMode==='schulte'}}">
+    <view class="info-bar">
+      <view class="info-item">
+        <text class="info-label">用时</text>
+        <text class="info-val">{{schulteTime}}</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">下一个</text>
+        <text class="info-val highlight">{{schulteNext}}</text>
+      </view>
+    </view>
+    <!-- 难度选择 -->
+    <view class="diff-bar" wx:if="{{!schulteStarted}}">
+      <view class="diff-item {{schulteSize===3?'active':''}}" bind:tap="setSchulteSize" data-s="3">3×3</view>
+      <view class="diff-item {{schulteSize===4?'active':''}}" bind:tap="setSchulteSize" data-s="4">4×4</view>
+      <view class="diff-item {{schulteSize===5?'active':''}}" bind:tap="setSchulteSize" data-s="5">5×5</view>
+    </view>
+    <view class="schulte-grid" style="grid-template-columns: repeat({{schulteSize}}, 1fr);">
+      <view wx:for="{{schulteGrid}}" wx:key="index"
+        class="schulte-cell {{item.done?'done':''}} {{item.wrong?'wrong':''}}"
+        bind:tap="tapSchulte" data-idx="{{index}}">
+        <text>{{item.val}}</text>
+      </view>
+    </view>
+    <view class="btn-row" wx:if="{{!schulteStarted}}">
+      <button class="btn-start" bind:tap="startSchulte">开始挑战</button>
+    </view>
+    <view class="hint-text" wx:if="{{schulteStarted}}">
+      按 1 → {{schulteSize*schulteSize}} 的顺序依次点击
+    </view>
+  </block>
+
+  <!-- ==================== 找不同 ==================== -->
+  <block wx:if="{{currentMode==='spotdiff'}}">
+    <view class="info-bar">
+      <view class="info-item">
+        <text class="info-label">第</text>
+        <text class="info-val">{{spotRound}}/{{spotTotal}}</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">得分</text>
+        <text class="info-val highlight">{{spotScore}}</text>
+      </view>
+    </view>
+    <view class="spot-area">
+      <view class="spot-hint">找出不一样的那一个！</view>
+      <view class="spot-grid">
+        <view wx:for="{{spotItems}}" wx:key="index"
+          class="spot-cell {{item.clicked?'clicked':''}} {{item.correct?'correct':''}} {{item.wrong?'wrong':''}}"
+          bind:tap="tapSpot" data-idx="{{index}}">
+          <text class="spot-emoji-big">{{item.emoji}}</text>
+        </view>
+      </view>
+    </view>
+    <view class="btn-row" wx:if="{{spotRound>spotTotal}}">
+      <button class="btn-start" bind:tap="startSpot">再来一轮</button>
+    </view>
+  </block>
+
+  <!-- ==================== 颜色干扰 ==================== -->
+  <block wx:if="{{currentMode==='stroop'}}">
+    <view class="info-bar">
+      <view class="info-item">
+        <text class="info-label">第</text>
+        <text class="info-val">{{stroopRound}}/{{stroopTotal}}</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">得分</text>
+        <text class="info-val highlight">{{stroopScore}}</text>
+      </view>
+    </view>
+    <view class="stroop-area">
+      <view class="stroop-question">这个词的<u>颜色</u>是什么？</view>
+      <view class="stroop-word" style="color:{{stroopColor}};">{{stroopText}}</view>
+      <view class="stroop-btns">
+        <view wx:for="{{stroopOptions}}" wx:key="index"
+          class="stroop-btn" style="background:{{item.color}};"
+          bind:tap="tapStroop" data-idx="{{index}}">
+          <text>{{item.name}}</text>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <!-- ==================== 记忆翻牌 ==================== -->
+  <block wx:if="{{currentMode==='memory'}}">
+    <view class="info-bar">
+      <view class="info-item">
+        <text class="info-label">翻牌</text>
+        <text class="info-val">{{memoryMoves}}次</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">配对</text>
+        <text class="info-val highlight">{{memoryMatched}}/{{memoryPairs}}</text>
+      </view>
+    </view>
+    <view class="diff-bar" wx:if="{{!memoryStarted}}">
+      <view class="diff-item {{memoryTotal===12?'active':''}}" bind:tap="setMemorySize" data-total="12">4×3</view>
+      <view class="diff-item {{memoryTotal===16?'active':''}}" bind:tap="setMemorySize" data-total="16">4×4</view>
+    </view>
+    <view class="memory-grid" style="grid-template-columns: repeat({{memoryCols}}, 1fr);">
+      <view wx:for="{{memoryCards}}" wx:key="index"
+        class="memory-card {{item.flipped?'flipped':''}} {{item.matched?'matched':''}}"
+        bind:tap="tapMemory" data-idx="{{index}}">
+        <text wx:if="{{item.flipped || item.matched}}">{{item.emoji}}</text>
+        <text wx:else>❓</text>
+      </view>
+    </view>
+    <view class="btn-row" wx:if="{{!memoryStarted}}">
+      <button class="btn-start" bind:tap="startMemory">开始翻牌</button>
+    </view>
+  </block>
+
+  <!-- 完成弹窗 -->
+  <view class="result-mask" wx:if="{{showResult}}" bind:tap="closeResult">
+    <view class="result-box" catchtap="">
+      <view class="result-emoji">{{resultEmoji}}</view>
+      <view class="result-title">{{resultTitle}}</view>
+      <view class="result-detail">{{resultDetail}}</view>
+      <button class="btn-again" bind:tap="playAgain">再来一次</button>
+    </view>
+  </view>
+</view>

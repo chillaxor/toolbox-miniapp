@@ -1,0 +1,91 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">叠叠乐</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <!-- 准备阶段 -->
+  <view wx:if="{{state === 'ready'}}">
+    <view class="card">
+      <text class="card-title">🏗️ 叠叠乐</text>
+      <view class="ready-desc">
+        <text class="ready-text">左右移动的方块会自动下落</text>
+        <text class="ready-text">点击屏幕放置方块，对齐叠高</text>
+        <text class="ready-text">完美对齐可获得额外加分</text>
+      </view>
+    </view>
+    <view class="card" style="margin-top:24rpx;">
+      <text class="card-title">选择难度</text>
+      <view class="count-btns">
+        <view class="count-btn {{difficulty === item.value ? 'count-active' : ''}}" wx:for="{{difficulties}}" wx:key="value" data-val="{{item.value}}" bindtap="onDifficultyChange">{{item.label}}</view>
+      </view>
+    </view>
+    <view class="best-info" wx:if="{{bestScore > 0}}">
+      <text class="best-label">🏆 最高分</text>
+      <text class="best-value">{{bestScore}}</text>
+    </view>
+    <button class="start-btn" bindtap="startGame">🎮 开始游戏</button>
+  </view>
+
+  <!-- 游戏中 -->
+  <view wx:if="{{state === 'playing'}}">
+    <!-- 信息栏 -->
+    <view class="game-info">
+      <view class="info-item">
+        <text class="info-label">层数</text>
+        <text class="info-value">{{layers}}</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">得分</text>
+        <text class="info-value">{{score}}</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">连击</text>
+        <text class="info-value combo-value">{{combo}}</text>
+      </view>
+    </view>
+
+    <!-- 完美提示 -->
+    <view class="perfect-hint {{showPerfect ? 'show' : ''}}">
+      <text>{{perfectText}}</text>
+    </view>
+
+    <!-- 游戏画布 -->
+    <canvas canvas-id="gameCanvas" class="game-canvas" bindtap="onTap"></canvas>
+
+    <!-- 操作提示 -->
+    <view class="tap-hint">
+      <text>👆 点击屏幕放置方块</text>
+    </view>
+  </view>
+
+  <!-- 游戏结束 -->
+  <view wx:if="{{state === 'finished'}}">
+    <view class="card result-card">
+      <text class="result-emoji">🏗️</text>
+      <text class="result-title">挑战结束！</text>
+      <view class="result-tower">
+        <text class="tower-label">叠了</text>
+        <text class="tower-num">{{layers}}</text>
+        <text class="tower-unit">层</text>
+      </view>
+      <text class="result-score">总分：{{score}}</text>
+      <view class="result-stats">
+        <view class="stat-item">
+          <text class="stat-value">{{maxCombo}}</text>
+          <text class="stat-label">最大连击</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-value">{{perfects}}</text>
+          <text class="stat-label">完美对齐</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-value">{{bestScore}}</text>
+          <text class="stat-label">历史最高</text>
+        </view>
+      </view>
+      <view wx:if="{{isNewRecord}}" class="new-record">🎉 新纪录！</view>
+      <button class="start-btn" bindtap="startGame" style="margin-top:32rpx;">🔄 再来一局</button>
+    </view>
+  </view>
+</view>

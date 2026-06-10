@@ -1,0 +1,115 @@
+<view class="container">
+  <!-- 设置面板 -->
+  <view class="settings" wx:if="{{phase === 'setting'}}">
+    <view class="setting-title">🍅 番茄钟设置</view>
+    
+    <view class="setting-item">
+      <text class="setting-label">专注时长</text>
+      <view class="setting-btns">
+        <view class="sbtn {{focusMin===15?'active':''}}" bindtap="setFocus" data-v="15">15分钟</view>
+        <view class="sbtn {{focusMin===25?'active':''}}" bindtap="setFocus" data-v="25">25分钟</view>
+        <view class="sbtn {{focusMin===30?'active':''}}" bindtap="setFocus" data-v="30">30分钟</view>
+        <view class="sbtn {{focusMin===45?'active':''}}" bindtap="setFocus" data-v="45">45分钟</view>
+      </view>
+    </view>
+    
+    <view class="setting-item">
+      <text class="setting-label">休息时长</text>
+      <view class="setting-btns">
+        <view class="sbtn {{restMin===5?'active':''}}" bindtap="setRest" data-v="5">5分钟</view>
+        <view class="sbtn {{restMin===10?'active':''}}" bindtap="setRest" data-v="10">10分钟</view>
+        <view class="sbtn {{restMin===15?'active':''}}" bindtap="setRest" data-v="15">15分钟</view>
+      </view>
+    </view>
+
+    <view class="setting-item">
+      <text class="setting-label">连续轮数</text>
+      <view class="setting-btns">
+        <view class="sbtn {{totalRounds===2?'active':''}}" bindtap="setRounds" data-v="2">2轮</view>
+        <view class="sbtn {{totalRounds===4?'active':''}}" bindtap="setRounds" data-v="4">4轮</view>
+        <view class="sbtn {{totalRounds===6?'active':''}}" bindtap="setRounds" data-v="6">6轮</view>
+      </view>
+    </view>
+
+    <view class="setting-item">
+      <text class="setting-label">白噪音</text>
+      <view class="setting-btns noise-btns">
+        <view class="sbtn {{noiseType==='none'?'active':''}}" bindtap="setNoise" data-v="none">关闭</view>
+        <view class="sbtn {{noiseType==='rain'?'active':''}}" bindtap="setNoise" data-v="rain">🌧 雨声</view>
+        <view class="sbtn {{noiseType==='forest'?'active':''}}" bindtap="setNoise" data-v="forest">🌲 森林</view>
+        <view class="sbtn {{noiseType==='waves'?'active':''}}" bindtap="setNoise" data-v="waves">🌊 海浪</view>
+        <view class="sbtn {{noiseType==='fire'?'active':''}}" bindtap="setNoise" data-v="fire">🔥 篝火</view>
+      </view>
+    </view>
+
+    <button class="start-btn" bindtap="startTimer">开始专注 🍅</button>
+  </view>
+
+  <!-- 计时主界面 -->
+  <view class="timer-area" wx:if="{{phase !== 'setting'}}">
+    <!-- 状态标签 -->
+    <view class="phase-label {{isFocus?'focus-label':'rest-label'}}">
+      {{isFocus ? '🍅 专注中' : '☕ 休息中'}}
+    </view>
+
+    <!-- 圆形进度 -->
+    <view class="circle-wrap">
+      <view class="circle-bg"></view>
+      <view class="circle-progress" style="background: conic-gradient({{isFocus?'#E74C3C':'#27AE60'}} {{progress}}%, transparent {{progress}}%);"></view>
+      <view class="circle-inner">
+        <text class="time-text">{{timeDisplay}}</text>
+        <text class="round-text">第 {{currentRound}} / {{totalRounds}} 轮</text>
+      </view>
+    </view>
+
+    <!-- 控制按钮 -->
+    <view class="ctrl-btns">
+      <view class="ctrl-btn" bindtap="toggleTimer">
+        <text>{{isPaused ? '▶️ 继续' : '⏸ 暂停'}}</text>
+      </view>
+      <view class="ctrl-btn skip-btn" bindtap="skipPhase">
+        <text>⏭ 跳过</text>
+      </view>
+      <view class="ctrl-btn stop-btn" bindtap="stopTimer">
+        <text>⏹ 结束</text>
+      </view>
+    </view>
+
+    <!-- 白噪音控制 -->
+    <view class="noise-ctrl" wx:if="{{noiseType !== 'none'}}">
+      <text class="noise-icon">{{noiseIcon}}</text>
+      <text class="noise-label">白噪音播放中</text>
+      <view class="noise-toggle" bindtap="toggleNoise">{{noiseOn ? '🔊' : '🔇'}}</view>
+    </view>
+
+    <!-- 今日统计 -->
+    <view class="stats-bar">
+      <view class="stat-item">
+        <text class="stat-num">{{todayCount}}</text>
+        <text class="stat-label">今日完成</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-num">{{todayMinutes}}</text>
+        <text class="stat-label">专注分钟</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-num">{{streak}}</text>
+        <text class="stat-label">连续天数</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 完成弹窗 -->
+  <view class="modal-mask" wx:if="{{showComplete}}" bindtap="closeComplete">
+    <view class="modal-box" catchtap>
+      <text class="modal-emoji">🎉</text>
+      <text class="modal-title">恭喜完成！</text>
+      <text class="modal-desc">已完成 {{currentRound}}/{{totalRounds}} 轮专注</text>
+      <text class="modal-time">总计专注 {{focusMin * currentRound}} 分钟</text>
+      <view class="modal-btns">
+        <button class="modal-btn" bindtap="continueNext">{{isFocus ? '开始休息' : '继续专注'}}</button>
+        <button class="modal-btn secondary" bindtap="stopTimer">结束</button>
+      </view>
+    </view>
+  </view>
+</view>

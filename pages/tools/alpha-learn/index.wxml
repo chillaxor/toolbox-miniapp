@@ -1,0 +1,244 @@
+<view class="container">
+  <!-- 标签栏 -->
+  <view class="tabs">
+    <view class="tab {{currentTab === 'cards' ? 'active' : ''}}" bindtap="switchTab" data-tab="cards">
+      <text class="tab-icon">🔤</text>
+      <text class="tab-text">字母卡</text>
+    </view>
+    <view class="tab {{currentTab === 'vowels' ? 'active' : ''}}" bindtap="switchTab" data-tab="vowels">
+      <text class="tab-icon">🅰️</text>
+      <text class="tab-text">元辅音</text>
+    </view>
+    <view class="tab {{currentTab === 'practice' ? 'active' : ''}}" bindtap="switchTab" data-tab="practice">
+      <text class="tab-icon">🎯</text>
+      <text class="tab-text">练习</text>
+    </view>
+  </view>
+
+  <!-- 字母卡模式 -->
+  <view class="content" wx:if="{{currentTab === 'cards'}}">
+    <!-- 大卡片展示 -->
+    <view class="big-card" wx:if="{{currentLetter}}">
+      <view class="card-inner">
+        <view class="card-letter-row">
+          <text class="card-letter">{{currentLetter.letter}}</text>
+          <text class="card-lower">{{currentLetter.lower}}</text>
+        </view>
+        <view class="card-phonetic">{{currentLetter.phonetic}}</view>
+        <view class="card-words">
+          <view class="card-word-item" wx:for="{{currentLetter.words}}" wx:key="word">
+            <text class="word-emoji">{{item.emoji}}</text>
+            <view class="word-info">
+              <text class="word-en">{{item.word}}</text>
+              <text class="word-cn">{{item.chinese}}</text>
+            </view>
+          </view>
+        </view>
+        <view class="card-fact">💡 {{currentLetter.funFact}}</view>
+        <button class="speak-btn" bindtap="speakLetter" data-text="{{currentLetter.letter}}">
+          <text>🔊 点击发音</text>
+        </button>
+      </view>
+      <!-- 翻页按钮 -->
+      <view class="nav-row">
+        <view class="nav-btn {{currentIndex <= 0 ? 'disabled' : ''}}" bindtap="prevLetter">
+          <text>◀ 上一个</text>
+        </view>
+        <view class="nav-index">{{currentIndex + 1}} / 26</view>
+        <view class="nav-btn {{currentIndex >= 25 ? 'disabled' : ''}}" bindtap="nextLetter">
+          <text>下一个 ▶</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 字母总览网格 -->
+    <view class="alpha-grid-title">点击字母快速跳转</view>
+    <view class="alpha-grid">
+      <view class="alpha-cell {{item.letter === currentLetter.letter ? 'active' : ''}} {{item.isVowel ? 'vowel' : ''}}"
+            wx:for="{{alphaList}}" wx:key="letter"
+            bindtap="jumpToLetter" data-index="{{index}}">
+        <text class="cell-letter">{{item.letter}}</text>
+        <text class="cell-lower">{{item.lower}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 元音辅音 -->
+  <view class="content" wx:if="{{currentTab === 'vowels'}}">
+    <view class="vc-section">
+      <view class="group-title">🅰️ 元音字母（5个）</view>
+      <view class="vc-desc">元音是发音的基础，所有英语单词都包含元音</view>
+      <view class="vc-grid">
+        <view class="vc-cell vowel" wx:for="{{vowels}}" wx:key="letter"
+              bindtap="jumpToLetter" data-index="{{item.index}}">
+          <text class="vc-letter">{{item.letter}}</text>
+          <text class="vc-sound">{{item.phonetic}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="vc-section" style="margin-top: 30rpx;">
+      <view class="group-title">🅱️ 辅音字母（21个）</view>
+      <view class="vc-desc">辅音需要和元音搭配才能发出完整的声音</view>
+      <view class="vc-grid">
+        <view class="vc-cell consonant" wx:for="{{consonants}}" wx:key="letter"
+              bindtap="jumpToLetter" data-index="{{item.index}}">
+          <text class="vc-letter">{{item.letter}}</text>
+          <text class="vc-sound">{{item.phonetic}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="vc-section" style="margin-top: 30rpx;">
+      <view class="group-title">📝 记忆口诀</view>
+      <view class="tip-cards">
+        <view class="tip-card">
+          <text class="tip-title">🎵 元音字母歌</text>
+          <text class="tip-text">A E I O U，五个元音要记住</text>
+        </view>
+        <view class="tip-card">
+          <text class="tip-title">📌 特殊字母</text>
+          <text class="tip-text">Y 有时也当元音用，如 baby、gym</text>
+        </view>
+        <view class="tip-card">
+          <text class="tip-title">💡 发音技巧</text>
+          <text class="tip-text">元音响亮能延长，辅音短促靠嘴型</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 练习模式 -->
+  <view class="content" wx:if="{{currentTab === 'practice'}}">
+    <!-- 练习选择 -->
+    <view class="practice-modes" wx:if="{{!practiceStarted}}">
+      <view class="group-title">选择练习模式</view>
+      <view class="mode-cards">
+        <view class="mode-card" bindtap="startPractice" data-mode="identify">
+          <view class="mode-icon">👁️</view>
+          <view class="mode-name">看图猜字母</view>
+          <view class="mode-desc">看单词首字母，选出正确字母</view>
+        </view>
+        <view class="mode-card" bindtap="startPractice" data-mode="listen">
+          <view class="mode-icon">👂</view>
+          <view class="mode-name">听音选字母</view>
+          <view class="mode-desc">听发音，选出正确字母</view>
+        </view>
+        <view class="mode-card" bindtap="startPractice" data-mode="match">
+          <view class="mode-icon">🔗</view>
+          <view class="mode-name">大小写配对</view>
+          <view class="mode-desc">将大写和小写字母配对</view>
+        </view>
+        <view class="mode-card" bindtap="startPractice" data-mode="word">
+          <view class="mode-icon">📝</view>
+          <view class="mode-name">首字母填空</view>
+          <view class="mode-desc">看图片和单词，补全首字母</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 练习题目 -->
+    <view class="practice-area" wx:if="{{practiceStarted}}">
+      <view class="practice-header">
+        <view class="practice-progress">第 {{currentQ + 1}} / {{totalQ}} 题</view>
+        <view class="practice-score">得分：{{score}}</view>
+        <view class="practice-close" bindtap="closePractice">✕</view>
+      </view>
+      <view class="progress-bar">
+        <view class="progress-fill" style="width: {{(currentQ + 1) / totalQ * 100}}%"></view>
+      </view>
+
+      <!-- 看图猜字母 -->
+      <view class="question-area" wx:if="{{practiceMode === 'identify'}}">
+        <view class="q-emoji">{{qData.emoji}}</view>
+        <view class="q-word">{{qData.word}}</view>
+        <view class="q-chinese">{{qData.chinese}}</view>
+        <view class="q-tip">这个单词的首字母是？</view>
+        <view class="options-grid">
+          <view class="option-item {{item === qData.answer && showResult ? 'correct' : ''}} {{selOpt === item && item !== qData.answer && showResult ? 'wrong' : ''}}"
+                wx:for="{{qData.options}}" wx:key="*this"
+                bindtap="selectOption" data-opt="{{item}}">
+            <text class="opt-text">{{item}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 听音选字母 -->
+      <view class="question-area" wx:if="{{practiceMode === 'listen'}}">
+        <view class="q-speaker" bindtap="speakLetter" data-text="{{qData.letter}}">
+          <text class="speaker-icon">🔊</text>
+          <text class="speaker-tip">点击听发音</text>
+        </view>
+        <view class="q-tip">选出你听到的字母</view>
+        <view class="options-grid">
+          <view class="option-item {{item === qData.answer && showResult ? 'correct' : ''}} {{selOpt === item && item !== qData.answer && showResult ? 'wrong' : ''}}"
+                wx:for="{{qData.options}}" wx:key="*this"
+                bindtap="selectOption" data-opt="{{item}}">
+            <text class="opt-text opt-lg">{{item}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 大小写配对 -->
+      <view class="question-area" wx:if="{{practiceMode === 'match'}}">
+        <view class="q-tip">将大写和小写字母配对</view>
+        <view class="match-area">
+          <view class="match-col">
+            <view class="match-item {{item.selected ? 'match-sel' : ''}} {{item.matched ? 'match-done' : ''}}"
+                  wx:for="{{matchUpper}}" wx:key="letter"
+                  bindtap="selMatch" data-type="upper" data-idx="{{index}}">
+              <text>{{item.letter}}</text>
+            </view>
+          </view>
+          <view class="match-col">
+            <view class="match-item {{item.selected ? 'match-sel' : ''}} {{item.matched ? 'match-done' : ''}}"
+                  wx:for="{{matchLower}}" wx:key="letter"
+                  bindtap="selMatch" data-type="lower" data-idx="{{index}}">
+              <text>{{item.letter}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 首字母填空 -->
+      <view class="question-area" wx:if="{{practiceMode === 'word'}}">
+        <view class="q-emoji">{{qData.emoji}}</view>
+        <view class="q-word-blank">
+          <text class="blank-letter">{{qData.answer}}</text>
+          <text class="blank-rest" wx:if="{{showResult}}">{{qData.rest}}</text>
+          <text class="blank-mask" wx:else>___</text>
+        </view>
+        <view class="q-chinese">{{qData.chinese}}</view>
+        <view class="q-tip">选出正确的首字母</view>
+        <view class="options-grid">
+          <view class="option-item {{item === qData.answer && showResult ? 'correct' : ''}} {{selOpt === item && item !== qData.answer && showResult ? 'wrong' : ''}}"
+                wx:for="{{qData.options}}" wx:key="*this"
+                bindtap="selectOption" data-opt="{{item}}">
+            <text class="opt-text">{{item}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 结果反馈 -->
+      <view class="result-feedback" wx:if="{{showResult && practiceMode !== 'match'}}">
+        <view class="result-icon">{{isCorrect ? '✅' : '❌'}}</view>
+        <view class="result-text">{{isCorrect ? '回答正确！' : '正确答案是：' + correctAns}}</view>
+        <button class="next-btn" bindtap="nextQ">
+          {{currentQ < totalQ - 1 ? '下一题' : '查看结果'}}
+        </button>
+      </view>
+
+      <!-- 练习结束 -->
+      <view class="practice-result" wx:if="{{practiceFinished}}">
+        <view class="result-emoji">{{score >= 80 ? '🎉' : score >= 60 ? '😊' : '💪'}}</view>
+        <view class="result-title">{{score >= 80 ? '太棒了！' : score >= 60 ? '不错哦！' : '继续加油！'}}</view>
+        <view class="result-score">得分：{{score}} 分</view>
+        <view class="result-detail">答对 {{correctCnt}} / {{totalQ}} 题</view>
+        <view class="result-buttons">
+          <button class="retry-btn" bindtap="retryPractice">再来一轮</button>
+          <button class="back-btn" bindtap="closePractice">返回选择</button>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

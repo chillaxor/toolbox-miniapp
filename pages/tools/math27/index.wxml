@@ -1,0 +1,85 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">算27点</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <!-- 计时和统计 -->
+  <view class="stats-bar">
+    <view class="stat-item">
+      <text class="stat-label">用时</text>
+      <text class="stat-value">{{timerText}}</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-label">最佳</text>
+      <text class="stat-value">{{bestTimeText}}</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-label">已解</text>
+      <text class="stat-value">{{solvedCount}}</text>
+    </view>
+  </view>
+
+  <!-- 数字卡片 -->
+  <view class="number-cards">
+    <view
+      wx:for="{{numbers}}"
+      wx:key="index"
+      class="number-card {{usedCardIdx[index] ? 'card-used' : 'card-active'}}"
+      data-idx="{{index}}"
+      bindtap="onCardTap"
+    >
+      <text class="card-face">{{cardFaces[index]}}</text>
+      <text class="card-num">{{item}}</text>
+    </view>
+  </view>
+
+  <!-- 表达式显示框 -->
+  <view class="expr-box {{exprState}}">
+    <text class="expr-text">{{expression || '点击数字牌开始拼式子'}}</text>
+  </view>
+
+  <!-- 运算符 + 括号行 -->
+  <view class="op-row">
+    <view class="op-btn op-bracket" bindtap="onBracketLeft">(</view>
+    <view class="op-btn" data-op="+" bindtap="onOpTap">+</view>
+    <view class="op-btn" data-op="-" bindtap="onOpTap">−</view>
+    <view class="op-btn" data-op="×" bindtap="onOpTap">×</view>
+    <view class="op-btn" data-op="÷" bindtap="onOpTap">÷</view>
+    <view class="op-btn op-bracket" bindtap="onBracketRight">)</view>
+  </view>
+
+  <!-- 操作按钮行 -->
+  <view class="action-row">
+    <view class="btn-del" bindtap="onBackspace">⌫</view>
+    <view class="btn-clear" bindtap="onClear">清空</view>
+    <view class="btn-hint" bindtap="onHint">💡</view>
+    <view class="btn-equal" bindtap="onEqual">=</view>
+    <view class="btn-new" bindtap="onNewPuzzle">🔄</view>
+  </view>
+
+  <!-- 结果提示 -->
+  <view class="result-tip" wx:if="{{resultTip}}">
+    <text class="result-tip-text">{{resultTip}}</text>
+  </view>
+
+  <!-- 提示弹窗 -->
+  <view class="hint-overlay" wx:if="{{showHint}}" bindtap="onCloseHint">
+    <view class="hint-card" catchtap="">
+      <text class="hint-title">💡 参考答案</text>
+      <text class="hint-content">{{hint}}</text>
+      <view class="hint-close-btn" bindtap="onCloseHint">知道了</view>
+    </view>
+  </view>
+
+  <!-- 成功弹窗 -->
+  <view class="hint-overlay" wx:if="{{showSuccess}}" bindtap="onCloseSuccess">
+    <view class="hint-card hint-success" catchtap="">
+      <text class="success-emoji">🎉</text>
+      <text class="hint-title">答对了！</text>
+      <text class="hint-content">{{expression}} = 27</text>
+      <text class="success-time">用时 {{timerText}}</text>
+      <view class="hint-close-btn" bindtap="onCloseSuccess">继续挑战</view>
+    </view>
+  </view>
+</view>

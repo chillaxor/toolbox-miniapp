@@ -1,0 +1,58 @@
+.container{min-height:100vh;background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);padding:40rpx 32rpx;box-sizing:border-box}
+.settings{padding-top:40rpx}
+.setting-title{font-size:48rpx;color:#fff;text-align:center;margin-bottom:60rpx;font-weight:bold}
+.setting-item{margin-bottom:40rpx}
+.setting-label{font-size:30rpx;color:rgba(255,255,255,0.7);margin-bottom:20rpx;display:block}
+.setting-btns{display:flex;flex-wrap:wrap;gap:16rpx}
+.sbtn{padding:16rpx 28rpx;border-radius:20rpx;background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.7);font-size:26rpx;border:2rpx solid rgba(255,255,255,0.15);text-align:center}
+.sbtn.active{background:rgba(231,76,60,0.3);color:#fff;border-color:#E74C3C}
+.noise-btns .sbtn{padding:14rpx 20rpx;font-size:24rpx}
+.start-btn{width:100%;height:100rpx;border-radius:50rpx;background:linear-gradient(135deg,#E74C3C,#C0392B);color:#fff;font-size:36rpx;font-weight:bold;border:none;margin-top:60rpx;line-height:100rpx}
+.start-btn::after{border:none}
+
+/* 计时主界面 */
+.timer-area{display:flex;flex-direction:column;align-items:center;padding-top:30rpx}
+.phase-label{font-size:36rpx;font-weight:bold;padding:16rpx 40rpx;border-radius:30rpx;margin-bottom:40rpx}
+.focus-label{background:rgba(231,76,60,0.2);color:#E74C3C}
+.rest-label{background:rgba(39,174,96,0.2);color:#27AE60}
+
+/* 圆形进度 */
+.circle-wrap{position:relative;width:460rpx;height:460rpx;margin-bottom:50rpx}
+.circle-bg{position:absolute;width:100%;height:100%;border-radius:50%;background:rgba(255,255,255,0.05)}
+.circle-progress{position:absolute;width:100%;height:100%;border-radius:50%;transition:background 1s linear}
+.circle-inner{position:absolute;top:20rpx;left:20rpx;right:20rpx;bottom:20rpx;border-radius:50%;background:linear-gradient(135deg,#1a1a2e,#16213e);display:flex;flex-direction:column;align-items:center;justify-content:center}
+.time-text{font-size:96rpx;color:#fff;font-weight:bold;font-family:'Courier New',monospace;letter-spacing:4rpx}
+.round-text{font-size:26rpx;color:rgba(255,255,255,0.5);margin-top:10rpx}
+
+/* 控制按钮 */
+.ctrl-btns{display:flex;gap:30rpx;margin-bottom:40rpx}
+.ctrl-btn{padding:20rpx 40rpx;border-radius:30rpx;background:rgba(255,255,255,0.1);border:2rpx solid rgba(255,255,255,0.2);color:#fff;font-size:28rpx}
+.ctrl-btn text{color:#fff}
+.skip-btn{background:rgba(241,196,15,0.15);border-color:rgba(241,196,15,0.3)}
+.skip-btn text{color:#F1C40F}
+.stop-btn{background:rgba(231,76,60,0.15);border-color:rgba(231,76,60,0.3)}
+.stop-btn text{color:#E74C3C}
+
+/* 白噪音 */
+.noise-ctrl{display:flex;align-items:center;gap:16rpx;padding:20rpx 30rpx;border-radius:20rpx;background:rgba(255,255,255,0.06);margin-bottom:40rpx;width:80%;justify-content:center}
+.noise-icon{font-size:36rpx}
+.noise-label{font-size:26rpx;color:rgba(255,255,255,0.6)}
+.noise-toggle{font-size:36rpx;padding:10rpx}
+
+/* 今日统计 */
+.stats-bar{display:flex;gap:20rpx;width:100%;justify-content:center}
+.stat-item{flex:1;text-align:center;padding:24rpx 0;border-radius:20rpx;background:rgba(255,255,255,0.06)}
+.stat-num{font-size:48rpx;color:#fff;font-weight:bold;display:block}
+.stat-label{font-size:22rpx;color:rgba(255,255,255,0.5);display:block;margin-top:8rpx}
+
+/* 完成弹窗 */
+.modal-mask{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:999}
+.modal-box{width:80%;background:linear-gradient(135deg,#1a1a2e,#16213e);border-radius:30rpx;padding:60rpx 40rpx;text-align:center;border:2rpx solid rgba(255,255,255,0.1)}
+.modal-emoji{font-size:80rpx;display:block;margin-bottom:20rpx}
+.modal-title{font-size:40rpx;color:#fff;font-weight:bold;display:block;margin-bottom:16rpx}
+.modal-desc{font-size:28rpx;color:rgba(255,255,255,0.6);display:block;margin-bottom:8rpx}
+.modal-time{font-size:32rpx;color:#F1C40F;display:block;margin-bottom:40rpx;font-weight:bold}
+.modal-btns{display:flex;gap:20rpx}
+.modal-btn{flex:1;height:80rpx;border-radius:40rpx;background:linear-gradient(135deg,#E74C3C,#C0392B);color:#fff;font-size:30rpx;border:none;line-height:80rpx}
+.modal-btn::after{border:none}
+.modal-btn.secondary{background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.7)}

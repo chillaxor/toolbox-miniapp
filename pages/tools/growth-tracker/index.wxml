@@ -1,0 +1,153 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">身高体重记录</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <!-- 添加记录 -->
+  <view class="card">
+    <text class="card-title">📝 添加记录</text>
+    <view class="form-group">
+      <text class="form-label">记录日期</text>
+      <picker mode="date" value="{{date}}" bindchange="onDateChange">
+        <view class="picker-btn">{{date || '请选择日期'}}</view>
+      </picker>
+    </view>
+    <view class="form-row">
+      <view class="form-group half">
+        <text class="form-label">身高 (cm)</text>
+        <input class="input-field" type="digit" placeholder="如 120" value="{{height}}" bindinput="onHeightInput" />
+      </view>
+      <view class="form-group half">
+        <text class="form-label">体重 (kg)</text>
+        <input class="input-field" type="digit" placeholder="如 25" value="{{weight}}" bindinput="onWeightInput" />
+      </view>
+    </view>
+    <button class="btn-primary" style="background-color: #4ECDC4;" bindtap="onAddRecord">添加记录</button>
+  </view>
+
+  <!-- 最新数据概览 -->
+  <view class="card" wx:if="{{latestRecord}}">
+    <text class="card-title">📊 最新数据</text>
+    <view class="stats-row">
+      <view class="stat-item">
+        <text class="stat-value" style="color: #4ECDC4;">{{latestRecord.height}}</text>
+        <text class="stat-unit">cm</text>
+        <text class="stat-label">身高</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-value" style="color: #FF6B35;">{{latestRecord.weight}}</text>
+        <text class="stat-unit">kg</text>
+        <text class="stat-label">体重</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-value" style="color: #9B59B6;">{{latestRecord.bmi}}</text>
+        <text class="stat-unit"></text>
+        <text class="stat-label">BMI</text>
+      </view>
+    </view>
+    <view class="bmi-tag" style="background-color: {{latestBmiColor}};">
+      <text style="color: #fff; font-size: 24rpx;">{{latestBmiCategory}}</text>
+    </view>
+  </view>
+
+  <!-- 生长曲线图 -->
+  <view class="card" wx:if="{{records.length >= 2}}">
+    <text class="card-title">📈 生长曲线</text>
+    <view class="tab-row">
+      <view class="tab-item {{chartTab === 'height' ? 'tab-active' : ''}}" bindtap="switchChartTab" data-tab="height">身高曲线</view>
+      <view class="tab-item {{chartTab === 'weight' ? 'tab-active' : ''}}" bindtap="switchChartTab" data-tab="weight">体重曲线</view>
+      <view class="tab-item {{chartTab === 'bmi' ? 'tab-active' : ''}}" bindtap="switchChartTab" data-tab="bmi">BMI曲线</view>
+    </view>
+    <canvas canvas-id="growthChart" class="chart-canvas" />
+    <view class="chart-legend" wx:if="{{chartTab !== 'bmi'}}">
+      <view class="legend-line normal"></view>
+      <text class="legend-text">标准范围</text>
+      <view class="legend-line actual"></view>
+      <text class="legend-text">实际数据</text>
+    </view>
+  </view>
+
+  <!-- 标准参考 -->
+  <view class="card" wx:if="{{latestRecord}}">
+    <text class="card-title">📋 标准参考</text>
+    <text class="ref-subtitle">根据WHO儿童生长标准（{{genderIndex === 0 ? '男' : '女'}}孩）</text>
+    <view class="ref-table">
+      <view class="ref-row ref-header">
+        <text class="ref-cell">指标</text>
+        <text class="ref-cell">当前值</text>
+        <text class="ref-cell">同龄标准</text>
+        <text class="ref-cell">评价</text>
+      </view>
+      <view class="ref-row">
+        <text class="ref-cell">身高</text>
+        <text class="ref-cell">{{latestRecord.height}}cm</text>
+        <text class="ref-cell">{{stdHeightRange}}</text>
+        <text class="ref-cell" style="color: {{heightStatusColor}};">{{heightStatus}}</text>
+      </view>
+      <view class="ref-row">
+        <text class="ref-cell">体重</text>
+        <text class="ref-cell">{{latestRecord.weight}}kg</text>
+        <text class="ref-cell">{{stdWeightRange}}</text>
+        <text class="ref-cell" style="color: {{weightStatusColor}};">{{weightStatus}}</text>
+      </view>
+      <view class="ref-row">
+        <text class="ref-cell">BMI</text>
+        <text class="ref-cell">{{latestRecord.bmi}}</text>
+        <text class="ref-cell">{{stdBmiRange}}</text>
+        <text class="ref-cell" style="color: {{latestBmiColor}};">{{latestBmiCategory}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 历史记录列表 -->
+  <view class="card" wx:if="{{records.length > 0}}">
+    <view class="card-header-row">
+      <text class="card-title">📖 历史记录 ({{records.length}})</text>
+      <text class="clear-btn" bindtap="onClearAll">清空</text>
+    </view>
+    <view class="record-list">
+      <view class="record-item" wx:for="{{records}}" wx:key="index">
+        <view class="record-left">
+          <text class="record-date">{{item.date}}</text>
+          <view class="record-detail">
+            <text class="record-tag height-tag">{{item.height}}cm</text>
+            <text class="record-tag weight-tag">{{item.weight}}kg</text>
+            <text class="record-tag bmi-tag-sm">BMI {{item.bmi}}</text>
+          </view>
+        </view>
+        <view class="record-right">
+          <view class="record-change" wx:if="{{item.heightDiff}}">
+            <text class="change-text {{item.heightDiff > 0 ? 'change-up' : 'change-down'}}">{{item.heightDiff > 0 ? '+' : ''}}{{item.heightDiff}}cm</text>
+          </view>
+          <text class="delete-btn" catchtap="onDeleteRecord" data-index="{{index}}">✕</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-state" wx:if="{{records.length === 0}}">
+    <text class="empty-icon">📏</text>
+    <text class="empty-text">还没有记录</text>
+    <text class="empty-sub">添加第一条身高体重记录吧</text>
+  </view>
+
+  <!-- 性别选择 -->
+  <view class="card">
+    <text class="card-title">⚙️ 设置</text>
+    <view class="setting-row">
+      <text class="setting-label">性别</text>
+      <view class="setting-btns">
+        <view class="setting-btn {{genderIndex === 0 ? 'setting-active' : ''}}" bindtap="setGender" data-gender="0">👦 男孩</view>
+        <view class="setting-btn {{genderIndex === 1 ? 'setting-active' : ''}}" bindtap="setGender" data-gender="1">👧 女孩</view>
+      </view>
+    </view>
+    <view class="setting-row">
+      <text class="setting-label">出生日期</text>
+      <picker mode="date" value="{{birthday}}" bindchange="onBirthdayChange">
+        <view class="picker-btn small">{{birthday || '选择生日'}}</view>
+      </picker>
+    </view>
+  </view>
+</view>

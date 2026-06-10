@@ -42,9 +42,9 @@
 
   <!-- 挑战网格 -->
   <view class="mole-grid" wx:if="{{state === 'playing'}}">
-    <view class="mole-cell {{grid[idx] === 1 ? 'mole-up' : ''}} {{grid[idx] === 2 ? 'bomb-up' : ''}} {{hitAnim === idx ? 'hit-anim' : ''}}" wx:for="{{grid}}" wx:key="index" data-idx="{{idx}}" bindtap="onWhack">
-      <text class="cell-emoji" wx:if="{{grid[idx] === 1}}">🐹</text>
-      <text class="cell-emoji" wx:elif="{{grid[idx] === 2}}">💣</text>
+    <view class="mole-cell {{grid[index] === 1 ? 'mole-up' : ''}} {{grid[index] === 2 ? 'bomb-up' : ''}} {{hitAnim === index ? 'hit-anim' : ''}}" wx:for="{{grid}}" wx:key="index" data-idx="{{index}}" bindtap="onWhack">
+      <text class="cell-emoji" wx:if="{{grid[index] === 1}}">🐹</text>
+      <text class="cell-emoji" wx:elif="{{grid[index] === 2}}">💣</text>
       <text class="cell-emoji hole" wx:else>🕳️</text>
     </view>
   </view>

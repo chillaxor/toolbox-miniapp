@@ -1,0 +1,86 @@
+<view class="container">
+  <!-- 顶部信息栏 -->
+  <view class="header">
+    <view class="header-left">
+      <view class="fav-btn {{isFavorite ? 'active' : ''}}" bindtap="toggleFavorite">
+        <text>{{isFavorite ? '★' : '☆'}}</text>
+      </view>
+    </view>
+    <view class="header-center">
+      <view class="stat-item">
+        <text class="stat-label">得分</text>
+        <text class="stat-value">{{score}}</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-label">最高</text>
+        <text class="stat-value">{{bestScore}}</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-label">速度</text>
+        <text class="stat-value">Lv{{level}}</text>
+      </view>
+    </view>
+    <view class="header-right">
+      <view class="speed-btn" bindtap="changeSpeed">
+        <text class="speed-icon">⚡</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 游戏画布 -->
+  <view class="game-area" id="gameArea">
+    <canvas type="2d" id="gameCanvas"
+      class="game-canvas"
+      style="width:{{canvasWidth}}px;height:{{canvasHeight}}px"
+      bindtouchstart="onTouchStart"
+      bindtouchmove="onTouchMove"
+      bindtouchend="onTouchEnd">
+    </canvas>
+
+    <!-- 开始/结束覆盖层 -->
+    <view class="overlay" wx:if="{{gameState !== 'playing'}}">
+      <view class="overlay-content">
+        <text class="overlay-title" wx:if="{{gameState === 'idle'}}">🐍 贪吃蛇</text>
+        <text class="overlay-title" wx:if="{{gameState === 'over'}}">💀 游戏结束</text>
+        <text class="overlay-score" wx:if="{{gameState === 'over'}}">得分: {{score}}</text>
+        <text class="overlay-best" wx:if="{{gameState === 'over' && isNewBest}}">🎉 新纪录！</text>
+        <view class="start-btn" bindtap="startGame">
+          <text>{{gameState === 'idle' ? '开始游戏' : '再来一局'}}</text>
+        </view>
+        <text class="overlay-hint">滑动屏幕控制方向</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 虚拟方向键 -->
+  <view class="controls">
+    <view class="ctrl-row">
+      <view class="ctrl-btn up" bindtouchstart="onBtnUp">
+        <text>▲</text>
+      </view>
+    </view>
+    <view class="ctrl-row middle">
+      <view class="ctrl-btn left" bindtouchstart="onBtnLeft">
+        <text>◀</text>
+      </view>
+      <view class="ctrl-btn center">
+        <text>🐍</text>
+      </view>
+      <view class="ctrl-btn right" bindtouchstart="onBtnRight">
+        <text>▶</text>
+      </view>
+    </view>
+    <view class="ctrl-row">
+      <view class="ctrl-btn down" bindtouchstart="onBtnDown">
+        <text>▼</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 暂停按钮 -->
+  <view class="pause-bar" wx:if="{{gameState === 'playing'}}">
+    <view class="pause-btn" bindtap="togglePause">
+      <text>{{isPaused ? '▶ 继续' : '⏸ 暂停'}}</text>
+    </view>
+  </view>
+</view>

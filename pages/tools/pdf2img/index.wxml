@@ -1,0 +1,91 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">PDF转图片</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <!-- 选择PDF -->
+  <view class="card">
+    <view class="pdf-picker" bindtap="onChoosePDF">
+      <view wx:if="{{!filePath}}" class="picker-placeholder">
+        <text style="font-size: 64rpx;">📄</text>
+        <text class="picker-title">点击选择PDF文件</text>
+        <text class="picker-desc">从聊天记录中选择PDF文件</text>
+      </view>
+      <view wx:else class="file-info">
+        <view class="file-icon-wrap">
+          <text class="file-icon">📄</text>
+        </view>
+        <view class="file-detail">
+          <text class="file-name">{{fileName}}</text>
+          <text class="file-size">{{fileSize}}</text>
+        </view>
+        <text class="file-change" bindtap="onChoosePDF">更换</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="card" wx:if="{{filePath}}">
+    <view class="action-list">
+      <view class="action-item" bindtap="onPreviewPDF">
+        <view class="action-left">
+          <text class="action-icon">👁️</text>
+          <view class="action-text-wrap">
+            <text class="action-title">预览并截图</text>
+            <text class="action-desc">打开PDF预览，长按截图保存为图片</text>
+          </view>
+        </view>
+        <text class="action-arrow">›</text>
+      </view>
+      <view class="action-item" bindtap="onShowTips">
+        <view class="action-left">
+          <text class="action-icon">💡</text>
+          <view class="action-text-wrap">
+            <text class="action-title">操作指南</text>
+            <text class="action-desc">查看详细的PDF转图片步骤</text>
+          </view>
+        </view>
+        <text class="action-arrow">›</text>
+      </view>
+    </view>
+    <button class="btn-clear" bindtap="onClear">清除文件</button>
+  </view>
+
+  <!-- 使用说明 -->
+  <view class="card">
+    <text class="section-title">📖 使用说明</text>
+    <view class="step-list">
+      <view class="step-item">
+        <view class="step-num">1</view>
+        <view class="step-content">
+          <text class="step-title">选择文件</text>
+          <text class="step-desc">从微信聊天记录中选择PDF文件</text>
+        </view>
+      </view>
+      <view class="step-item">
+        <view class="step-num">2</view>
+        <view class="step-content">
+          <text class="step-title">预览文档</text>
+          <text class="step-desc">使用微信内置预览器打开PDF</text>
+        </view>
+      </view>
+      <view class="step-item">
+        <view class="step-num">3</view>
+        <view class="step-content">
+          <text class="step-title">截图保存</text>
+          <text class="step-desc">长按页面或截屏，图片自动保存到相册</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 小贴士 -->
+  <view class="card tips-card">
+    <text class="section-title">💡 温馨提示</text>
+    <view wx:for="{{tips}}" wx:key="index" class="tip-item">
+      <text class="tip-dot">•</text>
+      <text class="tip-text">{{item}}</text>
+    </view>
+  </view>
+</view>

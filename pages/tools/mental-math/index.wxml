@@ -1,0 +1,168 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">口算练习机</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <!-- 设置页 -->
+  <view wx:if="{{page === 'setup'}}">
+    <view class="card">
+      <text class="card-title">选择年级</text>
+      <view class="option-grid">
+        <view class="option-item {{grade === item.value ? 'option-active' : ''}}"
+              wx:for="{{grades}}" wx:key="value"
+              data-value="{{item.value}}" bindtap="onGradeSelect">
+          <text class="option-text">{{item.label}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="card">
+      <text class="card-title">运算类型</text>
+      <view class="option-grid">
+        <view class="option-item {{opType === item.value ? 'option-active' : ''}}"
+              wx:for="{{opTypes}}" wx:key="value"
+              data-value="{{item.value}}" bindtap="onOpSelect">
+          <text class="option-text">{{item.label}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="card">
+      <text class="card-title">计时模式</text>
+      <view class="option-grid">
+        <view class="option-item {{timeMode === item.value ? 'option-active' : ''}}"
+              wx:for="{{timeModes}}" wx:key="value"
+              data-value="{{item.value}}" bindtap="onTimeSelect">
+          <text class="option-text">{{item.label}}</text>
+        </view>
+      </view>
+    </view>
+
+    <button class="btn-primary" style="background-color: #45B058;" bindtap="onStart">开始练习</button>
+  </view>
+
+  <!-- 答题页 -->
+  <view wx:if="{{page === 'playing'}}">
+    <!-- 状态栏 -->
+    <view class="status-bar">
+      <view class="status-item">
+        <text class="status-label">第</text>
+        <text class="status-value">{{questionNum}}</text>
+        <text class="status-label">题</text>
+      </view>
+      <view class="status-item" wx:if="{{timeMode > 0}}">
+        <text class="status-label">剩余</text>
+        <text class="status-value {{timeLeft <= 10 ? 'time-warning' : ''}}">{{timeLeft}}</text>
+        <text class="status-label">秒</text>
+      </view>
+      <view class="status-item">
+        <text class="status-label">连对</text>
+        <text class="status-value streak-value">{{streak}}</text>
+      </view>
+    </view>
+
+    <!-- 得分条 -->
+    <view class="score-bar">
+      <view class="score-correct">
+        <text class="score-num">{{correctNum}}</text>
+        <text class="score-label">对</text>
+      </view>
+      <view class="score-wrong">
+        <text class="score-num">{{wrongNum}}</text>
+        <text class="score-label">错</text>
+      </view>
+    </view>
+
+    <!-- 题目区域 -->
+    <view class="card question-card" wx:if="{{question}}">
+      <view class="question-expression">
+        <text class="question-num">{{question.a}}</text>
+        <text class="question-op">{{question.op}}</text>
+        <text class="question-num">{{question.b}}</text>
+        <text class="question-eq">=</text>
+      </view>
+
+      <!-- 答题反馈 -->
+      <view class="feedback {{isCorrect === true ? 'feedback-correct' : ''}} {{isCorrect === false ? 'feedback-wrong' : ''}}" wx:if="{{isCorrect !== null}}">
+        <text wx:if="{{isCorrect}}" class="feedback-icon">✅ 正确！</text>
+        <text wx:else class="feedback-icon">❌ 答案是 {{question.answer}}</text>
+      </view>
+    </view>
+
+    <!-- 输入区 -->
+    <view class="answer-area">
+      <input class="answer-input" type="number" placeholder="输入答案" value="{{userAnswer}}" bindinput="onAnswerInput" bindconfirm="onSubmit" focus="{{isCorrect === null}}" />
+      <button class="btn-primary" style="background-color: #45B058;" bindtap="onSubmit">确定</button>
+    </view>
+
+    <!-- 结束按钮 -->
+    <view class="finish-area">
+      <button class="btn-finish" bindtap="onFinish">结束练习</button>
+    </view>
+  </view>
+
+  <!-- 结果页 -->
+  <view wx:if="{{page === 'result'}}">
+    <view class="result-box">
+      <view class="result-emoji">
+        <text wx:if="{{resultSummary.accuracy >= 90}}">🎉</text>
+        <text wx:elif="{{resultSummary.accuracy >= 70}}">💪</text>
+        <text wx:else>📚</text>
+      </view>
+      <text class="result-title" wx:if="{{resultSummary.accuracy >= 90}}">太棒了！</text>
+      <text class="result-title" wx:elif="{{resultSummary.accuracy >= 70}}">继续加油！</text>
+      <text class="result-title" wx:else>多多练习哦！</text>
+
+      <view class="result-stats">
+        <view class="stat-item">
+          <text class="stat-value">{{resultSummary.total}}</text>
+          <text class="stat-label">总题数</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-value" style="color: #27AE60;">{{resultSummary.correct}}</text>
+          <text class="stat-label">答对</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-value" style="color: #E74C3C;">{{resultSummary.wrong}}</text>
+          <text class="stat-label">答错</text>
+        </view>
+      </view>
+
+      <view class="result-detail">
+        <view class="detail-row">
+          <text class="detail-label">正确率</text>
+          <view class="detail-bar-wrap">
+            <view class="detail-bar" style="width: {{resultSummary.accuracy}}%; background-color: {{resultSummary.accuracy >= 80 ? '#27AE60' : resultSummary.accuracy >= 60 ? '#F39C12' : '#E74C3C'}};"></view>
+          </view>
+          <text class="detail-value">{{resultSummary.accuracy}}%</text>
+        </view>
+        <view class="detail-row">
+          <text class="detail-label">最佳连对</text>
+          <text class="detail-value">{{resultSummary.bestStreak}} 题</text>
+        </view>
+        <view class="detail-row">
+          <text class="detail-label">年级</text>
+          <text class="detail-value">{{resultSummary.grade}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 错题回顾 -->
+    <view class="card" wx:if="{{wrongList.length > 0}}" style="margin-top: 24rpx;">
+      <text class="card-title">错题回顾</text>
+      <view class="wrong-list">
+        <view class="wrong-item" wx:for="{{wrongList}}" wx:key="index">
+          <text class="wrong-expr">{{item.expression}} =</text>
+          <text class="wrong-your" style="color: #E74C3C; text-decoration: line-through;">{{item.yourAnswer}}</text>
+          <text class="wrong-correct" style="color: #27AE60;">✓ {{item.correctAnswer}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="btn-group">
+      <button class="btn-primary" style="background-color: #45B058;" bindtap="onRetry">再来一轮</button>
+      <button class="btn-secondary" bindtap="onBackSetup">返回设置</button>
+    </view>
+  </view>
+</view>

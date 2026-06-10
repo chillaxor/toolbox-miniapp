@@ -154,8 +154,9 @@ Page({
   onBoardTap: function (e) {
     if (this.data.gameOver) return;
 
-    var x = e.detail.x;
-    var y = e.detail.y;
+    var touch = e.touches[0];
+    var x = touch.x;
+    var y = touch.y;
     var cs = this.cellSize;
     var pad = this.padding;
 

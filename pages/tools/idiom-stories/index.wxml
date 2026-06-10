@@ -1,0 +1,175 @@
+<view class="container">
+  <!-- 顶部导航 -->
+  <view class="top-bar">
+    <view class="nav-left" bindtap="onBackList" wx:if="{{page !== 'list'}}">
+      <text class="nav-icon">←</text>
+    </view>
+    <view class="nav-center">
+      <text class="nav-title">{{page === 'list' ? '成语故事' : page === 'detail' ? '成语详情' : page === 'quiz' ? '成语问答' : '答题结果'}}</text>
+    </view>
+    <view class="nav-right" bindtap="toggleFavorite">
+      <text class="fav-icon {{isFavorite ? 'active' : ''}}">★</text>
+    </view>
+  </view>
+
+  <!-- 列表页 -->
+  <view class="page-list" wx:if="{{page === 'list'}}">
+    <!-- 操作按钮 -->
+    <view class="action-bar">
+      <view class="quiz-btn" bindtap="onStartQuiz">
+        <text class="quiz-icon">📝</text>
+        <text class="quiz-text">开始问答挑战</text>
+      </view>
+    </view>
+
+    <!-- 分类筛选 -->
+    <scroll-view class="category-scroll" scroll-x>
+      <view class="category-list">
+        <view 
+          class="category-tag {{selectedCategory === item ? 'active' : ''}}"
+          wx:for="{{categories}}" 
+          wx:key="*this"
+          data-category="{{item}}"
+          bindtap="onCategoryTap"
+        >{{item}}</view>
+      </view>
+    </scroll-view>
+
+    <!-- 成语列表 -->
+    <scroll-view class="idiom-list" scroll-y>
+      <view 
+        class="idiom-item" 
+        wx:for="{{filteredIdioms}}" 
+        wx:key="idiom"
+        data-index="{{index}}"
+        bindtap="onIdiomTap"
+      >
+        <view class="idiom-left">
+          <view class="idiom-name">{{item.idiom}}</view>
+          <view class="idiom-pinyin">{{item.pinyin}}</view>
+        </view>
+        <view class="idiom-right">
+          <view class="idiom-category-tag">{{item.category}}</view>
+          <view class="idiom-difficulty">
+            <text wx:for="{{item.difficulty}}" wx:for-item="star" wx:key="*this">⭐</text>
+          </view>
+        </view>
+      </view>
+      <view class="list-footer">共 {{filteredIdioms.length}} 个成语</view>
+    </scroll-view>
+  </view>
+
+  <!-- 详情页 -->
+  <view class="page-detail" wx:if="{{page === 'detail'}}">
+    <scroll-view class="detail-scroll" scroll-y>
+      <view class="detail-header">
+        <view class="detail-idiom">{{currentIdiom.idiom}}</view>
+        <view class="detail-pinyin">{{currentIdiom.pinyin}}</view>
+        <view class="detail-meta">
+          <text class="meta-tag">{{currentIdiom.category}}</text>
+          <text class="meta-origin">{{currentIdiom.origin}}</text>
+        </view>
+      </view>
+
+      <view class="detail-section">
+        <view class="section-title">📖 释义</view>
+        <view class="section-content">{{currentIdiom.meaning}}</view>
+      </view>
+
+      <view class="detail-section">
+        <view class="section-title">📜 故事</view>
+        <view class="section-content story-content">{{currentIdiom.story}}</view>
+      </view>
+
+      <view class="detail-section">
+        <view class="section-title">✍️ 造句</view>
+        <view class="section-content">{{currentIdiom.example}}</view>
+      </view>
+
+      <!-- 翻页 -->
+      <view class="detail-nav">
+        <view class="nav-btn" bindtap="onPrevIdiom">
+          <text>← 上一个</text>
+        </view>
+        <view class="nav-btn primary" bindtap="onNextIdiom">
+          <text>下一个 →</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 问答页 -->
+  <view class="page-quiz" wx:if="{{page === 'quiz'}}">
+    <scroll-view class="quiz-scroll" scroll-y>
+      <view class="quiz-progress">
+        <view class="progress-bar">
+          <view class="progress-fill" style="width: {{(quizIndex + 1) / quizIdioms.length * 100}}%"></view>
+        </view>
+        <text class="progress-text">第 {{quizIndex + 1}} / {{quizIdioms.length}} 题</text>
+      </view>
+
+      <view class="quiz-score">
+        <text class="score-correct">✓ {{correctNum}}</text>
+        <text class="score-wrong">✗ {{wrongNum}}</text>
+      </view>
+
+      <view class="quiz-question">
+        <view class="question-idiom">{{quizIdioms[quizIndex].idiom}}</view>
+        <view class="question-hint">请选择正确的含义：</view>
+      </view>
+
+      <view class="quiz-options">
+        <view 
+          class="option-item {{showAnswer && index === correctOptionIndex ? 'correct' : ''}} {{showAnswer && selectedOption === index && index !== correctOptionIndex ? 'wrong' : ''}} {{selectedOption === index && !showAnswer ? 'selected' : ''}}"
+          wx:for="{{quizOptions}}" 
+          wx:key="*this"
+          data-index="{{index}}"
+          bindtap="onOptionTap"
+        >
+          <text class="option-letter">{{['A','B','C','D'][index]}}</text>
+          <text class="option-text">{{item}}</text>
+          <text class="option-icon" wx:if="{{showAnswer && index === correctOptionIndex}}">✓</text>
+          <text class="option-icon wrong" wx:if="{{showAnswer && selectedOption === index && index !== correctOptionIndex}}">✗</text>
+        </view>
+      </view>
+
+      <view class="quiz-next" wx:if="{{showAnswer}}" bindtap="onNextQuiz">
+        <text>{{quizIndex + 1 >= quizIdioms.length ? '查看结果' : '下一题 →'}}</text>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 结果页 -->
+  <view class="page-result" wx:if="{{page === 'result'}}">
+    <scroll-view class="result-scroll" scroll-y>
+      <view class="result-card">
+        <view class="result-emoji">{{resultSummary.accuracy >= 80 ? '🎉' : resultSummary.accuracy >= 60 ? '😊' : '💪'}}</view>
+        <view class="result-title">{{resultSummary.accuracy >= 80 ? '太棒了！' : resultSummary.accuracy >= 60 ? '还不错！' : '继续加油！'}}</view>
+        
+        <view class="result-stats">
+          <view class="stat-item">
+            <text class="stat-num">{{resultSummary.total}}</text>
+            <text class="stat-label">总题数</text>
+          </view>
+          <view class="stat-item correct">
+            <text class="stat-num">{{resultSummary.correct}}</text>
+            <text class="stat-label">答对</text>
+          </view>
+          <view class="stat-item wrong">
+            <text class="stat-num">{{resultSummary.wrong}}</text>
+            <text class="stat-label">答错</text>
+          </view>
+          <view class="stat-item">
+            <text class="stat-num">{{resultSummary.accuracy}}%</text>
+            <text class="stat-label">正确率</text>
+          </view>
+        </view>
+
+        <view class="result-actions">
+          <view class="result-btn" bindtap="onRetry">再来一局</view>
+          <view class="result-btn secondary" bindtap="onBackList">返回列表</view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+</view>
