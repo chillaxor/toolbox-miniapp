@@ -100,17 +100,28 @@ Page({
   speakText: function (text) {
     try {
       var plugin = requirePlugin('WechatSI');
-      if (plugin) {
+      if (plugin && plugin.textToSpeech) {
         plugin.textToSpeech({
           lang: 'zh_CN',
           tts: true,
           content: text,
-          success: function () {},
-          fail: function () {}
+          success: function (res) {
+            if (res && res.filename) {
+              var audio = wx.createInnerAudioContext();
+              audio.src = res.filename;
+              audio.play();
+            }
+          },
+          fail: function (err) {
+            console.error('TTS失败:', err);
+            wx.showToast({ title: text, icon: 'none', duration: 1500 });
+          }
         });
+      } else {
+        wx.showToast({ title: text, icon: 'none', duration: 1500 });
       }
     } catch (err) {
-      // 使用系统朗读
+      console.error('插件加载失败:', err);
       wx.showToast({ title: text, icon: 'none', duration: 1500 });
     }
   },

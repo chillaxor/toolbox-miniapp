@@ -99,20 +99,29 @@ Page({
     var text = e.currentTarget.dataset.text;
     try {
       var plugin = requirePlugin('WechatSI');
-      var manager = plugin.getRecordRecognitionManager();
-      var tts = plugin.textToSpeech;
-      if (tts) {
-        tts.textToSpeech({
+      if (plugin && plugin.textToSpeech) {
+        plugin.textToSpeech({
           lang: 'en_US',
-          ttsContent: text,
-          success: function () {},
-          fail: function () {
-            wx.showToast({ title: '发音需要同声传译插件', icon: 'none' });
+          tts: true,
+          content: text,
+          success: function (res) {
+            if (res && res.filename) {
+              var audio = wx.createInnerAudioContext();
+              audio.src = res.filename;
+              audio.play();
+            }
+          },
+          fail: function (err) {
+            console.error('TTS失败:', err);
+            wx.showToast({ title: text, icon: 'none', duration: 1500 });
           }
         });
+      } else {
+        wx.showToast({ title: text, icon: 'none', duration: 1500 });
       }
     } catch (err) {
-      wx.showToast({ title: '发音功能需要同声传译插件', icon: 'none' });
+      console.error('插件加载失败:', err);
+      wx.showToast({ title: text, icon: 'none', duration: 1500 });
     }
   },
 

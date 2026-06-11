@@ -208,22 +208,34 @@ Page({
   },
 
   speakWord: function (word) {
-    // 使用微信小程序TTS（如果可用）
-    var plugin = requirePlugin('WechatSI');
-    if (plugin && plugin.textToSpeech) {
-      plugin.textToSpeech({
-        lang: 'zh_CN',
-        content: word,
-        success: function (res) {
-          var audio = wx.createInnerAudioContext();
-          audio.src = res.filename;
-          audio.play();
-        }
-      });
-    } else {
-      // 如果没有TTS插件，使用振动反馈
+    try {
+      var plugin = requirePlugin('WechatSI');
+      if (plugin && plugin.textToSpeech) {
+        plugin.textToSpeech({
+          lang: 'zh_CN',
+          tts: true,
+          content: word,
+          success: function (res) {
+            if (res && res.filename) {
+              var audio = wx.createInnerAudioContext();
+              audio.src = res.filename;
+              audio.play();
+            }
+          },
+          fail: function (err) {
+            console.error('TTS失败:', err);
+            wx.vibrateShort({ type: 'medium' });
+            wx.showToast({ title: '请家长读出: ' + word, icon: 'none', duration: 2000 });
+          }
+        });
+      } else {
+        wx.vibrateShort({ type: 'medium' });
+        wx.showToast({ title: '请家长读出: ' + word, icon: 'none', duration: 2000 });
+      }
+    } catch (err) {
+      console.error('插件加载失败:', err);
       wx.vibrateShort({ type: 'medium' });
-      wx.showToast({ title: '请家长读出: ' + word, icon: 'none', duration: 1500 });
+      wx.showToast({ title: '请家长读出: ' + word, icon: 'none', duration: 2000 });
     }
   },
 
