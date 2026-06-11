@@ -1,0 +1,115 @@
+<view class="container">
+  <!-- 标题 -->
+  <view class="header">
+    <text class="title">⌨️ 打字速度测试</text>
+    <text class="subtitle">测测你的打字速度</text>
+  </view>
+
+  <!-- 模式选择 -->
+  <view class="mode-bar" wx:if="{{status === 'ready'}}">
+    <view class="mode-item {{mode === 'easy' ? 'active' : ''}}" bindtap="switchMode" data-mode="easy">
+      <text class="mode-label">简单</text>
+      <text class="mode-desc">短句</text>
+    </view>
+    <view class="mode-item {{mode === 'medium' ? 'active' : ''}}" bindtap="switchMode" data-mode="medium">
+      <text class="mode-label">中等</text>
+      <text class="mode-desc">段落</text>
+    </view>
+    <view class="mode-item {{mode === 'hard' ? 'active' : ''}}" bindtap="switchMode" data-mode="hard">
+      <text class="mode-label">困难</text>
+      <text class="mode-desc">长文</text>
+    </view>
+  </view>
+
+  <!-- 计时与统计 -->
+  <view class="stats-bar" wx:if="{{status !== 'ready'}}">
+    <view class="stat-item">
+      <text class="stat-value">{{seconds}}s</text>
+      <text class="stat-label">用时</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-value">{{wpm}}</text>
+      <text class="stat-label">WPM</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-value">{{accuracy}}%</text>
+      <text class="stat-label">准确率</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-value">{{charsTyped}}</text>
+      <text class="stat-label">已输入</text>
+    </view>
+  </view>
+
+  <!-- 目标文本 -->
+  <view class="text-display" wx:if="{{status !== 'result'}}">
+    <view class="text-content">
+      <text wx:for="{{textArray}}" wx:key="index" class="char {{item.typed ? (item.correct ? 'correct' : 'wrong') : (index === currentPos ? 'cursor' : 'pending')}}">{{item.char}}</text>
+    </view>
+  </view>
+
+  <!-- 等待开始 -->
+  <view class="start-area" wx:if="{{status === 'ready'}}">
+    <view class="start-btn" bindtap="startTest">
+      <text class="start-text">开始测试</text>
+    </view>
+    <text class="start-hint">点击开始后在输入框中输入上方文字</text>
+  </view>
+
+  <!-- 输入区域 -->
+  <view class="input-area" wx:if="{{status === 'typing'}}">
+    <textarea class="typing-input" value="{{inputValue}}" bindinput="onInput" bindblur="onBlur" focus="{{inputFocus}}" auto-height maxlength="{{targetText.length + 10}}" placeholder="在此输入..." />
+    <view class="action-bar">
+      <view class="reset-btn" bindtap="resetTest">
+        <text>重新开始</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 结果页面 -->
+  <view class="result-area" wx:if="{{status === 'result'}}">
+    <view class="result-card">
+      <view class="result-grade {{gradeClass}}">
+        <text class="grade-icon">{{gradeIcon}}</text>
+        <text class="grade-text">{{grade}}</text>
+      </view>
+
+      <view class="result-stats">
+        <view class="result-stat">
+          <text class="result-stat-value">{{wpm}}</text>
+          <text class="result-stat-label">WPM (字/分钟)</text>
+        </view>
+        <view class="result-stat">
+          <text class="result-stat-value">{{cpm}}</text>
+          <text class="result-stat-label">CPM (字符/分钟)</text>
+        </view>
+        <view class="result-stat">
+          <text class="result-stat-value">{{accuracy}}%</text>
+          <text class="result-stat-label">准确率</text>
+        </view>
+        <view class="result-stat">
+          <text class="result-stat-value">{{seconds}}s</text>
+          <text class="result-stat-label">总用时</text>
+        </view>
+        <view class="result-stat">
+          <text class="result-stat-value">{{totalChars}}</text>
+          <text class="result-stat-label">总字符</text>
+        </view>
+        <view class="result-stat">
+          <text class="result-stat-value">{{errorCount}}</text>
+          <text class="result-stat-label">错误数</text>
+        </view>
+      </view>
+
+      <view class="best-record" wx:if="{{bestWpm > 0}}">
+        <text class="best-label">🏆 历史最佳: {{bestWpm}} WPM</text>
+      </view>
+    </view>
+
+    <view class="result-actions">
+      <view class="retry-btn" bindtap="resetTest">
+        <text>再来一次</text>
+      </view>
+    </view>
+  </view>
+</view>

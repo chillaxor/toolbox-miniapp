@@ -1,0 +1,271 @@
+.geo-quiz {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #E8F5E9 0%, #B2DFDB 50%, #80CBC4 100%);
+  padding: 0 0 40rpx 0;
+}
+
+.start-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: 200rpx;
+}
+
+.start-icon {
+  font-size: 120rpx;
+  margin-bottom: 30rpx;
+}
+
+.start-title {
+  font-size: 48rpx;
+  font-weight: bold;
+  color: #2E7D32;
+  margin-bottom: 16rpx;
+}
+
+.start-desc {
+  font-size: 28rpx;
+  color: #558B2F;
+  margin-bottom: 10rpx;
+}
+
+.start-btn {
+  width: 500rpx;
+  height: 88rpx;
+  background: linear-gradient(135deg, #4CAF50, #2E7D32);
+  color: #fff;
+  font-size: 32rpx;
+  font-weight: bold;
+  border-radius: 44rpx;
+  margin-top: 60rpx;
+  border: none;
+  line-height: 88rpx;
+}
+
+.fav-btn {
+  margin-top: 30rpx;
+  padding: 16rpx 40rpx;
+  font-size: 28rpx;
+  color: #558B2F;
+}
+
+.quiz-area {
+  padding: 30rpx;
+}
+
+.progress-bar {
+  margin-bottom: 30rpx;
+}
+
+.progress-text {
+  font-size: 28rpx;
+  color: #2E7D32;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 12rpx;
+}
+
+.progress-track {
+  width: 100%;
+  height: 12rpx;
+  background: rgba(255,255,255,0.5);
+  border-radius: 6rpx;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #4CAF50;
+  border-radius: 6rpx;
+  transition: width 0.3s;
+}
+
+.question-card {
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 40rpx;
+  margin-bottom: 30rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.08);
+}
+
+.question-text {
+  font-size: 34rpx;
+  color: #333;
+  line-height: 1.6;
+  font-weight: bold;
+}
+
+.options {
+  margin-bottom: 20rpx;
+}
+
+.option-item {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border: 2rpx solid #E8E8E8;
+  border-radius: 16rpx;
+  padding: 28rpx 30rpx;
+  margin-bottom: 16rpx;
+  transition: all 0.2s;
+}
+
+.option-item.correct,
+.option-item.correct-answer {
+  background: #E8F5E9;
+  border-color: #4CAF50;
+}
+
+.option-item.wrong {
+  background: #FFEBEE;
+  border-color: #F44336;
+}
+
+.option-label {
+  width: 52rpx;
+  height: 52rpx;
+  background: #F5F5F5;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26rpx;
+  font-weight: bold;
+  color: #666;
+  margin-right: 24rpx;
+  flex-shrink: 0;
+}
+
+.option-item.correct .option-label,
+.option-item.correct-answer .option-label {
+  background: #4CAF50;
+  color: #fff;
+}
+
+.option-item.wrong .option-label {
+  background: #F44336;
+  color: #fff;
+}
+
+.option-text {
+  flex: 1;
+  font-size: 30rpx;
+  color: #333;
+}
+
+.option-icon {
+  font-size: 32rpx;
+  color: #4CAF50;
+  font-weight: bold;
+}
+
+.option-icon.wrong-icon {
+  color: #F44336;
+}
+
+.explanation {
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 30rpx;
+  margin-top: 10rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.08);
+}
+
+.explanation-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  margin-bottom: 16rpx;
+}
+
+.explanation-text {
+  font-size: 28rpx;
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 24rpx;
+}
+
+.next-btn {
+  width: 100%;
+  height: 80rpx;
+  background: linear-gradient(135deg, #4CAF50, #2E7D32);
+  color: #fff;
+  font-size: 30rpx;
+  font-weight: bold;
+  border-radius: 40rpx;
+  border: none;
+  line-height: 80rpx;
+}
+
+.result-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 120rpx;
+}
+
+.result-score-circle {
+  width: 260rpx;
+  height: 260rpx;
+  background: #fff;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 40rpx rgba(0,0,0,0.1);
+  margin-bottom: 40rpx;
+}
+
+.result-score-num {
+  font-size: 80rpx;
+  font-weight: bold;
+  color: #4CAF50;
+}
+
+.result-score-label {
+  font-size: 28rpx;
+  color: #999;
+}
+
+.result-detail {
+  text-align: center;
+  margin-bottom: 50rpx;
+}
+
+.result-text {
+  font-size: 32rpx;
+  color: #333;
+  display: block;
+  margin-bottom: 16rpx;
+}
+
+.result-grade {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #2E7D32;
+}
+
+.retry-btn {
+  width: 500rpx;
+  height: 88rpx;
+  background: linear-gradient(135deg, #4CAF50, #2E7D32);
+  color: #fff;
+  font-size: 32rpx;
+  font-weight: bold;
+  border-radius: 44rpx;
+  border: none;
+  line-height: 88rpx;
+  margin-bottom: 20rpx;
+}
+
+.share-btn {
+  width: 500rpx;
+  height: 88rpx;
+  background: #fff;
+  color: #4CAF50;
+  font-size: 32rpx;
+  font-weight: bold;
+  border-radius: 44rpx;
+  border: 2rpx solid #4CAF50;
+  line-height: 88rpx;
+}

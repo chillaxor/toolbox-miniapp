@@ -1,0 +1,67 @@
+<view class="geo-quiz">
+  <!-- 未开始 -->
+  <view class="start-screen" wx:if="{{!started}}">
+    <view class="start-icon">🌍</view>
+    <view class="start-title">地理知识问答</view>
+    <view class="start-desc">中国地理 · 世界地理</view>
+    <view class="start-desc">随机10题 · 测试你的地理知识</view>
+    <button class="start-btn" bindtap="startQuiz">开始答题</button>
+    <view class="fav-btn" bindtap="toggleFavorite">
+      <text>{{isFavorite ? '❤️ 已收藏' : '🤍 收藏'}}</text>
+    </view>
+  </view>
+
+  <!-- 答题中 -->
+  <view class="quiz-area" wx:elif="{{!finished}}">
+    <view class="progress-bar">
+      <view class="progress-text">{{index + 1}} / {{total}}</view>
+      <view class="progress-track">
+        <view class="progress-fill" style="width: {{(index + 1) / total * 100}}%"></view>
+      </view>
+    </view>
+
+    <view class="question-card">
+      <text class="question-text">{{questions[index].question}}</text>
+    </view>
+
+    <view class="options">
+      <view
+        class="option-item {{selected === item ? (isCorrect ? 'correct' : 'wrong') : ''}} {{showResult && questions[index].answer === item ? 'correct-answer' : ''}}"
+        wx:for="{{questions[index].options}}"
+        wx:key="*this"
+        data-option="{{item}}"
+        bindtap="selectOption"
+      >
+        <view class="option-label">{{['A','B','C','D'][index]}}</view>
+        <text class="option-text">{{item}}</text>
+        <view class="option-icon" wx:if="{{showResult && questions[index].answer === item}}">✓</view>
+        <view class="option-icon wrong-icon" wx:elif="{{showResult && selected === item && !isCorrect}}">✗</view>
+      </view>
+    </view>
+
+    <view class="explanation" wx:if="{{showResult}}">
+      <view class="explanation-title">{{isCorrect ? '🎉 回答正确！' : '❌ 回答错误'}}</view>
+      <text class="explanation-text">{{questions[index].explanation}}</text>
+      <button class="next-btn" bindtap="nextQuestion">
+        {{index >= total - 1 ? '查看结果' : '下一题'}}
+      </button>
+    </view>
+  </view>
+
+  <!-- 结果 -->
+  <view class="result-screen" wx:else>
+    <view class="result-score-circle">
+      <text class="result-score-num">{{score}}</text>
+      <text class="result-score-label">分</text>
+    </view>
+    <view class="result-detail">
+      <text class="result-text">答对 {{correct}} / {{total}} 题</text>
+      <text class="result-grade" wx:if="{{score >= 90}}">🏆 地理达人！</text>
+      <text class="result-grade" wx:elif="{{score >= 70}}">👍 知识渊博！</text>
+      <text class="result-grade" wx:elif="{{score >= 60}}">😊 继续加油！</text>
+      <text class="result-grade" wx:else>📖 多学多看！</text>
+    </view>
+    <button class="retry-btn" bindtap="retry">再来一轮</button>
+    <button class="share-btn" open-type="share">分享给好友</button>
+  </view>
+</view>

@@ -1,0 +1,187 @@
+<!--pages/tools/text2img/index.wxml-->
+<view class="container">
+
+  <!-- 预览区域 -->
+  <view class="preview-area">
+    <view class="preview-card template-{{selectedTemplate}}" style="background-color: {{bgColor}};">
+
+      <!-- 模板: 简约白 -->
+      <block wx:if="{{selectedTemplate === 'minimal'}}">
+        <view class="tpl-minimal">
+          <view class="tpl-minimal-line" style="background-color: {{textColor}};"></view>
+          <text class="tpl-minimal-title" style="color: {{textColor}}; font-size: {{fontSize}}rpx;">{{inputText || '输入你的文字'}}</text>
+          <view class="tpl-minimal-line" style="background-color: {{textColor}};"></view>
+          <text class="tpl-minimal-author" wx:if="{{author}}" style="color: {{textColor}};">—— {{author}}</text>
+        </view>
+      </block>
+
+      <!-- 模板: 经典卡片 -->
+      <block wx:elif="{{selectedTemplate === 'card'}}">
+        <view class="tpl-card">
+          <view class="tpl-card-icon">"</view>
+          <text class="tpl-card-text" style="color: {{textColor}}; font-size: {{fontSize}}rpx;">{{inputText || '输入你的文字'}}</text>
+          <text class="tpl-card-author" wx:if="{{author}}" style="color: {{textColor}};">—— {{author}}</text>
+        </view>
+      </block>
+
+      <!-- 模板: 诗意古风 -->
+      <block wx:elif="{{selectedTemplate === 'chinese'}}">
+        <view class="tpl-chinese">
+          <view class="tpl-chinese-border" style="border-color: {{textColor}};">
+            <text class="tpl-chinese-text" style="color: {{textColor}}; font-size: {{fontSize}}rpx;">{{inputText || '输入你的文字'}}</text>
+          </view>
+          <text class="tpl-chinese-seal" wx:if="{{author}}" style="color: {{textColor}}; border-color: {{textColor}};">{{author}}</text>
+        </view>
+      </block>
+
+      <!-- 模板: 渐变背景 -->
+      <block wx:elif="{{selectedTemplate === 'gradient'}}">
+        <view class="tpl-gradient" style="background: linear-gradient({{gradientAngle}}deg, {{gradientStart}}, {{gradientEnd}});">
+          <text class="tpl-gradient-text" style="color: {{textColor}}; font-size: {{fontSize}}rpx;">{{inputText || '输入你的文字'}}</text>
+          <text class="tpl-gradient-author" wx:if="{{author}}" style="color: {{textColor}};">—— {{author}}</text>
+        </view>
+      </block>
+
+      <!-- 模板: 便签纸 -->
+      <block wx:elif="{{selectedTemplate === 'note'}}">
+        <view class="tpl-note">
+          <view class="tpl-note-pin"></view>
+          <text class="tpl-note-text" style="color: {{textColor}}; font-size: {{fontSize}}rpx;">{{inputText || '输入你的文字'}}</text>
+          <text class="tpl-note-author" wx:if="{{author}}" style="color: {{textColor}};">—— {{author}}</text>
+        </view>
+      </block>
+
+      <!-- 模板: 深色高级 -->
+      <block wx:elif="{{selectedTemplate === 'dark'}}">
+        <view class="tpl-dark">
+          <view class="tpl-dark-decor"></view>
+          <text class="tpl-dark-text" style="color: {{textColor}}; font-size: {{fontSize}}rpx;">{{inputText || '输入你的文字'}}</text>
+          <view class="tpl-dark-decor bottom"></view>
+          <text class="tpl-dark-author" wx:if="{{author}}" style="color: {{textColor}};">—— {{author}}</text>
+        </view>
+      </block>
+
+      <!-- 模板: 朋友圈金句 -->
+      <block wx:elif="{{selectedTemplate === 'quote'}}">
+        <view class="tpl-quote" style="background: linear-gradient(135deg, {{gradientStart}}, {{gradientEnd}});">
+          <view class="tpl-quote-content">
+            <text class="tpl-quote-text" style="color: {{textColor}}; font-size: {{fontSize}}rpx;">{{inputText || '输入你的文字'}}</text>
+          </view>
+          <view class="tpl-quote-footer">
+            <text class="tpl-quote-author" wx:if="{{author}}" style="color: {{textColor}};">—— {{author}}</text>
+            <text class="tpl-quote-date" style="color: {{textColor}};">{{currentDate}}</text>
+          </view>
+        </view>
+      </block>
+
+      <!-- 模板: 撕边纸 -->
+      <block wx:elif="{{selectedTemplate === 'torn'}}">
+        <view class="tpl-torn">
+          <view class="tpl-torn-inner">
+            <text class="tpl-torn-text" style="color: {{textColor}}; font-size: {{fontSize}}rpx;">{{inputText || '输入你的文字'}}</text>
+            <text class="tpl-torn-author" wx:if="{{author}}" style="color: {{textColor}};">—— {{author}}</text>
+          </view>
+        </view>
+      </block>
+
+    </view>
+  </view>
+
+  <!-- 编辑区域 -->
+  <view class="edit-panel">
+
+    <!-- 文字输入 -->
+    <view class="section">
+      <view class="section-label">文字内容</view>
+      <textarea class="text-input" value="{{inputText}}" bindinput="onInputChange" placeholder="输入你想生成图片的文字..." maxlength="200" auto-height />
+    </view>
+
+    <!-- 署名输入 -->
+    <view class="section">
+      <view class="section-label">署名/来源 <text class="optional-tag">(可选)</text></view>
+      <input class="author-input" value="{{author}}" bindinput="onAuthorChange" placeholder="如：鲁迅、《围城》" maxlength="20" />
+    </view>
+
+    <!-- 模板选择 -->
+    <view class="section">
+      <view class="section-label">模板风格</view>
+      <scroll-view class="template-scroll" scroll-x enable-flex>
+        <view class="template-list">
+          <view
+            wx:for="{{templates}}"
+            wx:key="id"
+            class="template-item {{selectedTemplate === item.id ? 'active' : ''}}"
+            data-id="{{item.id}}"
+            bindtap="onTemplateSelect"
+          >
+            <view class="template-preview tpl-{{item.id}}-preview">
+              <view class="tpl-mini-dot" style="background: {{item.previewColor}};"></view>
+            </view>
+            <text class="template-name">{{item.name}}</text>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- 字号 -->
+    <view class="section">
+      <view class="section-label">字号: {{fontSize}}rpx</view>
+      <slider min="28" max="72" value="{{fontSize}}" activeColor="#333" block-size="20" bindchange="onFontSizeChange" />
+    </view>
+
+    <!-- 文字颜色 -->
+    <view class="section">
+      <view class="section-label">文字颜色</view>
+      <view class="color-row">
+        <view
+          wx:for="{{textColors}}"
+          wx:key="color"
+          class="color-dot {{textColor === item.color ? 'active' : ''}}"
+          style="background-color: {{item.color}}; {{item.border ? 'border: 1rpx solid #ddd;' : ''}}"
+          data-color="{{item.color}}"
+          bindtap="onTextColorSelect"
+        ></view>
+      </view>
+    </view>
+
+    <!-- 背景颜色 (仅简约白和深色高级) -->
+    <view class="section" wx:if="{{selectedTemplate === 'minimal' || selectedTemplate === 'note' || selectedTemplate === 'torn'}}">
+      <view class="section-label">背景颜色</view>
+      <view class="color-row">
+        <view
+          wx:for="{{bgColors}}"
+          wx:key="color"
+          class="color-dot {{bgColor === item.color ? 'active' : ''}}"
+          style="background-color: {{item.color}}; {{item.border ? 'border: 1rpx solid #ddd;' : ''}}"
+          data-color="{{item.color}}"
+          bindtap="onBgColorSelect"
+        ></view>
+      </view>
+    </view>
+
+    <!-- 渐变色选择 (渐变和朋友圈模板) -->
+    <view class="section" wx:if="{{selectedTemplate === 'gradient' || selectedTemplate === 'quote'}}">
+      <view class="section-label">渐变配色</view>
+      <view class="gradient-list">
+        <view
+          wx:for="{{gradients}}"
+          wx:key="index"
+          class="gradient-item {{selectedGradient === index ? 'active' : ''}}"
+          style="background: linear-gradient(135deg, {{item.start}}, {{item.end}});"
+          data-index="{{index}}"
+          bindtap="onGradientSelect"
+        ></view>
+      </view>
+    </view>
+
+    <!-- 操作按钮 -->
+    <view class="btn-row">
+      <button class="action-btn save-btn" bindtap="saveImage">💾 保存到相册</button>
+    </view>
+
+  </view>
+
+  <!-- 隐藏画布 -->
+  <canvas type="2d" id="imgCanvas" class="offscreen-canvas"></canvas>
+
+</view>

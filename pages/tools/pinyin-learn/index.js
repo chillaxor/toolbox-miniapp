@@ -99,31 +99,27 @@ Page({
 
   speakText: function (text) {
     try {
-      var plugin = requirePlugin('WechatSI');
-      if (plugin && plugin.textToSpeech) {
-        plugin.textToSpeech({
-          lang: 'zh_CN',
-          tts: true,
-          content: text,
-          success: function (res) {
-            if (res && res.filename) {
-              var audio = wx.createInnerAudioContext();
-              audio.src = res.filename;
-              audio.play();
-            }
-          },
-          fail: function (err) {
-            console.error('TTS失败:', err);
-            wx.showToast({ title: text, icon: 'none', duration: 1500 });
-          }
-        });
-      } else {
-        wx.showToast({ title: text, icon: 'none', duration: 1500 });
+      // 优先使用 Web Speech API（安卓微信内核支持，纯前端零费用）
+      if (typeof speechSynthesis !== 'undefined' && typeof SpeechSynthesisUtterance !== 'undefined') {
+        // 取消之前的语音
+        speechSynthesis.cancel();
+        var utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'zh-CN';
+        utterance.rate = 1.0;
+        utterance.pitch = 1.0;
+        utterance.volume = 1.0;
+        utterance.onerror = function () {
+          // Web Speech 失败时降级
+          wx.showToast({ title: text, icon: 'none', duration: 1500 });
+        };
+        speechSynthesis.speak(utterance);
+        return;
       }
-    } catch (err) {
-      console.error('插件加载失败:', err);
-      wx.showToast({ title: text, icon: 'none', duration: 1500 });
+    } catch (e) {
+      console.warn('Web Speech API 不可用:', e);
     }
+    // 降级方案：文字提示
+    wx.showToast({ title: text, icon: 'none', duration: 1500 });
   },
 
   // ============ 练习模式 ============

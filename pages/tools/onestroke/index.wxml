@@ -1,0 +1,59 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">一笔画</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <!-- 难度选择 -->
+  <view class="level-bar">
+    <view class="level-btn {{level === 'easy' ? 'level-active' : ''}}" data-level="easy" bindtap="onLevelChange">简单</view>
+    <view class="level-btn {{level === 'medium' ? 'level-active' : ''}}" data-level="medium" bindtap="onLevelChange">中等</view>
+    <view class="level-btn {{level === 'hard' ? 'level-active' : ''}}" data-level="hard" bindtap="onLevelChange">困难</view>
+  </view>
+
+  <!-- 状态栏 -->
+  <view class="stats-bar">
+    <view class="stat-item">
+      <text class="stat-label">关卡</text>
+      <text class="stat-value">{{currentLevelIndex + 1}}/{{totalLevels}}</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-label">{{levelName}}</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-label">步数</text>
+      <text class="stat-value">{{steps}}/{{totalEdges}}</text>
+    </view>
+  </view>
+
+  <!-- 游戏画布 -->
+  <view class="canvas-wrapper">
+    <canvas type="2d" id="gameCanvas" class="game-canvas" bindtap="onCanvasTap"></canvas>
+  </view>
+
+  <!-- 提示 -->
+  <view class="hint-bar">
+    <text class="hint-text" wx:if="{{!started}}">点击任意节点开始画线</text>
+    <text class="hint-text" wx:elif="{{completed}}">🎉 恭喜通关！</text>
+    <text class="hint-text" wx:elif="{{stuck}}">😵 没有相邻的未走边了，请点击重试</text>
+    <text class="hint-text" wx:else>从高亮节点选一条未走过的边连线</text>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="btn-row">
+    <button class="btn-action btn-hint" bindtap="onHint">💡 提示</button>
+    <button class="btn-action btn-retry" bindtap="onRetry">↩️ 重试</button>
+    <button class="btn-action btn-next" bindtap="onNextLevel" wx:if="{{completed}}">下一关 ➡️</button>
+    <button class="btn-action btn-restart" bindtap="onRestartLevel" wx:else>🔄 重来</button>
+  </view>
+
+  <!-- 完成弹窗 -->
+  <view class="complete-overlay" wx:if="{{showComplete}}" bindtap="onCloseComplete">
+    <view class="complete-card" catchtap="">
+      <text class="complete-emoji">🎉</text>
+      <text class="complete-title">全部通关！</text>
+      <text class="complete-desc">{{difficultyLabel}}难度 {{totalLevels}}关全部完成</text>
+      <button class="btn-primary" bindtap="onRestartAll" style="margin-top: 32rpx;">再来一轮</button>
+    </view>
+  </view>
+</view>

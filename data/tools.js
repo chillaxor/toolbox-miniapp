@@ -117,6 +117,18 @@ const TOOLS = [
   { id: 'cardmatch', name: '翻牌配对', category: 'fun', icon: '🃏', path: '/pages/tools/cardmatch/index', description: '翻转卡牌找到相同图案·计时计步·难度递增' },
   { id: 'pomodoro', name: '番茄钟', category: 'life', icon: '🍅', path: '/pages/tools/pomodoro/index', description: '25分钟专注+5分钟休息·白噪音·每日统计' },
   { id: 'lifecalendar', name: '人生日历', category: 'life', icon: '📅', path: '/pages/tools/lifecalendar/index', description: '输入生日·可视化已过/剩余周数·珍惜时间' },
+  { id: 'dynasty', name: '历史朝代表', category: 'study', icon: '📜', path: '/pages/tools/dynasty/index', description: '中国历史朝代时间轴·排序游戏·历史问答' },
+  { id: 'geo-quiz', name: '地理知识问答', category: 'study', icon: '🌍', path: '/pages/tools/geo-quiz/index', description: '中国地理·世界地理·随机10题·知识挑战' },
+  { id: 'tang-poetry', name: '唐诗三百首', category: 'study', icon: '📖', path: '/pages/tools/tang-poetry/index', description: '唐诗背诵·填空练习·赏析学习' },
+  { id: 'math-formulas', name: '数学公式大全', category: 'study', icon: '📐', path: '/pages/tools/math-formulas/index', description: '小学到高中数学公式速查·搜索收藏' },
+  { id: 'cert-expiry', name: '证件有效期', category: 'life', icon: '🪪', path: '/pages/tools/cert-expiry/index', description: '身份证护照驾照有效期管理·到期提醒' },
+  { id: 'cal-wallpaper', name: '日历壁纸', category: 'image', icon: '📅', path: '/pages/tools/cal-wallpaper/index', description: '选图片+当月日历生成手机壁纸·保存到相册' },
+  { id: 'onestroke', name: '一笔画', category: 'fun', icon: '✏️', path: '/pages/tools/onestroke/index', description: '数学逻辑一笔画·欧拉路径·关卡挑战' },
+  { id: 'periodic-table', name: '元素周期表', category: 'study', icon: '⚛️', path: '/pages/tools/periodic-table/index', description: '化学元素周期表·搜索·分类筛选·详细信息' },
+  { id: 'daily-photo', name: '每日一拍', category: 'life', icon: '📸', path: '/pages/tools/daily-photo/index', description: '每天拍一张照片·日历回顾·时光轴·连续打卡' },
+  { id: 'typing-test', name: '打字速度', category: 'study', icon: '⌨️', path: '/pages/tools/typing-test/index', description: '测试打字速度WPM·准确率统计·三种难度' },
+  { id: 'text2img', name: '文字转图片', category: 'image', icon: '📝', path: '/pages/tools/text2img/index', description: '输入文字生成精美长图·8种模板·适合发朋友圈' },
+  { id: 'imgmerge', name: '图片拼接', category: 'image', icon: '🧩', path: '/pages/tools/imgmerge/index', description: '多张图片上下/左右拼接成长图·保存到相册' },
 ];
 
 /**

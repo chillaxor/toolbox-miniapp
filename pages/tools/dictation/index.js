@@ -209,34 +209,26 @@ Page({
 
   speakWord: function (word) {
     try {
-      var plugin = requirePlugin('WechatSI');
-      if (plugin && plugin.textToSpeech) {
-        plugin.textToSpeech({
-          lang: 'zh_CN',
-          tts: true,
-          content: word,
-          success: function (res) {
-            if (res && res.filename) {
-              var audio = wx.createInnerAudioContext();
-              audio.src = res.filename;
-              audio.play();
-            }
-          },
-          fail: function (err) {
-            console.error('TTS失败:', err);
-            wx.vibrateShort({ type: 'medium' });
-            wx.showToast({ title: '请家长读出: ' + word, icon: 'none', duration: 2000 });
-          }
-        });
-      } else {
-        wx.vibrateShort({ type: 'medium' });
-        wx.showToast({ title: '请家长读出: ' + word, icon: 'none', duration: 2000 });
+      if (typeof speechSynthesis !== 'undefined' && typeof SpeechSynthesisUtterance !== 'undefined') {
+        speechSynthesis.cancel();
+        var utterance = new SpeechSynthesisUtterance(word);
+        utterance.lang = 'zh-CN';
+        utterance.rate = 0.85;
+        utterance.pitch = 1.0;
+        utterance.volume = 1.0;
+        utterance.onerror = function () {
+          wx.vibrateShort({ type: 'medium' });
+          wx.showToast({ title: '请家长读出: ' + word, icon: 'none', duration: 2500 });
+        };
+        speechSynthesis.speak(utterance);
+        return;
       }
-    } catch (err) {
-      console.error('插件加载失败:', err);
-      wx.vibrateShort({ type: 'medium' });
-      wx.showToast({ title: '请家长读出: ' + word, icon: 'none', duration: 2000 });
+    } catch (e) {
+      console.warn('Web Speech API 不可用:', e);
     }
+    // 降级方案
+    wx.vibrateShort({ type: 'medium' });
+    wx.showToast({ title: '请家长读出: ' + word, icon: 'none', duration: 2500 });
   },
 
   onTogglePinyin: function () {

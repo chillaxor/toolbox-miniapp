@@ -106,7 +106,19 @@
     "pages/tools/lifecalendar/index",
     "pages/tools/pdf2img/index",
     "pages/tools/answereraser/index",
-    "pages/tools/gifmaker/index"
+    "pages/tools/gifmaker/index",
+    "pages/tools/dynasty/index",
+    "pages/tools/geo-quiz/index",
+    "pages/tools/tang-poetry/index",
+    "pages/tools/math-formulas/index",
+    "pages/tools/cert-expiry/index",
+    "pages/tools/cal-wallpaper/index",
+    "pages/tools/onestroke/index",
+    "pages/tools/periodic-table/index",
+    "pages/tools/daily-photo/index",
+    "pages/tools/typing-test/index",
+    "pages/tools/text2img/index",
+    "pages/tools/imgmerge/index"
   ],
   "window": {
     "backgroundTextStyle": "light",
@@ -148,11 +160,5 @@
     ]
   },
   "sitemapLocation": "sitemap.json",
-  "style": "v2",
-  "plugins": {
-    "WechatSI": {
-      "version": "0.3.6",
-      "provider": "wx069ba97219f66d99"
-    }
-  }
+  "style": "v2"
 }

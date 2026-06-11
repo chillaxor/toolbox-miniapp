@@ -97,32 +97,28 @@ Page({
 
   speakLetter: function (e) {
     var text = e.currentTarget.dataset.text;
+    this.speakText(text);
+  },
+
+  speakText: function (text) {
     try {
-      var plugin = requirePlugin('WechatSI');
-      if (plugin && plugin.textToSpeech) {
-        plugin.textToSpeech({
-          lang: 'en_US',
-          tts: true,
-          content: text,
-          success: function (res) {
-            if (res && res.filename) {
-              var audio = wx.createInnerAudioContext();
-              audio.src = res.filename;
-              audio.play();
-            }
-          },
-          fail: function (err) {
-            console.error('TTS失败:', err);
-            wx.showToast({ title: text, icon: 'none', duration: 1500 });
-          }
-        });
-      } else {
-        wx.showToast({ title: text, icon: 'none', duration: 1500 });
+      if (typeof speechSynthesis !== 'undefined' && typeof SpeechSynthesisUtterance !== 'undefined') {
+        speechSynthesis.cancel();
+        var utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US';
+        utterance.rate = 0.9;
+        utterance.pitch = 1.0;
+        utterance.volume = 1.0;
+        utterance.onerror = function () {
+          wx.showToast({ title: text, icon: 'none', duration: 1500 });
+        };
+        speechSynthesis.speak(utterance);
+        return;
       }
-    } catch (err) {
-      console.error('插件加载失败:', err);
-      wx.showToast({ title: text, icon: 'none', duration: 1500 });
+    } catch (e) {
+      console.warn('Web Speech API 不可用:', e);
     }
+    wx.showToast({ title: text, icon: 'none', duration: 1500 });
   },
 
   // 练习相关

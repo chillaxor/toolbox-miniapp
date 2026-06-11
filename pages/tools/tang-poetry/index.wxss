@@ -1,0 +1,452 @@
+.tool-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20rpx 0;
+  margin-bottom: 16rpx;
+}
+
+.tool-header-title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.tool-header-fav {
+  font-size: 44rpx;
+  padding: 8rpx;
+}
+
+.card-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--color-primary);
+  margin-bottom: 20rpx;
+  display: block;
+}
+
+.tip-text {
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1.8;
+  display: block;
+}
+
+.back-bar {
+  margin-bottom: 20rpx;
+}
+
+.back-bar text {
+  font-size: 28rpx;
+  color: #E74C3C;
+}
+
+.category-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+
+.category-item {
+  width: calc(33.33% - 11rpx);
+  padding: 24rpx 16rpx;
+  border-radius: 16rpx;
+  background-color: #f8f8f8;
+  text-align: center;
+}
+
+.category-item:active {
+  background-color: #E74C3C;
+}
+
+.category-item:active .category-name,
+.category-item:active .category-count {
+  color: #fff;
+}
+
+.category-name {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #2C3E50;
+  display: block;
+}
+
+.category-count {
+  font-size: 22rpx;
+  color: #999;
+  margin-top: 8rpx;
+  display: block;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 16rpx;
+  margin-top: 24rpx;
+}
+
+.action-buttons .btn-primary,
+.action-buttons .btn-secondary {
+  flex: 1;
+  height: 80rpx;
+  line-height: 80rpx;
+  font-size: 28rpx;
+  border-radius: 40rpx;
+}
+
+.btn-primary {
+  background-color: #E74C3C;
+  color: #fff;
+  border: none;
+}
+
+.btn-primary::after {
+  border: none;
+}
+
+.btn-secondary {
+  background-color: #f0f0f0;
+  color: #666;
+  border: none;
+}
+
+.btn-secondary::after {
+  border: none;
+}
+
+.mode-list {
+  margin-top: 12rpx;
+}
+
+.mode-item {
+  display: flex;
+  align-items: center;
+  padding: 24rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.mode-item:last-child {
+  border-bottom: none;
+}
+
+.mode-icon {
+  font-size: 44rpx;
+  margin-right: 20rpx;
+}
+
+.mode-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+}
+
+.mode-name {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #2C3E50;
+}
+
+.mode-desc {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.poem-list {
+  margin-top: 12rpx;
+}
+
+.poem-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.poem-item:last-child {
+  border-bottom: none;
+}
+
+.poem-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+}
+
+.poem-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #2C3E50;
+}
+
+.poem-author {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.poem-arrow {
+  font-size: 36rpx;
+  color: #ccc;
+}
+
+.poem-card {
+  padding: 40rpx;
+  background: linear-gradient(135deg, #FFF8E1 0%, #FFECB3 100%);
+  border-radius: 20rpx;
+  margin-bottom: 24rpx;
+}
+
+.appreciation-card {
+  background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+}
+
+.poem-header {
+  text-align: center;
+  margin-bottom: 40rpx;
+  padding-bottom: 24rpx;
+  border-bottom: 1rpx solid rgba(0,0,0,0.08);
+}
+
+.poem-card-title {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: #5D4037;
+  display: block;
+}
+
+.poem-card-author {
+  font-size: 26rpx;
+  color: #8D6E63;
+  margin-top: 8rpx;
+  display: block;
+}
+
+.poem-card-category {
+  font-size: 22rpx;
+  color: #E74C3C;
+  margin-top: 8rpx;
+  display: block;
+  background-color: rgba(231,76,60,0.1);
+  padding: 4rpx 16rpx;
+  border-radius: 20rpx;
+  display: inline-block;
+}
+
+.poem-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+  margin-bottom: 32rpx;
+}
+
+.poem-line {
+  text-align: center;
+  padding: 16rpx 0;
+  border-radius: 12rpx;
+}
+
+.poem-line:active {
+  background-color: rgba(0,0,0,0.04);
+}
+
+.line-text {
+  font-size: 34rpx;
+  font-weight: 500;
+  color: #3E2723;
+  letter-spacing: 4rpx;
+}
+
+.line-blank {
+  font-size: 34rpx;
+  color: #BCAAA4;
+  letter-spacing: 4rpx;
+}
+
+.detail-actions,
+.recite-controls {
+  display: flex;
+  gap: 16rpx;
+  flex-wrap: wrap;
+}
+
+.ctrl-btn {
+  flex: 1;
+  min-width: 180rpx;
+  height: 80rpx;
+  line-height: 80rpx;
+  background-color: #5D4037;
+  color: #fff;
+  font-size: 28rpx;
+  border-radius: 40rpx;
+  border: none;
+}
+
+.ctrl-btn::after {
+  border: none;
+}
+
+.fill-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+  margin-bottom: 16rpx;
+}
+
+.fill-line {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.fill-blank-text {
+  font-size: 30rpx;
+  color: #5D4037;
+  text-align: center;
+  letter-spacing: 2rpx;
+}
+
+.fill-input {
+  width: 100%;
+  height: 80rpx;
+  line-height: 80rpx;
+  padding: 0 24rpx;
+  border: 2rpx solid #D7CCC8;
+  border-radius: 12rpx;
+  font-size: 30rpx;
+  text-align: center;
+  background-color: #fff;
+  box-sizing: border-box;
+}
+
+.appreciation-section {
+  margin-top: 32rpx;
+  padding-top: 24rpx;
+  border-top: 1rpx solid rgba(0,0,0,0.08);
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #1565C0;
+  margin-bottom: 16rpx;
+  display: block;
+}
+
+.appreciation-text {
+  font-size: 28rpx;
+  color: #37474F;
+  line-height: 1.8;
+  text-align: justify;
+  display: block;
+}
+
+.poem-meta {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 32rpx;
+  padding-top: 24rpx;
+  border-top: 1rpx solid rgba(0,0,0,0.08);
+}
+
+.meta-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.meta-label {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.meta-value {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #2C3E50;
+}
+
+.result-emoji {
+  text-align: center;
+  font-size: 80rpx;
+  margin-bottom: 16rpx;
+}
+
+.result-title {
+  text-align: center;
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #2C3E50;
+  margin-bottom: 32rpx;
+  display: block;
+}
+
+.result-stats {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 32rpx;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.stat-value {
+  font-size: 52rpx;
+  font-weight: 700;
+  color: #2C3E50;
+}
+
+.stat-label {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.result-detail {
+  padding-top: 24rpx;
+  border-top: 1rpx solid #ECEFF1;
+}
+
+.detail-row {
+  display: flex;
+  align-items: center;
+  padding: 12rpx 0;
+  gap: 16rpx;
+}
+
+.detail-label {
+  font-size: 26rpx;
+  color: #999;
+  width: 140rpx;
+}
+
+.detail-bar-wrap {
+  flex: 1;
+  height: 16rpx;
+  background-color: #f0f0f0;
+  border-radius: 8rpx;
+  overflow: hidden;
+}
+
+.detail-bar {
+  height: 100%;
+  border-radius: 8rpx;
+  transition: width 0.5s;
+}
+
+.detail-value {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #2C3E50;
+  min-width: 80rpx;
+  text-align: right;
+}
+
+.btn-group {
+  margin-top: 32rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}

@@ -1,0 +1,107 @@
+<view class="container">
+  <!-- 顶部统计 -->
+  <view class="stats-bar">
+    <view class="stat-item">
+      <text class="stat-num">{{totalPhotos}}</text>
+      <text class="stat-label">总拍摄</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-num">{{totalDays}}</text>
+      <text class="stat-label">累计天数</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-num">{{streakDays}}</text>
+      <text class="stat-label">连续打卡</text>
+    </view>
+  </view>
+
+  <!-- 拍照按钮 -->
+  <view class="shoot-area" bindtap="onTakePhoto">
+    <view class="shoot-ring">
+      <view class="shoot-btn">
+        <text class="shoot-icon">📷</text>
+        <text class="shoot-text">{{todayPhoto ? '今日已拍·换一张' : '今日拍摄'}}</text>
+      </view>
+    </view>
+    <text class="today-date">{{todayStr}}</text>
+    <text class="shoot-tip" wx:if="{{todayPhoto}}">点击可重新拍摄</text>
+  </view>
+
+  <!-- 视图切换 -->
+  <view class="view-tabs">
+    <view class="view-tab {{viewMode==='timeline'?'active':''}}" bindtap="onSwitchView" data-mode="timeline">时光轴</view>
+    <view class="view-tab {{viewMode==='calendar'?'active':''}}" bindtap="onSwitchView" data-mode="calendar">日历</view>
+  </view>
+
+  <!-- 时光轴视图 -->
+  <scroll-view class="photo-list" scroll-y="true" enhanced="{{true}}" wx:if="{{viewMode==='timeline'}}">
+    <view wx:if="{{timelineData.length===0}}" class="empty-tip">
+      <text class="empty-icon">📭</text>
+      <text class="empty-text">还没有照片，点击上方开始拍照吧</text>
+    </view>
+    <view wx:for="{{timelineData}}" wx:key="date" class="timeline-group">
+      <view class="timeline-date">
+        <view class="timeline-dot"></view>
+        <text class="timeline-date-text">{{item.dateStr}}</text>
+      </view>
+      <view class="timeline-photos">
+        <view wx:for="{{item.photos}}" wx:for-item="photo" wx:key="timestamp" class="photo-card" bindtap="onPreview" data-photos="{{item.photos}}" data-index="{{index}}">
+          <image class="photo-img" src="{{photo.tempFilePath || photo.path}}" mode="aspectFill" />
+          <view class="photo-info">
+            <text class="photo-time">{{photo.timeStr}}</text>
+            <text class="photo-note" wx:if="{{photo.note}}">{{photo.note}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 日历视图 -->
+  <scroll-view class="calendar-view" scroll-y="true" enhanced="{{true}}" wx:if="{{viewMode==='calendar'}}">
+    <!-- 月份切换 -->
+    <view class="month-nav">
+      <view class="nav-btn" bindtap="onPrevMonth">◀</view>
+      <text class="month-title">{{calYear}}年{{calMonth}}月</text>
+      <view class="nav-btn" bindtap="onNextMonth">▶</view>
+    </view>
+    <!-- 星期头部 -->
+    <view class="week-header">
+      <text wx:for="{{weekDays}}" wx:key="*this" class="week-day">{{item}}</text>
+    </view>
+    <!-- 日历格子 -->
+    <view class="cal-grid">
+      <view wx:for="{{calDays}}" wx:key="day" class="cal-cell {{item.isToday?'today':''}} {{!item.inMonth?'other-month':''}}" bindtap="onCalDayTap" data-date="{{item.dateStr}}">
+        <text class="cal-day-num">{{item.day}}</text>
+        <image wx:if="{{item.photo}}" class="cal-day-thumb" src="{{item.photo}}" mode="aspectFill" />
+        <view wx:if="{{item.photo}}" class="cal-day-dot"></view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 备注弹窗 -->
+  <view class="note-mask" wx:if="{{showNote}}" bindtap="onCloseNote">
+    <view class="note-card" catchtap="">
+      <text class="note-title">添加备注</text>
+      <textarea class="note-input" placeholder="记录今天的点滴..." value="{{noteText}}" bindinput="onNoteInput" maxlength="100" />
+      <view class="note-actions">
+        <view class="note-btn cancel" bindtap="onCloseNote">跳过</view>
+        <view class="note-btn confirm" bindtap="onSaveNote">保存</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 照片预览 -->
+  <view class="preview-mask" wx:if="{{showPreview}}" bindtap="onClosePreview">
+    <swiper class="preview-swiper" current="{{previewIndex}}" bindchange="onPreviewChange">
+      <swiper-item wx:for="{{previewPhotos}}" wx:key="timestamp">
+        <image class="preview-img" src="{{item.tempFilePath || item.path}}" mode="aspectFit" />
+      </swiper-item>
+    </swiper>
+    <view class="preview-info">
+      <text class="preview-date">{{previewPhotos[previewIndex].dateStr}}</text>
+      <text class="preview-time">{{previewPhotos[previewIndex].timeStr}}</text>
+    </view>
+    <view class="preview-close">✕ 关闭</view>
+    <view class="preview-delete" catchtap="onDeletePhoto">🗑️ 删除</view>
+  </view>
+</view>

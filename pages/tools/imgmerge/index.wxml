@@ -1,0 +1,96 @@
+<view class="container">
+  <!-- 操作按钮 -->
+  <view class="action-bar">
+    <view class="btn-pick" bindtap="pickImages">
+      <text class="btn-icon">🖼️</text>
+      <text class="btn-text">选择图片（{{images.length}}/9）</text>
+    </view>
+    <view class="btn-clear" wx:if="{{images.length > 0}}" bindtap="clearImages">
+      <text class="btn-icon">🗑️</text>
+    </view>
+  </view>
+
+  <!-- 拼接模式 -->
+  <view class="section" wx:if="{{images.length > 0}}">
+    <view class="section-title">拼接方向</view>
+    <view class="mode-row">
+      <view class="mode-item {{direction === 'vertical' ? 'active' : ''}}" bindtap="setDirection" data-dir="vertical">
+        <view class="mode-icon vertical-icon">
+          <view class="mini-rect"></view>
+          <view class="mini-rect"></view>
+          <view class="mini-rect"></view>
+        </view>
+        <text>上下拼接</text>
+      </view>
+      <view class="mode-item {{direction === 'horizontal' ? 'active' : ''}}" bindtap="setDirection" data-dir="horizontal">
+        <view class="mode-icon horizontal-icon">
+          <view class="mini-rect"></view>
+          <view class="mini-rect"></view>
+          <view class="mini-rect"></view>
+        </view>
+        <text>左右拼接</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 间距设置 -->
+  <view class="section" wx:if="{{images.length > 1}}">
+    <view class="section-title">图片间距：{{gap}}px</view>
+    <slider min="0" max="30" value="{{gap}}" step="1" activeColor="#333" bindchange="onGapChange" />
+  </view>
+
+  <!-- 图片列表 -->
+  <view class="section" wx:if="{{images.length > 0}}">
+    <view class="section-title">已选图片（长按拖拽排序）</view>
+    <view class="image-list {{direction}}">
+      <view class="image-item" wx:for="{{images}}" wx:key="index"
+        bindtap="previewImage" data-index="{{index}}"
+        bindlongpress="onDragStart" data-idx="{{index}}"
+        style="opacity: {{dragIndex === index ? 0.4 : 1}}">
+        <image src="{{item.tempFilePath}}" mode="aspectFill" class="thumb" />
+        <view class="img-index">{{index + 1}}</view>
+        <view class="img-delete" catchtap="deleteImage" data-index="{{index}}">✕</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 拖拽排序层 -->
+  <view class="drag-overlay" wx:if="{{dragIndex >= 0}}" catchtouchmove="onDragMove" catchtouchend="onDragEnd">
+    <view class="drag-hint">拖拽中，点击空白处取消</view>
+    <view class="drag-targets">
+      <view class="drag-target" wx:for="{{images}}" wx:key="index"
+        catchtap="onDragTo" data-target="{{index}}">
+        <text>{{index + 1}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 预览区 -->
+  <view class="section" wx:if="{{images.length > 1}}">
+    <view class="section-title">预览</view>
+    <scroll-view scroll-x="{{direction === 'horizontal'}}" scroll-y="{{direction === 'vertical'}}"
+      class="preview-scroll" style="{{direction === 'horizontal' ? 'max-height:400rpx;' : 'max-height:600rpx;'}}">
+      <view class="preview-wrapper {{direction}}" style="gap: {{gap}}px;">
+        <image wx:for="{{images}}" wx:key="index" src="{{item.tempFilePath}}"
+          mode="{{direction === 'horizontal' ? 'heightFix' : 'widthFix'}}"
+          class="preview-img {{direction}}" />
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty" wx:if="{{images.length === 0}}">
+    <text class="empty-icon">🖼️</text>
+    <text class="empty-title">图片拼接</text>
+    <text class="empty-desc">从相册选择2-9张图片，上下或左右拼接成一张长图</text>
+    <view class="empty-btn" bindtap="pickImages">选择图片</view>
+  </view>
+
+  <!-- 保存按钮 -->
+  <view class="bottom-bar" wx:if="{{images.length > 1}}">
+    <canvas type="2d" id="mergeCanvas" class="merge-canvas"></canvas>
+    <view class="save-btn" bindtap="mergeAndSave">
+      <text>💾 合并并保存到相册</text>
+    </view>
+  </view>
+</view>

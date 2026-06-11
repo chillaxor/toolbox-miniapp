@@ -1,0 +1,313 @@
+.container {
+  padding: 24rpx 32rpx 200rpx;
+  min-height: 100vh;
+  background: #f5f5f5;
+}
+
+/* 操作按钮 */
+.action-bar {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-bottom: 24rpx;
+}
+
+.btn-pick {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
+  background: #333;
+  color: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx 0;
+  font-size: 30rpx;
+  font-weight: 500;
+}
+
+.btn-pick .btn-icon {
+  font-size: 36rpx;
+}
+
+.btn-clear {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 88rpx;
+  height: 88rpx;
+  background: #fff;
+  border-radius: 16rpx;
+  border: 2rpx solid #eee;
+}
+
+.btn-clear .btn-icon {
+  font-size: 36rpx;
+}
+
+/* 区块 */
+.section {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 20rpx;
+}
+
+.section-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 16rpx;
+}
+
+/* 拼接模式 */
+.mode-row {
+  display: flex;
+  gap: 16rpx;
+}
+
+.mode-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10rpx;
+  padding: 20rpx 0;
+  border-radius: 12rpx;
+  border: 2rpx solid #e0e0e0;
+  font-size: 26rpx;
+  color: #666;
+  transition: all 0.2s;
+}
+
+.mode-item.active {
+  border-color: #333;
+  background: #f8f8f8;
+  color: #333;
+  font-weight: 600;
+}
+
+.mode-icon {
+  display: flex;
+  gap: 4rpx;
+  align-items: center;
+}
+
+.vertical-icon {
+  flex-direction: column;
+}
+
+.horizontal-icon {
+  flex-direction: row;
+}
+
+.mini-rect {
+  width: 24rpx;
+  height: 18rpx;
+  background: #bbb;
+  border-radius: 4rpx;
+}
+
+.mode-item.active .mini-rect {
+  background: #333;
+}
+
+/* 图片列表 */
+.image-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.image-list.horizontal {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+}
+
+.image-item {
+  position: relative;
+  width: calc((100% - 24rpx) / 3);
+  aspect-ratio: 1;
+  border-radius: 10rpx;
+  overflow: hidden;
+}
+
+.image-list.horizontal .image-item {
+  width: 160rpx;
+  flex-shrink: 0;
+}
+
+.thumb {
+  width: 100%;
+  height: 100%;
+}
+
+.img-index {
+  position: absolute;
+  top: 6rpx;
+  left: 6rpx;
+  width: 36rpx;
+  height: 36rpx;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  font-size: 20rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.img-delete {
+  position: absolute;
+  top: 6rpx;
+  right: 6rpx;
+  width: 36rpx;
+  height: 36rpx;
+  background: rgba(255, 0, 0, 0.7);
+  color: #fff;
+  font-size: 20rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 预览 */
+.preview-scroll {
+  background: #fafafa;
+  border-radius: 12rpx;
+  border: 2rpx dashed #ddd;
+  padding: 12rpx;
+}
+
+.preview-wrapper {
+  display: flex;
+}
+
+.preview-wrapper.vertical {
+  flex-direction: column;
+  align-items: center;
+}
+
+.preview-wrapper.horizontal {
+  flex-direction: row;
+  align-items: flex-start;
+  width: max-content;
+}
+
+.preview-img.vertical {
+  width: 100%;
+}
+
+.preview-img.horizontal {
+  height: 300rpx;
+}
+
+/* 拖拽层 */
+.drag-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.drag-hint {
+  color: #fff;
+  font-size: 28rpx;
+  margin-bottom: 40rpx;
+}
+
+.drag-targets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20rpx;
+  justify-content: center;
+  padding: 0 40rpx;
+}
+
+.drag-target {
+  width: 80rpx;
+  height: 80rpx;
+  background: #fff;
+  border-radius: 12rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #333;
+}
+
+/* 空状态 */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120rpx 40rpx;
+}
+
+.empty-icon {
+  font-size: 100rpx;
+  margin-bottom: 24rpx;
+}
+
+.empty-title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 12rpx;
+}
+
+.empty-desc {
+  font-size: 26rpx;
+  color: #999;
+  text-align: center;
+  margin-bottom: 40rpx;
+}
+
+.empty-btn {
+  background: #333;
+  color: #fff;
+  padding: 20rpx 60rpx;
+  border-radius: 40rpx;
+  font-size: 28rpx;
+}
+
+/* 底部按钮 */
+.bottom-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #fff;
+  padding: 20rpx 32rpx;
+  padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
+  box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.06);
+  z-index: 100;
+}
+
+.merge-canvas {
+  position: fixed;
+  left: -9999px;
+  top: -9999px;
+  width: 10px;
+  height: 10px;
+}
+
+.save-btn {
+  background: #333;
+  color: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx 0;
+  text-align: center;
+  font-size: 30rpx;
+  font-weight: 600;
+}

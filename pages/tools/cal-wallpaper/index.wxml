@@ -1,0 +1,161 @@
+<view class="container">
+  <!-- 标题 -->
+  <view class="header">
+    <text class="title">日历壁纸</text>
+    <text class="subtitle">选图片 + 当月日历 = 专属壁纸</text>
+  </view>
+
+  <!-- 月份切换 -->
+  <view class="month-bar">
+    <view class="month-btn" bindtap="prevMonth">
+      <text class="month-arrow">◀</text>
+    </view>
+    <text class="month-text">{{year}}年{{month}}月</text>
+    <view class="month-btn" bindtap="nextMonth">
+      <text class="month-arrow">▶</text>
+    </view>
+  </view>
+
+  <!-- 壁纸预览 -->
+  <view class="preview-section">
+    <view class="preview-frame" style="background-color: {{bgColor}}">
+      <image wx:if="{{bgImage}}" src="{{bgImage}}" mode="aspectFill" class="preview-bg-img" />
+      <view class="preview-overlay" style="opacity: {{overlayOpacity}}"></view>
+      <view class="preview-calendar">
+        <!-- 月份标题 -->
+        <view class="cal-header">
+          <text class="cal-month">{{monthNames[month-1]}}</text>
+          <text class="cal-year">{{year}}</text>
+        </view>
+        <!-- 星期行 -->
+        <view class="cal-weekdays">
+          <text wx:for="{{weekdays}}" wx:key="*this" class="cal-wd {{index >= 5 ? 'wd-weekend' : ''}}">{{item}}</text>
+        </view>
+        <!-- 日期网格 -->
+        <view wx:for="{{grid}}" wx:key="index" class="cal-row">
+          <text
+            wx:for="{{item}}"
+            wx:for-item="cell"
+            wx:key="dateStr"
+            class="cal-day {{!cell.isCurrentMonth ? 'day-other' : ''}} {{cell.isToday ? 'day-today' : ''}} {{cell.isWeekend ? 'day-weekend' : ''}}"
+          >{{cell.date}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 背景选择 -->
+  <view class="section">
+    <view class="section-title">背景图片</view>
+    <view class="bg-options">
+      <view class="bg-option {{!bgImage ? 'bg-active' : ''}}" bindtap="chooseNoImage">
+        <view class="bg-color-preview" style="background-color: {{bgColor}}"></view>
+        <text class="bg-label">纯色</text>
+      </view>
+      <view class="bg-option {{bgImage ? 'bg-active' : ''}}" bindtap="chooseImage">
+        <view class="bg-add-icon">
+          <text class="add-text">{{bgImage ? '更换' : '+'}}</text>
+        </view>
+        <text class="bg-label">图片</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 纯色选择（无背景图片时） -->
+  <view class="section" wx:if="{{!bgImage}}">
+    <view class="section-title">背景颜色</view>
+    <view class="color-grid">
+      <view
+        wx:for="{{bgColors}}"
+        wx:key="*this"
+        class="color-item {{bgColor === item ? 'color-active' : ''}}"
+        style="background-color: {{item}}"
+        data-color="{{item}}"
+        bindtap="selectBgColor"
+      ></view>
+    </view>
+  </view>
+
+  <!-- 遮罩透明度（有背景图片时） -->
+  <view class="section" wx:if="{{bgImage}}">
+    <view class="section-title">遮罩浓度</view>
+    <view class="slider-row">
+      <text class="slider-label">浅</text>
+      <slider
+        min="0"
+        max="80"
+        step="5"
+        value="{{overlayOpacity * 100}}"
+        activeColor="#333"
+        bindchanging="onOverlayChange"
+        bindchange="onOverlayChange"
+        class="opacity-slider"
+      />
+      <text class="slider-label">深</text>
+    </view>
+  </view>
+
+  <!-- 日历文字颜色 -->
+  <view class="section">
+    <view class="section-title">日历颜色</view>
+    <view class="cal-colors">
+      <view
+        wx:for="{{calColorOptions}}"
+        wx:key="color"
+        class="cal-color-item {{calColor === item.color ? 'cal-color-active' : ''}}"
+        data-color="{{item.color}}"
+        bindtap="selectCalColor"
+      >
+        <view class="cal-color-circle" style="background-color: {{item.color}}"></view>
+        <text class="cal-color-name">{{item.name}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 日历位置 -->
+  <view class="section">
+    <view class="section-title">日历位置</view>
+    <view class="pos-options">
+      <view
+        wx:for="{{positionOptions}}"
+        wx:key="key"
+        class="pos-btn {{position === item.key ? 'pos-active' : ''}}"
+        data-pos="{{item.key}}"
+        bindtap="selectPosition"
+      >
+        <text>{{item.label}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 生成按钮 -->
+  <view class="action-section">
+    <button
+      class="save-btn {{generating ? 'btn-disabled' : ''}}"
+      bindtap="generateWallpaper"
+      disabled="{{generating}}"
+    >
+      <text class="btn-text">{{generating ? '生成中...' : '生成并保存壁纸'}}</text>
+    </button>
+  </view>
+
+  <!-- 提示 -->
+  <view class="tip-card">
+    <text class="tip-icon">💡</text>
+    <view class="tip-content">
+      <text class="tip-title">使用提示</text>
+      <text class="tip-text">• 可选择纯色背景或自定义图片</text>
+      <text class="tip-text">• 有图片时可调节遮罩浓度让日历更清晰</text>
+      <text class="tip-text">• 生成壁纸分辨率为 750×1334</text>
+      <text class="tip-text">• 首次保存需授权相册权限</text>
+    </view>
+  </view>
+
+  <!-- 隐藏 Canvas -->
+  <canvas
+    type="2d"
+    id="wallpaperCanvas"
+    canvas-id="wallpaperCanvas"
+    class="offscreen-canvas"
+  ></canvas>
+</view>

@@ -1,0 +1,140 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">数学公式大全</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <!-- 搜索栏 -->
+  <view class="search-bar">
+    <input class="search-input" placeholder="搜索公式名称/关键词" value="{{searchKey}}"
+           bindinput="onSearchInput" bindconfirm="onSearchInput" />
+    <text wx:if="{{searchKey}}" class="search-clear" bindtap="onSearchClear">✕</text>
+  </view>
+
+  <!-- 搜索结果 -->
+  <view wx:if="{{isSearching}}">
+    <view class="card">
+      <text class="card-title">🔍 搜索结果</text>
+      <view wx:if="{{searchResults.length === 0}}" class="empty-tip">
+        <text class="tip-text">没有找到相关公式</text>
+      </view>
+      <view wx:else class="formula-list">
+        <view class="formula-item" wx:for="{{searchResults}}" wx:key="id"
+              data-index="{{index}}" bindtap="onSearchResultTap">
+          <view class="formula-item-info">
+            <text class="formula-item-name">{{item.name}}</text>
+            <text class="formula-item-cat">{{item.level}} · {{item.category}}</text>
+          </view>
+          <text class="formula-item-formula">{{item.formula}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 首页：年级段选择 + 分类 -->
+  <view wx:if="{{page === 'home' && !isSearching}}">
+    <!-- 年级段切换 -->
+    <view class="level-tabs">
+      <view class="level-tab {{currentLevel === item ? 'level-tab-active' : ''}}"
+            wx:for="{{levels}}" wx:key="*this"
+            data-level="{{item}}" bindtap="onLevelTap">
+        <text class="level-tab-text">{{item}}</text>
+      </view>
+    </view>
+
+    <!-- 分类列表 -->
+    <view class="card">
+      <text class="card-title">📚 {{currentLevel}}数学公式分类</text>
+      <view class="category-grid">
+        <view class="category-item" wx:for="{{categories}}" wx:key="*this"
+              data-category="{{item}}" bindtap="onCategoryTap">
+          <text class="category-name">{{item}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 公式预览 -->
+    <view class="card" style="margin-top: 24rpx;">
+      <text class="card-title">💡 {{currentLevel}}常用公式预览</text>
+      <view class="formula-list">
+        <view class="formula-item" wx:for="{{formulaList}}" wx:key="id"
+              wx:if="{{index < 6}}" data-index="{{index}}" bindtap="onFormulaTap">
+          <view class="formula-item-info">
+            <text class="formula-item-name">{{item.name}}</text>
+            <text class="formula-item-cat">{{item.category}}</text>
+          </view>
+          <text class="formula-item-formula">{{item.formula}}</text>
+        </view>
+      </view>
+      <view class="view-more" bindtap="onCategoryTap" data-category="{{categories[0]}}">
+        <text>查看更多 →</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 公式列表 -->
+  <view wx:if="{{page === 'list' && !isSearching}}">
+    <view class="back-bar" bindtap="onBackHome">
+      <text>← 返回分类</text>
+    </view>
+
+    <view class="level-tabs" style="margin-bottom: 16rpx;">
+      <view class="level-tab {{currentLevel === item ? 'level-tab-active' : ''}}"
+            wx:for="{{levels}}" wx:key="*this"
+            data-level="{{item}}" bindtap="onLevelTap">
+        <text class="level-tab-text">{{item}}</text>
+      </view>
+    </view>
+
+    <view class="card">
+      <text class="card-title">📋 {{currentCategory}} 公式</text>
+      <text class="tip-text">共{{formulaList.length}}个公式</text>
+      <view class="formula-list">
+        <view class="formula-item" wx:for="{{formulaList}}" wx:key="id"
+              data-index="{{index}}" bindtap="onFormulaTap">
+          <view class="formula-item-info">
+            <text class="formula-item-name">{{item.name}}</text>
+          </view>
+          <text class="formula-item-formula">{{item.formula}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 公式详情 -->
+  <view wx:if="{{page === 'detail' && !isSearching}}">
+    <view class="back-bar" bindtap="onBackList">
+      <text>← 返回列表</text>
+    </view>
+
+    <view class="formula-detail-card">
+      <view class="detail-header">
+        <text class="detail-name">{{currentFormula.name}}</text>
+        <view class="detail-tags">
+          <text class="detail-tag tag-level">{{currentFormula.level}}</text>
+          <text class="detail-tag tag-cat">{{currentFormula.category}}</text>
+        </view>
+      </view>
+
+      <view class="formula-display">
+        <text class="formula-main">{{currentFormula.formula}}</text>
+      </view>
+
+      <view class="detail-section">
+        <text class="detail-section-title">📝 说明</text>
+        <text class="detail-section-text">{{currentFormula.note}}</text>
+      </view>
+
+      <view class="detail-section" wx:if="{{currentFormula.example}}">
+        <text class="detail-section-title">📐 示例</text>
+        <view class="example-box">
+          <text class="example-text">{{currentFormula.example}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="detail-nav">
+      <button class="nav-btn" bindtap="onBackList">返回列表</button>
+    </view>
+  </view>
+</view>

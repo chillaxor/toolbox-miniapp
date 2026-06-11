@@ -1,0 +1,122 @@
+<view class="container">
+  <!-- 顶部标签 -->
+  <view class="tab-bar">
+    <view class="tab-item {{currentTab === 'timeline' ? 'active' : ''}}" bindtap="switchTab" data-tab="timeline">📜 时间轴</view>
+    <view class="tab-item {{currentTab === 'sort' ? 'active' : ''}}" bindtap="switchTab" data-tab="sort">🎯 排序游戏</view>
+    <view class="tab-item {{currentTab === 'quiz' ? 'active' : ''}}" bindtap="switchTab" data-tab="quiz">❓ 历史问答</view>
+  </view>
+
+  <!-- 时间轴模式 -->
+  <view wx:if="{{currentTab === 'timeline'}}" class="timeline-container">
+    <view class="timeline-line"></view>
+    <view wx:for="{{dynasties}}" wx:key="name" class="timeline-item {{expandedIndex === index ? 'expanded' : ''}}" bindtap="toggleExpand" data-index="{{index}}">
+      <view class="timeline-dot {{expandedIndex === index ? 'active' : ''}}"></view>
+      <view class="dynasty-card">
+        <view class="dynasty-header">
+          <text class="dynasty-name">{{item.name}}</text>
+          <text class="dynasty-period">{{item.period}}</text>
+        </view>
+        <view class="dynasty-summary">
+          <text class="founder">开国：{{item.founder}}</text>
+          <text class="capital">都城：{{item.capital}}</text>
+        </view>
+        <view wx:if="{{expandedIndex === index}}" class="dynasty-detail">
+          <view wx:if="{{item.duration}}" class="detail-row">
+            <text class="detail-label">时长：</text>
+            <text class="detail-value">{{item.duration}}</text>
+          </view>
+          <view class="detail-section">
+            <text class="section-title">📜 重大事件</text>
+            <view class="tag-list">
+              <text wx:for="{{item.events}}" wx:key="*this" wx:for-item="evt" class="tag">{{evt}}</text>
+            </view>
+          </view>
+          <view class="detail-section">
+            <text class="section-title">👑 代表人物</text>
+            <view class="tag-list">
+              <text wx:for="{{item.figures}}" wx:key="*this" wx:for-item="fig" class="tag figure">{{fig}}</text>
+            </view>
+          </view>
+          <view class="detail-section">
+            <text class="section-title">🏛️ 文化成就</text>
+            <view class="tag-list">
+              <text wx:for="{{item.culture}}" wx:key="*this" wx:for-item="cul" class="tag culture">{{cul}}</text>
+            </view>
+          </view>
+        </view>
+        <view class="expand-hint">{{expandedIndex === index ? '收起 ▲' : '展开详情 ▼'}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 排序游戏模式 -->
+  <view wx:if="{{currentTab === 'sort'}}" class="sort-container">
+    <view wx:if="{{!sortStarted}}" class="game-intro">
+      <text class="intro-icon">🎯</text>
+      <text class="intro-title">朝代排序挑战</text>
+      <text class="intro-desc">按历史时间顺序排列朝代</text>
+      <button class="start-btn" bindtap="startSort">开始挑战</button>
+    </view>
+    <view wx:if="{{sortStarted}}" class="sort-game">
+      <view class="sort-progress">按时间顺序点击选择（从早到晚）</view>
+      <view class="sort-items">
+        <view wx:for="{{sortItems}}" wx:key="name" class="sort-item {{item.selected ? 'selected' : ''}}" bindtap="selectSortItem" data-index="{{index}}">
+          <text class="sort-index">{{item.selected ? '✓' : (index + 1)}}</text>
+          <text class="sort-name">{{item.name}}</text>
+          <text class="sort-period">{{item.period}}</text>
+        </view>
+      </view>
+      <view wx:if="{{sortFinished}}" class="sort-result {{sortScore === 100 ? 'correct' : 'wrong'}}">
+        <text class="result-text">{{sortResult}}</text>
+        <text class="result-score">得分：{{sortScore}}</text>
+      </view>
+      <view class="sort-actions">
+        <button class="retry-btn" bindtap="retrySort">重新挑战</button>
+        <button class="close-btn" bindtap="closeSort">返回</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 问答模式 -->
+  <view wx:if="{{currentTab === 'quiz'}}" class="quiz-container">
+    <view wx:if="{{!quizStarted}}" class="game-intro">
+      <text class="intro-icon">❓</text>
+      <text class="intro-title">历史知识问答</text>
+      <text class="intro-desc">10道历史选择题，测试你的历史知识</text>
+      <button class="start-btn" bindtap="startQuiz">开始答题</button>
+    </view>
+    <view wx:if="{{quizStarted}}" class="quiz-game">
+      <view class="quiz-header">
+        <text class="quiz-progress">第 {{quizIndex + 1}} / {{quizTotal}} 题</text>
+        <text class="quiz-score">得分：{{quizScore}}</text>
+      </view>
+      <view class="quiz-question">
+        <text class="question-text">{{quizQuestions[quizIndex].question}}</text>
+      </view>
+      <view class="quiz-options">
+        <view wx:for="{{quizQuestions[quizIndex].options}}" wx:key="*this" class="quiz-option {{quizShowResult && item === quizQuestions[quizIndex].answer ? 'correct' : ''}} {{quizShowResult && item === quizSelected && !quizIsCorrect ? 'wrong' : ''}}" bindtap="selectQuizOption" data-option="{{item}}">
+          <text class="option-letter">{{['A','B','C','D'][index]}}</text>
+          <text class="option-text">{{item}}</text>
+        </view>
+      </view>
+      <view wx:if="{{quizShowResult}}" class="quiz-feedback">
+        <text class="feedback-text {{quizIsCorrect ? 'correct' : 'wrong'}}">{{quizIsCorrect ? '✓ 回答正确！' : '✗ 回答错误'}}</text>
+        <button class="next-btn" bindtap="{{quizIndex < quizTotal - 1 ? 'nextQuiz' : 'retryQuiz'}}">
+          {{quizIndex < quizTotal - 1 ? '下一题' : '查看结果'}}
+        </button>
+      </view>
+      <view wx:if="{{quizFinished}}" class="quiz-result">
+        <text class="result-title">答题完成！</text>
+        <text class="result-score">最终得分：{{quizScore}}分</text>
+        <text class="result-detail">答对 {{quizCorrect}} / {{quizTotal}} 题</text>
+        <button class="retry-btn" bindtap="retryQuiz">重新答题</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 收藏按钮 -->
+  <view class="favorite-btn" bindtap="toggleFavorite">
+    <text class="fav-icon">{{isFavorite ? '❤️' : '🤍'}}</text>
+    <text class="fav-text">{{isFavorite ? '已收藏' : '收藏'}}</text>
+  </view>
+</view>

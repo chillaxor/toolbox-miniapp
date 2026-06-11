@@ -1,0 +1,215 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: #f5f7fa;
+}
+
+.search-bar {
+  padding: 20rpx 24rpx;
+  background: #fff;
+}
+
+.search-input {
+  background: #f0f2f5;
+  border-radius: 40rpx;
+  padding: 16rpx 30rpx;
+  font-size: 28rpx;
+}
+
+.category-bar {
+  white-space: nowrap;
+  padding: 16rpx 24rpx;
+  background: #fff;
+  border-bottom: 1rpx solid #eee;
+}
+
+.cat-item {
+  display: inline-block;
+  padding: 10rpx 24rpx;
+  border-radius: 30rpx;
+  font-size: 24rpx;
+  margin-right: 12rpx;
+  background: #f0f0f0;
+  color: #333;
+  transition: all 0.2s;
+}
+
+.cat-item.active {
+  color: #fff;
+}
+
+/* 详情弹窗 */
+.detail-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.detail-card {
+  width: 600rpx;
+  max-height: 80vh;
+  background: #fff;
+  border-radius: 24rpx;
+  overflow: hidden;
+}
+
+.detail-header {
+  padding: 40rpx 30rpx;
+  text-align: center;
+  color: #fff;
+  position: relative;
+}
+
+.detail-z {
+  font-size: 36rpx;
+  opacity: 0.8;
+}
+
+.detail-symbol {
+  display: block;
+  font-size: 100rpx;
+  font-weight: bold;
+  line-height: 1.1;
+}
+
+.detail-name {
+  font-size: 36rpx;
+  display: block;
+}
+
+.detail-name-en {
+  font-size: 26rpx;
+  opacity: 0.8;
+  display: block;
+  margin-top: 4rpx;
+}
+
+.detail-body {
+  max-height: 50vh;
+  padding: 24rpx 30rpx;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16rpx 0;
+  border-bottom: 1rpx solid #f5f5f5;
+}
+
+.detail-label {
+  font-size: 26rpx;
+  color: #888;
+}
+
+.detail-value {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 500;
+}
+
+.detail-summary {
+  padding: 20rpx 0;
+}
+
+.detail-summary-text {
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1.6;
+}
+
+.detail-close {
+  text-align: center;
+  padding: 24rpx;
+  font-size: 30rpx;
+  color: #666;
+  border-top: 1rpx solid #eee;
+}
+
+/* 周期表网格 */
+.table-scroll {
+  flex: 1;
+  padding: 16rpx;
+}
+
+.periodic-grid {
+  min-width: 1400rpx;
+}
+
+.grid-row {
+  display: flex;
+  margin-bottom: 4rpx;
+}
+
+.row-label {
+  width: 100rpx;
+  min-width: 100rpx;
+  font-size: 20rpx;
+  color: #999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.group-header {
+  flex: 1;
+  min-width: 70rpx;
+  text-align: center;
+  font-size: 20rpx;
+  color: #999;
+  padding: 8rpx 0;
+}
+
+.element-cell {
+  flex: 1;
+  min-width: 70rpx;
+  height: 80rpx;
+  border-radius: 8rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 2rpx;
+  transition: opacity 0.3s;
+  position: relative;
+}
+
+.element-cell.empty {
+  background: transparent !important;
+}
+
+.cell-z {
+  font-size: 16rpx;
+  color: rgba(0,0,0,0.6);
+  line-height: 1;
+}
+
+.cell-symbol {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #fff;
+  line-height: 1.2;
+}
+
+.cell-name {
+  font-size: 14rpx;
+  color: rgba(255,255,255,0.9);
+  line-height: 1;
+}
+
+.separator-row {
+  margin-top: 12rpx;
+}
+
+.separator-label {
+  color: #666;
+  font-size: 22rpx;
+}

@@ -1,0 +1,252 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">唐诗三百首</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <!-- 首页：分类选择 -->
+  <view wx:if="{{page === 'home'}}">
+    <view class="card">
+      <text class="card-title">📚 按题材分类浏览</text>
+      <view class="category-grid">
+        <view class="category-item" wx:for="{{categories}}" wx:key="*this"
+              data-category="{{item}}" bindtap="onCategorySelect">
+          <text class="category-name">{{item}}</text>
+          <text class="category-count" wx:if="{{item !== '全部'}}">{{poemList.length}}首</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="action-buttons">
+      <button class="btn-primary" bindtap="onBrowseAll">浏览全部</button>
+      <button class="btn-secondary" bindtap="onRandomPoem">随机一首</button>
+    </view>
+
+    <view class="card" style="margin-top: 24rpx;">
+      <text class="card-title">✨ 学习模式</text>
+      <view class="mode-list">
+        <view class="mode-item" bindtap="onBrowseAll">
+          <text class="mode-icon">📝</text>
+          <view class="mode-info">
+            <text class="mode-name">背诵练习</text>
+            <text class="mode-desc">逐句隐藏，辅助记忆</text>
+          </view>
+        </view>
+        <view class="mode-item" bindtap="onBrowseAll">
+          <text class="mode-icon">✍️</text>
+          <view class="mode-info">
+            <text class="mode-name">填空默写</text>
+            <text class="mode-desc">关键字挖空，检验记忆</text>
+          </view>
+        </view>
+        <view class="mode-item" bindtap="onBrowseAll">
+          <text class="mode-icon">📖</text>
+          <view class="mode-info">
+            <text class="mode-name">名句赏析</text>
+            <text class="mode-desc">深入理解诗意</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 古诗列表 -->
+  <view wx:if="{{page === 'list'}}">
+    <view class="back-bar" bindtap="onBackHome">
+      <text>← 返回分类</text>
+    </view>
+
+    <view class="card">
+      <text class="card-title">📜 {{selectedCategory}} 诗词</text>
+      <text class="tip-text">共{{totalPoems}}首</text>
+      <view class="poem-list">
+        <view class="poem-item" wx:for="{{poemList}}" wx:key="title"
+              data-index="{{index}}" bindtap="onPoemTap">
+          <view class="poem-info">
+            <text class="poem-title">{{item.title}}</text>
+            <text class="poem-author">〔{{item.dynasty}}〕{{item.author}}</text>
+          </view>
+          <text class="poem-arrow">›</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 详情页 -->
+  <view wx:if="{{page === 'detail'}}">
+    <view class="back-bar" bindtap="onBackList">
+      <text>← 返回列表</text>
+    </view>
+
+    <view class="poem-card">
+      <view class="poem-header">
+        <text class="poem-card-title">{{currentPoem.title}}</text>
+        <text class="poem-card-author">〔{{currentPoem.dynasty}}〕{{currentPoem.author}}</text>
+        <text class="poem-card-category">{{currentPoem.category}}</text>
+      </view>
+
+      <view class="poem-lines">
+        <view class="poem-line" wx:for="{{currentPoem.lines}}" wx:key="index">
+          <text class="line-text">{{item}}</text>
+        </view>
+      </view>
+
+      <view class="detail-actions">
+        <button class="ctrl-btn" bindtap="onStartRecite">背诵模式</button>
+        <button class="ctrl-btn" bindtap="onStartFill">填空默写</button>
+        <button class="ctrl-btn" bindtap="onShowAppreciation">名句赏析</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 背诵模式 -->
+  <view wx:if="{{page === 'recite'}}">
+    <view class="back-bar" bindtap="onBackDetail">
+      <text>← 返回详情</text>
+    </view>
+
+    <view class="poem-card">
+      <view class="poem-header">
+        <text class="poem-card-title">{{currentPoem.title}}</text>
+        <text class="poem-card-author">〔{{currentPoem.dynasty}}〕{{currentPoem.author}}</text>
+      </view>
+
+      <view class="poem-lines">
+        <view class="poem-line" wx:for="{{currentPoem.lines}}" wx:key="index"
+              data-index="{{index}}" bindtap="onToggleLine">
+          <text wx:if="{{!hiddenLines[index] || showAll}}" class="line-text">{{item}}</text>
+          <text wx:else class="line-blank">__________</text>
+        </view>
+      </view>
+
+      <view class="recite-controls">
+        <button class="ctrl-btn" bindtap="onStartRecite">重新隐藏</button>
+        <button class="ctrl-btn" bindtap="onShowAll" wx:if="{{!showAll}}">显示全文</button>
+        <button class="ctrl-btn" bindtap="onCheckRecite">我已背会</button>
+      </view>
+    </view>
+
+    <view class="card" style="margin-top: 24rpx;">
+      <text class="card-title">💡 背诵技巧</text>
+      <text class="tip-text">• 先通读全文理解诗意</text>
+      <text class="tip-text">• 逐句背诵，点击诗句可切换显示/隐藏</text>
+      <text class="tip-text">• 尝试默写检验记忆效果</text>
+    </view>
+  </view>
+
+  <!-- 填空默写模式 -->
+  <view wx:if="{{page === 'fill'}}">
+    <view class="back-bar" bindtap="onBackDetail">
+      <text>← 返回详情</text>
+    </view>
+
+    <view class="poem-card">
+      <view class="poem-header">
+        <text class="poem-card-title">{{currentPoem.title}}</text>
+        <text class="poem-card-author">〔{{currentPoem.dynasty}}〕{{currentPoem.author}}</text>
+      </view>
+
+      <view class="fill-lines">
+        <view class="fill-line" wx:for="{{fillBlanks}}" wx:key="index">
+          <text class="fill-blank-text">{{item.blank}}</text>
+          <input class="fill-input" placeholder="填入关键字" value="{{userInputs[index]}}"
+                 data-index="{{index}}" bindinput="onFillInput" />
+        </view>
+      </view>
+
+      <button class="btn-primary" style="background-color: #E74C3C; margin-top: 24rpx;" bindtap="onSubmitFill">提交答案</button>
+    </view>
+  </view>
+
+  <!-- 赏析模式 -->
+  <view wx:if="{{page === 'appreciation'}}">
+    <view class="back-bar" bindtap="onBackDetail">
+      <text>← 返回详情</text>
+    </view>
+
+    <view class="poem-card appreciation-card">
+      <view class="poem-header">
+        <text class="poem-card-title">{{currentPoem.title}}</text>
+        <text class="poem-card-author">〔{{currentPoem.dynasty}}〕{{currentPoem.author}}</text>
+      </view>
+
+      <view class="poem-lines">
+        <view class="poem-line" wx:for="{{currentPoem.lines}}" wx:key="index">
+          <text class="line-text">{{item}}</text>
+        </view>
+      </view>
+
+      <view class="appreciation-section">
+        <text class="section-title">📝 赏析</text>
+        <text class="appreciation-text">{{currentPoem.appreciation}}</text>
+      </view>
+
+      <view class="poem-meta">
+        <view class="meta-item">
+          <text class="meta-label">题材</text>
+          <text class="meta-value">{{currentPoem.category}}</text>
+        </view>
+        <view class="meta-item">
+          <text class="meta-label">名句</text>
+          <text class="meta-value">{{currentPoem.lines[0]}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="detail-actions" style="margin-top: 24rpx;">
+      <button class="ctrl-btn" bindtap="onStartRecite">背诵模式</button>
+      <button class="ctrl-btn" bindtap="onStartFill">填空默写</button>
+    </view>
+  </view>
+
+  <!-- 结果页 -->
+  <view wx:if="{{page === 'result'}}">
+    <view class="result-emoji">
+      <text wx:if="{{resultSummary.accuracy >= 90}}">🎉</text>
+      <text wx:elif="{{resultSummary.accuracy >= 70}}">💪</text>
+      <text wx:else>📚</text>
+    </view>
+    <text class="result-title" wx:if="{{resultSummary.accuracy >= 90}}">默写完成！太棒了！</text>
+    <text class="result-title" wx:elif="{{resultSummary.accuracy >= 70}}">默写完成！继续加油！</text>
+    <text class="result-title" wx:else>默写完成！多背几遍哦！</text>
+
+    <view class="result-stats">
+      <view class="stat-item">
+        <text class="stat-value">{{resultSummary.total}}</text>
+        <text class="stat-label">总空数</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-value" style="color: #27AE60;">{{resultSummary.correct}}</text>
+        <text class="stat-label">正确</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-value" style="color: #E74C3C;">{{resultSummary.wrong}}</text>
+        <text class="stat-label">错误</text>
+      </view>
+    </view>
+
+    <view class="result-detail">
+      <view class="detail-row">
+        <text class="detail-label">正确率</text>
+        <view class="detail-bar-wrap">
+          <view class="detail-bar" style="width: {{resultSummary.accuracy}}%; background-color: {{resultSummary.accuracy >= 80 ? '#27AE60' : resultSummary.accuracy >= 60 ? '#F39C12' : '#E74C3C'}};"></view>
+        </view>
+        <text class="detail-value">{{resultSummary.accuracy}}%</text>
+      </view>
+      <view class="detail-row">
+        <text class="detail-label">古诗</text>
+        <text class="detail-value">《{{resultSummary.title}}》</text>
+      </view>
+      <view class="detail-row">
+        <text class="detail-label">作者</text>
+        <text class="detail-value">〔{{resultSummary.dynasty}}〕{{resultSummary.author}}</text>
+      </view>
+    </view>
+
+    <view class="btn-group">
+      <button class="btn-primary" style="background-color: #45B058;" bindtap="onRetry">再练一遍</button>
+      <button class="btn-primary" style="background-color: #3498DB;" bindtap="onNextPoem">下一首</button>
+      <button class="btn-secondary" bindtap="onBackList">返回列表</button>
+    </view>
+  </view>
+</view>
