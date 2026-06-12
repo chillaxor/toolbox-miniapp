@@ -129,6 +129,7 @@ const TOOLS = [
   { id: 'typing-test', name: '打字速度', category: 'study', icon: '⌨️', path: '/pages/tools/typing-test/index', description: '测试打字速度WPM·准确率统计·三种难度' },
   { id: 'text2img', name: '文字转图片', category: 'image', icon: '📝', path: '/pages/tools/text2img/index', description: '输入文字生成精美长图·8种模板·适合发朋友圈' },
   { id: 'imgmerge', name: '图片拼接', category: 'image', icon: '🧩', path: '/pages/tools/imgmerge/index', description: '多张图片上下/左右拼接成长图·保存到相册' },
+  { id: 'picpuzzle', name: '照片拼图', category: 'fun', icon: '🧩', path: '/pages/tools/picpuzzle/index', description: '选图切块打乱重拼·3种难度·计时挑战' },
 ];
 
 /**
