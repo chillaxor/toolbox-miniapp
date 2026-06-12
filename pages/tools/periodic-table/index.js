@@ -1,4 +1,4 @@
-const { elements } = require('../../../utils/elements-data.js');
+const { ELEMENTS, CATEGORY_COLORS } = require('../../../utils/elements-data.js');
 
 Page({
   data: {
@@ -37,27 +37,30 @@ Page({
     for (let p = 1; p <= 7; p++) {
       const cells = [];
       for (let g = 1; g <= 18; g++) {
-        const el = elements.find(e => e.period === p && e.group === g && !e.isLanthanide && !e.isActinide);
+        const el = ELEMENTS.find(e => e.period === p && e.group === g && e.category !== 'lanthanide' && e.category !== 'actinide');
         if (el) {
           const opacity = this.getElementOpacity(el, filterCategory, searchKey);
-          cells.push({ ...el, isEmpty: false, opacity });
+          const color = CATEGORY_COLORS[el.category] || '#999';
+          cells.push({ ...el, isEmpty: false, opacity, color });
         } else {
-          cells.push({ isEmpty: true, z: 0, opacity: 1 });
+          cells.push({ isEmpty: true, z: 0, opacity: 1, color: 'transparent' });
         }
       }
       periods.push({ cells });
     }
     
     // 镧系 (Z=57-71)
-    const lanthanides = elements.filter(e => e.isLanthanide).map(el => ({
+    const lanthanides = ELEMENTS.filter(e => e.category === 'lanthanide').map(el => ({
       ...el,
-      opacity: this.getElementOpacity(el, filterCategory, searchKey)
+      opacity: this.getElementOpacity(el, filterCategory, searchKey),
+      color: CATEGORY_COLORS[el.category] || '#999'
     }));
     
     // 锕系 (Z=89-103)
-    const actinides = elements.filter(e => e.isActinide).map(el => ({
+    const actinides = ELEMENTS.filter(e => e.category === 'actinide').map(el => ({
       ...el,
-      opacity: this.getElementOpacity(el, filterCategory, searchKey)
+      opacity: this.getElementOpacity(el, filterCategory, searchKey),
+      color: CATEGORY_COLORS[el.category] || '#999'
     }));
     
     this.setData({ periods, lanthanides, actinides });
@@ -93,7 +96,7 @@ Page({
   onTapElement(e) {
     const z = parseInt(e.currentTarget.dataset.z);
     if (!z) return;
-    const el = elements.find(e => e.z === z);
+    const el = ELEMENTS.find(e => e.z === z);
     if (!el) return;
     
     const cat = this.data.categories.find(c => c.key === el.category);
