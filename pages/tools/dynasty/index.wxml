@@ -2,7 +2,7 @@
   <!-- 顶部标签 -->
   <view class="tab-bar">
     <view class="tab-item {{currentTab === 'timeline' ? 'active' : ''}}" bindtap="switchTab" data-tab="timeline">📜 时间轴</view>
-    <view class="tab-item {{currentTab === 'sort' ? 'active' : ''}}" bindtap="switchTab" data-tab="sort">🎯 排序游戏</view>
+    <view class="tab-item {{currentTab === 'sort' ? 'active' : ''}}" bindtap="switchTab" data-tab="sort">🎯 排序互动</view>
     <view class="tab-item {{currentTab === 'quiz' ? 'active' : ''}}" bindtap="switchTab" data-tab="quiz">❓ 历史问答</view>
   </view>
 
@@ -49,7 +49,7 @@
     </view>
   </view>
 
-  <!-- 排序游戏模式 -->
+  <!-- 排序互动模式 -->
   <view wx:if="{{currentTab === 'sort'}}" class="sort-container">
     <view wx:if="{{!sortStarted}}" class="game-intro">
       <text class="intro-icon">🎯</text>

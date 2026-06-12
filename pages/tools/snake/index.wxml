@@ -27,7 +27,7 @@
     </view>
   </view>
 
-  <!-- 游戏画布 -->
+  <!-- 互动画布 -->
   <view class="game-area" id="gameArea">
     <canvas type="2d" id="gameCanvas"
       class="game-canvas"
@@ -41,11 +41,11 @@
     <view class="overlay" wx:if="{{gameState !== 'playing'}}">
       <view class="overlay-content">
         <text class="overlay-title" wx:if="{{gameState === 'idle'}}">🐍 贪吃蛇</text>
-        <text class="overlay-title" wx:if="{{gameState === 'over'}}">💀 游戏结束</text>
+        <text class="overlay-title" wx:if="{{gameState === 'over'}}">💀 互动结束</text>
         <text class="overlay-score" wx:if="{{gameState === 'over'}}">得分: {{score}}</text>
         <text class="overlay-best" wx:if="{{gameState === 'over' && isNewBest}}">🎉 新纪录！</text>
         <view class="start-btn" bindtap="startGame">
-          <text>{{gameState === 'idle' ? '开始游戏' : '再来一局'}}</text>
+          <text>{{gameState === 'idle' ? '开始互动' : '再来一局'}}</text>
         </view>
         <text class="overlay-hint">滑动屏幕控制方向</text>
       </view>

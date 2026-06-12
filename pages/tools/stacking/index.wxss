@@ -121,7 +121,7 @@
   border: none;
 }
 
-/* 游戏信息 */
+/* 互动信息 */
 .game-info {
   display: flex;
   justify-content: space-around;
@@ -173,7 +173,7 @@
   transform: translateY(0);
 }
 
-/* 游戏画布 */
+/* 互动画布 */
 .game-canvas {
   width: 100%;
   height: 800rpx;

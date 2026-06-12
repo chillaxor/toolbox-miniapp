@@ -24,10 +24,10 @@
       <text class="best-label">🏆 最高分</text>
       <text class="best-value">{{bestScore}}</text>
     </view>
-    <button class="start-btn" bindtap="startGame">🎮 开始游戏</button>
+    <button class="start-btn" bindtap="startGame">🎮 开始互动</button>
   </view>
 
-  <!-- 游戏中 -->
+  <!-- 互动中 -->
   <view wx:if="{{state === 'playing'}}">
     <!-- 信息栏 -->
     <view class="game-info">
@@ -50,7 +50,7 @@
       <text>{{perfectText}}</text>
     </view>
 
-    <!-- 游戏画布 -->
+    <!-- 互动画布 -->
     <canvas type="2d" id="gameCanvas" canvas-id="gameCanvas" class="game-canvas" bindtap="onTap"></canvas>
 
     <!-- 操作提示 -->
@@ -59,7 +59,7 @@
     </view>
   </view>
 
-  <!-- 游戏结束 -->
+  <!-- 互动结束 -->
   <view wx:if="{{state === 'finished'}}">
     <view class="card result-card">
       <text class="result-emoji">🏗️</text>

@@ -76,7 +76,7 @@
   color: #333;
 }
 
-/* 游戏画布 */
+/* 互动画布 */
 .canvas-wrapper {
   width: 100%;
   aspect-ratio: 1;

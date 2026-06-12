@@ -75,7 +75,7 @@
   font-size: 32rpx;
 }
 
-/* 游戏区域 */
+/* 互动区域 */
 .game-area {
   position: relative;
   background: #16213e;

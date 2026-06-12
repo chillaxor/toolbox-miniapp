@@ -26,7 +26,7 @@
     </view>
   </view>
 
-  <!-- 游戏画布 -->
+  <!-- 互动画布 -->
   <view class="canvas-wrapper">
     <canvas type="2d" id="gameCanvas" class="game-canvas" bindtap="onCanvasTap"></canvas>
   </view>

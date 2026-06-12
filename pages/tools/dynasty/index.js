@@ -6,7 +6,7 @@ Page({
     currentTab: 'timeline',
     dynasties: [],
     expandedIndex: -1,
-    // 排序游戏
+    // 排序互动
     sortStarted: false,
     sortFinished: false,
     sortItems: [],
@@ -55,7 +55,7 @@ Page({
     this.setData({ expandedIndex: this.data.expandedIndex === idx ? -1 : idx });
   },
 
-  // ============ 排序游戏 ============
+  // ============ 排序互动 ============
   startSort: function () {
     var all = dynastyData.DYNASTIES.slice();
     this.shuffleArray(all);

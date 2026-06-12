@@ -102,7 +102,7 @@ Page({
     }
   },
 
-  // ---------- 游戏逻辑 ----------
+  // ---------- 互动逻辑 ----------
   startGame: function () {
     // 初始化蛇
     var startX = Math.floor(COLS / 2);
@@ -168,7 +168,7 @@ Page({
       }
     }
     if (free.length === 0) {
-      // 蛇填满整个棋盘，游戏胜利
+      // 蛇填满整个棋盘，互动胜利
       this._gameOver(true);
       return;
     }
@@ -393,14 +393,14 @@ Page({
       ctx.textAlign = 'start';
     }
 
-    // 游戏结束遮罩
+    // 互动结束遮罩
     if (this.data.gameState === 'over') {
       ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
       ctx.fillRect(0, 0, w, h);
       ctx.fillStyle = '#e94560';
       ctx.font = 'bold 32px sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText('游戏结束', w / 2, h / 2 - 20);
+      ctx.fillText('互动结束', w / 2, h / 2 - 20);
       ctx.fillStyle = '#fff';
       ctx.font = '22px sans-serif';
       ctx.fillText('得分: ' + this._score, w / 2, h / 2 + 15);
@@ -476,7 +476,7 @@ Page({
 
   onShareAppMessage: function () {
     return {
-      title: '贪吃蛇 - 经经典小游戏',
+      title: '贪吃蛇 - 经经典小互动',
       path: '/pages/tools/snake/index'
     };
   }

@@ -29,7 +29,7 @@ Page({
     state: 'setup', // setup, playing, complete
     difficulty: 'easy',
     bestRecord: null,
-    // 游戏数据
+    // 互动数据
     cards: [],
     cols: 4,
     rows: 3,

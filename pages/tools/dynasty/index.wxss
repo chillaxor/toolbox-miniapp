@@ -156,7 +156,7 @@
   margin-top: 12rpx;
 }
 
-/* 排序游戏 */
+/* 排序互动 */
 .game-intro {
   text-align: center;
   padding: 80rpx 40rpx;
