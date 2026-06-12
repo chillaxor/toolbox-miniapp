@@ -164,16 +164,20 @@ Page({
     var self = this;
     var canvas = this._canvas;
     if (!canvas) return;
-    this._timer = canvas.requestAnimationFrame(function loop() {
+    var loop = function () {
       self._update();
       self._draw();
-      if (self._timer) {
-        self._timer = canvas.requestAnimationFrame(loop);
-      }
-    });
+      self._timer = canvas.requestAnimationFrame(loop);
+    };
+    this._timer = canvas.requestAnimationFrame(loop);
   },
 
   _stopLoop: function () {
+    if (this._timer) {
+      try {
+        this._canvas.cancelAnimationFrame(this._timer);
+      } catch (e) {}
+    }
     this._timer = null;
   },
 
@@ -198,54 +202,51 @@ Page({
 
     ctx.clearRect(0, 0, w, h);
 
+    // 背景渐变
     var grad = ctx.createLinearGradient(0, 0, 0, h);
     grad.addColorStop(0, '#1a1a2e');
     grad.addColorStop(1, '#16213e');
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, w, h);
 
+    // 网格线
     ctx.fillStyle = 'rgba(255,255,255,0.05)';
     for (var gy = 0; gy < h; gy += 30) {
       ctx.fillRect(0, gy, w, 1);
     }
 
+    // 绘制已放置的方块
     for (var i = 0; i < this._placedBlocks.length; i++) {
       this._drawBlock(ctx, this._placedBlocks[i], i);
     }
 
+    // 绘制当前移动的方块
     if (this._currentBlock) {
       this._drawBlock(ctx, this._currentBlock, this._placedBlocks.length);
     }
 
+    // 绘制底部地面
     ctx.fillStyle = 'rgba(255,255,255,0.15)';
     ctx.fillRect(0, this._baseOffsetY, w, 40);
   },
 
   _drawBlock: function (ctx, block, index) {
+    // 方块主体
     ctx.fillStyle = block.color;
-    ctx.shadowColor = 'rgba(0,0,0,0.3)';
-    ctx.shadowBlur = 8;
-    ctx.shadowOffsetY = 4;
+    ctx.fillRect(block.x, block.y, block.w, block.h);
 
-    ctx.beginPath();
-    ctx.roundRect(block.x, block.y, block.w, block.h, 4);
-    ctx.fill();
-
-    ctx.shadowColor = 'transparent';
-    ctx.shadowBlur = 0;
-    ctx.shadowOffsetY = 0;
-
+    // 高光效果（顶部）
     ctx.fillStyle = 'rgba(255,255,255,0.3)';
     ctx.fillRect(block.x + 2, block.y + 2, block.w - 4, 6);
 
-    ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+    // 边框
+    ctx.strokeStyle = 'rgba(255,255,255,0.2)';
     ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.roundRect(block.x, block.y, block.w, block.h, 4);
-    ctx.stroke();
+    ctx.strokeRect(block.x, block.y, block.w, block.h);
 
+    // 层数编号（跳过底座）
     if (index > 0) {
-      ctx.fillStyle = 'rgba(255,255,255,0.6)';
+      ctx.fillStyle = 'rgba(255,255,255,0.7)';
       ctx.font = 'bold 12px sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';

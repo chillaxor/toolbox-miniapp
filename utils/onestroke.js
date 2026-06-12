@@ -203,9 +203,9 @@ var LEVELS = {
  */
 function getDifficultyConfig(level) {
   var configs = {
-    easy: { label: '简单', nodeSize: 14, lineWidth: 4 },
-    medium: { label: '中等', nodeSize: 12, lineWidth: 3 },
-    hard: { label: '困难', nodeSize: 10, lineWidth: 3 }
+    easy: { label: '简单', nodeSize: 20, lineWidth: 4 },
+    medium: { label: '中等', nodeSize: 16, lineWidth: 3 },
+    hard: { label: '困难', nodeSize: 14, lineWidth: 3 }
   };
   return configs[level] || configs.easy;
 }

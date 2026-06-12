@@ -54,18 +54,16 @@
 }
 
 .detail-card {
-  width: 600rpx;
-  max-height: 80vh;
+  width: 680rpx;
   background: #fff;
   border-radius: 24rpx;
   overflow: hidden;
 }
 
 .detail-header {
-  padding: 40rpx 30rpx;
+  padding: 30rpx;
   text-align: center;
   color: #fff;
-  position: relative;
 }
 
 .detail-z {
@@ -93,7 +91,7 @@
 }
 
 .detail-body {
-  max-height: 50vh;
+  height: 600rpx;
   padding: 24rpx 30rpx;
 }
 
