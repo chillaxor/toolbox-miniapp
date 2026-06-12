@@ -51,7 +51,7 @@
     </view>
 
     <!-- 游戏画布 -->
-    <canvas canvas-id="gameCanvas" class="game-canvas" bindtap="onTap"></canvas>
+    <canvas type="2d" id="gameCanvas" canvas-id="gameCanvas" class="game-canvas" bindtap="onTap"></canvas>
 
     <!-- 操作提示 -->
     <view class="tap-hint">

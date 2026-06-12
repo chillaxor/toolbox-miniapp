@@ -22,8 +22,8 @@ Page({
   _canvasW: 0,
   _canvasH: 0,
   _currentLevel: null,
-  _path: [],          // 已走过的边索引
-  _nodePath: [],      // 节点访问序列，用于撤回
+  _path: [],
+  _nodePath: [],
   _currentNode: -1,
   _usedEdges: [],
   _nodeScreenPos: [],
@@ -231,39 +231,34 @@ Page({
   onCanvasTap: function (e) {
     if (this.data.completed) return;
 
-    var touch = e.touches[0];
-    var query = wx.createSelectorQuery();
-    var self = this;
-    query.select('#gameCanvas').boundingClientRect(function (rect) {
-      if (!rect) return;
-      var x = touch.clientX - rect.left;
-      var y = touch.clientY - rect.top;
+    // canvas type="2d" 的 bindtap 事件通过 e.detail 获取坐标
+    var x = e.detail.x;
+    var y = e.detail.y;
 
-      var clickedNode = -1;
-      var config = oneStroke.getDifficultyConfig(self.data.level);
-      var hitRadius = config.nodeSize + 12;
-      for (var i = 0; i < self._nodeScreenPos.length; i++) {
-        var dx = x - self._nodeScreenPos[i].x;
-        var dy = y - self._nodeScreenPos[i].y;
-        if (Math.sqrt(dx * dx + dy * dy) <= hitRadius) {
-          clickedNode = i;
-          break;
-        }
+    var clickedNode = -1;
+    var config = oneStroke.getDifficultyConfig(this.data.level);
+    var hitRadius = config.nodeSize + 12;
+    for (var i = 0; i < this._nodeScreenPos.length; i++) {
+      var dx = x - this._nodeScreenPos[i].x;
+      var dy = y - this._nodeScreenPos[i].y;
+      if (Math.sqrt(dx * dx + dy * dy) <= hitRadius) {
+        clickedNode = i;
+        break;
       }
+    }
 
-      if (clickedNode === -1) return;
+    if (clickedNode === -1) return;
 
-      if (!self.data.started) {
-        self._currentNode = clickedNode;
-        self._nodePath = [clickedNode];
-        self.setData({ started: true });
-        self.drawGame();
-        self._checkStuck();
-        return;
-      }
+    if (!this.data.started) {
+      this._currentNode = clickedNode;
+      this._nodePath = [clickedNode];
+      this.setData({ started: true });
+      this.drawGame();
+      this._checkStuck();
+      return;
+    }
 
-      self._tryMove(clickedNode);
-    }).exec();
+    this._tryMove(clickedNode);
   },
 
   _tryMove: function (targetNode) {

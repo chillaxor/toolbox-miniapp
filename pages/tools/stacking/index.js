@@ -1,27 +1,17 @@
 var storage = require('../../../utils/storage.js');
 
-var TOOL_ID = 'stacking';
-
-// 颜色方案 - 从底部到顶部渐变
 var COLORS = [
-  '#FF6B6B', '#FF8E53', '#FFA726', '#FFCC02', '#8BC34A',
-  '#4CAF50', '#26C6DA', '#42A5F5', '#5C6BC0', '#AB47BC',
-  '#EC407A', '#FF7043', '#FFCA28', '#66BB6A', '#29B6F6'
+  '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7',
+  '#DDA0DD', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E9',
+  '#F8C471', '#82E0AA', '#F1948A', '#85929E', '#73C6B6'
 ];
-
-var PERFECT_THRESHOLD = 5; // 像素容差，视为完美对齐
 
 Page({
   data: {
-    state: 'ready', // ready | playing | finished
-    difficulty: 'normal',
-    difficulties: [
-      { value: 'easy', label: '简单' },
-      { value: 'normal', label: '普通' },
-      { value: 'hard', label: '困难' }
-    ],
-    score: 0,
+    isFavorite: false,
+    state: 'ready',
     layers: 0,
+    score: 0,
     combo: 0,
     maxCombo: 0,
     perfects: 0,
@@ -29,66 +19,82 @@ Page({
     isNewRecord: false,
     showPerfect: false,
     perfectText: '',
-    isFavorite: false
+    difficulty: 1,
+    difficulties: [
+      { label: '简单', value: 1 },
+      { label: '中等', value: 0.7 },
+      { label: '困难', value: 0.5 }
+    ]
   },
 
-  // 游戏内部状态
   _canvas: null,
   _ctx: null,
   _canvasW: 0,
   _canvasH: 0,
-  _dpr: 1,
-  _animTimer: null,
-  _stack: [], // 已放置的方块 [{x, y, w, h, color}]
-  _current: null, // 当前移动的方块 {x, y, w, h, color, dir}
-  _speed: 3,
-  _blockH: 0,
-  _baseW: 0,
+  _baseW: 120,
+  _baseH: 28,
+  _placedBlocks: [],
+  _currentBlock: null,
+  _direction: 1,
+  _speed: 1.5,
+  _timer: null,
+  _baseOffsetY: 0,
 
   onLoad: function () {
-    var bestScore = storage.getSync('stacking_best_' + this.data.difficulty, 0);
-    this.setData({
-      bestScore: bestScore,
-      isFavorite: storage.isFavorite(TOOL_ID)
-    });
-  },
-
-  onUnload: function () {
-    this._stopAnim();
-  },
-
-  onHide: function () {
-    if (this.data.state === 'playing') {
-      this._stopAnim();
-    }
+    this._loadBest();
+    this.checkFavorite();
   },
 
   onShow: function () {
-    if (this.data.state === 'playing' && !this._animTimer) {
-      this._startLoop();
-    }
+    this.checkFavorite();
+  },
+
+  onUnload: function () {
+    this._stopLoop();
+  },
+
+  onHide: function () {
+    this._stopLoop();
+  },
+
+  checkFavorite: function () {
+    this.setData({ isFavorite: storage.isFavorite('stacking') });
   },
 
   toggleFavorite: function () {
-    var result = storage.toggleFavorite(TOOL_ID);
-    this.setData({ isFavorite: result });
+    var fav = storage.toggleFavorite('stacking');
+    this.setData({ isFavorite: fav });
   },
 
   onDifficultyChange: function (e) {
     var val = e.currentTarget.dataset.val;
     this.setData({ difficulty: val });
-    var bestScore = storage.getSync('stacking_best_' + val, 0);
-    this.setData({ bestScore: bestScore });
+  },
+
+  _loadBest: function () {
+    try {
+      var best = wx.getStorageSync('stacking_best');
+      if (best) this.setData({ bestScore: best });
+    } catch (ex) {}
+  },
+
+  _saveBest: function (score) {
+    try {
+      var best = wx.getStorageSync('stacking_best') || 0;
+      if (score > best) {
+        wx.setStorageSync('stacking_best', score);
+        this.setData({ bestScore: score, isNewRecord: true });
+      } else {
+        this.setData({ isNewRecord: false });
+      }
+    } catch (ex) {}
   },
 
   startGame: function () {
-    var sysInfo = wx.getSystemInfoSync();
-    var dpr = sysInfo.pixelRatio || 2;
-
     this.setData({
       state: 'playing',
-      score: 0,
       layers: 0,
+      score: 0,
       combo: 0,
       maxCombo: 0,
       perfects: 0,
@@ -97,327 +103,265 @@ Page({
       perfectText: ''
     });
 
-    var that = this;
-    // 等待 canvas 渲染
-    setTimeout(function () {
-      that._initCanvas(dpr);
-      that._initGame();
-      that._startLoop();
-    }, 100);
-  },
-
-  _initCanvas: function (dpr) {
+    var self = this;
     var query = wx.createSelectorQuery();
-    query.select('.game-canvas')
-      .fields({ node: true, size: true })
-      .exec(function (res) {
-        if (!res || !res[0] || !res[0].node) return;
+    query.select('#gameCanvas').fields({ node: true, size: true }).exec(function (res) {
+      if (!res[0]) return;
+      var canvas = res[0].node;
+      var ctx = canvas.getContext('2d');
+      var dpr = wx.getWindowInfo().pixelRatio;
+      var width = res[0].width;
+      var height = res[0].height;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      ctx.scale(dpr, dpr);
+
+      self._canvas = canvas;
+      self._ctx = ctx;
+      self._canvasW = width;
+      self._canvasH = height;
+      self._baseOffsetY = height - 40;
+      self._baseW = 120;
+      self._baseH = 28;
+
+      self._placedBlocks = [];
+      self._direction = 1;
+      self._speed = 1.5 * (1 / self.data.difficulty);
+
+      var bx = (width - self._baseW) / 2;
+      self._placedBlocks.push({
+        x: bx,
+        y: self._baseOffsetY - self._baseH,
+        w: self._baseW,
+        h: self._baseH,
+        color: COLORS[0]
       });
 
-    // 使用旧版 canvas API 兼容
-    var ctx = wx.createCanvasContext('gameCanvas', this);
-
-    // 获取canvas尺寸
-    var sysInfo = wx.getSystemInfoSync();
-    var canvasW = sysInfo.windowWidth - 24 * 2; // 减去padding rpx转px约24px
-    var canvasH = 400; // 800rpx ≈ 400px
-
-    this._ctx = ctx;
-    this._canvasW = canvasW;
-    this._canvasH = canvasH;
-    this._dpr = dpr;
-  },
-
-  _initGame: function () {
-    // 难度参数
-    var speedMap = { easy: 2, normal: 3.5, hard: 5 };
-    this._speed = speedMap[this.data.difficulty] || 3.5;
-
-    this._blockH = 28;
-    this._baseW = this._canvasW * 0.5;
-
-    // 地基方块
-    this._stack = [{
-      x: (this._canvasW - this._baseW) / 2,
-      y: this._canvasH - this._blockH,
-      w: this._baseW,
-      h: this._blockH,
-      color: COLORS[0]
-    }];
-
-    this._spawnBlock();
+      self._spawnBlock();
+      self._startLoop();
+    });
   },
 
   _spawnBlock: function () {
-    var top = this._stack[this._stack.length - 1];
-    var w = top.w;
-    var y = top.y - this._blockH;
-
-    // 从左侧或右侧出发
-    var dir = Math.random() > 0.5 ? 1 : -1;
-    var x = dir === 1 ? -w : this._canvasW;
-
-    this._current = {
-      x: x,
+    var last = this._placedBlocks[this._placedBlocks.length - 1];
+    var y = last.y - this._baseH - 2;
+    if (y < 20) {
+      this._endGame();
+      return;
+    }
+    this._currentBlock = {
+      x: -last.w,
       y: y,
-      w: w,
-      h: this._blockH,
-      color: COLORS[this._stack.length % COLORS.length],
-      dir: dir
+      w: last.w,
+      h: this._baseH,
+      color: COLORS[this._placedBlocks.length % COLORS.length]
     };
+    this._direction = 1;
   },
 
   _startLoop: function () {
-    this._stopAnim();
-    var that = this;
-    var fps = 60;
-    var lastTime = Date.now();
-
-    function loop() {
-      var now = Date.now();
-      var dt = (now - lastTime) / (1000 / 60); // 归一化到60fps
-      lastTime = now;
-
-      that._update(dt);
-      that._render();
-
-      that._animTimer = setTimeout(loop, 1000 / fps);
-    }
-
-    this._animTimer = setTimeout(loop, 1000 / fps);
+    this._stopLoop();
+    var self = this;
+    var canvas = this._canvas;
+    if (!canvas) return;
+    this._timer = canvas.requestAnimationFrame(function loop() {
+      self._update();
+      self._draw();
+      if (self._timer) {
+        self._timer = canvas.requestAnimationFrame(loop);
+      }
+    });
   },
 
-  _stopAnim: function () {
-    if (this._animTimer) {
-      clearTimeout(this._animTimer);
-      this._animTimer = null;
+  _stopLoop: function () {
+    this._timer = null;
+  },
+
+  _update: function () {
+    if (!this._currentBlock) return;
+    var b = this._currentBlock;
+    b.x += this._speed * this._direction;
+    if (b.x + b.w >= this._canvasW) {
+      b.x = this._canvasW - b.w;
+      this._direction = -1;
+    } else if (b.x <= 0) {
+      b.x = 0;
+      this._direction = 1;
     }
   },
 
-  _update: function (dt) {
-    if (!this._current) return;
+  _draw: function () {
+    var ctx = this._ctx;
+    if (!ctx) return;
+    var w = this._canvasW;
+    var h = this._canvasH;
 
-    var cur = this._current;
-    cur.x += this._speed * cur.dir * dt;
+    ctx.clearRect(0, 0, w, h);
 
-    // 边界反弹
-    if (cur.x + cur.w > this._canvasW) {
-      cur.x = this._canvasW - cur.w;
-      cur.dir = -1;
+    var grad = ctx.createLinearGradient(0, 0, 0, h);
+    grad.addColorStop(0, '#1a1a2e');
+    grad.addColorStop(1, '#16213e');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+
+    ctx.fillStyle = 'rgba(255,255,255,0.05)';
+    for (var gy = 0; gy < h; gy += 30) {
+      ctx.fillRect(0, gy, w, 1);
     }
-    if (cur.x < 0) {
-      cur.x = 0;
-      cur.dir = 1;
+
+    for (var i = 0; i < this._placedBlocks.length; i++) {
+      this._drawBlock(ctx, this._placedBlocks[i], i);
+    }
+
+    if (this._currentBlock) {
+      this._drawBlock(ctx, this._currentBlock, this._placedBlocks.length);
+    }
+
+    ctx.fillStyle = 'rgba(255,255,255,0.15)';
+    ctx.fillRect(0, this._baseOffsetY, w, 40);
+  },
+
+  _drawBlock: function (ctx, block, index) {
+    ctx.fillStyle = block.color;
+    ctx.shadowColor = 'rgba(0,0,0,0.3)';
+    ctx.shadowBlur = 8;
+    ctx.shadowOffsetY = 4;
+
+    ctx.beginPath();
+    ctx.roundRect(block.x, block.y, block.w, block.h, 4);
+    ctx.fill();
+
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetY = 0;
+
+    ctx.fillStyle = 'rgba(255,255,255,0.3)';
+    ctx.fillRect(block.x + 2, block.y + 2, block.w - 4, 6);
+
+    ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.roundRect(block.x, block.y, block.w, block.h, 4);
+    ctx.stroke();
+
+    if (index > 0) {
+      ctx.fillStyle = 'rgba(255,255,255,0.6)';
+      ctx.font = 'bold 12px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(String(index), block.x + block.w / 2, block.y + block.h / 2);
     }
   },
 
   onTap: function () {
-    if (this.data.state !== 'playing' || !this._current) return;
+    if (this.data.state !== 'playing' || !this._currentBlock) return;
 
-    var cur = this._current;
-    var top = this._stack[this._stack.length - 1];
+    var cur = this._currentBlock;
+    var last = this._placedBlocks[this._placedBlocks.length - 1];
+    var overlapX = Math.max(0, Math.min(cur.x + cur.w, last.x + last.w) - Math.max(cur.x, last.x));
 
-    // 计算重叠区域
-    var overlapLeft = Math.max(cur.x, top.x);
-    var overlapRight = Math.min(cur.x + cur.w, top.x + top.w);
-    var overlapW = overlapRight - overlapLeft;
-
-    if (overlapW <= 0) {
-      // 完全没对齐，游戏结束
-      this._gameOver();
+    if (overlapX <= 0) {
+      this._endGame();
       return;
     }
 
-    // 判断是否完美对齐
-    var diff = Math.abs(cur.x - top.x);
-    var isPerfect = diff <= PERFECT_THRESHOLD;
+    var diff = Math.abs(cur.x - last.x);
+    var isPerfect = diff < 5;
+    var isGood = diff < 15;
 
+    var newX, newW;
     if (isPerfect) {
-      // 完美对齐，恢复宽度（最多恢复到初始宽度的80%）
-      overlapW = top.w;
-      overlapLeft = top.x;
-
-      var combo = this.data.combo + 1;
-      var maxCombo = Math.max(combo, this.data.maxCombo);
-      var perfects = this.data.perfects + 1;
-      var points = 10 + combo * 5;
-
-      // 每10连击恢复一些宽度
-      var restoreW = 0;
-      if (combo % 10 === 0 && combo > 0) {
-        restoreW = Math.min(this._baseW * 0.1, this._baseW * 0.8 - overlapW);
-        if (restoreW > 0) {
-          overlapW += restoreW;
-          overlapLeft -= restoreW / 2;
-        }
-      }
-
-      this.setData({
-        combo: combo,
-        maxCombo: maxCombo,
-        perfects: perfects,
-        score: this.data.score + points,
-        showPerfect: true,
-        perfectText: combo >= 10 ? '🔥 ' + combo + '连击完美！' + ' +' + points :
-                     combo >= 5 ? '✨ ' + combo + '连击！' + ' +' + points :
-                     '🎯 完美！' + ' +' + points
-      });
+      newX = last.x;
+      newW = cur.w;
     } else {
-      var points2 = 5 + Math.floor(this.data.combo / 2);
-      this.setData({
-        combo: 0,
-        score: this.data.score + points2,
-        showPerfect: true,
-        perfectText: overlapW >= top.w * 0.8 ? '👍 不错 +' + points2 : '+' + points2
-      });
+      newX = Math.max(cur.x, last.x);
+      newW = overlapX;
     }
 
-    // 隐藏完美提示
-    var that = this;
-    setTimeout(function () {
-      that.setData({ showPerfect: false });
-    }, 800);
-
-    // 裁剪掉多余部分
-    var placedBlock = {
-      x: overlapLeft,
+    var newBlock = {
+      x: newX,
       y: cur.y,
-      w: overlapW,
-      h: this._blockH,
+      w: newW,
+      h: cur.h,
       color: cur.color
     };
+    this._placedBlocks.push(newBlock);
 
-    this._stack.push(placedBlock);
-    this.setData({ layers: this._stack.length - 1 });
+    var addScore = 10;
+    var combo = this.data.combo;
+    var perfects = this.data.perfects;
 
-    // 计算屏幕滚动偏移 - 方块堆高时整体下移
-    if (this._stack.length > 8) {
-      this._scrollOffset = (this._stack.length - 8) * this._blockH;
+    if (isPerfect) {
+      combo += 1;
+      perfects += 1;
+      addScore += combo * 10;
+      this.setData({ showPerfect: true, perfectText: combo >= 5 ? '🔥 完美x' + combo + '！' : combo >= 3 ? '✨ 完美x' + combo + '！' : '✨ 完美！' });
+      this._hidePerfect();
+    } else if (isGood) {
+      combo += 1;
+      addScore += 5;
+    } else {
+      combo = 0;
     }
 
-    // 生成下一个方块
+    var layers = this.data.layers + 1;
+    var score = this.data.score + addScore;
+    var maxCombo = Math.max(this.data.maxCombo, combo);
+
+    this.setData({
+      layers: layers,
+      score: score,
+      combo: combo,
+      maxCombo: maxCombo,
+      perfects: perfects
+    });
+
+    if (newW < 8) {
+      this._endGame();
+      return;
+    }
+
+    var scrollThreshold = this._canvasH * 0.4;
+    if (newBlock.y < scrollThreshold) {
+      var offset = scrollThreshold - newBlock.y;
+      this._baseOffsetY += offset;
+      for (var i = 0; i < this._placedBlocks.length; i++) {
+        this._placedBlocks[i].y += offset;
+      }
+    }
+
+    this._baseW = newW;
+    this._speed = Math.min(3.5, 1.5 + layers * 0.08) * (1 / this.data.difficulty);
     this._spawnBlock();
   },
 
-  _gameOver: function () {
-    this._stopAnim();
+  _hidePerfect: function () {
+    var self = this;
+    setTimeout(function () {
+      self.setData({ showPerfect: false });
+    }, 1200);
+  },
 
-    var score = this.data.score;
-    var bestKey = 'stacking_best_' + this.data.difficulty;
-    var bestScore = storage.getSync(bestKey, 0);
-    var isNewRecord = score > bestScore;
+  _endGame: function () {
+    this._stopLoop();
+    this._currentBlock = null;
+    this._saveBest(this.data.score);
 
-    if (isNewRecord) {
-      storage.setSync(bestKey, score);
-      bestScore = score;
-    }
-
-    // 记录历史
     storage.addHistory({
-      toolId: TOOL_ID,
+      toolId: 'stacking',
       toolName: '叠叠乐',
       category: 'fun',
-      summary: '叠了' + this.data.layers + '层，得分' + score
+      summary: '叠了' + this.data.layers + '层，得分' + this.data.score,
+      timestamp: Date.now()
     });
 
-    this.setData({
-      state: 'finished',
-      bestScore: bestScore,
-      isNewRecord: isNewRecord
-    });
+    this.setData({ state: 'finished' });
   },
 
-  _render: function () {
-    var ctx = this._ctx;
-    if (!ctx) return;
-
-    var w = this._canvasW;
-    var h = this._canvasH;
-
-    // 清除画布
-    ctx.clearRect(0, 0, w, h);
-
-    // 绘制背景渐变
-    var grd = ctx.createLinearGradient(0, 0, 0, h);
-    grd.addColorStop(0, '#1a1a2e');
-    grd.addColorStop(1, '#16213e');
-    ctx.setFillStyle(grd);
-    ctx.fillRect(0, 0, w, h);
-
-    // 计算偏移量 - 方块堆高时整体上移
-    var offsetY = 0;
-    if (this._stack.length > 10) {
-      offsetY = (this._stack.length - 10) * this._blockH;
-    }
-
-    // 绘制已放置的方块
-    for (var i = 0; i < this._stack.length; i++) {
-      var block = this._stack[i];
-      var drawY = block.y - offsetY;
-      if (drawY > h || drawY + block.h < 0) continue;
-
-      this._drawBlock(ctx, block.x, drawY, block.w, block.h, block.color, i);
-    }
-
-    // 绘制当前移动方块
-    if (this._current) {
-      var cur = this._current;
-      var drawY2 = cur.y - offsetY;
-      this._drawBlock(ctx, cur.x, drawY2, cur.w, cur.h, cur.color, this._stack.length);
-
-      // 方块底部的下落指示线
-      ctx.setStrokeStyle('rgba(255,255,255,0.15)');
-      ctx.setLineWidth(1);
-      ctx.setLineDash([4, 4]);
-      ctx.beginPath();
-      ctx.moveTo(cur.x + cur.w / 2, drawY2 + cur.h);
-      ctx.lineTo(cur.x + cur.w / 2, h);
-      ctx.stroke();
-      ctx.setLineDash([]);
-    }
-
-    // 绘制地面
-    var groundY = this._canvasH - offsetY;
-    if (groundY <= h) {
-      ctx.setFillStyle('rgba(255,255,255,0.05)');
-      ctx.fillRect(0, Math.max(groundY, 0), w, 4);
-    }
-
-    ctx.draw();
-  },
-
-  _drawBlock: function (ctx, x, y, w, h, color, index) {
-    // 主体
-    ctx.setFillStyle(color);
-    ctx.beginPath();
-    // 圆角矩形
-    var r = 4;
-    ctx.moveTo(x + r, y);
-    ctx.lineTo(x + w - r, y);
-    ctx.arcTo(x + w, y, x + w, y + r, r);
-    ctx.lineTo(x + w, y + h - r);
-    ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
-    ctx.lineTo(x + r, y + h);
-    ctx.arcTo(x, y + h, x, y + h - r, r);
-    ctx.lineTo(x, y + r);
-    ctx.arcTo(x, y, x + r, y, r);
-    ctx.closePath();
-    ctx.fill();
-
-    // 高光效果
-    var highlightGrd = ctx.createLinearGradient(x, y, x, y + h);
-    highlightGrd.addColorStop(0, 'rgba(255,255,255,0.25)');
-    highlightGrd.addColorStop(0.5, 'rgba(255,255,255,0.05)');
-    highlightGrd.addColorStop(1, 'rgba(0,0,0,0.1)');
-    ctx.setFillStyle(highlightGrd);
-    ctx.fillRect(x + 2, y + 2, w - 4, h - 2);
-
-    // 层数标签（每5层显示）
-    if (index > 0 && index % 5 === 0) {
-      ctx.setFillStyle('rgba(255,255,255,0.6)');
-      ctx.setFontSize(10);
-      ctx.setTextAlign('right');
-      ctx.fillText(index + 'F', x - 6, y + h / 2 + 3);
-    }
+  onShareAppMessage: function () {
+    return {
+      title: '我叠了' + this.data.layers + '层，得分' + this.data.score + '！',
+      path: '/pages/tools/stacking/index'
+    };
   }
 });
