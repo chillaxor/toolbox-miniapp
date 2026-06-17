@@ -4,6 +4,7 @@
   "description": "试卷擦除云函数 - 百度文档去手写API",
   "main": "index.js",
   "dependencies": {
-    "axios": "^1.6.0"
+    "axios": "^1.6.0",
+    "wx-server-sdk": "~2.6.3"
   }
 }

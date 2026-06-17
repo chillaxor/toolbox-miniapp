@@ -9,6 +9,8 @@
  */
 
 const axios = require('axios');
+const cloud = require('wx-server-sdk');
+cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
 
 // ====== 配置区（通过云函数环境变量注入，勿硬编码） ======
 const API_KEY = process.env.BAIDU_API_KEY || '';
