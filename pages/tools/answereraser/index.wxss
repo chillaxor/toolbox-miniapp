@@ -26,34 +26,35 @@
   color: var(--color-hint);
 }
 
-.canvas-card {
-  padding: 24rpx;
+/* ========== 编辑区域整体布局 ========== */
+.edit-area {
+  display: flex;
+  flex-direction: column;
+  padding: 16rpx;
 }
 
-.draw-canvas {
-  width: 100%;
-  border-radius: 8rpx;
-  border: 2rpx solid var(--color-border);
-  touch-action: none;
-}
-
-.toolbar {
-  margin-top: 24rpx;
+/* ========== 工具栏固定在上方 ========== */
+.toolbar-fixed {
+  background: #FFFFFF;
+  border-radius: 12rpx;
+  padding: 12rpx 16rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.06);
+  margin-bottom: 12rpx;
 }
 
 .tool-group {
   display: flex;
   justify-content: space-around;
-  padding: 12rpx 0;
+  padding: 8rpx 0;
 }
 
 .tool-btn {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 12rpx 16rpx;
+  padding: 10rpx 14rpx;
   border-radius: 12rpx;
-  min-width: 80rpx;
+  min-width: 72rpx;
   transition: background 0.2s;
 }
 
@@ -62,8 +63,8 @@
 }
 
 .tool-icon {
-  font-size: 36rpx;
-  margin-bottom: 4rpx;
+  font-size: 32rpx;
+  margin-bottom: 2rpx;
 }
 
 .tool-label {
@@ -79,25 +80,64 @@
 .brush-size-row {
   display: flex;
   align-items: center;
-  padding: 12rpx 0;
-  margin-top: 8rpx;
+  padding: 8rpx 0;
+  margin-top: 4rpx;
 }
 
 .size-label {
   font-size: 24rpx;
   color: var(--color-secondary);
   flex-shrink: 0;
-  margin-right: 16rpx;
+  margin-right: 12rpx;
 }
 
 .size-slider {
   flex: 1;
 }
 
-.btn-export {
-  margin-bottom: 0;
+/* ========== 操作提示 ========== */
+.action-hint {
+  text-align: center;
+  padding: 6rpx 0;
+  margin-top: 4rpx;
 }
 
+.hint-text {
+  font-size: 24rpx;
+  color: #45B058;
+  font-weight: 500;
+}
+
+/* ========== Canvas 区域 ========== */
+.canvas-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8rpx;
+  border: 2rpx solid var(--color-border);
+  background: #F8F9FA;
+  overflow: hidden;
+}
+
+.draw-canvas {
+  border-radius: 8rpx;
+  touch-action: none;
+}
+
+/* ========== 导出按钮固定底部 ========== */
+.export-bar {
+  margin-top: 12rpx;
+  padding: 0;
+}
+
+.btn-export {
+  margin-bottom: 0;
+  font-size: 30rpx;
+  font-weight: 600;
+  letter-spacing: 2rpx;
+}
+
+/* ========== 使用说明等 ========== */
 .section-title {
   font-size: 28rpx;
   font-weight: 600;

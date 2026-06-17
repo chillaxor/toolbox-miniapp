@@ -30,6 +30,13 @@ Page({
 
   onLoad: function () {
     this.checkFavorite();
+    // 计算可用画布最大高度：屏幕高度 - 顶部导航(44px) - 页面标题栏 - 工具栏+导出按钮(~200px) - padding
+    var sysInfo = wx.getWindowInfo();
+    var windowHeight = sysInfo.windowHeight;
+    // 预留：导航栏44px + 页面标题40px + 工具栏区160px + padding约30px
+    var maxCanvasH = windowHeight - 44 - 40 - 160 - 30;
+    if (maxCanvasH < 200) maxCanvasH = 200; // 最低保底
+    this.maxCanvasHeight = maxCanvasH;
   },
   onShow: function () {
     this.checkFavorite();
@@ -60,14 +67,27 @@ Page({
       src: path,
       success: function (info) {
         var maxW = 690;
+        var maxH = self.maxCanvasHeight || 500; // 屏幕可用高度限制
         var ratio = info.width / info.height;
         var cw, ch;
         if (ratio > 1) {
+          // 横图：宽度优先
           cw = maxW;
           ch = Math.round(maxW / ratio);
+          // 横图也可能太高，二次限制
+          if (ch > maxH) {
+            ch = maxH;
+            cw = Math.round(maxH * ratio);
+          }
         } else {
-          ch = maxW;
-          cw = Math.round(maxW * ratio);
+          // 竖图：高度优先（关键！原来ch=maxW=690可能超屏幕）
+          ch = maxH;
+          cw = Math.round(maxH * ratio);
+          // 竖图宽度也别超maxW
+          if (cw > maxW) {
+            cw = maxW;
+            ch = Math.round(maxW / ratio);
+          }
         }
         self.setData({
           imageSrc: path,

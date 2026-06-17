@@ -13,21 +13,10 @@
     </view>
   </view>
 
-  <!-- 画布区域 -->
-  <view wx:if="{{imageSrc}}" class="card canvas-card">
-    <canvas
-      id="drawCanvas"
-      type="2d"
-      class="draw-canvas"
-      style="width:{{canvasWidth}}px;height:{{canvasHeight}}px;"
-      bindtouchstart="onDrawStart"
-      bindtouchmove="onDrawMove"
-      bindtouchend="onDrawEnd"
-      disable-scroll
-    ></canvas>
-
-    <!-- 工具栏 -->
-    <view class="toolbar">
+  <!-- 编辑区域：固定布局，不滚动 -->
+  <view wx:if="{{imageSrc}}" class="edit-area">
+    <!-- 工具栏放在Canvas上方，始终可见 -->
+    <view class="toolbar-fixed">
       <view class="tool-group">
         <view class="tool-btn {{drawMode === 'brush' ? 'active' : ''}}" data-mode="brush" bindtap="onDrawModeChange">
           <text class="tool-icon">✏️</text>
@@ -52,14 +41,39 @@
       </view>
 
       <view class="brush-size-row" wx:if="{{drawMode === 'brush'}}">
-        <text class="size-label">画笔粗细</text>
+        <text class="size-label">粗细</text>
         <slider class="size-slider" min="5" max="60" value="{{brushSize}}" activeColor="#45B058" bindchange="onBrushSizeChange" show-value/>
+      </view>
+
+      <!-- 操作提示 -->
+      <view class="action-hint" wx:if="{{isReady && history.length > 0}}">
+        <text class="hint-text">{{history.length > 0 ? '已遮挡✅ 点击下方「保存」导出到相册' : '在图片上滑动涂抹遮挡答案'}}</text>
+      </view>
+      <view class="action-hint" wx:if="{{isReady && history.length === 0}}">
+        <text class="hint-text">👆 在图片上滑动涂抹，或用矩形覆盖答案</text>
       </view>
     </view>
 
-    <button class="btn-primary btn-export" style="background:linear-gradient(135deg,#45B058 0%,#388E3C 100%);margin-top:24rpx;" bindtap="onExport">
-      导出并保存到相册
-    </button>
+    <!-- Canvas 区域：自适应高度 -->
+    <view class="canvas-wrapper">
+      <canvas
+        id="drawCanvas"
+        type="2d"
+        class="draw-canvas"
+        style="width:{{canvasWidth}}px;height:{{canvasHeight}}px;"
+        bindtouchstart="onDrawStart"
+        bindtouchmove="onDrawMove"
+        bindtouchend="onDrawEnd"
+        disable-scroll
+      ></canvas>
+    </view>
+
+    <!-- 导出按钮固定在底部 -->
+    <view class="export-bar">
+      <button class="btn-primary btn-export" style="background:linear-gradient(135deg,#45B058 0%,#388E3C 100%);" bindtap="onExport">
+        💾 导出并保存到相册
+      </button>
+    </view>
   </view>
 
   <!-- 使用说明 -->
@@ -84,7 +98,7 @@
         <view class="step-num">3</view>
         <view class="step-content">
           <text class="step-title">导出保存</text>
-          <text class="step-desc">点击导出，遮挡后的图片自动保存到相册</text>
+          <text class="step-desc">点击底部「导出并保存到相册」按钮，遮挡后的图片自动保存</text>
         </view>
       </view>
     </view>
