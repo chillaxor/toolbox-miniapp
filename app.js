@@ -2,6 +2,13 @@ App({
   onLaunch: function () {
     // 小程序启动时执行
     console.log('[App] onLaunch');
+    // 初始化云开发环境
+    if (wx.cloud) {
+      wx.cloud.init({
+        env: '7856333',
+        traceUser: true
+      });
+    }
   },
 
   onShow: function () {

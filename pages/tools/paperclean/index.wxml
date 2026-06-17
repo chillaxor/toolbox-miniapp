@@ -1,0 +1,110 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">试卷擦除</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <!-- 额度提示 -->
+  <view class="card quota-card" style="background:linear-gradient(135deg,#9B59B6 0%,#8E44AD 100%);">
+    <view class="quota-info">
+      <text class="quota-label">本月剩余额度</text>
+      <text class="quota-value">{{remainingCount}} / {{monthlyLimit}} 次</text>
+    </view>
+    <view class="quota-bar-bg">
+      <view class="quota-bar-fill" style="width:{{(remainingCount / monthlyLimit) * 100}}%;"></view>
+    </view>
+    <text class="quota-hint" wx:if="{{remainingCount <= 0}}">本月额度已用完，下月自动恢复</text>
+  </view>
+
+  <!-- 未选图 -->
+  <view class="card" wx:if="{{!imageSrc && !showResult}}">
+    <view class="image-picker" bindtap="onChooseImage">
+      <text class="picker-icon">🧹</text>
+      <text class="picker-title">选择试卷照片</text>
+      <text class="picker-desc">拍照或从相册选择已做过的试卷</text>
+    </view>
+  </view>
+
+  <!-- 已选图 → 擦除 -->
+  <view class="card" wx:if="{{imageSrc && !showResult && !isLoading}}">
+    <view class="preview-box">
+      <image class="preview-img" src="{{imageSrc}}" mode="aspectFit"></image>
+    </view>
+    <view class="action-row">
+      <button class="btn-primary btn-clean" style="background:linear-gradient(135deg,#9B59B6 0%,#8E44AD 100%);" bindtap="onStartClean">
+        🧹 开始擦除手写笔迹
+      </button>
+      <button class="btn-secondary" bindtap="onReset">重新选图</button>
+    </view>
+  </view>
+
+  <!-- 加载中 -->
+  <view class="card" wx:if="{{isLoading}}">
+    <view class="loading-box">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">{{loadingText}}</text>
+      <text class="loading-sub">AI正在识别手写与印刷内容</text>
+    </view>
+  </view>
+
+  <!-- 擦除结果 -->
+  <view class="card result-card" wx:if="{{showResult}}">
+    <view class="compare-section">
+      <view class="compare-item">
+        <text class="compare-label">原图（含手写）</text>
+        <image class="compare-img" src="{{imageSrc}}" mode="aspectFit"></image>
+      </view>
+      <view class="compare-divider">
+        <text class="divider-icon">→</text>
+      </view>
+      <view class="compare-item">
+        <text class="compare-label">擦除后（干净试卷）</text>
+        <image class="compare-img" src="{{resultSrc}}" mode="aspectFit"></image>
+      </view>
+    </view>
+
+    <view class="result-actions">
+      <button class="btn-primary btn-save" style="background:linear-gradient(135deg,#9B59B6 0%,#8E44AD 100%);" bindtap="onSaveResult">
+        💾 保存干净试卷到相册
+      </button>
+      <button class="btn-secondary" bindtap="onReset">擦除另一张</button>
+    </view>
+  </view>
+
+  <!-- 使用说明 -->
+  <view class="card">
+    <text class="section-title">📖 使用说明</text>
+    <view class="step-list">
+      <view class="step-item">
+        <view class="step-num" style="background:linear-gradient(135deg,#9B59B6 0%,#8E44AD 100%);">1</view>
+        <view class="step-content">
+          <text class="step-title">选择试卷照片</text>
+          <text class="step-desc">拍照或从相册选取已做过的试卷图片</text>
+        </view>
+      </view>
+      <view class="step-item">
+        <view class="step-num" style="background:linear-gradient(135deg,#9B59B6 0%,#8E44AD 100%);">2</view>
+        <view class="step-content">
+          <text class="step-title">AI智能擦除</text>
+          <text class="step-desc">自动区分手写笔迹与印刷内容，擦除手写保留印刷</text>
+        </view>
+      </view>
+      <view class="step-item">
+        <view class="step-num" style="background:linear-gradient(135deg,#9B59B6 0%,#8E44AD 100%);">3</view>
+        <view class="step-content">
+          <text class="step-title">保存干净试卷</text>
+          <text class="step-desc">擦除后的空白试卷保存到手机相册，方便重做复习</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 小贴士 -->
+  <view class="card tips-card">
+    <text class="section-title">💡 温馨提示</text>
+    <view wx:for="{{tips}}" wx:key="index" class="tip-item">
+      <text class="tip-dot" style="color:#9B59B6;">•</text>
+      <text class="tip-text">{{item}}</text>
+    </view>
+  </view>
+</view>

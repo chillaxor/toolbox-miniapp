@@ -119,7 +119,8 @@
     "pages/tools/typing-test/index",
     "pages/tools/text2img/index",
     "pages/tools/imgmerge/index",
-    "pages/tools/picpuzzle/index"
+    "pages/tools/picpuzzle/index",
+    "pages/tools/paperclean/index"
   ],
   "window": {
     "backgroundTextStyle": "light",

@@ -44,9 +44,11 @@
   "libVersion": "3.16.1",
   "appid": "wx02b3c92c6051c892",
   "projectname": "toolbox-miniapp",
+  "cloudfunctionRoot": "cloudfunctions/",
   "condition": {},
   "editorSetting": {
     "tabIndent": "insertSpaces",
     "tabSize": 2
-  }
+  },
+  "cloudfunctionTemplateRoot": "cloudfunctionTemplate/"
 }
