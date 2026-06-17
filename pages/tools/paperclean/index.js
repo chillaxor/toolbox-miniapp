@@ -1,5 +1,8 @@
 var storage = require('../../../utils/storage.js');
 
+// 云环境ID（与app.js中wx.cloud.init的env保持一致）
+var CLOUD_ENV = '7856333';
+
 Page({
   data: {
     imageSrc: '',
@@ -11,6 +14,7 @@ Page({
     remainingCount: 50,
     monthlyLimit: 50,
     showResult: false,
+    cloudReady: false, // 云函数是否可用
     tips: [
       '选择拍好的试卷照片',
       'AI自动识别并擦除手写笔迹',
@@ -21,7 +25,7 @@ Page({
 
   onLoad: function () {
     this.checkFavorite();
-    this.fetchQuota();
+    this.checkCloudReady();
   },
 
   onShow: function () {
@@ -37,12 +41,44 @@ Page({
   },
 
   /**
+   * 检测云函数是否可用
+   */
+  checkCloudReady: function () {
+    var self = this;
+    if (!wx.cloud) {
+      self.setData({ cloudReady: false });
+      return;
+    }
+    wx.cloud.callFunction({
+      name: 'paperclean',
+      data: { action: 'quota' },
+      env: CLOUD_ENV,
+      success: function (res) {
+        console.log('[paperclean] cloud ready, quota:', res.result);
+        self.setData({ cloudReady: true });
+        if (res.result && res.result.success) {
+          self.setData({
+            usedCount: res.result.used,
+            remainingCount: res.result.remaining,
+            monthlyLimit: res.result.limit
+          });
+        }
+      },
+      fail: function (err) {
+        console.error('[paperclean] cloud check failed:', JSON.stringify(err));
+        self.setData({ cloudReady: false });
+      }
+    });
+  },
+
+  /**
    * 查询本月剩余额度
    */
   fetchQuota: function () {
     wx.cloud.callFunction({
       name: 'paperclean',
       data: { action: 'quota' },
+      env: CLOUD_ENV,
       success: function (res) {
         if (res.result && res.result.success) {
           this.setData({
@@ -52,9 +88,9 @@ Page({
           });
         }
       }.bind(this),
-      fail: function () {
+      fail: function (err) {
         // 额度查询失败不影响使用，静默处理
-        console.log('[paperclean] quota query failed');
+        console.log('[paperclean] quota query failed:', JSON.stringify(err));
       }
     });
   },
@@ -135,6 +171,7 @@ Page({
             action: 'clean',
             imageBase64: readRes.data
           },
+          env: CLOUD_ENV,
           success: function (callRes) {
             self.setData({ isLoading: false, loadingText: '' });
 
@@ -195,11 +232,23 @@ Page({
               }
             });
           },
-          fail: function () {
+          fail: function (err) {
             self.setData({ isLoading: false, loadingText: '' });
+            console.error('[paperclean] callFunction failed:', JSON.stringify(err));
+            var errMsg = '云函数调用失败';
+            if (err.errMsg) {
+              // 提取关键错误信息
+              if (err.errMsg.indexOf('timeout') !== -1 || err.errMsg.indexOf('timed out') !== -1) {
+                errMsg = '请求超时，请稍后重试';
+              } else if (err.errMsg.indexOf('not found') !== -1 || err.errMsg.indexOf('FunctionName') !== -1) {
+                errMsg = '云函数未部署，请在开发者工具中上传 paperclean 云函数';
+              } else if (err.errMsg.indexOf('network') !== -1 || err.errMsg.indexOf('ECONNREFUSED') !== -1) {
+                errMsg = '网络连接失败，请检查网络';
+              }
+            }
             wx.showModal({
-              title: '网络错误',
-              content: '云函数调用失败，请检查网络连接',
+              title: '服务暂不可用',
+              content: errMsg,
               showCancel: false
             });
           }

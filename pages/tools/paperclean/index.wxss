@@ -1,3 +1,44 @@
+/* 云服务不可用提示 */
+.cloud-error-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48rpx 32rpx;
+  margin-bottom: 24rpx;
+  text-align: center;
+}
+
+.cloud-error-icon {
+  font-size: 72rpx;
+  margin-bottom: 16rpx;
+}
+
+.cloud-error-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #E67E22;
+  margin-bottom: 12rpx;
+}
+
+.cloud-error-desc {
+  font-size: 26rpx;
+  color: var(--color-hint);
+  margin-bottom: 32rpx;
+  line-height: 1.5;
+}
+
+.btn-retry {
+  background: linear-gradient(135deg, #9B59B6 0%, #8E44AD 100%);
+  color: #FFFFFF;
+  font-size: 28rpx;
+  border-radius: 16rpx;
+  padding: 0 48rpx;
+  height: 80rpx;
+  line-height: 80rpx;
+  text-align: center;
+  border: none;
+}
+
 /* 额度卡片 */
 .quota-card {
   padding: 32rpx;

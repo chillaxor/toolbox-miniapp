@@ -5,7 +5,7 @@
   </view>
 
   <!-- 额度提示 -->
-  <view class="card quota-card" style="background:linear-gradient(135deg,#9B59B6 0%,#8E44AD 100%);">
+  <view class="card quota-card" style="background:linear-gradient(135deg,#9B59B6 0%,#8E44AD 100%);" wx:if="{{cloudReady}}">
     <view class="quota-info">
       <text class="quota-label">本月剩余额度</text>
       <text class="quota-value">{{remainingCount}} / {{monthlyLimit}} 次</text>
@@ -14,6 +14,14 @@
       <view class="quota-bar-fill" style="width:{{(remainingCount / monthlyLimit) * 100}}%;"></view>
     </view>
     <text class="quota-hint" wx:if="{{remainingCount <= 0}}">本月额度已用完，下月自动恢复</text>
+  </view>
+
+  <!-- 云服务不可用提示 -->
+  <view class="card cloud-error-card" wx:if="{{!cloudReady && !isLoading}}">
+    <text class="cloud-error-icon">⚠️</text>
+    <text class="cloud-error-title">云服务暂不可用</text>
+    <text class="cloud-error-desc">试卷擦除功能需要云服务支持，请检查网络后重试</text>
+    <button class="btn-retry" bindtap="checkCloudReady">重新检测</button>
   </view>
 
   <!-- 未选图 -->
