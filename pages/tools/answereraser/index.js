@@ -11,7 +11,7 @@ Page({
     brushSize: 20,
     isFavorite: false,
     isReady: false,
-    history: [],
+    historyCount: 0,
     tips: [
       '从相册选择试卷照片',
       '用涂抹模式在答案区域上滑动遮挡',
@@ -22,20 +22,25 @@ Page({
 
   ctx: null,
   imgObj: null,
+  imgPath: '',
   isDrawing: false,
   lastX: 0,
   lastY: 0,
   rectStart: null,
   baseImageData: null,
+  canvasOffsetX: 0,
+  canvasOffsetY: 0,
+  historyStack: [],      // 存 ImageData 快照（内存中，不走 setData）
+  canvasWidthVal: 0,
+  canvasHeightVal: 0,
 
   onLoad: function () {
     this.checkFavorite();
     // 计算可用画布最大高度：屏幕高度 - 顶部导航(44px) - 页面标题栏 - 工具栏+导出按钮(~200px) - padding
     var sysInfo = wx.getWindowInfo();
     var windowHeight = sysInfo.windowHeight;
-    // 预留：导航栏44px + 页面标题40px + 工具栏区160px + padding约30px
     var maxCanvasH = windowHeight - 44 - 40 - 160 - 30;
-    if (maxCanvasH < 200) maxCanvasH = 200; // 最低保底
+    if (maxCanvasH < 200) maxCanvasH = 200;
     this.maxCanvasHeight = maxCanvasH;
   },
   onShow: function () {
@@ -67,23 +72,19 @@ Page({
       src: path,
       success: function (info) {
         var maxW = 690;
-        var maxH = self.maxCanvasHeight || 500; // 屏幕可用高度限制
+        var maxH = self.maxCanvasHeight || 500;
         var ratio = info.width / info.height;
         var cw, ch;
         if (ratio > 1) {
-          // 横图：宽度优先
           cw = maxW;
           ch = Math.round(maxW / ratio);
-          // 横图也可能太高，二次限制
           if (ch > maxH) {
             ch = maxH;
             cw = Math.round(maxH * ratio);
           }
         } else {
-          // 竖图：高度优先（关键！原来ch=maxW=690可能超屏幕）
           ch = maxH;
           cw = Math.round(maxH * ratio);
-          // 竖图宽度也别超maxW
           if (cw > maxW) {
             cw = maxW;
             ch = Math.round(maxW / ratio);
@@ -96,7 +97,7 @@ Page({
           canvasWidth: cw,
           canvasHeight: ch,
           isReady: false,
-          history: []
+          historyCount: 0
         }, function () {
           self.initCanvas(path, cw, ch);
         });
@@ -123,62 +124,72 @@ Page({
           ctx.drawImage(img, 0, 0, cw, ch);
           self.ctx = ctx;
           self.imgObj = img;
+          self.imgPath = path;
           self.canvas = canvas;
           self.dpr = dpr;
+          self.canvasWidthVal = cw;
+          self.canvasHeightVal = ch;
           self.baseImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          self.historyStack = [];
           self.setData({ isReady: true });
+
+          // 缓存 Canvas 在页面中的位置，后续触摸事件直接用，不再每帧查询
+          self._refreshCanvasOffset();
         };
         img.src = path;
       });
   },
 
+  /** 缓存 Canvas 偏移量（只在初始化和窗口变化时查询一次） */
+  _refreshCanvasOffset: function () {
+    var self = this;
+    var query = wx.createSelectorQuery();
+    query.select('#drawCanvas').boundingClientRect(function (rect) {
+      self.canvasOffsetX = rect.left;
+      self.canvasOffsetY = rect.top;
+    }).exec();
+  },
+
+  /** 从触摸事件直接算坐标（同步，不查DOM） */
+  _getTouchPos: function (touch) {
+    return {
+      x: touch.clientX - this.canvasOffsetX,
+      y: touch.clientY - this.canvasOffsetY
+    };
+  },
+
   onDrawStart: function (e) {
     if (!this.ctx) return;
     var touch = e.touches[0];
-    var query = wx.createSelectorQuery();
-    var self = this;
-    query.select('#drawCanvas').boundingClientRect(function (rect) {
-      var x = touch.clientX - rect.left;
-      var y = touch.clientY - rect.top;
-      self.isDrawing = true;
-      self.lastX = x;
-      self.lastY = y;
-      if (self.data.drawMode === 'rect') {
-        self.rectStart = { x: x, y: y };
-      } else {
-        self.drawBrush(x, y, x, y);
-      }
-    }).exec();
+    var pos = this._getTouchPos(touch);
+    this.isDrawing = true;
+    this.lastX = pos.x;
+    this.lastY = pos.y;
+    if (this.data.drawMode === 'rect') {
+      this.rectStart = { x: pos.x, y: pos.y };
+    } else {
+      this.drawBrush(pos.x, pos.y, pos.x, pos.y);
+    }
   },
 
   onDrawMove: function (e) {
     if (!this.isDrawing || !this.ctx) return;
     var touch = e.touches[0];
-    var query = wx.createSelectorQuery();
-    var self = this;
-    query.select('#drawCanvas').boundingClientRect(function (rect) {
-      var x = touch.clientX - rect.left;
-      var y = touch.clientY - rect.top;
-      if (self.data.drawMode === 'brush') {
-        self.drawBrush(self.lastX, self.lastY, x, y);
-        self.lastX = x;
-        self.lastY = y;
-      }
-    }).exec();
+    var pos = this._getTouchPos(touch);
+    if (this.data.drawMode === 'brush') {
+      this.drawBrush(this.lastX, this.lastY, pos.x, pos.y);
+      this.lastX = pos.x;
+      this.lastY = pos.y;
+    }
   },
 
   onDrawEnd: function (e) {
     if (!this.isDrawing || !this.ctx) return;
     if (this.data.drawMode === 'rect' && this.rectStart && e.changedTouches && e.changedTouches[0]) {
       var touch = e.changedTouches[0];
-      var query = wx.createSelectorQuery();
-      var self = this;
-      query.select('#drawCanvas').boundingClientRect(function (rect) {
-        var x = touch.clientX - rect.left;
-        var y = touch.clientY - rect.top;
-        self.drawRect(self.rectStart.x, self.rectStart.y, x, y);
-        self.rectStart = null;
-      }).exec();
+      var pos = this._getTouchPos(touch);
+      this.drawRect(this.rectStart.x, this.rectStart.y, pos.x, pos.y);
+      this.rectStart = null;
     }
     this.saveHistory();
     this.isDrawing = false;
@@ -216,31 +227,31 @@ Page({
   saveHistory: function () {
     if (!this.canvas) return;
     var data = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
-    var history = this.data.history.slice();
-    if (history.length >= 20) history.shift();
-    history.push(data);
-    this.setData({ history: history });
+    if (this.historyStack.length >= 20) this.historyStack.shift();
+    this.historyStack.push(data);
+    // 只更新计数到 data（轻量），不传 ImageData 大对象
+    this.setData({ historyCount: this.historyStack.length });
   },
 
   onUndo: function () {
-    var history = this.data.history;
-    if (history.length === 0) {
+    if (this.historyStack.length === 0) {
       wx.showToast({ title: '没有可撤销的操作', icon: 'none' });
       return;
     }
-    history.pop();
-    if (history.length > 0) {
-      this.ctx.putImageData(history[history.length - 1], 0, 0);
+    this.historyStack.pop();
+    if (this.historyStack.length > 0) {
+      this.ctx.putImageData(this.historyStack[this.historyStack.length - 1], 0, 0);
     } else if (this.baseImageData) {
       this.ctx.putImageData(this.baseImageData, 0, 0);
     }
-    this.setData({ history: history });
+    this.setData({ historyCount: this.historyStack.length });
   },
 
   onReset: function () {
     if (this.baseImageData && this.ctx) {
       this.ctx.putImageData(this.baseImageData, 0, 0);
-      this.setData({ history: [] });
+      this.historyStack = [];
+      this.setData({ historyCount: 0 });
     }
   },
 

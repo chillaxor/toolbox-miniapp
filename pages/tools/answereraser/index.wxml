@@ -46,10 +46,10 @@
       </view>
 
       <!-- 操作提示 -->
-      <view class="action-hint" wx:if="{{isReady && history.length > 0}}">
-        <text class="hint-text">{{history.length > 0 ? '已遮挡✅ 点击下方「保存」导出到相册' : '在图片上滑动涂抹遮挡答案'}}</text>
+      <view class="action-hint" wx:if="{{isReady && historyCount > 0}}">
+        <text class="hint-text">已遮挡✅ 点击下方「保存」导出到相册</text>
       </view>
-      <view class="action-hint" wx:if="{{isReady && history.length === 0}}">
+      <view class="action-hint" wx:if="{{isReady && historyCount === 0}}">
         <text class="hint-text">👆 在图片上滑动涂抹，或用矩形覆盖答案</text>
       </view>
     </view>
