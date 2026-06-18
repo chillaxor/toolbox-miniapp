@@ -1,7 +1,7 @@
 var storage = require('../../../utils/storage.js');
 
 // 云环境ID（与app.js中wx.cloud.init的env保持一致）
-var CLOUD_ENV = '7856333';
+var CLOUD_ENV = 'cloud1-d9gm1qla9bebafa31';
 
 Page({
   data: {
@@ -102,7 +102,7 @@ Page({
     if (this.data.remainingCount <= 0) {
       wx.showModal({
         title: '额度已用完',
-        content: '本月免费额度已用完（50次），该功能暂不可用，下月自动恢复',
+        content: '本月免费额度已用完，该功能暂不可用，下月自动恢复',
         showCancel: false,
         confirmText: '知道了'
       });
@@ -148,7 +148,7 @@ Page({
     if (this.data.remainingCount <= 0) {
       wx.showModal({
         title: '额度已用完',
-        content: '本月免费额度已用完（50次），该功能暂不可用',
+        content: '本月免费额度已用完，该功能暂不可用',
         showCancel: false
       });
       return;
@@ -188,7 +188,7 @@ Page({
                 self.setData({ remainingCount: 0 });
                 wx.showModal({
                   title: '额度已用完',
-                  content: '本月免费额度已用完（50次），该功能暂不可用',
+                  content: '本月免费额度已用完，该功能暂不可用',
                   showCancel: false
                 });
               } else {

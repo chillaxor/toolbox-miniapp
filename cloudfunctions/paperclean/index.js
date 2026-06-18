@@ -66,7 +66,7 @@ exports.main = async (event, context) => {
       return {
         success: false,
         errorCode: 'QUOTA_EXCEEDED',
-        errorMsg: '本月免费额度已用完（50次），该功能暂不可用'
+        errorMsg: '本月免费额度已用完，该功能暂不可用'
       };
     }
 
