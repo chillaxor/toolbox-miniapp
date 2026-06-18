@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "openapi": []
+  },
+  "envVariables": {
+    "BAIDU_API_KEY": "",
+    "BAIDU_SECRET_KEY": "",
+    "MONTHLY_LIMIT": "500",
+    "DAILY_USER_LIMIT": "10"
+  }
+}

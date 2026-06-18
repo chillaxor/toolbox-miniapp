@@ -28,11 +28,19 @@
   margin-right: 12rpx;
 }
 
-.mode-ai {
+/* 云端AI模式 */
+.mode-cloud {
+  background: linear-gradient(135deg, #2196f3, #00bcd4);
+  color: #fff;
+}
+
+/* 本地AI模式 */
+.mode-localai {
   background: linear-gradient(135deg, #667eea, #764ba2);
   color: #fff;
 }
 
+/* 基础模式 */
 .mode-basic {
   background: #f0f0f0;
   color: #999;
@@ -45,6 +53,44 @@
 .mode-status {
   font-size: 20rpx;
   opacity: 0.85;
+}
+
+/* 额度条 */
+.quota-bar {
+  display: flex;
+  gap: 16rpx;
+  background: var(--color-bg, #f7f8fa);
+  border-radius: 12rpx;
+  padding: 16rpx 20rpx;
+  margin-bottom: 16rpx;
+  flex-wrap: wrap;
+}
+
+.quota-item {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  flex: 1;
+}
+
+.quota-label {
+  font-size: 22rpx;
+  color: var(--color-secondary, #888);
+}
+
+.quota-val {
+  font-size: 22rpx;
+  color: var(--color-primary, #333);
+  font-weight: 600;
+}
+
+.quota-warn {
+  color: #f44336;
+}
+
+.quota-fallback .quota-label {
+  font-size: 22rpx;
+  color: #f57c00;
 }
 
 /* 模型状态卡片 */

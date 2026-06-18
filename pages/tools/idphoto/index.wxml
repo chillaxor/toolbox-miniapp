@@ -1,11 +1,32 @@
 <view class="container">
   <view class="tool-header">
     <text class="tool-header-title">证件照生成器</text>
-    <view class="mode-badge {{aiMode && aiAvailable ? 'mode-ai' : 'mode-basic'}}">
-      <text class="mode-badge-text">{{aiMode && aiAvailable ? '🤖 AI智能抠图' : '📝 基础模式'}}</text>
-      <text class="mode-status" wx:if="{{aiMode && aiAvailable && modelStatus !== 'ready'}}"> · {{modelStatus === 'loading' ? '加载中' + modelProgress + '%' : modelStatus === 'error' ? '不可用' : '待下载'}}</text>
+    <!-- 模式徽章 -->
+    <view class="mode-badge mode-{{activeMode}}">
+      <text class="mode-badge-text">
+        {{activeMode === 'cloud' ? '☁️ 云端AI' : activeMode === 'localai' ? '🤖 本地AI' : '📝 基础模式'}}
+      </text>
     </view>
     <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <!-- 云端额度提示 -->
+  <view class="quota-bar" wx:if="{{cloudQuotaLoaded}}">
+    <view class="quota-item" wx:if="{{activeMode === 'cloud'}}">
+      <text class="quota-label">☁️ 今日剩余</text>
+      <text class="quota-val {{cloudQuota.dailyUserRemaining <= 2 ? 'quota-warn' : ''}}">
+        {{cloudQuota.dailyUserRemaining}}/{{cloudQuota.dailyUserLimit}} 次
+      </text>
+    </view>
+    <view class="quota-item" wx:if="{{activeMode === 'cloud'}}">
+      <text class="quota-label">📅 本月剩余</text>
+      <text class="quota-val {{cloudQuota.remaining <= 50 ? 'quota-warn' : ''}}">
+        {{cloudQuota.remaining}}/{{cloudQuota.limit}} 次
+      </text>
+    </view>
+    <view class="quota-item quota-fallback" wx:if="{{activeMode !== 'cloud'}}">
+      <text class="quota-label">💡 云端额度耗尽，已切换到{{activeMode === 'localai' ? '本地AI' : '基础模式'}}</text>
+    </view>
   </view>
 
   <!-- 选择照片 -->
@@ -38,18 +59,27 @@
   <view class="card">
     <text class="card-title">🎨 背景颜色</text>
     <view class="bg-grid">
-      <view class="bg-item {{bgIdx === index ? 'bg-active' : ''}}" wx:for="{{bgColors}}" wx:key="index" data-idx="{{index}}" bindtap="onBgChange">
+      <view class="bg-item {{bgIdx === index ? 'bg-active' : ''}}"
+            wx:for="{{bgColors}}" wx:key="index"
+            data-idx="{{index}}" bindtap="onBgChange">
         <view class="bg-circle" style="background: {{item.color}};"></view>
         <text class="bg-name">{{item.name}}</text>
       </view>
     </view>
-    <text class="bg-tip">{{aiMode && aiAvailable ? '✨ AI自动识别人像，精确到发丝边缘' : '💡 自动检测背景色替换，纯色背景效果最佳'}}</text>
+    <text class="bg-tip">
+      {{activeMode === 'cloud' ? '✨ 百度云AI精准识别人像，支持复杂背景' :
+        activeMode === 'localai' ? '🤖 本地AI推理，精确到发丝边缘' :
+        '💡 自动检测背景色替换，纯色背景效果最佳'}}
+    </text>
   </view>
 
   <!-- 生成按钮 -->
   <view class="card" wx:if="{{photoPath}}">
-    <view class="btn-generate {{generating ? 'btn-disabled' : ''}}" bindtap="{{generating ? '' : 'generatePhoto'}}">
-      {{generating ? '生成中...' : (aiMode && aiAvailable ? '🤖 AI抠图+生成证件照' : '📸 生成证件照')}}
+    <view class="btn-generate {{generating ? 'btn-disabled' : ''}}"
+          bindtap="{{generating ? '' : 'generatePhoto'}}">
+      {{generating ? '生成中...' :
+        (activeMode === 'cloud' ? '☁️ 云端AI生成证件照' :
+         activeMode === 'localai' ? '🤖 本地AI生成证件照' : '📸 生成证件照')}}
     </view>
   </view>
 
@@ -82,13 +112,9 @@
     </view>
   </view>
 
-  <!-- 隐藏canvas -->
-  <!-- idphoto-src: 图片预处理(最大800px), AI模式也用于推理输入 -->
-  <canvas canvas-id="idphoto-src" style="position:fixed;left:-9999px;width:800px;height:800px;"></canvas>
-  <!-- idphoto-mask: AI推理用的512x512, 也用于mask存储和缩放 -->
-  <canvas canvas-id="idphoto-mask" style="position:fixed;left:-9999px;width:512px;height:512px;"></canvas>
-  <!-- idphoto-canvas: 最终裁剪合成(普通排版) -->
+  <!-- 隐藏 canvas -->
+  <canvas canvas-id="idphoto-src"    style="position:fixed;left:-9999px;width:800px;height:800px;"></canvas>
+  <canvas canvas-id="idphoto-mask"   style="position:fixed;left:-9999px;width:512px;height:512px;"></canvas>
   <canvas canvas-id="idphoto-canvas" style="position:fixed;left:-9999px;width:{{canvasW}}px;height:{{canvasH}}px;"></canvas>
-  <!-- idphoto-layout: 6寸排版拼图(1200x1800) -->
   <canvas canvas-id="idphoto-layout" style="position:fixed;left:-9999px;width:1200px;height:1800px;"></canvas>
 </view>

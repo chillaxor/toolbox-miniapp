@@ -40,7 +40,7 @@ var LAYOUT6_CONFIGS = {
 var LAYOUT6_W = 1200;
 var LAYOUT6_H = 1800;
 
-// ============ AI 模型配置 ============
+// ============ AI 本地模型配置（降级备用） ============
 var MODEL_CONFIG = {
   url: 'https://your-cdn.com/modnet.onnx', // TODO: 替换实际CDN地址
   localPath: wx.env.USER_DATA_PATH + '/modnet.onnx'
@@ -52,10 +52,52 @@ var INFERENCE_TIMEOUT = 10000;
 var COLOR_THRESHOLD = 80;
 var MAX_PROCESS_SIZE = 800;
 
+// ============ 模式优先级 ============
+// cloud → localAI → basic
+// cloud:  百度智能云人像分割（云函数中转），效果最佳
+// localAI: 本地 ONNX 推理（需下载模型），次之
+// basic:  颜色替换（纯色背景），兜底
+
 // ============ 工具函数 ============
 function colorDist(r1, g1, b1, r2, g2, b2) {
   var dr = r1 - r2, dg = g1 - g2, db = b1 - b2;
   return Math.sqrt(dr * dr + dg * dg + db * db);
+}
+
+/** 将图片压缩并转 base64，用于云函数上传 */
+function imageToBase64(filePath, maxSize, callback) {
+  // 先压缩图片到最大边 maxSize
+  wx.compressImage({
+    src: filePath,
+    quality: 85,
+    success: function (res) {
+      var fs = wx.getFileSystemManager();
+      fs.readFile({
+        filePath: res.tempFilePath,
+        encoding: 'base64',
+        success: function (fileRes) {
+          callback(null, fileRes.data);
+        },
+        fail: function (err) {
+          callback(err);
+        }
+      });
+    },
+    fail: function () {
+      // 压缩失败直接读原图
+      var fs = wx.getFileSystemManager();
+      fs.readFile({
+        filePath: filePath,
+        encoding: 'base64',
+        success: function (fileRes) {
+          callback(null, fileRes.data);
+        },
+        fail: function (err) {
+          callback(err);
+        }
+      });
+    }
+  });
 }
 
 Page({
@@ -74,25 +116,35 @@ Page({
     canvasH: 413,
     resultPath: '',
     generating: false,
-    // AI 相关
+
+    // ── 云端 AI 模式（百度）──
+    cloudMode: true,            // 是否启用云端AI
+    cloudQuota: null,           // { remaining, limit, dailyUserRemaining, dailyUserLimit }
+    cloudQuotaLoaded: false,
+
+    // ── 本地 AI 模式（ONNX）──
     aiAvailable: false,
-    modelStatus: 'unloaded', // unloaded | downloading | loading | ready | error | unavailable
+    modelStatus: 'unloaded',    // unloaded | downloading | loading | ready | error | unavailable
     modelProgress: 0,
     aiMode: true,
-    maskReady: false
+    maskReady: false,
+
+    // 当前显示的模式标签
+    // 'cloud' | 'localai' | 'basic'
+    activeMode: 'cloud'
   },
 
-  // AI 推理 session（页面生命周期复用）
+  // 本地 AI 推理 session
   _session: null,
-  // 缓存的 mask 数据（Float32Array, 原图处理尺寸 procW x procH）
+  // 缓存的 mask 数据（Float32Array）
   _cachedMask: null,
-  // 处理尺寸
   _procW: 0,
   _procH: 0,
 
   onLoad: function () {
     this.checkFavorite();
     this._checkAiCapability();
+    this._loadCloudQuota();
   },
 
   onShow: function () {
@@ -116,27 +168,64 @@ Page({
     this.setData({ isFavorite: fav });
   },
 
-  // ============ AI 初始化 ============
-  _checkAiCapability: function () {
-    if (typeof wx.createInferenceSession !== 'function') {
-      this.setData({ aiAvailable: false, modelStatus: 'unavailable', aiMode: false });
-      return;
-    }
-    this.setData({ aiAvailable: true });
-    // 检查本地是否有模型
+  // ============ 云端额度查询 ============
+  _loadCloudQuota: function () {
     var self = this;
-    wx.getFileInfo({
-      filePath: MODEL_CONFIG.localPath,
-      success: function () {
-        self._loadModel();
+    wx.cloud.callFunction({
+      name: 'idphoto',
+      data: { action: 'quota' },
+      success: function (res) {
+        var r = res.result || {};
+        if (r.success) {
+          self.setData({
+            cloudQuota: {
+              remaining: r.remaining,
+              limit: r.limit,
+              dailyUserRemaining: r.dailyUserRemaining,
+              dailyUserLimit: r.dailyUserLimit
+            },
+            cloudQuotaLoaded: true,
+            // 若额度耗尽自动切换到本地AI
+            cloudMode: r.remaining > 0 && r.dailyUserRemaining > 0
+          });
+          self._updateActiveMode();
+        }
       },
       fail: function () {
-        self.setData({ modelStatus: 'unloaded' });
+        // 云函数不可用，降级
+        self.setData({ cloudMode: false, cloudQuotaLoaded: true });
+        self._updateActiveMode();
       }
     });
   },
 
-  // 下载模型
+  _updateActiveMode: function () {
+    var d = this.data;
+    var mode = 'basic';
+    if (d.cloudMode && d.cloudQuotaLoaded) {
+      mode = 'cloud';
+    } else if (d.aiAvailable && d.aiMode) {
+      mode = 'localai';
+    }
+    this.setData({ activeMode: mode });
+  },
+
+  // ============ 本地 AI 初始化 ============
+  _checkAiCapability: function () {
+    if (typeof wx.createInferenceSession !== 'function') {
+      this.setData({ aiAvailable: false, modelStatus: 'unavailable', aiMode: false });
+      this._updateActiveMode();
+      return;
+    }
+    this.setData({ aiAvailable: true });
+    var self = this;
+    wx.getFileInfo({
+      filePath: MODEL_CONFIG.localPath,
+      success: function () { self._loadModel(); },
+      fail: function () { self.setData({ modelStatus: 'unloaded' }); }
+    });
+  },
+
   _downloadModel: function (callback) {
     var self = this;
     if (self.data.modelStatus === 'downloading') return;
@@ -164,7 +253,6 @@ Page({
     });
   },
 
-  // 加载模型到 session
   _loadModel: function (callback) {
     var self = this;
     if (self._session) {
@@ -172,59 +260,42 @@ Page({
       if (callback) callback(true);
       return;
     }
-
     self.setData({ modelStatus: 'loading' });
-
     try {
       var session = wx.createInferenceSession({
         model: MODEL_CONFIG.localPath,
         precisionLevel: 4
       });
-
-      // onLoad / onError 是事件监听方法
       session.onLoad(function () {
         self._session = session;
         self.setData({ modelStatus: 'ready' });
         if (callback) callback(true);
       });
-
       session.onError(function (err) {
         console.error('模型加载失败', err);
         self._session = null;
         self.setData({ modelStatus: 'error', aiMode: false });
+        self._updateActiveMode();
         if (callback) callback(false);
       });
     } catch (e) {
       console.error('创建InferenceSession失败', e);
       self.setData({ modelStatus: 'error', aiMode: false });
+      self._updateActiveMode();
       if (callback) callback(false);
     }
   },
 
-  // 确保模型可用
   _ensureModel: function (callback) {
     var self = this;
-    if (self.data.modelStatus === 'ready' && self._session) {
-      callback(true);
-      return;
-    }
-    if (self.data.modelStatus === 'unavailable' || self.data.modelStatus === 'error') {
-      callback(false);
-      return;
-    }
-
+    if (self.data.modelStatus === 'ready' && self._session) { callback(true); return; }
+    if (self.data.modelStatus === 'unavailable' || self.data.modelStatus === 'error') { callback(false); return; }
     wx.getFileInfo({
       filePath: MODEL_CONFIG.localPath,
-      success: function () {
-        self._loadModel(callback);
-      },
+      success: function () { self._loadModel(callback); },
       fail: function () {
         self._downloadModel(function (ok) {
-          if (ok) {
-            self._loadModel(callback);
-          } else {
-            callback(false);
-          }
+          if (ok) { self._loadModel(callback); } else { callback(false); }
         });
       }
     });
@@ -232,7 +303,8 @@ Page({
 
   _onModelFail: function (msg) {
     this.setData({ modelStatus: 'error', aiMode: false });
-    wx.showToast({ title: msg || 'AI不可用，使用基础模式', icon: 'none', duration: 2000 });
+    this._updateActiveMode();
+    wx.showToast({ title: msg || '本地AI不可用，切换模式', icon: 'none', duration: 2000 });
   },
 
   // ============ 照片选择 ============
@@ -244,11 +316,7 @@ Page({
       sourceType: ['album', 'camera'],
       success: function (res) {
         var path = res.tempFilePaths[0];
-        that.setData({
-          photoPath: path,
-          resultPath: '',
-          maskReady: false
-        });
+        that.setData({ photoPath: path, resultPath: '', maskReady: false });
         that._cachedMask = null;
         wx.getImageInfo({
           src: path,
@@ -274,7 +342,9 @@ Page({
   },
 
   onBgChange: function (e) {
-    var idx = e.currentTarget.dataset.idx !== undefined ? parseInt(e.currentTarget.dataset.idx) : parseInt(e.detail.value);
+    var idx = e.currentTarget.dataset.idx !== undefined
+      ? parseInt(e.currentTarget.dataset.idx)
+      : parseInt(e.detail.value);
     this.setData({ bgIdx: idx, resultPath: '' });
   },
 
@@ -285,13 +355,11 @@ Page({
       wx.showToast({ title: '请先选择照片', icon: 'none' });
       return;
     }
-
     this.setData({ generating: true });
     wx.showLoading({ title: '处理中...' });
 
     var imgW = this.data.imgWidth;
     var imgH = this.data.imgHeight;
-
     if (!imgW || !imgH) {
       wx.getImageInfo({
         src: this.data.photoPath,
@@ -309,31 +377,152 @@ Page({
       return;
     }
 
-    // 选择生成方式
-    if (this.data.aiMode && this.data.aiAvailable) {
+    // 路由：云端AI → 本地AI → 基础模式
+    var d = this.data;
+    if (d.cloudMode && d.cloudQuotaLoaded) {
+      this._generateCloud();
+    } else if (d.aiMode && d.aiAvailable) {
       this._generateAI();
     } else {
       this._generateBasic();
     }
   },
 
-  // ============ AI 模式 ============
+  // ============ 云端 AI 模式（百度人像分割） ============
+  _generateCloud: function () {
+    var self = this;
+    wx.showLoading({ title: '☁️ 云端AI处理中...' });
+
+    imageToBase64(self.data.photoPath, 1200, function (err, base64) {
+      if (err) {
+        wx.hideLoading();
+        self.setData({ generating: false });
+        wx.showToast({ title: '图片读取失败', icon: 'none' });
+        return;
+      }
+
+      wx.cloud.callFunction({
+        name: 'idphoto',
+        data: { action: 'segment', imageBase64: base64 },
+        success: function (res) {
+          var r = res.result || {};
+          if (!r.success) {
+            // 额度超限 → 降级
+            if (r.errorCode === 'QUOTA_EXCEEDED' || r.errorCode === 'USER_DAILY_QUOTA_EXCEEDED') {
+              wx.showToast({ title: r.errorMsg, icon: 'none', duration: 3000 });
+              self.setData({ cloudMode: false });
+              self._updateActiveMode();
+              // 降级到本地AI或基础模式
+              if (self.data.aiAvailable && self.data.aiMode) {
+                self._generateAI();
+              } else {
+                self._generateBasic();
+              }
+            } else {
+              wx.hideLoading();
+              self.setData({ generating: false });
+              wx.showToast({ title: r.errorMsg || '云端处理失败', icon: 'none' });
+            }
+            return;
+          }
+
+          // 更新额度显示
+          self.setData({
+            cloudQuota: {
+              remaining: r.remaining,
+              limit: self.data.cloudQuota ? self.data.cloudQuota.limit : 500,
+              dailyUserRemaining: r.dailyUserRemaining,
+              dailyUserLimit: self.data.cloudQuota ? self.data.cloudQuota.dailyUserLimit : 10
+            }
+          });
+
+          // r.foreground: 背景透明的 PNG base64（RGBA）
+          // 将 base64 写入临时文件，然后用 canvas 合成背景色
+          var fs = wx.getFileSystemManager();
+          var tmpPath = wx.env.USER_DATA_PATH + '/idphoto_fg_' + Date.now() + '.png';
+          fs.writeFile({
+            filePath: tmpPath,
+            data: r.foreground,
+            encoding: 'base64',
+            success: function () {
+              // 用原图尺寸比例合成
+              var imgW = self.data.imgWidth;
+              var imgH = self.data.imgHeight;
+              var scale = 1;
+              if (imgW > MAX_PROCESS_SIZE || imgH > MAX_PROCESS_SIZE) {
+                scale = Math.min(MAX_PROCESS_SIZE / imgW, MAX_PROCESS_SIZE / imgH);
+              }
+              var procW = Math.round(imgW * scale);
+              var procH = Math.round(imgH * scale);
+              self._procW = procW;
+              self._procH = procH;
+              // 合成背景色并排版
+              self._composeForeground(tmpPath, procW, procH);
+            },
+            fail: function () {
+              wx.hideLoading();
+              self.setData({ generating: false });
+              wx.showToast({ title: '写入临时文件失败', icon: 'none' });
+            }
+          });
+        },
+        fail: function (err) {
+          wx.hideLoading();
+          self.setData({ generating: false, cloudMode: false });
+          self._updateActiveMode();
+          wx.showToast({ title: '云函数调用失败', icon: 'none' });
+        }
+      });
+    });
+  },
+
+  /**
+   * 将前景图（透明 PNG）叠加目标背景色后合成
+   * 利用 idphoto-src canvas 完成
+   */
+  _composeForeground: function (fgPath, procW, procH) {
+    var self = this;
+    var targetBg = BG_COLORS[this.data.bgIdx];
+    var srcCtx = wx.createCanvasContext('idphoto-src', self);
+
+    // 先填充背景色
+    srcCtx.setFillStyle(targetBg.color);
+    srcCtx.fillRect(0, 0, procW, procH);
+    // 再叠加前景（透明 PNG，alpha 自动混合）
+    srcCtx.drawImage(fgPath, 0, 0, procW, procH);
+    srcCtx.draw(false, function () {
+      setTimeout(function () {
+        wx.canvasToTempFilePath({
+          canvasId: 'idphoto-src',
+          quality: 1,
+          success: function (tmpRes) {
+            self._composeResult(tmpRes.tempFilePath, procW, procH);
+          },
+          fail: function () {
+            wx.hideLoading();
+            self.setData({ generating: false });
+            wx.showToast({ title: '合成失败', icon: 'none' });
+          }
+        }, self);
+      }, 300);
+    });
+  },
+
+  // ============ 本地 AI 模式（ONNX MODNet） ============
   _generateAI: function () {
     var self = this;
-    wx.showLoading({ title: 'AI处理中...' });
+    wx.showLoading({ title: '🤖 本地AI处理中...' });
 
     this._ensureModel(function (modelOk) {
       if (!modelOk || !self._session) {
-        // 降级到基础模式
         self.setData({ aiMode: false });
+        self._updateActiveMode();
         self._generateBasic();
         return;
       }
 
       var imgW = self.data.imgWidth;
       var imgH = self.data.imgHeight;
-
-      // 计算处理尺寸（限制最大边）
       var scale = 1;
       if (imgW > MAX_PROCESS_SIZE || imgH > MAX_PROCESS_SIZE) {
         scale = Math.min(MAX_PROCESS_SIZE / imgW, MAX_PROCESS_SIZE / imgH);
@@ -343,17 +532,14 @@ Page({
       self._procW = procW;
       self._procH = procH;
 
-      // Step 1: 原图画到 src canvas
       var srcCtx = wx.createCanvasContext('idphoto-src', self);
       srcCtx.drawImage(self.data.photoPath, 0, 0, procW, procH);
       srcCtx.draw(false, function () {
         setTimeout(function () {
-          // Step 2: 获取原图像素
           wx.canvasGetImageData({
             canvasId: 'idphoto-src',
             x: 0, y: 0, width: procW, height: procH,
             success: function (origRes) {
-              // Step 3: 把原图缩放到 512x512 到 mask canvas，用于AI推理
               var maskCtx = wx.createCanvasContext('idphoto-mask', self);
               maskCtx.drawImage(self.data.photoPath, 0, 0, INFERENCE_SIZE, INFERENCE_SIZE);
               maskCtx.draw(false, function () {
@@ -362,45 +548,35 @@ Page({
                     canvasId: 'idphoto-mask',
                     x: 0, y: 0, width: INFERENCE_SIZE, height: INFERENCE_SIZE,
                     success: function (res512) {
-                      // Step 4: 预处理 RGBA → 归一化 RGB CHW
                       var pixelCount = INFERENCE_SIZE * INFERENCE_SIZE;
                       var float32Data = new Float32Array(3 * pixelCount);
                       var srcData = res512.data;
-
                       for (var i = 0; i < pixelCount; i++) {
                         var srcIdx = i * 4;
                         float32Data[i] = srcData[srcIdx] / 255.0;
                         float32Data[pixelCount + i] = srcData[srcIdx + 1] / 255.0;
                         float32Data[2 * pixelCount + i] = srcData[srcIdx + 2] / 255.0;
                       }
-
-                      // Step 5: 运行推理
                       self._runInference(float32Data, function (mask512) {
                         if (!mask512) {
-                          // 推理失败，降级
                           self.setData({ aiMode: false });
+                          self._updateActiveMode();
                           self._generateBasic();
                           return;
                         }
-
-                        // Step 6: 将 512x512 mask 缩放回原图尺寸
                         self._scaleMask(mask512, procW, procH, function (scaledMask) {
                           if (!scaledMask) {
                             self.setData({ aiMode: false });
+                            self._updateActiveMode();
                             self._generateBasic();
                             return;
                           }
-
-                          // 缓存 mask
                           self._cachedMask = scaledMask;
                           self.setData({ maskReady: true });
-
-                          // Step 7: Alpha 合成（人像 + 目标背景色）
                           var targetBg = BG_COLORS[self.data.bgIdx];
                           var bgR = targetBg.rgb[0], bgG = targetBg.rgb[1], bgB = targetBg.rgb[2];
                           var data = origRes.data;
                           var cnt = procW * procH;
-
                           for (var i = 0; i < cnt; i++) {
                             var alpha = scaledMask[i];
                             var idx = i * 4;
@@ -409,31 +585,23 @@ Page({
                             data[idx + 2] = Math.round(data[idx + 2] * alpha + bgB * (1 - alpha));
                             data[idx + 3] = 255;
                           }
-
-                          // Step 8: 写回 src canvas
                           wx.canvasPutImageData({
                             canvasId: 'idphoto-src',
-                            data: data,
-                            x: 0, y: 0, width: procW, height: procH,
+                            data: data, x: 0, y: 0, width: procW, height: procH,
                             success: function () {
-                              // Step 9: 导出
                               wx.canvasToTempFilePath({
-                                canvasId: 'idphoto-src',
-                                quality: 1,
+                                canvasId: 'idphoto-src', quality: 1,
                                 success: function (tmpRes) {
-                                  // Step 10: 裁剪排版
                                   self._composeResult(tmpRes.tempFilePath, procW, procH);
                                 },
                                 fail: function () {
-                                  wx.hideLoading();
-                                  self.setData({ generating: false });
+                                  wx.hideLoading(); self.setData({ generating: false });
                                   wx.showToast({ title: '处理失败', icon: 'none' });
                                 }
                               }, self);
                             },
                             fail: function () {
-                              wx.hideLoading();
-                              self.setData({ generating: false });
+                              wx.hideLoading(); self.setData({ generating: false });
                               wx.showToast({ title: '像素写入失败', icon: 'none' });
                             }
                           }, self);
@@ -441,8 +609,7 @@ Page({
                       });
                     },
                     fail: function () {
-                      wx.hideLoading();
-                      self.setData({ generating: false });
+                      wx.hideLoading(); self.setData({ generating: false });
                       wx.showToast({ title: '预处理失败', icon: 'none' });
                     }
                   }, self);
@@ -450,8 +617,7 @@ Page({
               });
             },
             fail: function () {
-              wx.hideLoading();
-              self.setData({ generating: false });
+              wx.hideLoading(); self.setData({ generating: false });
               wx.showToast({ title: '读取像素失败', icon: 'none' });
             }
           }, self);
@@ -460,39 +626,26 @@ Page({
     });
   },
 
-  // 运行AI推理
   _runInference: function (inputBuffer, callback) {
     var self = this;
     var timedOut = false;
-
     var timer = setTimeout(function () {
       timedOut = true;
-      wx.hideLoading();
-      self.setData({ generating: false });
+      wx.hideLoading(); self.setData({ generating: false });
       wx.showToast({ title: 'AI推理超时', icon: 'none' });
       callback(null);
     }, INFERENCE_TIMEOUT);
-
     try {
       self._session.run({
-        'input': {
-          shape: [1, 3, INFERENCE_SIZE, INFERENCE_SIZE],
-          data: inputBuffer.buffer,
-          type: 'float32'
-        }
+        'input': { shape: [1, 3, INFERENCE_SIZE, INFERENCE_SIZE], data: inputBuffer.buffer, type: 'float32' }
       }).then(function (res) {
         if (timedOut) return;
         clearTimeout(timer);
-
-        // 取第一个输出
         var keys = Object.keys(res);
         if (!keys.length) { callback(null); return; }
         var outputData = res[keys[0]];
         if (!outputData || !outputData.data) { callback(null); return; }
-
         var maskData = new Float32Array(outputData.data);
-
-        // 归一化 mask 到 0-1
         var minVal = 1, maxVal = 0;
         for (var i = 0; i < maskData.length; i++) {
           if (maskData[i] < minVal) minVal = maskData[i];
@@ -503,7 +656,6 @@ Page({
         for (var j = 0; j < maskData.length; j++) {
           maskData[j] = (maskData[j] - minVal) / range;
         }
-
         callback(maskData);
       }).catch(function (err) {
         if (timedOut) return;
@@ -518,32 +670,22 @@ Page({
     }
   },
 
-  // 将 512x512 mask 缩放回原图处理尺寸
   _scaleMask: function (mask512, procW, procH, callback) {
     var self = this;
-    // 把 float mask 转为灰度 RGBA
     var pixelCount = INFERENCE_SIZE * INFERENCE_SIZE;
     var maskPixels = new Uint8ClampedArray(pixelCount * 4);
     for (var i = 0; i < pixelCount; i++) {
       var val = Math.round(Math.min(1, Math.max(0, mask512[i])) * 255);
-      maskPixels[i * 4] = val;
-      maskPixels[i * 4 + 1] = val;
-      maskPixels[i * 4 + 2] = val;
-      maskPixels[i * 4 + 3] = 255;
+      maskPixels[i * 4] = val; maskPixels[i * 4 + 1] = val;
+      maskPixels[i * 4 + 2] = val; maskPixels[i * 4 + 3] = 255;
     }
-
-    // 写入 mask canvas
     wx.canvasPutImageData({
-      canvasId: 'idphoto-mask',
-      data: maskPixels,
+      canvasId: 'idphoto-mask', data: maskPixels,
       x: 0, y: 0, width: INFERENCE_SIZE, height: INFERENCE_SIZE,
       success: function () {
-        // 导出 mask 图片
         wx.canvasToTempFilePath({
-          canvasId: 'idphoto-mask',
-          quality: 1,
+          canvasId: 'idphoto-mask', quality: 1,
           success: function (tmpRes) {
-            // 把 mask 图片缩放画到 src canvas（临时借用）
             var srcCtx = wx.createCanvasContext('idphoto-src', self);
             srcCtx.drawImage(tmpRes.tempFilePath, 0, 0, procW, procH);
             srcCtx.draw(false, function () {
@@ -552,7 +694,6 @@ Page({
                   canvasId: 'idphoto-src',
                   x: 0, y: 0, width: procW, height: procH,
                   success: function (scaledRes) {
-                    // 提取灰度值为 float mask
                     var scaledMask = new Float32Array(procW * procH);
                     for (var k = 0; k < procW * procH; k++) {
                       scaledMask[k] = scaledRes.data[k * 4] / 255.0;
@@ -571,50 +712,34 @@ Page({
     }, self);
   },
 
-  // ============ 基础模式（降级） ============
+  // ============ 基础模式（颜色替换，兜底） ============
   _generateBasic: function () {
     var self = this;
-    var size = SIZES[this.data.sizeIdx];
     var layout = LAYOUTS[this.data.layoutIdx];
-    var targetBg = BG_COLORS[this.data.bgIdx];
-    var cw = size.w, ch = size.h;
+    if (layout.layout6) { this._generateBasicThen6Inch(layout); return; }
+
     var imgW = this.data.imgWidth, imgH = this.data.imgHeight;
-
-    wx.showLoading({ title: '处理中...' });
-
-    // 6寸排版
-    if (layout.layout6) {
-      this._generateBasicThen6Inch(layout);
-      return;
-    }
-
-    var outputCols = layout.cols, outputRows = layout.rows;
-
-    // 计算处理尺寸
     var scale = 1;
     if (imgW > MAX_PROCESS_SIZE || imgH > MAX_PROCESS_SIZE) {
       scale = Math.min(MAX_PROCESS_SIZE / imgW, MAX_PROCESS_SIZE / imgH);
     }
     var procW = Math.round(imgW * scale);
     var procH = Math.round(imgH * scale);
+    var targetBg = BG_COLORS[this.data.bgIdx];
 
-    // Step 1: 画到 src canvas
+    wx.showLoading({ title: '📝 基础处理中...' });
+
     var srcCtx = wx.createCanvasContext('idphoto-src', this);
     srcCtx.drawImage(self.data.photoPath, 0, 0, procW, procH);
     srcCtx.draw(false, function () {
       setTimeout(function () {
-        // Step 2: 获取像素
         wx.canvasGetImageData({
-          canvasId: 'idphoto-src',
-          x: 0, y: 0, width: procW, height: procH,
+          canvasId: 'idphoto-src', x: 0, y: 0, width: procW, height: procH,
           success: function (res) {
-            // Step 3: 检测原背景色
             var detectedBg = self._detectBgColor(res, procW, procH);
             var targetRgb = targetBg.rgb;
             var data = res.data;
             var threshold = COLOR_THRESHOLD;
-
-            // Step 4: 替换背景色
             for (var i = 0; i < data.length; i += 4) {
               var dist = colorDist(data[i], data[i + 1], data[i + 2], detectedBg.r, detectedBg.g, detectedBg.b);
               if (dist < threshold) {
@@ -626,58 +751,40 @@ Page({
                 data[i + 2] = Math.round(targetRgb[2] * (1 - blend) + data[i + 2] * blend);
               }
             }
-
-            // Step 5: 写回
             wx.canvasPutImageData({
-              canvasId: 'idphoto-src',
-              data: data, x: 0, y: 0, width: procW, height: procH,
+              canvasId: 'idphoto-src', data: data, x: 0, y: 0, width: procW, height: procH,
               success: function () {
                 wx.canvasToTempFilePath({
                   canvasId: 'idphoto-src', quality: 1,
-                  success: function (tmpRes) {
-                    self._composeResult(tmpRes.tempFilePath, procW, procH);
-                  },
-                  fail: function () {
-                    wx.hideLoading(); self.setData({ generating: false });
-                    wx.showToast({ title: '导出失败', icon: 'none' });
-                  }
+                  success: function (tmpRes) { self._composeResult(tmpRes.tempFilePath, procW, procH); },
+                  fail: function () { wx.hideLoading(); self.setData({ generating: false }); wx.showToast({ title: '导出失败', icon: 'none' }); }
                 }, self);
               },
-              fail: function () {
-                wx.hideLoading(); self.setData({ generating: false });
-                wx.showToast({ title: '像素处理失败', icon: 'none' });
-              }
+              fail: function () { wx.hideLoading(); self.setData({ generating: false }); wx.showToast({ title: '像素处理失败', icon: 'none' }); }
             }, self);
           },
-          fail: function () {
-            wx.hideLoading(); self.setData({ generating: false });
-            wx.showToast({ title: '读取像素失败', icon: 'none' });
-          }
+          fail: function () { wx.hideLoading(); self.setData({ generating: false }); wx.showToast({ title: '读取像素失败', icon: 'none' }); }
         }, self);
       }, 500);
     });
   },
 
-  // 基础模式 → 6寸排版
   _generateBasicThen6Inch: function (layout) {
     var self = this;
     var targetBg = BG_COLORS[this.data.bgIdx];
     var imgW = this.data.imgWidth, imgH = this.data.imgHeight;
-
     var scale = 1;
     if (imgW > MAX_PROCESS_SIZE || imgH > MAX_PROCESS_SIZE) {
       scale = Math.min(MAX_PROCESS_SIZE / imgW, MAX_PROCESS_SIZE / imgH);
     }
     var procW = Math.round(imgW * scale);
     var procH = Math.round(imgH * scale);
-
     var srcCtx = wx.createCanvasContext('idphoto-src', this);
     srcCtx.drawImage(self.data.photoPath, 0, 0, procW, procH);
     srcCtx.draw(false, function () {
       setTimeout(function () {
         wx.canvasGetImageData({
-          canvasId: 'idphoto-src',
-          x: 0, y: 0, width: procW, height: procH,
+          canvasId: 'idphoto-src', x: 0, y: 0, width: procW, height: procH,
           success: function (res) {
             var detectedBg = self._detectBgColor(res, procW, procH);
             var targetRgb = targetBg.rgb;
@@ -695,36 +802,23 @@ Page({
               }
             }
             wx.canvasPutImageData({
-              canvasId: 'idphoto-src',
-              data: data, x: 0, y: 0, width: procW, height: procH,
+              canvasId: 'idphoto-src', data: data, x: 0, y: 0, width: procW, height: procH,
               success: function () {
                 wx.canvasToTempFilePath({
                   canvasId: 'idphoto-src', quality: 1,
-                  success: function (tmpRes) {
-                    self._compose6Inch(tmpRes.tempFilePath, procW, procH, layout);
-                  },
-                  fail: function () {
-                    wx.hideLoading(); self.setData({ generating: false });
-                    wx.showToast({ title: '导出失败', icon: 'none' });
-                  }
+                  success: function (tmpRes) { self._compose6Inch(tmpRes.tempFilePath, procW, procH, layout); },
+                  fail: function () { wx.hideLoading(); self.setData({ generating: false }); wx.showToast({ title: '导出失败', icon: 'none' }); }
                 }, self);
               },
-              fail: function () {
-                wx.hideLoading(); self.setData({ generating: false });
-                wx.showToast({ title: '像素处理失败', icon: 'none' });
-              }
+              fail: function () { wx.hideLoading(); self.setData({ generating: false }); wx.showToast({ title: '像素处理失败', icon: 'none' }); }
             }, self);
           },
-          fail: function () {
-            wx.hideLoading(); self.setData({ generating: false });
-            wx.showToast({ title: '读取像素失败', icon: 'none' });
-          }
+          fail: function () { wx.hideLoading(); self.setData({ generating: false }); wx.showToast({ title: '读取像素失败', icon: 'none' }); }
         }, self);
       }, 500);
     });
   },
 
-  // 检测背景色（四角采样，基础模式用）
   _detectBgColor: function (imgData, w, h) {
     var data = imgData.data;
     var sampleSize = 5;
@@ -752,12 +846,7 @@ Page({
   _composeResult: function (imgPath, procW, procH) {
     var self = this;
     var layout = LAYOUTS[this.data.layoutIdx];
-
-    // 6寸排版
-    if (layout.layout6) {
-      this._compose6Inch(imgPath, procW, procH, layout);
-      return;
-    }
+    if (layout.layout6) { this._compose6Inch(imgPath, procW, procH, layout); return; }
 
     var size = SIZES[this.data.sizeIdx];
     var targetBg = BG_COLORS[this.data.bgIdx];
@@ -768,8 +857,6 @@ Page({
     var outCtx = wx.createCanvasContext('idphoto-canvas', self);
     outCtx.setFillStyle(targetBg.color);
     outCtx.fillRect(0, 0, outputW, outputH);
-
-    // Cover 模式裁剪（保留顶部=头部）
     var srcRatio = procW / procH, dstRatio = cw / ch;
     var drawW, drawH, offX, offY;
     if (srcRatio > dstRatio) {
@@ -777,7 +864,6 @@ Page({
     } else {
       drawW = cw; drawH = procH * (cw / procW); offX = 0; offY = 0;
     }
-
     for (var row = 0; row < outputRows; row++) {
       for (var col = 0; col < outputCols; col++) {
         outCtx.drawImage(imgPath, offX + col * cw, offY + row * ch, drawW, drawH);
@@ -806,7 +892,6 @@ Page({
     });
   },
 
-  // 6寸排版拼图
   _compose6Inch: function (imgPath, procW, procH, layout) {
     var self = this;
     var sizeName = layout.sizeName;
@@ -822,8 +907,6 @@ Page({
     var outCtx = wx.createCanvasContext('idphoto-layout', self);
     outCtx.setFillStyle('#FFFFFF');
     outCtx.fillRect(0, 0, LAYOUT6_W, LAYOUT6_H);
-
-    // Cover 模式裁剪参数
     var srcRatio = procW / procH, dstRatio = cw / ch;
     var drawW, drawH, cropOffX, cropOffY;
     if (srcRatio > dstRatio) {
@@ -831,8 +914,6 @@ Page({
     } else {
       drawW = cw; drawH = procH * (cw / procW); cropOffX = 0; cropOffY = 0;
     }
-
-    // 居中
     var totalW = cols * cw + (cols - 1) * gap;
     var totalH = rows * ch + (rows - 1) * gap;
     var startX = Math.round((LAYOUT6_W - totalW) / 2);
@@ -842,7 +923,6 @@ Page({
       for (var col = 0; col < cols; col++) {
         var cellX = startX + col * (cw + gap);
         var cellY = startY + row * (ch + gap);
-        // clip 裁剪区域
         outCtx.save();
         outCtx.beginPath();
         outCtx.rect(cellX, cellY, cw, ch);
@@ -851,7 +931,6 @@ Page({
         outCtx.restore();
       }
     }
-
     outCtx.draw(false, function () {
       setTimeout(function () {
         wx.canvasToTempFilePath({
@@ -887,7 +966,7 @@ Page({
 
   onShareAppMessage: function () {
     return {
-      title: '证件照生成器 - AI智能抠图',
+      title: '证件照生成器 - 云端AI精准抠图',
       path: '/pages/tools/idphoto/index'
     };
   }
