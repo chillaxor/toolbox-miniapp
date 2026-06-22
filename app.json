@@ -121,7 +121,10 @@
     "pages/tools/text2img/index",
     "pages/tools/imgmerge/index",
     "pages/tools/picpuzzle/index",
-    "pages/tools/paperclean/index"
+    "pages/tools/paperclean/index",
+    "pages/tools/lovecard/index",
+    "pages/tools/pixelavatar/index",
+    "pages/tools/watermarkremove/index"
   ],
   "window": {
     "backgroundTextStyle": "light",

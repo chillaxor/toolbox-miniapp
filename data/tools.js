@@ -131,6 +131,9 @@ const TOOLS = [
   { id: 'text2img', name: '文字转图片', category: 'image', icon: '📝', path: '/pages/tools/text2img/index', description: '输入文字生成精美长图·8种模板·适合发朋友圈' },
   { id: 'imgmerge', name: '图片拼接', category: 'image', icon: '🧩', path: '/pages/tools/imgmerge/index', description: '多张图片上下/左右拼接成长图·保存到相册' },
   { id: 'picpuzzle', name: '照片拼图', category: 'fun', icon: '🧩', path: '/pages/tools/picpuzzle/index', description: '选图切块打乱重拼·3种难度·计时挑战' },
+  { id: 'lovecard', name: '情话卡片', category: 'fun', icon: '💕', path: '/pages/tools/lovecard/index', description: '每日情话·精美卡片·保存分享' },
+  { id: 'pixelavatar', name: '像素头像', category: 'image', icon: '👾', path: '/pages/tools/pixelavatar/index', description: '输入名字生成专属像素风头像' },
+  { id: 'watermarkremove', name: '去水印', category: 'image', icon: '🧽', path: '/pages/tools/watermarkremove/index', description: 'AI智能去水印+手动涂抹修补' },
 ];
 
 /**

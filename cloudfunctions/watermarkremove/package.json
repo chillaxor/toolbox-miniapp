@@ -1,0 +1,10 @@
+{
+  "name": "watermarkremove",
+  "version": "1.0.0",
+  "description": "去水印云函数 - 百度图像修复API",
+  "main": "index.js",
+  "dependencies": {
+    "axios": "^1.6.0",
+    "wx-server-sdk": "~2.6.3"
+  }
+}

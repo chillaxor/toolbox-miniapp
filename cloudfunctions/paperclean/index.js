@@ -5,7 +5,7 @@
  *
  * 接口：POST https://aip.baidubce.com/rest/2.0/ocr/v1/remove_handwriting
  * 鉴权：access_token（API Key + Secret Key → OAuth2.0）
- * 限制：每月50次免费额度，超出提示暂不可用
+ * 限制：每人每天2次 + 全局每月50次
  */
 
 const axios = require('axios');
@@ -15,7 +15,8 @@ cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
 // ====== 配置区（通过云函数环境变量注入，勿硬编码） ======
 const API_KEY = process.env.BAIDU_API_KEY || '';
 const SECRET_KEY = process.env.BAIDU_SECRET_KEY || '';
-const MONTHLY_LIMIT = parseInt(process.env.MONTHLY_LIMIT, 10) || 50;
+const DAILY_LIMIT = parseInt(process.env.DAILY_LIMIT, 10) || 2;
+const TOTAL_MONTHLY_LIMIT = parseInt(process.env.TOTAL_MONTHLY_LIMIT, 10) || 50;
 
 // ====== Access Token 缓存 ======
 let tokenCache = { token: '', expireAt: 0 };
@@ -26,7 +27,6 @@ let tokenCache = { token: '', expireAt: 0 };
  * @param {string} event.imageBase64 - 图片base64（不含data:image前缀）
  */
 exports.main = async (event, context) => {
-  // 校验环境变量是否已配置
   if (!API_KEY || !SECRET_KEY) {
     return {
       success: false,
@@ -35,38 +35,66 @@ exports.main = async (event, context) => {
     };
   }
 
+  const wxContext = cloud.getWXContext();
+  const openid = wxContext.OPENID;
   const db = cloud.database();
   const action = event.action || 'clean';
   const now = new Date();
   const monthKey = `${now.getFullYear()}-${now.getMonth() + 1}`;
+  const dateKey = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
 
   // ── 查询额度 ──
   if (action === 'quota') {
-    const countRes = await db.collection('paperclean_usage')
+    // 个人今日已用
+    const dailyRes = await db.collection('paperclean_usage')
+      .where({ openid, dateKey })
+      .count();
+    const dailyUsed = dailyRes.total || 0;
+
+    // 全局本月已用
+    const monthlyRes = await db.collection('paperclean_usage')
       .where({ monthKey })
       .count();
-    const used = countRes.total || 0;
+    const monthlyUsed = monthlyRes.total || 0;
+
     return {
       success: true,
-      used,
-      remaining: MONTHLY_LIMIT - used,
-      limit: MONTHLY_LIMIT
+      dailyUsed,
+      dailyRemaining: Math.max(0, DAILY_LIMIT - dailyUsed),
+      dailyLimit: DAILY_LIMIT,
+      monthlyUsed,
+      monthlyRemaining: Math.max(0, TOTAL_MONTHLY_LIMIT - monthlyUsed),
+      monthlyLimit: TOTAL_MONTHLY_LIMIT
     };
   }
 
   // ── 擦除操作 ──
   if (action === 'clean') {
-    // 1. 检查月额度
-    const countRes = await db.collection('paperclean_usage')
+    // 1. 检查全局月额度
+    const monthlyRes = await db.collection('paperclean_usage')
       .where({ monthKey })
       .count();
-    const used = countRes.total || 0;
+    const monthlyUsed = monthlyRes.total || 0;
 
-    if (used >= MONTHLY_LIMIT) {
+    if (monthlyUsed >= TOTAL_MONTHLY_LIMIT) {
       return {
         success: false,
         errorCode: 'QUOTA_EXCEEDED',
-        errorMsg: '本月免费额度已用完，该功能暂不可用'
+        errorMsg: '本月总额度已用完，下月自动恢复'
+      };
+    }
+
+    // 2. 检查个人每日额度
+    const dailyRes = await db.collection('paperclean_usage')
+      .where({ openid, dateKey })
+      .count();
+    const dailyUsed = dailyRes.total || 0;
+
+    if (dailyUsed >= DAILY_LIMIT) {
+      return {
+        success: false,
+        errorCode: 'DAILY_LIMIT',
+        errorMsg: '今日次数已用完，明天再来吧'
       };
     }
 
@@ -114,7 +142,9 @@ exports.main = async (event, context) => {
       // 6. 成功 → 记录使用次数
       await db.collection('paperclean_usage').add({
         data: {
+          openid,
           monthKey,
+          dateKey,
           timestamp: Date.now(),
           date: now.toISOString()
         }
@@ -124,8 +154,10 @@ exports.main = async (event, context) => {
         success: true,
         imageProcessed: data.image_processed,
         logId: data.log_id,
-        used: used + 1,
-        remaining: MONTHLY_LIMIT - used - 1
+        dailyUsed: dailyUsed + 1,
+        dailyRemaining: Math.max(0, DAILY_LIMIT - dailyUsed - 1),
+        monthlyUsed: monthlyUsed + 1,
+        monthlyRemaining: Math.max(0, TOTAL_MONTHLY_LIMIT - monthlyUsed - 1)
       };
 
     } catch (err) {

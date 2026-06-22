@@ -10,16 +10,18 @@ Page({
     isFavorite: false,
     isLoading: false,
     loadingText: '',
-    usedCount: 0,
-    remainingCount: 50,
+    dailyUsed: 0,
+    dailyRemaining: 2,
+    dailyLimit: 2,
+    monthlyUsed: 0,
+    monthlyRemaining: 50,
     monthlyLimit: 50,
     showResult: false,
-    cloudReady: false, // 云函数是否可用
+    cloudReady: false,
     tips: [
       '选择拍好的试卷照片',
       'AI自动识别并擦除手写笔迹',
-      '还原出干净的空白试卷',
-      '每月免费50次，超出暂不可用'
+      '还原出干净的空白试卷'
     ]
   },
 
@@ -58,9 +60,12 @@ Page({
         self.setData({ cloudReady: true });
         if (res.result && res.result.success) {
           self.setData({
-            usedCount: res.result.used,
-            remainingCount: res.result.remaining,
-            monthlyLimit: res.result.limit
+            dailyUsed: res.result.dailyUsed,
+            dailyRemaining: res.result.dailyRemaining,
+            dailyLimit: res.result.dailyLimit,
+            monthlyUsed: res.result.monthlyUsed,
+            monthlyRemaining: res.result.monthlyRemaining,
+            monthlyLimit: res.result.monthlyLimit
           });
         }
       },
@@ -82,9 +87,12 @@ Page({
       success: function (res) {
         if (res.result && res.result.success) {
           this.setData({
-            usedCount: res.result.used,
-            remainingCount: res.result.remaining,
-            monthlyLimit: res.result.limit
+            dailyUsed: res.result.dailyUsed,
+            dailyRemaining: res.result.dailyRemaining,
+            dailyLimit: res.result.dailyLimit,
+            monthlyUsed: res.result.monthlyUsed,
+            monthlyRemaining: res.result.monthlyRemaining,
+            monthlyLimit: res.result.monthlyLimit
           });
         }
       }.bind(this),
@@ -99,10 +107,19 @@ Page({
    * 选择图片
    */
   onChooseImage: function () {
-    if (this.data.remainingCount <= 0) {
+    if (this.data.dailyRemaining <= 0) {
       wx.showModal({
-        title: '额度已用完',
-        content: '本月免费额度已用完，该功能暂不可用，下月自动恢复',
+        title: '今日次数已用完',
+        content: '明天再来吧',
+        showCancel: false,
+        confirmText: '知道了'
+      });
+      return;
+    }
+    if (this.data.monthlyRemaining <= 0) {
+      wx.showModal({
+        title: '总额度已用完',
+        content: '本月全局总额度已用完，下月自动恢复',
         showCancel: false,
         confirmText: '知道了'
       });
@@ -145,10 +162,18 @@ Page({
       return;
     }
 
-    if (this.data.remainingCount <= 0) {
+    if (this.data.dailyRemaining <= 0 && this.data.monthlyRemaining <= 0) {
       wx.showModal({
         title: '额度已用完',
-        content: '本月免费额度已用完，该功能暂不可用',
+        content: '今日次数和本月总额度均已用完',
+        showCancel: false
+      });
+      return;
+    }
+    if (this.data.dailyRemaining <= 0) {
+      wx.showModal({
+        title: '今日次数已用完',
+        content: '明天再来吧',
         showCancel: false
       });
       return;
@@ -183,12 +208,18 @@ Page({
             var result = callRes.result;
 
             if (!result.success) {
-              // 额度已用完
               if (result.errorCode === 'QUOTA_EXCEEDED') {
-                self.setData({ remainingCount: 0 });
+                self.setData({ monthlyRemaining: 0 });
                 wx.showModal({
-                  title: '额度已用完',
-                  content: '本月免费额度已用完，该功能暂不可用',
+                  title: '总额度已用完',
+                  content: '本月全局总额度已用完，下月自动恢复',
+                  showCancel: false
+                });
+              } else if (result.errorCode === 'DAILY_LIMIT') {
+                self.setData({ dailyRemaining: 0 });
+                wx.showModal({
+                  title: '今日次数已用完',
+                  content: '明天再来吧',
                   showCancel: false
                 });
               } else {
@@ -213,8 +244,10 @@ Page({
                 self.setData({
                   resultSrc: filePath,
                   showResult: true,
-                  usedCount: result.used,
-                  remainingCount: result.remaining
+                  dailyUsed: result.dailyUsed,
+                  dailyRemaining: result.dailyRemaining,
+                  monthlyUsed: result.monthlyUsed,
+                  monthlyRemaining: result.monthlyRemaining
                 });
                 wx.showToast({ title: '擦除完成', icon: 'success' });
 
