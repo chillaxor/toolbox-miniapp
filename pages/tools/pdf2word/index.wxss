@@ -295,41 +295,6 @@
   flex-shrink: 0;
 }
 
-/* 来源选择按钮 */
-.source-row {
-  display: flex;
-  gap: 20rpx;
-  margin-top: 20rpx;
-}
-
-.source-btn {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24rpx 0;
-  background: linear-gradient(135deg, #EAF4FE 0%, #D6E9FB 100%);
-  border: 2rpx solid #B8DAFE;
-  border-radius: 12rpx;
-  transition: all 0.2s ease;
-}
-
-.source-btn:active {
-  transform: scale(0.97);
-  background: linear-gradient(135deg, #D6E9FB 0%, #B8DAFE 100%);
-}
-
-.source-icon {
-  font-size: 36rpx;
-  margin-right: 12rpx;
-}
-
-.source-text {
-  font-size: 28rpx;
-  font-weight: 600;
-  color: #2E86DE;
-}
-
 /* 格式选择 */
 .format-row {
   display: flex;

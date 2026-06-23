@@ -34,7 +34,7 @@ Page({
     cloudResultName: '',
     tips: [
       '纯本地解析·文件不上传·保护隐私',
-      'AI云端转换·有道智云·高质量输出',
+      'AI云端转换输出',
       '生成RTF/TXT可被Word/WPS直接打开',
       '复杂排版建议用WPS等专业App'
     ]
@@ -54,36 +54,38 @@ Page({
   onChoosePDF: function () {
     var self = this;
     wx.showActionSheet({
-      itemList: ['从聊天记录选择', '从手机文件选择'],
+      itemList: ['💬 从聊天记录选择', '📁 从手机文件管理器选择'],
       success: function (res) {
         if (res.tapIndex === 0) {
-          self.choosePDF('message');
+          self.doChooseFile(false);
         } else if (res.tapIndex === 1) {
-          self.choosePDF('album');
+          self.chooseFromFileManager();
         }
       },
-      fail: function () {
-        // 用户取消
+      fail: function () {}
+    });
+  },
+
+  chooseFromFileManager: function () {
+    var self = this;
+    wx.showModal({
+      title: '从手机文件管理器选择',
+      content: '点击"去选择"后，在弹出的面板中点击「文件管理器」或「本地文件」入口，即可浏览手机文件夹选择PDF文件。\n\n若未看到该入口，请升级微信到最新版本。',
+      confirmText: '去选择',
+      cancelText: '取消',
+      success: function (r) {
+        if (!r.confirm) return;
+        self.doChooseFile(true);
       }
     });
   },
 
-  onChooseFromMessage: function () {
-    this.choosePDF('message');
-  },
-
-  onChooseFromAlbum: function () {
-    this.choosePDF('album');
-  },
-
-  choosePDF: function (sourceType) {
+  doChooseFile: function (fromFileManager) {
     var self = this;
-    var sourceLabel = sourceType === 'album' ? '手机文件' : '聊天记录';
     wx.chooseMessageFile({
       count: 1,
       type: 'file',
       extension: ['pdf'],
-      sourceType: [sourceType],
       success: function (res) {
         var file = res.tempFiles[0];
         if (!file) {
@@ -101,7 +103,7 @@ Page({
         });
         storage.addHistory({
           toolId: 'pdf2word', toolName: 'PDF转Word', category: 'image',
-          summary: '从' + sourceLabel + '选择：' + file.name,
+          summary: '选择了文件：' + file.name,
           timestamp: Date.now()
         });
         wx.showToast({ title: '已选择文件', icon: 'success', duration: 1200 });
