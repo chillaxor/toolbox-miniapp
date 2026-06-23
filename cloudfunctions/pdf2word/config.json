@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "openapi": []
+  },
+  "envVariables": {
+    "YOUDAO_APP_KEY": "",
+    "YOUDAO_APP_SECRET": "",
+    "DAILY_USER_LIMIT": "1",
+    "DAILY_TOTAL_LIMIT": "20"
+  }
+}

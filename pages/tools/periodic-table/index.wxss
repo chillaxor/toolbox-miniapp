@@ -39,7 +39,7 @@
   color: #fff;
 }
 
-/* 详情弹窗 */
+/* ============ 详情弹窗（手机端适配） ============ */
 .detail-mask {
   position: fixed;
   top: 0;
@@ -51,77 +51,118 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 40rpx;
 }
 
 .detail-card {
-  width: 680rpx;
+  width: 100%;
+  max-width: 680rpx;
+  max-height: 88vh;
   background: #fff;
   border-radius: 24rpx;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20rpx 60rpx rgba(0,0,0,0.2);
+  animation: detailIn 0.25s ease-out;
+}
+
+@keyframes detailIn {
+  from { transform: scale(0.92); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
 }
 
 .detail-header {
-  padding: 30rpx;
+  padding: 28rpx 32rpx 24rpx;
   text-align: center;
   color: #fff;
+  position: relative;
+  flex-shrink: 0;
 }
 
 .detail-z {
-  font-size: 36rpx;
-  opacity: 0.8;
+  font-size: 30rpx;
+  opacity: 0.85;
+  display: block;
 }
 
 .detail-symbol {
   display: block;
-  font-size: 100rpx;
+  font-size: 88rpx;
   font-weight: bold;
   line-height: 1.1;
+  margin: 4rpx 0;
 }
 
 .detail-name {
-  font-size: 36rpx;
+  font-size: 32rpx;
   display: block;
+  font-weight: 600;
 }
 
 .detail-name-en {
-  font-size: 26rpx;
-  opacity: 0.8;
+  font-size: 24rpx;
+  opacity: 0.85;
   display: block;
   margin-top: 4rpx;
 }
 
 .detail-body {
-  height: 600rpx;
-  padding: 24rpx 30rpx;
+  flex: 1;
+  min-height: 0;
+  padding: 20rpx 32rpx;
+  box-sizing: border-box;
 }
 
 .detail-row {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: 16rpx 0;
+  align-items: flex-start;
+  padding: 14rpx 0;
   border-bottom: 1rpx solid #f5f5f5;
+  gap: 16rpx;
+}
+
+.detail-row:last-child {
+  border-bottom: none;
 }
 
 .detail-label {
   font-size: 26rpx;
   color: #888;
+  flex-shrink: 0;
+  min-width: 120rpx;
 }
 
 .detail-value {
-  font-size: 28rpx;
+  font-size: 26rpx;
   color: #333;
   font-weight: 500;
+  text-align: right;
+  word-break: break-all;
+  flex: 1;
+  line-height: 1.5;
 }
 
 .detail-summary {
-  padding: 20rpx 0;
+  margin-top: 20rpx;
+  padding: 20rpx 24rpx;
+  background: #f8f9fb;
+  border-radius: 12rpx;
+}
+
+.detail-summary-label {
+  display: block;
+  font-size: 24rpx;
+  color: #888;
+  margin-bottom: 10rpx;
 }
 
 .detail-summary-text {
   font-size: 26rpx;
-  color: #666;
-  line-height: 1.6;
+  color: #555;
+  line-height: 1.7;
+  display: block;
 }
 
 .detail-close {
@@ -130,9 +171,14 @@
   font-size: 30rpx;
   color: #666;
   border-top: 1rpx solid #eee;
+  flex-shrink: 0;
 }
 
-/* 周期表网格 */
+.detail-close:active {
+  background: #f5f5f5;
+}
+
+/* ============ 周期表网格 ============ */
 .table-scroll {
   flex: 1;
   padding: 16rpx;

@@ -27,6 +27,7 @@ const TOOLS = [
   { id: 'base64', name: 'Base64编解', category: 'text', icon: '🔐', path: '/pages/tools/base64/index', description: '文本编解码' },
   { id: 'imgcompress', name: '图片压缩', category: 'image', icon: '🖼️', path: '/pages/tools/imgcompress/index', description: '压缩图片体积' },
   { id: 'pdf2img', name: 'PDF转图片', category: 'image', icon: '📄', path: '/pages/tools/pdf2img/index', description: 'PDF文件转图片预览保存' },
+  { id: 'pdf2word', name: 'PDF转Word', category: 'image', icon: '📝', path: '/pages/tools/pdf2word/index', description: 'PDF文件转Word文档·多格式输出' },
   { id: 'answereraser', name: '答案遮挡器', category: 'image', icon: '✏️', path: '/pages/tools/answereraser/index', description: '试卷图片涂抹遮挡答案·导出保存' },
   { id: 'paperclean', name: '试卷擦除', category: 'image', icon: '🧹', path: '/pages/tools/paperclean/index', description: 'AI智能识别并擦除手写笔迹·还原空白试卷' },
   { id: 'gifmaker', name: 'GIF制作器', category: 'image', icon: '🎞️', path: '/pages/tools/gifmaker/index', description: '多图合成GIF动图·调速·保存分享' },

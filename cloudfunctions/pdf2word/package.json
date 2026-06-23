@@ -1,0 +1,10 @@
+{
+  "name": "pdf2word",
+  "version": "1.0.0",
+  "description": "PDF转Word云函数 - 有道智云PDF转Word API",
+  "main": "index.js",
+  "dependencies": {
+    "axios": "^1.6.0",
+    "wx-server-sdk": "~2.6.3"
+  }
+}

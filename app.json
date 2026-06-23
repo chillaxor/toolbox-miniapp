@@ -106,6 +106,7 @@
     "pages/tools/pomodoro/index",
     "pages/tools/lifecalendar/index",
     "pages/tools/pdf2img/index",
+    "pages/tools/pdf2word/index",
     "pages/tools/answereraser/index",
     "pages/tools/gifmaker/index",
     "pages/tools/dynasty/index",

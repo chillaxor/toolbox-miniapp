@@ -67,7 +67,8 @@
           <text class="detail-value">{{selectedElement.year < 0 ? '公元前' + (-selectedElement.year) : selectedElement.year}}年</text>
         </view>
         <view class="detail-summary">
-          <text class="detail-summary-text">{{selectedElement.summary}}</text>
+          <text class="detail-summary-label">📖 简介</text>
+          <text class="detail-summary-text" user-select="true">{{selectedElement.summary}}</text>
         </view>
       </scroll-view>
       <view class="detail-close" bindtap="onCloseDetail">关闭</view>
