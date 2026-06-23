@@ -43,8 +43,7 @@
         {{previewing ? '⏸ 暂停' : '▶ 播放预览'}}
       </button>
     </view>
-
-    <!-- 帧率控制 -->
+  <!-- 帧率控制 -->
     <view class="slider-row">
       <text class="slider-label">播放速度</text>
       <slider

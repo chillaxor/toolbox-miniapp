@@ -12,7 +12,7 @@
 
   <!-- 云端额度提示 -->
   <view class="quota-bar" wx:if="{{cloudQuotaLoaded}}">
-    <view class="quota-item" wx:if="{{activeMode === 'cloud'}}">
+    <!--<view class="quota-item" wx:if="{{activeMode === 'cloud'}}">
       <text class="quota-label">☁️ 今日剩余</text>
       <text class="quota-val {{cloudQuota.dailyUserRemaining <= 2 ? 'quota-warn' : ''}}">
         {{cloudQuota.dailyUserRemaining}}/{{cloudQuota.dailyUserLimit}} 次
@@ -23,7 +23,7 @@
       <text class="quota-val {{cloudQuota.remaining <= 50 ? 'quota-warn' : ''}}">
         {{cloudQuota.remaining}}/{{cloudQuota.limit}} 次
       </text>
-    </view>
+    </view> -->
     <view class="quota-item quota-fallback" wx:if="{{activeMode !== 'cloud'}}">
       <text class="quota-label">💡 云端额度耗尽，已切换到{{activeMode === 'localai' ? '本地AI' : '基础模式'}}</text>
     </view>

@@ -64,6 +64,9 @@ Page({
     this.checkFavorite();
     this.checkCloudReady();
     var sysInfo = wx.getWindowInfo();
+    var rpxToPx = sysInfo.windowWidth / 750;
+    // edit-area padding 16rpx 两侧 = 32rpx，canvas-wrapper border 2rpx 两侧 = 4rpx
+    this.maxCanvasWidth = Math.floor(sysInfo.windowWidth - (32 + 4) * rpxToPx);
     var maxCanvasH = sysInfo.windowHeight - 44 - 40 - 180 - 30;
     if (maxCanvasH < 200) maxCanvasH = 200;
     this.maxCanvasHeight = maxCanvasH;
@@ -143,7 +146,7 @@ Page({
     wx.getImageInfo({
       src: path,
       success: function (info) {
-        var maxW = 690;
+        var maxW = self.maxCanvasWidth || (wx.getWindowInfo().windowWidth - 32);
         var maxH = self.maxCanvasHeight || 500;
         var ratio = info.width / info.height;
         var cw, ch;
@@ -198,7 +201,8 @@ Page({
           self.selectDpr = dpr;
           self.selectRects = [];
           self.selectBaseImage = ctx.getImageData(0, 0, canvas.width, canvas.height);
-          // 延迟测量确保布局稳定，500ms后首次测量，失败则重试
+          // 优先立即测量 Canvas 相对页面的偏移，避免快速触碰时出现错位
+          self._refreshSelectOffset(0);
           setTimeout(function () {
             self._refreshSelectOffset(0);
           }, 500);
@@ -225,15 +229,32 @@ Page({
   },
 
   _getSelectTouchPos: function (touch) {
-    return {
-      x: touch.clientX - (this.selectOffsetX || 0),
-      y: touch.clientY - (this.selectOffsetY || 0)
-    };
+    // 微信小程序 Canvas 2D 组件中，touch.x/y 是相对于 Canvas 元素的 CSS 像素坐标，直接使用即可
+    var cw = this.data.canvasWidth || 0;
+    var ch = this.data.canvasHeight || 0;
+
+    function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+
+    if (typeof touch.x === 'number' && typeof touch.y === 'number') {
+      // touch.x/y 已经是相对 Canvas 的 CSS 像素坐标，不需要除以 DPR，也不需要减 offset
+      var x = clamp(touch.x, 0, cw);
+      var y = clamp(touch.y, 0, ch);
+      console.log('[watermarkremove] _getSelectTouchPos touch.x/y =', touch.x, touch.y, '-> clamped=', x, y);
+      return { x: x, y: y };
+    }
+
+    // 回退：用 clientX/Y 减去 Canvas 在页面中的偏移
+    var px = (touch.clientX || 0) - (this.selectOffsetX || 0);
+    var py = (touch.clientY || 0) - (this.selectOffsetY || 0);
+    px = clamp(px, 0, cw);
+    py = clamp(py, 0, ch);
+    console.log('[watermarkremove] _getSelectTouchPos fallback client, client=(', touch.clientX, touch.clientY, '), offset=(', this.selectOffsetX, this.selectOffsetY, '), pos=(', px, py, ')');
+    return { x: px, y: py };
   },
 
   onSelectStart: function (e) {
     var touch = e.touches[0];
-    console.log('[watermarkremove] touchStart clientX:', touch.clientX, 'offsetX:', this.selectOffsetX, 'canvasWidth:', this.data.canvasWidth);
+    console.log('[watermarkremove] onSelectStart event touches[0]=', touch, 'selectOffset=', this.selectOffsetX, this.selectOffsetY, 'canvas=', this.data.canvasWidth, this.data.canvasHeight);
     var pos = this._getSelectTouchPos(touch);
     this.isSelecting = true;
     this.selectStartPos = pos;
@@ -477,7 +498,7 @@ Page({
     wx.getImageInfo({
       src: self.data.imageSrc,
       success: function (info) {
-        var maxW = 690;
+        var maxW = self.maxCanvasWidth || (wx.getWindowInfo().windowWidth - 32);
         var maxH = self.maxCanvasHeight || 500;
         var ratio = info.width / info.height;
         var cw, ch;
@@ -510,7 +531,7 @@ Page({
     wx.getImageInfo({
       src: src,
       success: function (info) {
-        var maxW = 690;
+        var maxW = self.maxCanvasWidth || (wx.getWindowInfo().windowWidth - 32);
         var maxH = self.maxCanvasHeight || 500;
         var ratio = info.width / info.height;
         var cw, ch;

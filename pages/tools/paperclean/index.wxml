@@ -5,8 +5,8 @@
   </view>
 
   <!-- 额度提示 -->
-  <view class="card quota-card" style="background:linear-gradient(135deg,#9B59B6 0%,#8E44AD 100%);" wx:if="{{cloudReady}}">
-    <view class="quota-info">
+  <view class="card quota-card" style="background:linear-gradient(135deg,#9B59B6 0%,#8E44AD 100%);" wx:if="{{cloudReady && dailyRemaining <= 0}}">
+   <!-- <view class="quota-info">
       <text class="quota-label">今日剩余</text>
       <text class="quota-value">{{dailyRemaining}} / {{dailyLimit}} 次</text>
     </view>
@@ -19,9 +19,9 @@
     </view>
     <view class="quota-bar-bg">
       <view class="quota-bar-fill" style="width:{{(monthlyRemaining / monthlyLimit) * 100}}%;"></view>
-    </view>
+    </view> -->
     <text class="quota-hint" wx:if="{{dailyRemaining <= 0}}">今日次数已用完，明天再来</text>
-    <text class="quota-hint" wx:if="{{monthlyRemaining <= 0}}">本月总额度已用完，下月自动恢复</text>
+    <!--<text class="quota-hint" wx:if="{{monthlyRemaining <= 0}}">本月总额度已用完，下月自动恢复</text> -->
   </view>
 
   <!-- 云服务不可用提示 -->
