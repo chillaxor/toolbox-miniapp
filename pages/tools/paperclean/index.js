@@ -18,6 +18,9 @@ Page({
     monthlyLimit: 50,
     showResult: false,
     cloudReady: false,
+    provider: 'baidu',
+    baiduAvailable: false,
+    youdaoAvailable: false,
     tips: [
       '选择拍好的试卷照片',
       'AI自动识别并擦除手写笔迹',
@@ -27,6 +30,8 @@ Page({
 
   onLoad: function () {
     this.checkFavorite();
+    var savedProvider = storage.getPreference('paperclean_provider', 'baidu');
+    this.setData({ provider: savedProvider });
     this.checkCloudReady();
   },
 
@@ -40,6 +45,23 @@ Page({
 
   toggleFavorite: function () {
     this.setData({ isFavorite: storage.toggleFavorite('paperclean') });
+  },
+
+  /**
+   * 切换 AI 引擎
+   */
+  onSwitchProvider: function (e) {
+    var provider = e.currentTarget.dataset.provider;
+    if (provider === 'baidu' && !this.data.baiduAvailable) {
+      wx.showToast({ title: '百度引擎未配置', icon: 'none' });
+      return;
+    }
+    if (provider === 'youdao' && !this.data.youdaoAvailable) {
+      wx.showToast({ title: '有道引擎未配置', icon: 'none' });
+      return;
+    }
+    this.setData({ provider: provider });
+    storage.setPreference('paperclean_provider', provider);
   },
 
   /**
@@ -59,14 +81,27 @@ Page({
         console.log('[paperclean] cloud ready, quota:', res.result);
         self.setData({ cloudReady: true });
         if (res.result && res.result.success) {
+          var baiduAvail = !!res.result.baiduAvailable;
+          var youdaoAvail = !!res.result.youdaoAvailable;
           self.setData({
             dailyUsed: res.result.dailyUsed,
             dailyRemaining: res.result.dailyRemaining,
             dailyLimit: res.result.dailyLimit,
             monthlyUsed: res.result.monthlyUsed,
             monthlyRemaining: res.result.monthlyRemaining,
-            monthlyLimit: res.result.monthlyLimit
+            monthlyLimit: res.result.monthlyLimit,
+            baiduAvailable: baiduAvail,
+            youdaoAvailable: youdaoAvail
           });
+          // 当前选的 provider 不可用时自动切换
+          var current = self.data.provider;
+          if (current === 'baidu' && !baiduAvail && youdaoAvail) {
+            self.setData({ provider: 'youdao' });
+            storage.setPreference('paperclean_provider', 'youdao');
+          } else if (current === 'youdao' && !youdaoAvail && baiduAvail) {
+            self.setData({ provider: 'baidu' });
+            storage.setPreference('paperclean_provider', 'baidu');
+          }
         }
       },
       fail: function (err) {
@@ -194,6 +229,7 @@ Page({
           name: 'paperclean',
           data: {
             action: 'clean',
+            provider: self.data.provider,
             imageBase64: readRes.data
           },
           env: CLOUD_ENV,

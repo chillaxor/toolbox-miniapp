@@ -5,6 +5,9 @@
   "envVariables": {
     "BAIDU_API_KEY": "",
     "BAIDU_SECRET_KEY": "",
-    "MONTHLY_LIMIT": "50"
+    "YOUDAO_APP_KEY": "",
+    "YOUDAO_APP_SECRET": "",
+    "DAILY_LIMIT": "2",
+    "TOTAL_MONTHLY_LIMIT": "50"
   }
 }
