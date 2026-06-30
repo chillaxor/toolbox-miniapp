@@ -25,57 +25,57 @@
     </view>
   </view>
 
-  <!-- 操作按钮 -->
+  <!-- 格式选择 -->
   <view class="card" wx:if="{{filePath}}">
-    <view class="action-list">
-      <view class="action-item" bindtap="onPreviewPDF">
-        <view class="action-left">
-          <text class="action-icon">👁️</text>
-          <view class="action-text-wrap">
-            <text class="action-title">预览并截图</text>
-            <text class="action-desc">打开PDF预览，长按截图保存为图片</text>
-          </view>
-        </view>
-        <text class="action-arrow">›</text>
+    <text class="section-title">输出格式</text>
+    <view class="format-row">
+      <view class="format-option {{selectedFormat === 'png' ? 'active' : ''}}" bindtap="onFormatChange" data-format="png">
+        <text>PNG</text>
+        <text class="format-desc">无损·清晰</text>
       </view>
-      <view class="action-item" bindtap="onShowTips">
-        <view class="action-left">
-          <text class="action-icon">💡</text>
-          <view class="action-text-wrap">
-            <text class="action-title">操作指南</text>
-            <text class="action-desc">查看详细的PDF转图片步骤</text>
-          </view>
-        </view>
-        <text class="action-arrow">›</text>
+      <view class="format-option {{selectedFormat === 'jpg' ? 'active' : ''}}" bindtap="onFormatChange" data-format="jpg">
+        <text>JPG</text>
+        <text class="format-desc">压缩·小体积</text>
       </view>
     </view>
+    <text class="section-title">画质等级</text>
+    <view class="format-row">
+      <view class="format-option {{selectedQuality === 'high' ? 'active' : ''}}" bindtap="onQualityChange" data-quality="high">
+        <text>高清</text>
+        <text class="format-desc">300dpi</text>
+      </view>
+      <view class="format-option {{selectedQuality === 'medium' ? 'active' : ''}}" bindtap="onQualityChange" data-quality="medium">
+        <text>标准</text>
+        <text class="format-desc">200dpi</text>
+      </view>
+      <view class="format-option {{selectedQuality === 'low' ? 'active' : ''}}" bindtap="onQualityChange" data-quality="low">
+        <text>快速</text>
+        <text class="format-desc">150dpi</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 云端转换按钮 -->
+  <view class="card" wx:if="{{filePath}}">
+    <view class="quota-info" wx:if="{{cloudReady}}">
+      <text class="quota-text">今日剩余：{{dailyUserRemaining}}/{{dailyUserLimit}}次（全局{{dailyTotalRemaining}}/{{dailyTotalLimit}}）</text>
+    </view>
+    <button class="btn-cloud" bindtap="onCloudConvert" disabled="{{isConverting || dailyUserRemaining <= 0}}">
+      {{isConverting ? '转换中...' : '☁️ 云端转换PDF为图片'}}
+    </button>
+    <text class="cloud-desc">纯本地处理·不上传第三方·保护隐私</text>
     <button class="btn-clear" bindtap="onClear">清除文件</button>
   </view>
 
-  <!-- 使用说明 -->
-  <view class="card">
-    <text class="section-title">📖 使用说明</text>
-    <view class="step-list">
-      <view class="step-item">
-        <view class="step-num">1</view>
-        <view class="step-content">
-          <text class="step-title">选择文件</text>
-          <text class="step-desc">从微信聊天记录中选择PDF文件</text>
-        </view>
-      </view>
-      <view class="step-item">
-        <view class="step-num">2</view>
-        <view class="step-content">
-          <text class="step-title">预览文档</text>
-          <text class="step-desc">使用微信内置预览器打开PDF</text>
-        </view>
-      </view>
-      <view class="step-item">
-        <view class="step-num">3</view>
-        <view class="step-content">
-          <text class="step-title">截图保存</text>
-          <text class="step-desc">长按页面或截屏，图片自动保存到相册</text>
-        </view>
+  <!-- 转换结果 -->
+  <view class="card" wx:if="{{convertedImages.length > 0}}">
+    <text class="section-title">转换结果（{{convertedImages.length}}页）</text>
+    <button class="btn-save-all" bindtap="onSaveAllImages">保存全部到相册</button>
+    <view class="image-grid">
+      <view wx:for="{{convertedImages}}" wx:key="page" class="image-item">
+        <image src="{{item.tempPath}}" mode="aspectFit" class="result-image" bindtap="onSaveImage" data-path="{{item.tempPath}}"></image>
+        <text class="image-page">第{{item.page}}页</text>
+        <text class="image-info">{{item.width}}×{{item.height}}</text>
       </view>
     </view>
   </view>

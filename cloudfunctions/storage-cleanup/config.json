@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "openapi": []
+  },
+  "triggers": [
+    {
+      "name": "storage_cleanup_trigger",
+      "type": "timer",
+      "config": "0 0 3 * * * *"
+    }
+  ]
+}
