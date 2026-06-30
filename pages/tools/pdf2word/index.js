@@ -38,35 +38,10 @@ Page({
   },
 
   onChoosePDF: function () {
-    var self = this;
-    wx.showActionSheet({
-      itemList: ['💬 从聊天记录选择', '📁 从手机文件管理器选择'],
-      success: function (res) {
-        if (res.tapIndex === 0) {
-          self.doChooseFile(false);
-        } else if (res.tapIndex === 1) {
-          self.chooseFromFileManager();
-        }
-      },
-      fail: function () {}
-    });
+    this.doChooseFile();
   },
 
-  chooseFromFileManager: function () {
-    var self = this;
-    wx.showModal({
-      title: '从手机文件管理器选择',
-      content: '点击"去选择"后，在弹出的面板中点击「文件管理器」或「本地文件」入口，即可浏览手机文件夹选择PDF文件。',
-      confirmText: '去选择',
-      cancelText: '取消',
-      success: function (r) {
-        if (!r.confirm) return;
-        self.doChooseFile(true);
-      }
-    });
-  },
-
-  doChooseFile: function (fromFileManager) {
+  doChooseFile: function () {
     var self = this;
     wx.chooseMessageFile({
       count: 1,

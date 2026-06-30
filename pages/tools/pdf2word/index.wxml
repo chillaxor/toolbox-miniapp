@@ -10,7 +10,7 @@
       <view wx:if="{{!filePath}}" class="picker-placeholder">
         <text class="picker-icon">📝</text>
         <text class="picker-title">点击选择PDF文件</text>
-        <text class="picker-desc">支持从聊天记录或手机文件管理器选择</text>
+        <text class="picker-desc">从微信聊天记录中选择PDF文件</text>
       </view>
       <view wx:else class="file-info">
         <view class="file-icon-wrap">
