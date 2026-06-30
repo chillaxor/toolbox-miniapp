@@ -1,0 +1,147 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">去水印2 测试</text>
+  </view>
+
+  <view class="card" wx:if="{{!imageSrc && !showResult}}">
+    <view class="image-picker" bindtap="onChooseImage">
+      <text class="picker-icon">🧽</text>
+      <text class="picker-title">选择含水印的图片</text>
+      <text class="picker-desc">从相册选择或拍照，然后在图片上框选水印区域</text>
+    </view>
+  </view>
+
+  <!-- 框选水印区域 -->
+  <view wx:if="{{imageSrc && selectMode && !isLoading}}" class="edit-area">
+    <view class="toolbar-fixed">
+      <view class="tool-group">
+        <view class="tool-btn" bindtap="onClearRect" wx:if="{{hasRect}}">
+          <text class="tool-icon">🗑️</text>
+          <text class="tool-label">清除框选</text>
+        </view>
+        <view class="tool-btn" bindtap="onChooseImage">
+          <text class="tool-icon">🖼️</text>
+          <text class="tool-label">换图</text>
+        </view>
+        <view class="tool-btn" bindtap="onExitSelect">
+          <text class="tool-icon">✖️</text>
+          <text class="tool-label">退出</text>
+        </view>
+      </view>
+      <view class="action-hint">
+        <text class="hint-text" wx:if="{{!hasRect}}">👆 在图片上拖拽框选水印区域（仅支持单个矩形）</text>
+        <text class="hint-text" wx:else>✅ 已框选区域，可重新框选或点击下方按钮处理</text>
+      </view>
+    </view>
+
+    <view class="canvas-wrapper">
+      <canvas
+        id="selectCanvas"
+        type="2d"
+        class="draw-canvas"
+        style="width:{{canvasWidth}}px;height:{{canvasHeight}}px;"
+        bindtouchstart="onSelectStart"
+        bindtouchmove="onSelectMove"
+        bindtouchend="onSelectEnd"
+        disable-scroll
+      ></canvas>
+    </view>
+
+    <!-- 参数调节 -->
+    <view class="params-card">
+      <view class="param-row">
+        <text class="param-label">修复半径</text>
+        <slider class="param-slider" min="1" max="20" value="{{inpaintRadius}}" activeColor="#E67E22" bindchange="onRadiusChange" show-value/>
+      </view>
+      <view class="param-row">
+        <text class="param-label">羽化</text>
+        <slider class="param-slider" min="0" max="20" value="{{feather}}" activeColor="#E67E22" bindchange="onFeatherChange" show-value/>
+      </view>
+      <view class="param-row">
+        <text class="param-label">锐化</text>
+        <switch checked="{{sharpen}}" color="#E67E22" bindchange="onSharpenChange"/>
+      </view>
+    </view>
+
+    <view class="export-bar">
+      <button class="btn-primary btn-export" style="background:linear-gradient(135deg,#E67E22 0%,#D35400 100%);" bindtap="onStartProcess" disabled="{{!hasRect}}">
+        🧽 开始去水印
+      </button>
+    </view>
+  </view>
+
+  <!-- 处理中 -->
+  <view class="card" wx:if="{{isLoading}}">
+    <view class="loading-box">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">{{loadingText}}</text>
+      <text class="loading-sub">正在调用云函数 watermark3 处理</text>
+    </view>
+  </view>
+
+  <!-- 处理结果 -->
+  <view class="card result-card" wx:if="{{showResult && !selectMode}}">
+    <view class="compare-section">
+      <view class="compare-item">
+        <text class="compare-label">原图</text>
+        <image class="compare-img" src="{{imageSrc}}" mode="aspectFit"></image>
+      </view>
+      <view class="compare-divider">
+        <text class="divider-icon">→</text>
+      </view>
+      <view class="compare-item">
+        <text class="compare-label">去水印后</text>
+        <image class="compare-img" src="{{resultSrc}}" mode="aspectFit"></image>
+      </view>
+    </view>
+    <view class="result-actions">
+      <button class="btn-primary btn-save" style="background:linear-gradient(135deg,#E67E22 0%,#D35400 100%);" bindtap="onSaveResult">
+        💾 保存到相册
+      </button>
+    </view>
+    <view class="sub-row">
+      <button class="btn-text" bindtap="onReset">处理另一张</button>
+    </view>
+  </view>
+
+  <!-- 调试信息 -->
+  <view class="card" wx:if="{{debugInfo}}">
+    <text class="section-title">🐞 调试信息</text>
+    <text class="debug-text">{{debugInfo}}</text>
+  </view>
+
+  <!-- 使用说明 -->
+  <view class="card">
+    <text class="section-title">📖 使用说明</text>
+    <view class="step-list">
+      <view class="step-item">
+        <view class="step-num">1</view>
+        <view class="step-content">
+          <text class="step-title">选择图片</text>
+          <text class="step-desc">从相册或拍照选择含水印的图片</text>
+        </view>
+      </view>
+      <view class="step-item">
+        <view class="step-num">2</view>
+        <view class="step-content">
+          <text class="step-title">框选水印区域</text>
+          <text class="step-desc">在图片上拖拽画矩形框住水印位置（单区域）</text>
+        </view>
+      </view>
+      <view class="step-item">
+        <view class="step-num">3</view>
+        <view class="step-content">
+          <text class="step-title">调用云函数</text>
+          <text class="step-desc">将框选坐标转为原图坐标后调用 watermark3 云函数</text>
+        </view>
+      </view>
+      <view class="step-item">
+        <view class="step-num">4</view>
+        <view class="step-content">
+          <text class="step-title">查看与保存</text>
+          <text class="step-desc">对比原图与处理结果，可保存到相册</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

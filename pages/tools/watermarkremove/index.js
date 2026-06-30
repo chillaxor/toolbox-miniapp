@@ -495,8 +495,118 @@ Page({
   onEnterManual: function () {
     if (!this.data.imageSrc) return;
     var self = this;
+
+    // 没有框选区域，直接进入手动涂抹
+    if (this.selectRects.length === 0) {
+      self._enterManualEditMode(self.data.imageSrc);
+      return;
+    }
+
+    // 有框选区域，先调用 watermark3 云函数预处理，再进入手动涂抹
+    var cw = this.data.canvasWidth;
+    var ch = this.data.canvasHeight;
+    var iw = this.data.imageWidth;
+    var ih = this.data.imageHeight;
+
+    var rects = [];
+    for (var i = 0; i < this.selectRects.length; i++) {
+      var r = this.selectRects[i];
+      rects.push({
+        x1: Math.round(r.x / cw * iw),
+        y1: Math.round(r.y / ch * ih),
+        x2: Math.round((r.x + r.w) / cw * iw),
+        y2: Math.round((r.y + r.h) / ch * ih)
+      });
+    }
+
+    this.setData({ isLoading: true, loadingText: '正在读取图片...' });
+
+    wx.getFileSystemManager().readFile({
+      filePath: self.data.imageSrc,
+      encoding: 'base64',
+      success: function (readRes) {
+        self._processWatermark3Chain(readRes.data, rects, 0, function (finalBase64) {
+          var filePath = wx.env.USER_DATA_PATH + '/watermark3_' + Date.now() + '.png';
+          wx.getFileSystemManager().writeFile({
+            filePath: filePath,
+            data: finalBase64,
+            encoding: 'base64',
+            success: function () {
+              self.setData({ isLoading: false, loadingText: '' });
+              self._enterManualEditMode(filePath);
+            },
+            fail: function () {
+              self.setData({ isLoading: false, loadingText: '' });
+              wx.showToast({ title: '预处理结果保存失败', icon: 'none' });
+            }
+          });
+        }, function (errMsg) {
+          self.setData({ isLoading: false, loadingText: '' });
+          wx.showModal({
+            title: '预处理失败',
+            content: errMsg + '，将直接进入手动涂抹',
+            showCancel: false,
+            success: function () {
+              self._enterManualEditMode(self.data.imageSrc);
+            }
+          });
+        });
+      },
+      fail: function () {
+        self.setData({ isLoading: false, loadingText: '' });
+        wx.showToast({ title: '图片读取失败', icon: 'none' });
+      }
+    });
+  },
+
+  // 串行调用 watermark3 云函数处理多个矩形
+  _processWatermark3Chain: function (imgBase64, rects, index, onSuccess, onFail) {
+    var self = this;
+    if (index >= rects.length) {
+      onSuccess(imgBase64);
+      return;
+    }
+    var r = rects[index];
+    self.setData({ loadingText: '正在预处理第 ' + (index + 1) + '/' + rects.length + ' 个区域...' });
+
+    wx.cloud.callFunction({
+      name: 'watermark3',
+      data: {
+        img_base64: imgBase64,
+        x1: r.x1,
+        y1: r.y1,
+        x2: r.x2,
+        y2: r.y2,
+        inpaint_radius: 5,
+        feather: 8,
+        sharpen: true
+      },
+      env: CLOUD_ENV,
+      success: function (callRes) {
+        if (!callRes.result || callRes.result.code !== 0) {
+          var msg = (callRes.result && callRes.result.msg) || '云函数返回异常';
+          onFail(msg);
+          return;
+        }
+        self._processWatermark3Chain(callRes.result.new_img_base64, rects, index + 1, onSuccess, onFail);
+      },
+      fail: function (err) {
+        var errMsg = '云函数调用失败';
+        if (err.errMsg) {
+          if (err.errMsg.indexOf('timeout') !== -1) errMsg = '请求超时，请稍后重试';
+          else if (err.errMsg.indexOf('not found') !== -1) errMsg = '云函数 watermark3 未部署';
+          else if (err.errMsg.indexOf('network') !== -1) errMsg = '网络连接失败';
+        }
+        onFail(errMsg);
+      }
+    });
+  },
+
+  // 进入手动涂抹编辑模式（计算尺寸并初始化 canvas）
+  _enterManualEditMode: function (src) {
+    var self = this;
     wx.getImageInfo({
-      src: self.data.imageSrc,
+      src: src,
       success: function (info) {
         var maxW = self.maxCanvasWidth || (wx.getWindowInfo().windowWidth - 32);
         var maxH = self.maxCanvasHeight || 500;
@@ -518,7 +628,7 @@ Page({
           canvasHeight: ch,
           showResult: false
         }, function () {
-          self.initCanvas(self.data.imageSrc, cw, ch);
+          self.initCanvas(src, cw, ch);
         });
       }
     });

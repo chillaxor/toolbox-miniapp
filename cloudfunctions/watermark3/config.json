@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "openapi": []
+  },
+  "envVariables": {
+    "DAILY_USER_LIMIT": "5",
+    "DAILY_TOTAL_LIMIT": "100",
+    "WX_APPID": "请替换为小程序AppID",
+    "WX_APPSECRET": "请替换为小程序AppSecret",
+    "CLOUD_ENV": "cloud1-d9gm1qla9bebafa31"
+  },
+  "runtime": "Python3.11",
+  "clsLogsetId": "",
+  "clsTopicId": ""
+}
