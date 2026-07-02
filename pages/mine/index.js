@@ -32,6 +32,14 @@ Page({
     });
   },
 
+  goHistory: function () {
+    wx.navigateTo({ url: '/pages/history/index' });
+  },
+
+  goFavorites: function () {
+    wx.switchTab({ url: '/pages/favorites/index' });
+  },
+
   onClearCache: function () {
     var self = this;
     wx.showModal({

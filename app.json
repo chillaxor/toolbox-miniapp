@@ -1,5 +1,6 @@
 {
   "pages": [
+    "pages/blessing/index",
     "pages/index/index",
     "pages/favorites/index",
     "pages/history/index",
@@ -147,16 +148,16 @@
         "selectedIconPath": "assets/tabbar/home_active.png"
       },
       {
+        "pagePath": "pages/blessing/index",
+        "text": "禅香",
+        "iconPath": "assets/tabbar/blessing.png",
+        "selectedIconPath": "assets/tabbar/blessing_active.png"
+      },
+      {
         "pagePath": "pages/favorites/index",
         "text": "收藏",
         "iconPath": "assets/tabbar/star.png",
         "selectedIconPath": "assets/tabbar/star_active.png"
-      },
-      {
-        "pagePath": "pages/history/index",
-        "text": "历史",
-        "iconPath": "assets/tabbar/clock.png",
-        "selectedIconPath": "assets/tabbar/clock_active.png"
       },
       {
         "pagePath": "pages/mine/index",

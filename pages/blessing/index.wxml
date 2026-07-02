@@ -1,0 +1,142 @@
+<view class="page">
+  <!-- 顶部背景图 -->
+  <view class="bg-wrapper">
+    <image class="bg-image" src="../../assets/blessing/bg.jpg" mode="aspectFill" />
+    <view class="bg-overlay"></view>
+    <!-- 累计次数浮于背景上 -->
+    <view class="count-overlay">
+      <text class="count-label">累计祈福</text>
+      <text class="count-number">{{totalCount}}</text>
+      <text class="count-today">今日 {{todayCount}} 次</text>
+    </view>
+  </view>
+
+  <!-- 香炉区域 -->
+  <view class="censer-area">
+    <!-- 烟雾区域 -->
+    <view class="smoke-zone" wx:if="{{isBurning}}">
+      <block wx:for="{{[-70, 0, 70]}}" wx:key="*this" wx:for-item="source">
+        <block wx:for="{{[0, 1, 2]}}" wx:key="*this" wx:for-item="wave">
+          <view class="smoke" style="left: calc(50% + {{source}}rpx); animation-delay: {{wave * 0.8}}s;"></view>
+        </block>
+      </block>
+    </view>
+
+    <!-- 香炉图片 -->
+    <view class="censer-image-wrapper">
+      <!-- 燃烧中的香 + 倒计时 -->
+      <block wx:if="{{isBurning && currentIncense}}">
+        <image class="censer-image burning" src="{{incenseImages[currentIncense.imageIndex]}}" mode="aspectFit" />
+      </block>
+      <!-- 空状态：显示淡淡的香炉轮廓 -->
+      <block wx:else>
+        <image class="censer-image empty" src="{{incenseImages[selectedType]}}" mode="aspectFit" />
+      </block>
+    </view>
+  </view>
+
+  <!-- 插香按钮 -->
+  <view class="insert-btn-wrapper">
+    <block wx:if="{{isBurning}}">
+      <view class="insert-btn burning-state">
+        <text class="insert-btn-text">香燃烧中</text>
+      </view>
+    </block>
+    <block wx:else>
+      <view class="insert-btn" bindtap="onInsertIncense">
+        <text class="insert-btn-text">🪷 选香插供</text>
+      </view>
+    </block>
+    <text class="insert-hint">{{isBurning ? '香烧完即可再次插香' : '选择香型，虔诚供奉'}}</text>
+  </view>
+
+  <!-- 祝福语 -->
+  <view class="blessing-card {{showBlessing ? 'show' : ''}}">
+    <text class="blessing-icon">🙏</text>
+    <text class="blessing-text">{{blessing}}</text>
+  </view>
+
+  <!-- 等级卡片 -->
+  <view class="level-card">
+    <view class="level-header">
+      <text class="level-icon">🏵</text>
+      <text class="level-card-title">修行境界</text>
+    </view>
+    <view class="level-body">
+      <text class="level-name-text">{{levelName}}</text>
+      <view class="level-bar-wrapper">
+        <view class="level-bar-bg">
+          <view class="level-bar-fill" style="width: {{levelProgress}}%;"></view>
+        </view>
+      </view>
+      <text class="level-detail">距下一境界还需 {{nextLevelRemain}} 次</text>
+    </view>
+  </view>
+
+  <!-- 香型选择器 -->
+  <view class="type-picker-mask {{showTypePicker ? 'show' : ''}}" bindtap="onHideTypePicker">
+    <view class="type-picker {{showTypePicker ? 'show' : ''}}" catchtap="">
+      <text class="picker-title">🪷 选择香型</text>
+      <scroll-view class="picker-scroll" scroll-y="true">
+        <view class="picker-grid">
+          <view class="picker-item" wx:for="{{incenseImages}}" wx:key="*this" wx:for-item="img" wx:for-index="idx" bindtap="onSelectType" data-index="{{idx}}">
+            <image class="picker-item-image" src="{{img}}" mode="aspectFit" />
+            <text class="picker-item-name">{{incenseNames[idx]}}</text>
+          </view>
+        </view>
+      </scroll-view>
+      <text class="picker-cancel" bindtap="onHideTypePicker">取消</text>
+    </view>
+  </view>
+
+  <!-- 佛祖签悬浮icon -->
+  <view class="lingqian-fab" bindtap="onShowLingqian">
+    <text class="lingqian-fab-icon">🔮</text>
+  </view>
+
+  <!-- 佛祖签列表弹窗 -->
+  <view class="lingqian-mask {{showLingqian ? 'show' : ''}}" bindtap="onHideLingqian">
+    <view class="lingqian-panel {{showLingqian ? 'show' : ''}}" catchtap="">
+      <text class="lingqian-title">🔮 佛祖签</text>
+      <scroll-view class="lingqian-scroll" scroll-y="true">
+        <view class="lingqian-item" wx:for="{{lingqianList}}" wx:key="id" bindtap="onSelectLingqian" data-id="{{item.id}}">
+          <text class="lingqian-item-num">第{{item.id}}签</text>
+          <text class="lingqian-item-story">{{item.story}}</text>
+          <text class="lingqian-item-level {{item.levelClass}}">{{item.level}}</text>
+        </view>
+      </scroll-view>
+      <text class="lingqian-cancel" bindtap="onHideLingqian">关闭</text>
+    </view>
+  </view>
+
+  <!-- 签详情弹窗 -->
+  <view class="lingqian-detail-mask {{showLingqianDetail ? 'show' : ''}}" bindtap="onHideLingqianDetail">
+    <view class="lingqian-detail {{showLingqianDetail ? 'show' : ''}}" catchtap="">
+      <view class="detail-header">
+        <image class="detail-img" src="{{selectedLingqian.img}}" mode="aspectFit" />
+        <view class="detail-info">
+          <text class="detail-num">第{{selectedLingqian.id}}签</text>
+          <text class="detail-story">{{selectedLingqian.story}}</text>
+          <text class="detail-level {{selectedLingqian.levelClass}}">{{selectedLingqian.level}}</text>
+        </view>
+      </view>
+      <view class="detail-body">
+        <view class="detail-section">
+          <text class="detail-section-title">签诗</text>
+          <text class="detail-section-content">{{selectedLingqian.qianShi}}</text>
+        </view>
+        <view class="detail-section">
+          <text class="detail-section-title">诗解</text>
+          <text class="detail-section-content">{{selectedLingqian.shiJie}}</text>
+        </view>
+        <scroll-view class="detail-jie-scroll" scroll-y="true">
+          <view class="detail-section" wx:for="{{selectedLingqian.jieQian}}" wx:key="title">
+            <text class="detail-section-title">{{item.title}}</text>
+            <text class="detail-section-content">{{item.content}}</text>
+          </view>
+        </scroll-view>
+      </view>
+      <text class="detail-close" bindtap="onHideLingqianDetail">关闭</text>
+    </view>
+  </view>
+</view>
