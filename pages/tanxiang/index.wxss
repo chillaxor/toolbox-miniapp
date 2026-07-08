@@ -283,8 +283,8 @@
 }
 
 .woodfish-wrap {
-  width: 260rpx;
-  height: 200rpx;
+  width: 360rpx;
+  height: 280rpx;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -296,8 +296,8 @@
 }
 
 .woodfish {
-  width: 240rpx;
-  height: 190rpx;
+  width: 340rpx;
+  height: 280rpx;
   filter: drop-shadow(0 8rpx 16rpx rgba(0, 0, 0, 0.5));
 }
 
@@ -307,7 +307,7 @@
   right: 150rpx;
   width: 150rpx;
   height: 150rpx;
-  transform-origin: 80% 80%;
+  transform-origin: 60% 180%;
   transition: transform 0.12s ease;
   filter: drop-shadow(0 4rpx 10rpx rgba(0, 0, 0, 0.5));
 }

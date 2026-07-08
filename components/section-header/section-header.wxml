@@ -1,4 +1,0 @@
-<view class="section-header">
-  <view class="section-header-bar" style="background-color: {{color}}"></view>
-  <text class="section-header-title">{{title}}</text>
-</view>
