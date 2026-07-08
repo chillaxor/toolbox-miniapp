@@ -24,10 +24,10 @@
 
   <!-- 香炉场景 -->
   <view class="censer-scene">
-    <!-- 左蜡烛（原素材 left.png） -->
-    <image class="candle candle-left" src="../../assets/blessing/decor/left.png" mode="aspectFit" />
-    <!-- 右蜡烛（原素材 right.png） -->
-    <image class="candle candle-right" src="../../assets/blessing/decor/right.png" mode="aspectFit" />
+    <!-- 左蜡烛（WebP 压缩，透明底） -->
+    <image class="candle candle-left" src="../../assets/blessing/decor/left.webp" mode="aspectFit" webp="true" />
+    <!-- 右蜡烛（WebP 压缩，透明底） -->
+    <image class="candle candle-right" src="../../assets/blessing/decor/right.webp" mode="aspectFit" webp="true" />
 
     <!-- 香烟（燃烧时显示） -->
     <view class="smoke-zone" wx:if="{{isBurning}}">
@@ -43,19 +43,6 @@
     </view>
   </view>
 
-  <!-- 燃烧倒计时（独立显示，不在香上） -->
-  <view class="burn-countdown" wx:if="{{isBurning}}">
-    <text class="burn-countdown-text">🔥 香燃烧中 · 剩余 {{burnRemainText}}</text>
-  </view>
-
-  <!-- 插香按钮 -->
-  <view class="insert-wrap">
-    <view class="insert-btn {{isBurning ? 'disabled' : ''}}" bindtap="openIncensePicker">
-      <text class="insert-icon">{{isBurning ? '🔥' : '🕯'}}</text>
-      <text class="insert-text">{{isBurning ? '香燃烧中' : '插香祈福'}}</text>
-    </view>
-    <text class="insert-hint">{{isBurning ? '香烧完即可再次插香' : '选择香型，虔诚供奉'}}</text>
-  </view>
 
   <!-- 木鱼 -->
   <view class="woodfish-area">
@@ -70,7 +57,19 @@
     <image class="mallet" src="../../assets/blessing/mallet_red.png" mode="aspectFit" bindtap="tapWoodfish"></image>
     <text class="woodfish-tip">轻敲木鱼 · 功德 +1</text>
   </view>
+  <!-- 燃烧倒计时（独立显示，不在香上） -->
+  <view class="burn-countdown" wx:if="{{isBurning}}">
+    <text class="burn-countdown-text">🔥 香燃烧中 · 剩余 {{burnRemainText}}</text>
+  </view>
 
+  <!-- 插香按钮 -->
+  <view class="insert-wrap">
+    <view class="insert-btn {{isBurning ? 'disabled' : ''}}" bindtap="openIncensePicker">
+      <text class="insert-icon">{{isBurning ? '🔥' : '🕯'}}</text>
+      <text class="insert-text">{{isBurning ? '香燃烧中' : '插香祈福'}}</text>
+    </view>
+    <text class="insert-hint">{{isBurning ? '香烧完即可再次插香' : '选择香型，虔诚供奉'}}</text>
+  </view>
   <!-- 佛祖签悬浮按钮（保留原悬浮位置） -->
   <view class="lingqian-fab" bindtap="openLingqian">
     <view class="lingqian-fab-inner">🎋</view>
@@ -96,7 +95,7 @@
   </view>
 
   <!-- 佛祖签弹窗 -->
-  <view class="mask {{showLingqian ? 'show' : ''}}" bindtap="closeLingqian">
+  <view class="mask qian-mask {{showLingqian ? 'show' : ''}}" bindtap="closeLingqian">
     <view class="qian-panel" catchtap="noop">
       <view class="qian-close" bindtap="closeLingqian">✕</view>
 
