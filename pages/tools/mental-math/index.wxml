@@ -18,12 +18,13 @@
     </view>
 
     <view class="card">
-      <text class="card-title">运算类型</text>
+      <text class="card-title">运算类型 (可多选)</text>
       <view class="option-grid">
-        <view class="option-item {{opType === item.value ? 'option-active' : ''}}"
+        <view class="option-item {{item.selected ? 'option-active' : ''}}"
               wx:for="{{opTypes}}" wx:key="value"
-              data-value="{{item.value}}" bindtap="onOpSelect">
+              data-index="{{index}}" bindtap="onOpSelect">
           <text class="option-text">{{item.label}}</text>
+          <text wx:if="{{item.selected}}" class="checkmark">✓</text>
         </view>
       </view>
     </view>
@@ -77,10 +78,7 @@
     <!-- 题目区域 -->
     <view class="card question-card" wx:if="{{question}}">
       <view class="question-expression">
-        <text class="question-num">{{question.a}}</text>
-        <text class="question-op">{{question.op}}</text>
-        <text class="question-num">{{question.b}}</text>
-        <text class="question-eq">=</text>
+        <text class="question-full">{{question.expression}}</text>
       </view>
 
       <!-- 答题反馈 -->

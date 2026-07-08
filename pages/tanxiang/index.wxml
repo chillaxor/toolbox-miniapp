@@ -1,0 +1,141 @@
+<view class="page">
+  <!-- 背景图（高清竖图 JPEG，体积小，无遮罩） -->
+  <image class="bg" src="../../assets/blessing/bg_tanxiang.jpg" mode="aspectFill"></image>
+
+  <!-- 顶部统计 -->
+  <view class="stats">
+    <view class="stat-card">
+      <text class="stat-num">{{totalInsert}}</text>
+      <text class="stat-label">总插香</text>
+    </view>
+    <view class="stat-card">
+      <text class="stat-num">{{todayInsert}}</text>
+      <text class="stat-label">今日插香</text>
+    </view>
+    <view class="stat-card">
+      <text class="stat-num gold">{{totalMerit}}</text>
+      <text class="stat-label">功德总数</text>
+    </view>
+    <view class="stat-card">
+      <text class="stat-num gold">{{todayMerit}}</text>
+      <text class="stat-label">今日功德</text>
+    </view>
+  </view>
+
+  <!-- 香炉场景 -->
+  <view class="censer-scene">
+    <!-- 左蜡烛（原素材 left.png） -->
+    <image class="candle candle-left" src="../../assets/blessing/decor/left.png" mode="aspectFit" />
+    <!-- 右蜡烛（原素材 right.png） -->
+    <image class="candle candle-right" src="../../assets/blessing/decor/right.png" mode="aspectFit" />
+
+    <!-- 香烟（燃烧时显示） -->
+    <view class="smoke-zone" wx:if="{{isBurning}}">
+      <view class="smoke" style="left: calc(50% - 64rpx);"></view>
+      <view class="smoke" style="left: 50%;"></view>
+      <view class="smoke" style="left: calc(50% + 64rpx);"></view>
+    </view>
+
+    <!-- 香炉：空状态淡显 / 燃烧状态亮起 -->
+    <view class="censer-image-wrapper">
+      <image wx:if="{{isBurning}}" class="censer-image burning" src="{{burningImage}}" mode="aspectFit" />
+      <image wx:else class="censer-image empty" src="{{burnerImage}}" mode="aspectFit" />
+    </view>
+  </view>
+
+  <!-- 燃烧倒计时（独立显示，不在香上） -->
+  <view class="burn-countdown" wx:if="{{isBurning}}">
+    <text class="burn-countdown-text">🔥 香燃烧中 · 剩余 {{burnRemainText}}</text>
+  </view>
+
+  <!-- 插香按钮 -->
+  <view class="insert-wrap">
+    <view class="insert-btn {{isBurning ? 'disabled' : ''}}" bindtap="openIncensePicker">
+      <text class="insert-icon">{{isBurning ? '🔥' : '🕯'}}</text>
+      <text class="insert-text">{{isBurning ? '香燃烧中' : '插香祈福'}}</text>
+    </view>
+    <text class="insert-hint">{{isBurning ? '香烧完即可再次插香' : '选择香型，虔诚供奉'}}</text>
+  </view>
+
+  <!-- 木鱼 -->
+  <view class="woodfish-area">
+    <view class="merit-floats">
+      <block wx:for="{{meritFloats}}" wx:key="id">
+        <text class="merit-float" style="left:{{item.left}}%">+1</text>
+      </block>
+    </view>
+    <view class="woodfish-wrap {{meritStrike ? 'striking' : ''}}" bindtap="tapWoodfish">
+      <image class="woodfish" src="../../assets/blessing/fish_round.png" mode="aspectFit"></image>
+    </view>
+    <image class="mallet" src="../../assets/blessing/mallet_red.png" mode="aspectFit" bindtap="tapWoodfish"></image>
+    <text class="woodfish-tip">轻敲木鱼 · 功德 +1</text>
+  </view>
+
+  <!-- 佛祖签悬浮按钮（保留原悬浮位置） -->
+  <view class="lingqian-fab" bindtap="openLingqian">
+    <view class="lingqian-fab-inner">🎋</view>
+    <text class="lingqian-fab-text">佛祖签</text>
+  </view>
+
+  <!-- 插香选择器 -->
+  <view class="mask {{showIncensePicker ? 'show' : ''}}" bindtap="closeIncensePicker">
+    <view class="sheet" catchtap="noop">
+      <view class="sheet-title">请选择香型</view>
+      <view class="incense-options">
+        <view class="incense-option" wx:for="{{incenseTypes}}" wx:key="name" data-index="{{index}}" bindtap="selectIncense">
+          <image class="opt-img" src="{{item.image}}" mode="aspectFit"></image>
+          <view class="opt-info">
+            <text class="opt-name">{{item.name}}</text>
+            <text class="opt-desc">{{item.desc}}</text>
+          </view>
+          <text class="opt-arrow">›</text>
+        </view>
+      </view>
+      <view class="sheet-cancel" bindtap="closeIncensePicker">取消</view>
+    </view>
+  </view>
+
+  <!-- 佛祖签弹窗 -->
+  <view class="mask {{showLingqian ? 'show' : ''}}" bindtap="closeLingqian">
+    <view class="qian-panel" catchtap="noop">
+      <view class="qian-close" bindtap="closeLingqian">✕</view>
+
+      <block wx:if="{{!selectedQian}}">
+        <view class="qian-title">佛祖灵签 · 共 {{lingqianList.length}} 签</view>
+        <scroll-view scroll-y class="qian-list">
+          <view class="qian-item" wx:for="{{lingqianList}}" wx:key="id" data-id="{{item.id}}" bindtap="selectQian">
+            <text class="qian-index">{{item.id}}</text>
+            <text class="qian-story">{{item.story}}</text>
+            <text class="qian-level {{item.levelClass}}">{{item.level}}</text>
+          </view>
+        </scroll-view>
+      </block>
+
+      <block wx:else>
+        <view class="qian-detail">
+          <view class="qian-detail-head">
+            <text class="qian-detail-id">第 {{selectedQian.id}} 签</text>
+            <text class="qian-detail-level {{selectedQian.levelClass}}">{{selectedQian.level}}</text>
+          </view>
+          <view class="qian-detail-story">{{selectedQian.story}}</view>
+          <image wx:if="{{selectedQian.img}}" class="qian-detail-img" src="{{selectedQian.img}}" mode="aspectFit"></image>
+          <view class="qian-detail-poem">
+            <text class="label">签诗</text>
+            <text class="poem-text">{{selectedQian.qianShi}}</text>
+          </view>
+          <view class="qian-detail-jie">
+            <text class="label">诗解</text>
+            <text class="jie-text">{{selectedQian.shiJie}}</text>
+          </view>
+          <scroll-view scroll-y class="jie-scroll">
+            <view class="jie-block" wx:for="{{selectedQian.jieQian}}" wx:key="title" wx:for-item="jq">
+              <text class="jie-block-title">{{jq.title}}</text>
+              <text class="jie-block-content">{{jq.content}}</text>
+            </view>
+          </scroll-view>
+          <view class="qian-back" bindtap="backToQianList">← 返回签列表</view>
+        </view>
+      </block>
+    </view>
+  </view>
+</view>

@@ -21,7 +21,7 @@ Page({
   data: {
     page: 'setup',       // setup | playing | result
     grade: 1,
-    opType: 'mix',
+    selectedOps: ['+', '-'],  // 改为数组支持多选
     timeMode: 60,
     grades: [],
     opTypes: [],
@@ -52,8 +52,15 @@ Page({
       grades.push({ value: i, label: GRADE_CONFIG[i].name });
     }
     var opTypes = [];
+    var initialOps = this.data.selectedOps;
     for (var key in OP_LABELS) {
-      opTypes.push({ value: key, label: OP_LABELS[key] });
+      if (key !== 'mix') {  // 移除混合选项，改为多选
+        opTypes.push({
+          value: key,
+          label: OP_LABELS[key],
+          selected: initialOps.indexOf(key) > -1
+        });
+      }
     }
     this.setData({ grades: grades, opTypes: opTypes });
     this.checkFavorite();
@@ -81,7 +88,18 @@ Page({
   },
 
   onOpSelect: function (e) {
-    this.setData({ opType: e.currentTarget.dataset.value });
+    var idx = parseInt(e.currentTarget.dataset.index);
+    var opTypes = this.data.opTypes.slice();
+    var selectedCount = opTypes.filter(function (o) { return o.selected; }).length;
+
+    // 至少保留一个运算类型
+    if (opTypes[idx].selected && selectedCount <= 1) {
+      wx.showToast({ title: '至少选择一种运算', icon: 'none' });
+      return;
+    }
+
+    opTypes[idx].selected = !opTypes[idx].selected;
+    this.setData({ opTypes: opTypes });
   },
 
   onTimeSelect: function (e) {
@@ -89,7 +107,13 @@ Page({
   },
 
   onStart: function () {
+    // 从 opTypes 派生选中的运算类型数组
+    var selectedOps = this.data.opTypes
+      .filter(function (o) { return o.selected; })
+      .map(function (o) { return o.value; });
+
     this.setData({
+      selectedOps: selectedOps,
       page: 'playing',
       questionNum: 0,
       correctNum: 0,
@@ -131,43 +155,137 @@ Page({
 
   generateQuestion: function () {
     var grade = this.data.grade;
-    var opType = this.data.opType;
+    var selectedOps = this.data.selectedOps;
     var config = GRADE_CONFIG[grade];
     var maxNum = config.maxNum;
-    var ops = opType === 'mix' ? config.ops : [opType];
-
-    var op = ops[Math.floor(Math.random() * ops.length)];
-    var a, b, answer;
-
-    if (op === '+') {
+    
+    // 随机选择运算类型
+    var op = selectedOps[Math.floor(Math.random() * selectedOps.length)];
+    var a, b, c, answer, expression, missingPos;
+    
+    // 70%概率生成普通题型，30%概率生成填括号题型
+    var isBracketQuestion = Math.random() > 0.7;
+    
+    // 20%概率生成混合运算题
+    var isMixedOperation = Math.random() > 0.8;
+    
+    if (isMixedOperation && (op === '+' || op === '-')) {
+      // 生成混合运算题，如: 10 + (?) - 5 = 15
       a = Math.floor(Math.random() * maxNum) + 1;
-      b = Math.floor(Math.random() * maxNum) + 1;
-      answer = a + b;
-    } else if (op === '-') {
-      a = Math.floor(Math.random() * maxNum) + 1;
-      b = Math.floor(Math.random() * a) + 1;
-      answer = a - b;
-      // ensure a > b for positive result
-      if (a < b) { var t = a; a = b; b = t; answer = a - b; }
-    } else if (op === '*') {
-      var maxMul = grade <= 3 ? 9 : 99;
-      a = Math.floor(Math.random() * maxMul) + 1;
-      b = Math.floor(Math.random() * maxMul) + 1;
-      answer = a * b;
-    } else if (op === '/') {
-      var maxDiv = grade <= 4 ? 9 : 99;
-      b = Math.floor(Math.random() * maxDiv) + 1;
-      answer = Math.floor(Math.random() * maxDiv) + 1;
-      a = b * answer;
+      c = Math.floor(Math.random() * maxNum) + 1;
+      answer = Math.floor(Math.random() * maxNum) + 1;
+      
+      if (op === '+') {
+        // a + (?) - c = answer → (?) = answer + c - a
+        var result = answer + c - a;
+        if (result > 0) {
+          expression = a + ' + (?) - ' + c + ' = ' + answer;
+          answer = result;
+        } else {
+          // 如果结果为负数，生成普通题
+          isMixedOperation = false;
+        }
+      } else {
+        // a - (?) + c = answer → (?) = a + c - answer
+        var result = a + c - answer;
+        if (result > 0) {
+          expression = a + ' - (?) + ' + c + ' = ' + answer;
+          answer = result;
+        } else {
+          // 如果结果为负数，生成普通题
+          isMixedOperation = false;
+        }
+      }
+    }
+    
+    if (!isMixedOperation) {
+      if (op === '+') {
+        if (isBracketQuestion) {
+          // answer 统一存 (?) 的值（用户应填的数），右侧结果单独计算
+          missingPos = Math.random() > 0.5 ? 'left' : 'right';
+          if (missingPos === 'left') {
+            answer = Math.floor(Math.random() * maxNum) + 1;     // (?) 值
+            b = Math.floor(Math.random() * maxNum) + 1;
+            expression = '(?) + ' + b + ' = ' + (answer + b);
+          } else {
+            a = Math.floor(Math.random() * maxNum) + 1;
+            answer = Math.floor(Math.random() * maxNum) + 1;     // (?) 值
+            expression = a + ' + (?) = ' + (a + answer);
+          }
+        } else {
+          a = Math.floor(Math.random() * maxNum) + 1;
+          b = Math.floor(Math.random() * maxNum) + 1;
+          answer = a + b;
+          expression = a + ' + ' + b + ' = ?';
+        }
+      } else if (op === '-') {
+        if (isBracketQuestion) {
+          missingPos = Math.random() > 0.5 ? 'middle' : 'left';
+          if (missingPos === 'middle') {
+            a = Math.floor(Math.random() * maxNum) + 1;
+            answer = Math.floor(Math.random() * a);              // (?) 值，0..a-1
+            expression = a + ' - (?) = ' + (a - answer);
+          } else {
+            b = Math.floor(Math.random() * maxNum) + 1;
+            answer = b + Math.floor(Math.random() * maxNum) + 1; // (?) 值，>= b+1
+            expression = '(?) - ' + b + ' = ' + (answer - b);
+          }
+        } else {
+          a = Math.floor(Math.random() * maxNum) + 1;
+          b = Math.floor(Math.random() * a) + 1;
+          answer = a - b;
+          expression = a + ' - ' + b + ' = ?';
+        }
+      } else if (op === '*') {
+        var maxMul = grade <= 3 ? 9 : 99;
+        if (isBracketQuestion) {
+          missingPos = Math.random() > 0.5 ? 'left' : 'right';
+          if (missingPos === 'left') {
+            b = Math.floor(Math.random() * maxMul) + 1;
+            answer = Math.floor(Math.random() * maxMul) + 1;     // (?) 值
+            expression = '(?) × ' + b + ' = ' + (answer * b);
+          } else {
+            a = Math.floor(Math.random() * maxMul) + 1;
+            answer = Math.floor(Math.random() * maxMul) + 1;     // (?) 值
+            expression = a + ' × (?) = ' + (a * answer);
+          }
+        } else {
+          a = Math.floor(Math.random() * maxMul) + 1;
+          b = Math.floor(Math.random() * maxMul) + 1;
+          answer = a * b;
+          expression = a + ' × ' + b + ' = ?';
+        }
+      } else if (op === '/') {
+        var maxDiv = grade <= 4 ? 9 : 99;
+        if (isBracketQuestion) {
+          missingPos = Math.random() > 0.5 ? 'left' : 'middle';
+          if (missingPos === 'left') {
+            // (?) ÷ b = 结果 → (?) = 结果 × b
+            b = Math.floor(Math.random() * maxDiv) + 1;
+            var rhsL = Math.floor(Math.random() * maxDiv) + 1;   // 右侧结果
+            answer = rhsL * b;                                   // (?) 值
+            expression = '(?) ÷ ' + b + ' = ' + rhsL;
+          } else {
+            // a ÷ (?) = 结果 → (?) = a / 结果，a 必为 结果 × (?)
+            var rhsM = Math.floor(Math.random() * maxDiv) + 1;   // 右侧结果
+            answer = Math.floor(Math.random() * maxDiv) + 1;     // (?) 值
+            a = rhsM * answer;
+            expression = a + ' ÷ (?) = ' + rhsM;
+          }
+        } else {
+          b = Math.floor(Math.random() * maxDiv) + 1;
+          answer = Math.floor(Math.random() * maxDiv) + 1;
+          a = b * answer;
+          expression = a + ' ÷ ' + b + ' = ?';
+        }
+      }
     }
 
     return {
-      a: a,
-      b: b,
       op: op,
       opLabel: OP_LABELS[op],
       answer: answer,
-      expression: a + ' ' + op + ' ' + b + ' = ?'
+      expression: expression
     };
   },
 
@@ -186,14 +304,18 @@ Page({
   },
 
   onSubmit: function () {
+    // 防止键盘 confirm 与按钮点击在 600ms 反馈期内重复提交
+    if (this.data.isCorrect !== null) return;
+
     var userAnswer = this.data.userAnswer.trim();
     if (userAnswer === '') {
       wx.showToast({ title: '请输入答案', icon: 'none' });
       return;
     }
 
-    var numAnswer = parseFloat(userAnswer);
-    var correct = numAnswer === this.data.question.answer;
+    var numAnswer = Number(userAnswer);
+    var correct = numAnswer === Number(this.data.question.answer);
+    var questionExpr = this.data.question.expression.replace('(?)', userAnswer);
 
     if (correct) {
       var newStreak = this.data.streak + 1;
@@ -209,7 +331,7 @@ Page({
         streak: 0,
         isCorrect: false,
         wrongList: this.data.wrongList.concat([{
-          expression: this.data.question.a + ' ' + this.data.question.op + ' ' + this.data.question.b,
+          expression: this.data.question.expression.replace('(?)', '___'),
           yourAnswer: userAnswer,
           correctAnswer: this.data.question.answer
         }])

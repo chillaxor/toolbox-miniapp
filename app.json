@@ -1,7 +1,7 @@
 {
   "pages": [
-    "pages/blessing/index",
     "pages/index/index",
+    "pages/tanxiang/index",
     "pages/favorites/index",
     "pages/history/index",
     "pages/mine/index",
@@ -72,7 +72,6 @@
     "pages/tools/gradient/index",
     "pages/tools/poetrygame/index",
     "pages/tools/dailyquote/index",
-    "pages/tools/woodfish/index",
     "pages/tools/miteguide/index",
     "pages/tools/flowerlang/index",
     "pages/tools/acupoint/index",
@@ -148,8 +147,8 @@
         "selectedIconPath": "assets/tabbar/home_active.png"
       },
       {
-        "pagePath": "pages/blessing/index",
-        "text": "禅香",
+        "pagePath": "pages/tanxiang/index",
+        "text": "檀香",
         "iconPath": "assets/tabbar/blessing.png",
         "selectedIconPath": "assets/tabbar/blessing_active.png"
       },

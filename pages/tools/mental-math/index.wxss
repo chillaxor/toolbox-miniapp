@@ -52,6 +52,16 @@
   font-weight: 600;
 }
 
+.checkmark {
+  margin-left: 8rpx;
+  font-size: 24rpx;
+  font-weight: 700;
+}
+
+.option-active .checkmark {
+  color: #fff;
+}
+
 .status-bar {
   display: flex;
   justify-content: space-around;
@@ -131,22 +141,15 @@
   gap: 16rpx;
 }
 
-.question-num {
-  font-size: 72rpx;
+.question-full {
+  font-size: 56rpx;
   font-weight: 700;
   color: #2C3E50;
+  line-height: 1.5;
 }
 
-.question-op {
-  font-size: 56rpx;
-  font-weight: 700;
+.question-full span {
   color: #45B058;
-}
-
-.question-eq {
-  font-size: 56rpx;
-  font-weight: 700;
-  color: #999;
 }
 
 .feedback {
