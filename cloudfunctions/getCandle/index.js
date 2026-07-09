@@ -6,11 +6,11 @@ const axios = require('axios')
 
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 
-const BASE = 'https://chillaxor.github.io/qian_data'
+const BASE = 'https://gitee.com/b64882/qian_data/raw/master'
 
 // 云函数入口函数
 exports.main = async (event) => {
-  const type = event.type === 'right' ? 'right' : 'left'
+  const type = event.type
   const url = `${BASE}/${type}.png`
   const cloudPath = `candle/${type}.png`
 

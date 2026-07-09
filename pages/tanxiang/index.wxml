@@ -76,6 +76,14 @@
     <text class="lingqian-fab-text">佛祖签</text>
   </view>
 
+  <!-- 莲花灯悬浮按钮（左下，与佛祖签 FAB 对称；图片走云函数，同蜡烛） -->
+  <view class="lotus-lamp {{lampLit ? 'lit' : ''}}" bindtap="tapLotusLamp">
+    <view class="lotus-lamp-slot {{lotusLampUrl ? 'has-img' : ''}}">
+      <image wx:if="{{lotusLampUrl}}" class="lotus-lamp-img" src="{{lotusLampUrl}}" mode="aspectFit" />
+    </view>
+    <text class="lotus-lamp-text">{{lampLit ? '心灯明' : '点灯'}}</text>
+  </view>
+
   <!-- 插香选择器 -->
   <view class="mask {{showIncensePicker ? 'show' : ''}}" bindtap="closeIncensePicker">
     <view class="sheet" catchtap="noop">

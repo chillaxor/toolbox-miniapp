@@ -91,13 +91,17 @@ Page({
     // 蜡烛图（默认用本地 PNG 兜底，加载云函数 fileID 后替换）
     candleLeftUrl: '../../assets/blessing/decor/left.png',
     candleRightUrl: '../../assets/blessing/decor/right.png',
+    // 莲花灯图（走云函数，同蜡烛；fileID 由 getCandle(type:'lotus') 提供，代码不打包本地图）
+    lotusLampUrl: '',
     // 香型选择器
     showIncensePicker: false,
     incenseTypes: INCENSE_TYPES,
     // 佛祖签
     showLingqian: false,
     lingqianList: LINGQIAN_LIST,
-    selectedQian: null
+    selectedQian: null,
+    // 莲花灯（左下悬浮，可点亮）
+    lampLit: false
   },
 
   burnTimer: null,
@@ -110,6 +114,8 @@ Page({
     this.loadLingqianData();
     // 加载蜡烛图（云函数拉取，本地 PNG 兜底）
     this.loadCandleImages();
+    // 加载莲花灯图（云函数拉取，本地不打包）
+    this.loadLotusLamp();
     // 初始化木鱼敲击音效
     this.initKnockAudio();
   },
@@ -323,6 +329,17 @@ Page({
     this.setData({ selectedQian: null });
   },
 
+  // ===== 莲花灯（左下悬浮）=====
+  tapLotusLamp: function () {
+    var lit = !this.data.lampLit;
+    this.setData({ lampLit: lit });
+    wx.showToast({
+      title: lit ? '心灯已点亮' : '心灯已熄',
+      icon: 'none',
+      duration: 1200
+    });
+  },
+
   // ===== 签文数据加载 =====
   loadLingqianData: function () {
     var that = this;
@@ -376,6 +393,30 @@ Page({
       });
     });
     Promise.all(calls);
+  },
+
+  // ===== 莲花灯图（同蜡烛：云函数拉取，本地不打包）=====
+  loadLotusLamp: function () {
+    var that = this;
+    var cached = storage.getSync('tanxiang_lotus_lamp');
+    if (cached) {
+      this.setData({ lotusLampUrl: cached });
+      return;
+    }
+    wx.cloud.callFunction({
+      name: 'getCandle',
+      data: { type: 'lotus_lamp' },
+      success: function (res) {
+        var fid = res.result && res.result.fileID;
+        if (fid) {
+          storage.setSync('tanxiang_lotus_lamp', fid);
+          that.setData({ lotusLampUrl: fid });
+        }
+      },
+      fail: function (err) {
+        console.error('获取莲花灯图失败:', err);
+      }
+    });
   },
 
   // ===== 分享 =====

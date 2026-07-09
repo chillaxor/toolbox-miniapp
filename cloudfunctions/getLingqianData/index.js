@@ -8,7 +8,7 @@ cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 exports.main = async (event, context) => {
   try {
     // 发起 HTTP 请求获取签文数据
-    const response = await axios.get('https://chillaxor.github.io/qian_data/lingqian_data.js')
+    const response = await axios.get('https://gitee.com/b64882/qian_data/raw/master/lingqian_data.js')
     const dataStr = response.data
 
     // 文件格式： var LINGQIAN_DATA = [ ... ]; （JS 对象字面量，键名未加引号、含嵌套数组与 \u 转义）
