@@ -9,6 +9,15 @@ App({
         traceUser: true
       });
     }
+    // 全局音频选项：尊重手机静音键（静音时木鱼/木槌等音效不发声，符合预期）
+    // 必须在最早（onLaunch）设置，对全局 InnerAudioContext 生效
+    if (wx.setInnerAudioOption) {
+      wx.setInnerAudioOption({
+        obeyMuteSwitch: true,  // 核心：遵循 iOS 物理静音键，静音即静音
+        mixWithOther: true,    // 不打断后台音乐
+        speakerOn: true        // 走扬声器外放
+      });
+    }
   },
 
   onShow: function () {

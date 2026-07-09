@@ -88,6 +88,9 @@ Page({
     burningImage: '',
     burnRemainText: '',
     selectedType: 0,
+    // 蜡烛图（默认用本地 PNG 兜底，加载云函数 fileID 后替换）
+    candleLeftUrl: '../../assets/blessing/decor/left.png',
+    candleRightUrl: '../../assets/blessing/decor/right.png',
     // 香型选择器
     showIncensePicker: false,
     incenseTypes: INCENSE_TYPES,
@@ -98,12 +101,17 @@ Page({
   },
 
   burnTimer: null,
+  knockAudio: null,
 
   onLoad: function () {
     this.restoreStats();
     this.restoreBurning();
     // 加载签文数据
     this.loadLingqianData();
+    // 加载蜡烛图（云函数拉取，本地 PNG 兜底）
+    this.loadCandleImages();
+    // 初始化木鱼敲击音效
+    this.initKnockAudio();
   },
 
   onShow: function () {
@@ -116,6 +124,40 @@ Page({
 
   onUnload: function () {
     this.clearTimer();
+    if (this.knockAudio) {
+      this.knockAudio.destroy();
+      this.knockAudio = null;
+    }
+  },
+
+  // ===== 木鱼音效 =====
+  initKnockAudio: function () {
+    if (this.knockAudio) return;
+    try {
+      // 尊重静音键：obeyMuteSwitch=true（默认即如此），手机静音时敲木鱼不出声。
+      // 注意：这里【不能】开 useWebAudio —— 走 WebAudio 底层会强制遵循 iOS 静音键、
+      // 虽然这次是想要的行为，但它会绕过本选项、行为不可控，故保持默认音频通道。
+      if (wx.setInnerAudioOption) {
+        wx.setInnerAudioOption({ obeyMuteSwitch: true, mixWithOther: true, speakerOn: true });
+      }
+      var ctx = wx.createInnerAudioContext();
+      ctx.src = 'assets/sound/knock.mp3';
+      ctx.obeyMuteSwitch = true;
+      ctx.onError(function (e) { console.error('木鱼音效播放失败:', e); });
+      this.knockAudio = ctx;
+    } catch (e) {
+      console.error('初始化木鱼音效失败:', e);
+    }
+  },
+
+  playKnock: function () {
+    var ctx = this.knockAudio;
+    if (!ctx) return;
+    try {
+      ctx.stop();
+      ctx.seek(0);
+      ctx.play();
+    } catch (e) { /* 忽略单次播放异常 */ }
   },
 
   // ===== 统计数据 =====
@@ -156,6 +198,8 @@ Page({
     }, 1000);
 
     wx.vibrateShort({ type: 'light' });
+    // 木槌敲打：播放敲击音效
+    this.playKnock();
   },
 
   // ===== 插香 =====
@@ -288,6 +332,50 @@ Page({
       console.error('加载签文数据失败:', err);
       wx.showToast({ title: '加载签文失败', icon: 'none' });
     });
+  },
+
+  // ===== 蜡烛图（云函数拉取，按 type 引入不同图片）=====
+  loadCandleImages: function () {
+    var that = this;
+    var cachedLeft = storage.getSync('tanxiang_candle_left');
+    var cachedRight = storage.getSync('tanxiang_candle_right');
+    var pending = [];
+
+    if (cachedLeft) {
+      this.setData({ candleLeftUrl: cachedLeft });
+    } else {
+      pending.push('left');
+    }
+    if (cachedRight) {
+      this.setData({ candleRightUrl: cachedRight });
+    } else {
+      pending.push('right');
+    }
+    if (pending.length === 0) return;
+
+    var calls = pending.map(function (t) {
+      return new Promise(function (resolve) {
+        wx.cloud.callFunction({
+          name: 'getCandle',
+          data: { type: t },
+          success: function (res) {
+            var fid = res.result && res.result.fileID;
+            if (fid) {
+              storage.setSync('tanxiang_candle_' + t, fid);
+              var patch = {};
+              patch[t === 'left' ? 'candleLeftUrl' : 'candleRightUrl'] = fid;
+              that.setData(patch);
+            }
+            resolve();
+          },
+          fail: function (err) {
+            console.error('获取蜡烛图失败(' + t + '):', err);
+            resolve(); // 失败则用本地 PNG 兜底，不阻断页面
+          }
+        });
+      });
+    });
+    Promise.all(calls);
   },
 
   // ===== 分享 =====

@@ -24,10 +24,10 @@
 
   <!-- 香炉场景 -->
   <view class="censer-scene">
-    <!-- 左蜡烛（WebP 压缩，透明底） -->
-    <image class="candle candle-left" src="../../assets/blessing/decor/left.webp" mode="aspectFit" webp="true" />
-    <!-- 右蜡烛（WebP 压缩，透明底） -->
-    <image class="candle candle-right" src="../../assets/blessing/decor/right.webp" mode="aspectFit" webp="true" />
+    <!-- 左蜡烛 -->
+    <image class="candle candle-left" src="{{candleLeftUrl}}" mode="aspectFit" />
+    <!-- 右蜡烛 -->
+    <image class="candle candle-right" src="{{candleRightUrl}}" mode="aspectFit" />
 
     <!-- 香烟（燃烧时显示） -->
     <view class="smoke-zone" wx:if="{{isBurning}}">

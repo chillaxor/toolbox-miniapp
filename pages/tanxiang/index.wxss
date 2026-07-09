@@ -89,7 +89,7 @@
 
 .candle-left {
   left: 66rpx;
-  animation: candleSwayLeft 5s ease-in-out infinite;
+  animation: candleSway 5s ease-in-out infinite;
 }
 
 .candle-right {
@@ -303,11 +303,12 @@
 
 .mallet {
   position: absolute;
-  top: -10rpx;
-  right: 150rpx;
+  top: -90rpx;
+  right: 100rpx;
   width: 150rpx;
   height: 150rpx;
   transform-origin: 60% 180%;
+  transform: rotate(-45deg);
   transition: transform 0.12s ease;
   filter: drop-shadow(0 4rpx 10rpx rgba(0, 0, 0, 0.5));
 }
