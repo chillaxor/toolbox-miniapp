@@ -1,4 +1,10 @@
 <view class="container">
+  <!-- 加载遮罩：涂色数据（云函数）加载完成前显示 -->
+  <view class="loading-mask" wx:if="{{coloringLoading}}">
+    <view class="loading-spinner"></view>
+    <text class="loading-text">正在加载涂色数据...</text>
+  </view>
+
   <!-- 顶部：分类标签 -->
   <scroll-view class="category-bar" scroll-x enable-flex>
     <view

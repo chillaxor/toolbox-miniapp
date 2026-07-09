@@ -1,10 +1,17 @@
 <view class="container">
+  <!-- 加载中 -->
+  <view class="loading-mask" wx:if="{{poemsLoading}}">
+    <text class="loading-icon">📖</text>
+    <text class="loading-text">正在加载诗词数据...</text>
+  </view>
+
   <!-- Header -->
-  <view class="tool-header">
+  <view class="tool-header" wx:if="{{!poemsLoading}}">
     <text class="tool-header-title">🏮 诗词飞花令</text>
   </view>
 
   <!-- 模式切换 -->
+  <block wx:if="{{!poemsLoading}}">
   <view class="mode-tabs">
     <view class="mode-tab {{mode === 'browse' ? 'mode-active' : ''}}" bindtap="switchToBrowse">浏览模式</view>
     <view class="mode-tab {{mode === 'game' ? 'mode-active' : ''}}" bindtap="switchToGame">挑战模式</view>
@@ -166,4 +173,5 @@
     <text class="tip-title">💡 飞花令小知识</text>
     <text class="tip-text">飞花令是中国古代酒令的一种，得名于唐代诗人韩翃的名句"春城无处不飞花"。行令时，每人轮流说出含有指定字的诗句，既考验诗词功底，也考验临场反应。</text>
   </view>
+  </block>
 </view>

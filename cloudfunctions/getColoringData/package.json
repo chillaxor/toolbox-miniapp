@@ -1,0 +1,16 @@
+{
+  "name": "getColoringData",
+  "version": "1.0.0",
+  "description": "从 gitee 获取涂色数据，失败时回退本地兜底",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3",
+    "axios": "^1.6.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["coloring", "data"],
+  "author": "",
+  "license": "ISC"
+}

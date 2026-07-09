@@ -1,5 +1,3 @@
-var coloringData = require('../../../data/coloring-data.js');
-
 function pointInPolygon(x, y, polygon) {
   var inside = false;
   for (var i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
@@ -60,9 +58,10 @@ function drawRegionsOnCtx(ctx, w, h, regions, colors, selectedId) {
 
 Page({
   data: {
-    categories: coloringData.categories,
-    palette: coloringData.defaultPalette,
-    difficultyText: coloringData.difficultyText,
+    coloringLoading: true,
+    categories: [],
+    palette: [],
+    difficultyText: {},
     currentCategory: 'animals',
     templateList: [],
     currentTemplate: null,
@@ -84,6 +83,38 @@ Page({
   onLoad: function () {
     var sys = wx.getSystemInfoSync();
     var cw = Math.min(sys.windowWidth - 40, 360);
+    this.setData({
+      canvasWidth: cw,
+      canvasHeight: cw
+    });
+    // 涂色数据改为云函数（getColoringData）下发，异步加载
+    this.loadColoringData();
+  },
+
+  // 通过云函数获取涂色数据（gitee 远程 + 本地兜底）
+  loadColoringData: function () {
+    var self = this;
+    wx.cloud.callFunction({
+      name: 'getColoringData',
+      success: function (res) {
+        var coloringData = (res.result && res.result.COLORING_DATA) || {};
+        if (!coloringData.templates) {
+          wx.showToast({ title: '涂色数据加载失败', icon: 'none' });
+          self.setData({ coloringLoading: false });
+          return;
+        }
+        self.initColoringData(coloringData);
+      },
+      fail: function (err) {
+        console.error('调用 getColoringData 云函数失败:', err);
+        wx.showToast({ title: '涂色数据加载失败', icon: 'none' });
+        self.setData({ coloringLoading: false });
+      }
+    });
+  },
+
+  // 拿到涂色数据后做初始化（原 onLoad 中的同步逻辑）
+  initColoringData: function (coloringData) {
     var allTemplates = coloringData.templates;
     var processed = {};
     Object.keys(allTemplates).forEach(function (cat) {
@@ -99,20 +130,25 @@ Page({
       });
     });
     this._allTemplates = processed;
+    var self = this;
     var cat = this.data.currentCategory;
     this.setData({
-      canvasWidth: cw,
-      canvasHeight: cw,
-      templateList: processed[cat]
+      categories: coloringData.categories,
+      palette: coloringData.defaultPalette,
+      difficultyText: coloringData.difficultyText,
+      templateList: processed[cat] || [],
+      coloringLoading: false
+    }, function () {
+      self.loadSavedWorks();
+      // 数据就绪后选择第一个模板（原 onReady 逻辑移至此，因加载已异步化）
+      if (self.data.templateList.length > 0) {
+        self._selectTemplateInternal(self.data.templateList[0]);
+      }
     });
-    this.loadSavedWorks();
   },
 
   onReady: function () {
-    // 先选择第一个模板（会通过setData取消hidden），再初始化Canvas
-    if (this.data.templateList.length > 0) {
-      this._selectTemplateInternal(this.data.templateList[0]);
-    }
+    // 涂色数据已异步加载，首个模板的选择在 initColoringData 中处理
   },
 
   onShow: function () {

@@ -541,3 +541,22 @@ page {
   color: #9A8C6E;
   line-height: 1.8;
 }
+
+/* ========== 加载中 ========== */
+.loading-mask {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 200rpx 0;
+}
+
+.loading-icon {
+  font-size: 80rpx;
+  margin-bottom: 24rpx;
+}
+
+.loading-text {
+  font-size: 28rpx;
+  color: var(--color-text-light);
+}
