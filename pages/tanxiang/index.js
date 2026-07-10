@@ -130,6 +130,8 @@ Page({
     // 蜡烛图（默认用本地 PNG 兜底，加载云函数 fileID 后替换）
     candleLeftUrl: '../../assets/blessing/decor/left.png',
     candleRightUrl: '../../assets/blessing/decor/right.png',
+    candleLeftLoaded: false, // 蜡烛图真正渲染完成后才点火苗，避免火苗悬空
+    candleRightLoaded: false,
     // 莲花灯图（走云函数，同蜡烛；fileID 由 getCandle(type:'lotus') 提供，代码不打包本地图）
     lotusLampUrl: '',
     // 香型选择器
@@ -413,12 +415,12 @@ Page({
     var pending = [];
 
     if (cachedLeft) {
-      this.setData({ candleLeftUrl: cachedLeft });
+      this.setData({ candleLeftUrl: cachedLeft, candleLeftLoaded: false });
     } else {
       pending.push('left');
     }
     if (cachedRight) {
-      this.setData({ candleRightUrl: cachedRight });
+      this.setData({ candleRightUrl: cachedRight, candleRightLoaded: false });
     } else {
       pending.push('right');
     }
@@ -434,7 +436,13 @@ Page({
             if (fid) {
               storage.setSync('tanxiang_candle_' + t, fid);
               var patch = {};
-              patch[t === 'left' ? 'candleLeftUrl' : 'candleRightUrl'] = fid;
+              if (t === 'left') {
+                patch.candleLeftUrl = fid;
+                patch.candleLeftLoaded = false;
+              } else {
+                patch.candleRightUrl = fid;
+                patch.candleRightLoaded = false;
+              }
               that.setData(patch);
             }
             resolve();
@@ -447,6 +455,14 @@ Page({
       });
     });
     Promise.all(calls);
+  },
+
+  // 蜡烛图真正渲染完成后才点亮火苗（bindload 触发），避免图未出来火苗就悬空
+  onCandleLeftLoad: function () {
+    if (!this.data.candleLeftLoaded) this.setData({ candleLeftLoaded: true });
+  },
+  onCandleRightLoad: function () {
+    if (!this.data.candleRightLoaded) this.setData({ candleRightLoaded: true });
   },
 
   // ===== 莲花灯图（同蜡烛：云函数拉取，本地不打包）=====

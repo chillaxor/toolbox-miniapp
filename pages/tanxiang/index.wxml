@@ -25,9 +25,21 @@
   <!-- 香炉场景 -->
   <view class="censer-scene">
     <!-- 左蜡烛 -->
-    <image class="candle candle-left" src="{{candleLeftUrl}}" mode="aspectFit" />
+    <view class="candle-wrap candle-wrap-left">
+      <view class="flame" wx:if="{{candleLeftLoaded}}">
+        <view class="flame-inner"></view>
+        <view class="flame-glow"></view>
+      </view>
+      <image class="candle" src="{{candleLeftUrl}}" mode="aspectFit" bindload="onCandleLeftLoad" />
+    </view>
     <!-- 右蜡烛 -->
-    <image class="candle candle-right" src="{{candleRightUrl}}" mode="aspectFit" />
+    <view class="candle-wrap candle-wrap-right">
+      <view class="flame" wx:if="{{candleRightLoaded}}">
+        <view class="flame-inner"></view>
+        <view class="flame-glow"></view>
+      </view>
+      <image class="candle" src="{{candleRightUrl}}" mode="aspectFit" bindload="onCandleRightLoad" />
+    </view>
 
     <!-- 香烟（燃烧时显示） -->
     <view class="smoke-zone" wx:if="{{isBurning}}">

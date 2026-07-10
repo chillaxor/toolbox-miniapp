@@ -77,24 +77,81 @@
 }
 
 /* 蜡烛（使用原素材 left.png / right.png） */
-.candle {
+.candle-wrap {
   position: absolute;
   bottom: 8rpx;
   width: 132rpx;
-  height: 260rpx;
-  opacity: 0.96;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
   z-index: 3;
-  filter: drop-shadow(0 6rpx 14rpx rgba(0, 0, 0, 0.45));
 }
 
-.candle-left {
+.candle-wrap-left {
   left: 66rpx;
   animation: candleSway 5s ease-in-out infinite;
 }
 
-.candle-right {
+.candle-wrap-right {
   right: 66rpx;
   animation: candleSway 5s ease-in-out infinite;
+}
+
+.candle {
+  width: 132rpx;
+  height: 260rpx;
+  opacity: 0.96;
+  filter: drop-shadow(0 6rpx 14rpx rgba(0, 0, 0, 0.45));
+}
+
+/* 点燃的火苗：flex 列布局直接排在蜡烛图上方，保证不压住蜡烛、且始终贴着烛顶 */
+.flame {
+  position: relative;
+  width: 36rpx;
+  height: 60rpx;
+  margin-bottom: 2rpx;
+  z-index: 4;
+  transform-origin: 50% 100%;
+  border-radius: 50% 50% 50% 50% / 64% 64% 40% 40%;
+  background: radial-gradient(ellipse at 50% 75%,
+      #fff2c4 0%, #ffd24d 26%, #ff9d2f 52%, #ff5a1f 76%, rgba(255, 90, 30, 0) 100%);
+  box-shadow: 0 0 20rpx 6rpx rgba(255, 150, 55, 0.6), 0 0 44rpx 14rpx rgba(255, 110, 30, 0.3);
+  animation: flameFlicker 0.15s ease-in-out infinite alternate;
+}
+
+.flame-inner {
+  position: absolute;
+  left: 50%;
+  margin-left: -9rpx;
+  bottom: 4rpx;
+  width: 18rpx;
+  height: 36rpx;
+  border-radius: 50% 50% 50% 50% / 62% 62% 38% 38%;
+  background: radial-gradient(ellipse at 50% 70%, #ffffff 0%, #fff3b0 50%, rgba(255, 210, 110, 0) 100%);
+  animation: flameCore 0.2s ease-in-out infinite alternate;
+}
+
+.flame-glow {
+  position: absolute;
+  left: 50%;
+  margin-left: -42rpx;
+  bottom: -14rpx;
+  width: 84rpx;
+  height: 84rpx;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 160, 60, 0.35) 0%, rgba(255, 120, 40, 0.12) 45%, rgba(255, 120, 40, 0) 70%);
+  z-index: -1;
+}
+
+@keyframes flameFlicker {
+  0%   { transform: scale(1, 1) translateX(0) rotate(0deg); }
+  100% { transform: scale(0.9, 1.12) translateX(1.5rpx) rotate(1deg); }
+}
+
+@keyframes flameCore {
+  0%   { transform: scaleY(1); opacity: 0.85; }
+  100% { transform: scaleY(1.18); opacity: 1; }
 }
 
 @keyframes candleSway {
