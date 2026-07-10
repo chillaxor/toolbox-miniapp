@@ -1,6 +1,6 @@
 <view class="page">
   <!-- 背景图（高清竖图 JPEG，体积小，无遮罩） -->
-  <image class="bg" src="../../assets/blessing/bg_tanxiang.jpg" mode="aspectFill"></image>
+  <image class="bg" src="{{bgUrl}}" mode="aspectFill"></image>
 
   <!-- 顶部统计 -->
   <view class="stats">
@@ -64,9 +64,12 @@
 
   <!-- 插香按钮 -->
   <view class="insert-wrap">
-    <view class="insert-btn {{isBurning ? 'disabled' : ''}}" bindtap="openIncensePicker">
-      <text class="insert-icon">{{isBurning ? '🔥' : '🕯'}}</text>
-      <text class="insert-text">{{isBurning ? '香燃烧中' : '插香祈福'}}</text>
+    <view class="btn-group">
+      <view class="insert-btn {{isBurning ? 'disabled' : ''}}" bindtap="openIncensePicker">
+        <text class="insert-icon">{{isBurning ? '🔥' : '🕯'}}</text>
+        <text class="insert-text">{{isBurning ? '香燃烧中' : '插香祈福'}}</text>
+      </view>
+      <view class="bg-btn" bindtap="openBgPicker">🖼 背景</view>
     </view>
     <text class="insert-hint">{{isBurning ? '香烧完即可再次插香' : '选择香型，虔诚供奉'}}</text>
   </view>
@@ -88,17 +91,29 @@
   <view class="mask {{showIncensePicker ? 'show' : ''}}" bindtap="closeIncensePicker">
     <view class="sheet" catchtap="noop">
       <view class="sheet-title">请选择香型</view>
-      <view class="incense-options">
-        <view class="incense-option" wx:for="{{incenseTypes}}" wx:key="name" data-index="{{index}}" bindtap="selectIncense">
-          <image class="opt-img" src="{{item.image}}" mode="aspectFit"></image>
-          <view class="opt-info">
-            <text class="opt-name">{{item.name}}</text>
-            <text class="opt-desc">{{item.desc}}</text>
+      <scroll-view scroll-y class="incense-options">
+        <view class="incense-grid">
+          <view class="incense-cell {{selectedType === index ? 'active' : ''}}" wx:for="{{incenseTypes}}" wx:key="id" data-index="{{index}}" bindtap="selectIncense">
+            <image class="opt-img" src="{{item.image}}" mode="aspectFit"></image>
           </view>
-          <text class="opt-arrow">›</text>
         </view>
-      </view>
+      </scroll-view>
       <view class="sheet-cancel" bindtap="closeIncensePicker">取消</view>
+    </view>
+  </view>
+
+  <!-- 背景图选择器 -->
+  <view class="mask {{showBgPicker ? 'show' : ''}}" bindtap="closeBgPicker">
+    <view class="sheet" catchtap="noop">
+      <view class="sheet-title">选择背景</view>
+      <scroll-view scroll-y class="bg-options">
+        <view class="bg-grid">
+          <view class="bg-cell {{selectedBg === index ? 'active' : ''}}" wx:for="{{bgList}}" wx:key="id" data-index="{{index}}" bindtap="selectBg">
+            <image class="bg-thumb" src="{{item.image}}" mode="aspectFill"></image>
+          </view>
+        </view>
+      </scroll-view>
+      <view class="sheet-cancel" bindtap="closeBgPicker">取消</view>
     </view>
   </view>
 

@@ -36,12 +36,51 @@ function fetchLingqianData() {
   });
 }
 
-// 香型配置（3种，与实际素材对应；incense_1/2/3.png 本身是整张香炉图）
-var INCENSE_TYPES = [
-  { name: '道香', desc: '道法自然，清静无为', image: '../../assets/blessing/incense_1.png' },
-  { name: '德香', desc: '厚德载物，积善成德', image: '../../assets/blessing/incense_2.png' },
-  { name: '经香', desc: '诵经祈福，智慧增长', image: '../../assets/blessing/incense_3.png' }
+// 香型图片分两部分：
+// 1) 1~3 写死，使用代码内置的本地图片（assets/blessing/incense_1~3.png），永远可用
+// 2) 4~24 从 Gitee raw 仓库拉取（图片后续上传到 qian_data 仓库 master 分支）
+//    运行时逐个校验可用性，拿到才合并进选择器，没拿到的不显示。
+var LOCAL_INCENSE = [
+  { id: 'local-1', name: '', desc: '道法自然，清静无为', image: '../../assets/blessing/incense_1.png' },
+  { id: 'local-2', name: '', desc: '厚德载物，积善成德', image: '../../assets/blessing/incense_2.png' },
+  { id: 'local-3', name: '', desc: '诵经祈福，智慧增长', image: '../../assets/blessing/incense_3.png' }
 ];
+
+var INCENSE_IMG_BASE = 'https://gitee.com/b64882/qian_data/raw/master/';
+var GITEE_INCENSE_FROM = 4;
+var GITEE_INCENSE_TO = 24;
+
+// 4~24 的 Gitee 候选（校验通过才合并进列表）
+function buildGiteeIncense() {
+  var arr = [];
+  for (var n = GITEE_INCENSE_FROM; n <= GITEE_INCENSE_TO; n++) {
+    arr.push({
+      id: 'gitee-' + n,
+      name: '',
+      desc: '心香一瓣，虔诚供奉',
+      image: INCENSE_IMG_BASE + 'incense_' + n + '.png'
+    });
+  }
+  return arr;
+}
+
+// 全量主表（本地 + Gitee 候选），用于按 id 反查（燃烧态恢复用）
+var ALL_INCENSE = LOCAL_INCENSE.concat(buildGiteeIncense());
+var INCENSE_BY_ID = {};
+ALL_INCENSE.forEach(function (it) { INCENSE_BY_ID[it.id] = it; });
+
+// 背景图：默认本地 bg_tanxiang.jpg；另外 2 张来自 Gitee（xrds.jpg / yu.jpg）
+// 与香型一致：Gitee 图运行时逐个校验，拿到才合并进选择器，没拿到不显示。
+var BG_LOCAL = [
+  { id: 'local', image: '../../assets/blessing/bg_tanxiang.jpg' }
+];
+var BG_GITEE = [
+  { id: 'gitee-xrds', image: INCENSE_IMG_BASE + 'xrds.jpg' },
+  { id: 'gitee-yu', image: INCENSE_IMG_BASE + 'yu.jpg' }
+];
+var BG_ALL = BG_LOCAL.concat(BG_GITEE);
+var BG_BY_ID = {};
+BG_ALL.forEach(function (it) { BG_BY_ID[it.id] = it; });
 
 // 插香后的随机祝福语
 var BLESSINGS = [
@@ -83,7 +122,7 @@ Page({
     meritStrike: false,
     meritFloats: [],
     // 香炉（单柱模式，与 blessing 一致）
-    burnerImage: INCENSE_TYPES[0].image, // 空状态淡显的香炉图
+    burnerImage: LOCAL_INCENSE[0].image, // 空状态淡显的香炉图（本地内置，永远可用）
     isBurning: false,
     burningImage: '',
     burnRemainText: '',
@@ -95,7 +134,12 @@ Page({
     lotusLampUrl: '',
     // 香型选择器
     showIncensePicker: false,
-    incenseTypes: INCENSE_TYPES,
+    incenseTypes: LOCAL_INCENSE,
+    // 背景图选择器（默认本地，Gitee 图校验后合并）
+    bgUrl: '../../assets/blessing/bg_tanxiang.jpg',
+    bgList: BG_LOCAL,
+    selectedBg: 0,
+    showBgPicker: false,
     // 佛祖签
     showLingqian: false,
     lingqianList: LINGQIAN_LIST,
@@ -116,6 +160,11 @@ Page({
     this.loadCandleImages();
     // 加载莲花灯图（云函数拉取，本地不打包）
     this.loadLotusLamp();
+    // 加载香型列表（本地 1~3 写死 + Gitee 4~24 校验后合并）
+    this.loadIncenseTypes();
+    // 背景图：恢复已选 + 加载 Gitee 候选（xrds.jpg / yu.jpg）
+    this.restoreBg();
+    this.loadBgList();
     // 初始化木鱼敲击音效
     this.initKnockAudio();
   },
@@ -226,7 +275,8 @@ Page({
 
   insertIncense: function (idx) {
     if (this.data.isBurning) return;
-    var type = INCENSE_TYPES[idx];
+    var type = this.data.incenseTypes[idx];
+    if (!type) return;
     var startTime = Date.now();
     var today = dateStr();
 
@@ -236,7 +286,7 @@ Page({
     storage.setSync('tanxiang_today_insert', todayInsert);
     storage.setSync('tanxiang_today_insert_date', today);
     storage.setSync('tanxiang_burn_start', startTime);
-    storage.setSync('tanxiang_burn_type', idx);
+    storage.setSync('tanxiang_burn_id', type.id);
 
     this.setData({
       isBurning: true,
@@ -258,8 +308,9 @@ Page({
 
   restoreBurning: function () {
     var start = storage.getSync('tanxiang_burn_start', 0);
-    var idx = storage.getSync('tanxiang_burn_type', 0);
-    var typeImage = (INCENSE_TYPES[idx] && INCENSE_TYPES[idx].image) || INCENSE_TYPES[0].image;
+    var id = storage.getSync('tanxiang_burn_id', '');
+    var type = INCENSE_BY_ID[id];
+    var typeImage = (type && type.image) || LOCAL_INCENSE[0].image;
     if (!start) {
       this.setData({ isBurning: false, burningImage: '', burnerImage: typeImage });
       return;
@@ -269,9 +320,11 @@ Page({
       storage.setSync('tanxiang_burn_start', 0);
       this.setData({ isBurning: false, burningImage: '', burnerImage: typeImage });
     } else {
+      // 反查当前可用列表中的下标，保持 selectedType 与 incenseTypes 一致
+      var selIdx = this.data.incenseTypes.indexOf(type);
       this.setData({
         isBurning: true,
-        selectedType: idx,
+        selectedType: selIdx >= 0 ? selIdx : 0,
         burningImage: typeImage,
         burnerImage: typeImage,
         burnRemainText: formatRemain(remain)
@@ -293,8 +346,9 @@ Page({
     if (!start) { this.clearTimer(); return; }
     var remain = BURN_DURATION - (Date.now() - start);
     if (remain <= 0) {
-      var idx = storage.getSync('tanxiang_burn_type', 0);
-      var typeImage = (INCENSE_TYPES[idx] && INCENSE_TYPES[idx].image) || INCENSE_TYPES[0].image;
+      var id = storage.getSync('tanxiang_burn_id', '');
+      var type = INCENSE_BY_ID[id];
+      var typeImage = (type && type.image) || LOCAL_INCENSE[0].image;
       storage.setSync('tanxiang_burn_start', 0);
       this.clearTimer();
       this.setData({ isBurning: false, burningImage: '', burnRemainText: '', burnerImage: typeImage });
@@ -417,6 +471,107 @@ Page({
         console.error('获取莲花灯图失败:', err);
       }
     });
+  },
+
+  // ===== 香型列表（本地 1~3 写死 + Gitee 4~24 校验后合并）=====
+  // 本地三种永远在列表里；Gitee 候选逐个用 getImageInfo 校验，
+  // 拿到（图片存在且可加载）才合并进 incenseTypes，没拿到不显示。
+  loadIncenseTypes: function () {
+    var that = this;
+    var candidates = buildGiteeIncense();
+    var idx = 0;
+    var CONCURRENCY = 5; // 控制并发，避免触碰小程序请求数上限
+    var next = function () {
+      if (idx >= candidates.length) return;
+      var batch = candidates.slice(idx, idx + CONCURRENCY);
+      idx += CONCURRENCY;
+      var done = 0;
+      batch.forEach(function (item) {
+        wx.getImageInfo({
+          src: item.image,
+          success: function () {
+            // 拿到才合并进选择器（getImageInfo 已顺带缓存，渲染更快）
+            that.setData({ incenseTypes: that.data.incenseTypes.concat([item]) });
+          },
+          fail: function () {
+            // 没拿到（404/未加白名单等），不合并、不显示
+          },
+          complete: function () {
+            done++;
+            if (done === batch.length) next();
+          }
+        });
+      });
+    };
+    next();
+  },
+
+  // ===== 背景图选择器 =====
+  openBgPicker: function () {
+    this.setData({ showBgPicker: true });
+  },
+  closeBgPicker: function () {
+    this.setData({ showBgPicker: false });
+  },
+  // 恢复上次选中的背景（按 id 反查，列表动态变化后也不错位）
+  restoreBg: function () {
+    var id = storage.getSync('tanxiang_bg_id', 'local');
+    var item = BG_BY_ID[id] || BG_LOCAL[0];
+    var idx = -1;
+    for (var i = 0; i < this.data.bgList.length; i++) {
+      if (this.data.bgList[i].id === item.id) { idx = i; break; }
+    }
+    this.setData({
+      bgUrl: item.image,
+      selectedBg: idx >= 0 ? idx : 0
+    });
+  },
+  selectBg: function (e) {
+    var idx = e.currentTarget.dataset.index;
+    var item = this.data.bgList[idx];
+    if (!item) return;
+    storage.setSync('tanxiang_bg_id', item.id);
+    this.setData({
+      bgUrl: item.image,
+      selectedBg: idx,
+      showBgPicker: false
+    });
+  },
+  // 本地背景永远在；Gitee 背景逐个用 getImageInfo 校验，
+  // 拿到（图片存在且可加载）才合并进 bgList，没拿到不显示。
+  loadBgList: function () {
+    var that = this;
+    var candidates = BG_GITEE;
+    var idx = 0;
+    var CONCURRENCY = 3;
+    var next = function () {
+      if (idx >= candidates.length) {
+        console.log('[背景] Gitee 背景校验完成：共', candidates.length, '个候选');
+        // 列表已完整，重新套用已保存选中（若之前因列表未齐而回退到本地）
+        that.restoreBg();
+        return;
+      }
+      var batch = candidates.slice(idx, idx + CONCURRENCY);
+      idx += CONCURRENCY;
+      var done = 0;
+      batch.forEach(function (item) {
+        wx.getImageInfo({
+          src: item.image,
+          success: function () {
+            that.setData({ bgList: that.data.bgList.concat([item]) });
+            console.log('[背景] ✅ 获取到', item.id, '->', item.image);
+          },
+          fail: function (err) {
+            console.warn('[背景] ❌ 未获取到', item.id, '->', item.image, '原因:', err && err.errMsg);
+          },
+          complete: function () {
+            done++;
+            if (done === batch.length) next();
+          }
+        });
+      });
+    };
+    next();
   },
 
   // ===== 分享 =====
