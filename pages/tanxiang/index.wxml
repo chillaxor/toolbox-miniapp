@@ -69,7 +69,6 @@
         <text class="insert-icon">{{isBurning ? '🔥' : '🕯'}}</text>
         <text class="insert-text">{{isBurning ? '香燃烧中' : '插香祈福'}}</text>
       </view>
-      <view class="bg-btn" bindtap="openBgPicker">🖼 背景</view>
     </view>
     <text class="insert-hint">{{isBurning ? '香烧完即可再次插香' : '选择香型，虔诚供奉'}}</text>
   </view>
@@ -77,6 +76,12 @@
   <view class="lingqian-fab" bindtap="openLingqian">
     <view class="lingqian-fab-inner">🎋</view>
     <text class="lingqian-fab-text">佛祖签</text>
+  </view>
+
+  <!-- 更换背景悬浮小图标（位于佛祖签下方） -->
+  <view class="bg-fab" bindtap="openBgPicker">
+    <view class="bg-fab-inner">🖼</view>
+    <text class="bg-fab-text">背景</text>
   </view>
 
   <!-- 莲花灯悬浮按钮（左下，与佛祖签 FAB 对称；图片走云函数，同蜡烛） -->
