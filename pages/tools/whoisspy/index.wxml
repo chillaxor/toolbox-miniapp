@@ -9,7 +9,7 @@
     <view class="card">
       <text class="card-title">玩家人数</text>
       <view class="count-btns">
-        <view class="count-btn {{playerCount === item ? 'count-active' : ''}}" wx:for="{{[4,5,6,7,8,9,10,11,12]}}" wx:key="*this" data-count="{{item}}" bindtap="onPlayerCountChange">{{item}}</view>
+        <view class="count-btn {{playerCount === item ? 'count-active' : ''}}" wx:for="{{[3,4,5,6,7,8,9,10,11,12]}}" wx:key="*this" data-count="{{item}}" bindtap="onPlayerCountChange">{{item}}</view>
       </view>
     </view>
 
@@ -18,6 +18,21 @@
       <view class="count-btns">
         <view class="count-btn {{spyCount === item ? 'count-active' : ''}}" wx:for="{{[1,2,3]}}" wx:key="*this" data-count="{{item}}" bindtap="onSpyCountChange" wx:if="{{item < Math.floor(playerCount / 2)}}">{{item}}</view>
       </view>
+    </view>
+
+    <view class="card" style="margin-top: 24rpx;">
+      <text class="card-title">词语来源</text>
+      <view class="count-btns">
+        <view class="count-btn count-btn-wide {{!useCustom ? 'count-active' : ''}}" data-on="0" bindtap="onToggleCustom">🎲 随机词库</view>
+        <view class="count-btn count-btn-wide {{useCustom ? 'count-active' : ''}}" data-on="1" bindtap="onToggleCustom">✏️ 自己输入</view>
+      </view>
+    </view>
+
+    <view wx:if="{{useCustom}}" class="card" style="margin-top: 24rpx;">
+      <text class="card-title">自定义词语</text>
+      <input class="word-input" placeholder="输入平民词（如：西瓜）" value="{{customCivilian}}" data-field="civilian" bindinput="onCustomInput" />
+      <input class="word-input" placeholder="输入卧底词（如：冬瓜）" value="{{customSpy}}" data-field="spy" bindinput="onCustomInput" />
+      <text class="custom-tip">两个词要相似但不同，越像越刺激～</text>
     </view>
 
     <view class="card rule-card" style="margin-top: 24rpx;">

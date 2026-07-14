@@ -24,6 +24,30 @@
   border-color: #E74C3C;
 }
 
+/* 词语来源切换按钮（文字较长，自适应宽度） */
+.count-btn-wide {
+  width: auto;
+  min-width: 200rpx;
+  padding: 0 28rpx;
+}
+
+/* 自定义词语输入 */
+.word-input {
+  margin-top: 16rpx;
+  padding: 20rpx 24rpx;
+  background: #F5F5F5;
+  color: #333;
+  border-radius: 16rpx;
+  font-size: 30rpx;
+}
+
+.custom-tip {
+  display: block;
+  margin-top: 16rpx;
+  font-size: 24rpx;
+  color: #999;
+}
+
 .rule-text {
   font-size: 26rpx;
   color: #666;
