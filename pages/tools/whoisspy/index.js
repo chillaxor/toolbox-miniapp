@@ -60,24 +60,25 @@ Page({
     this.checkFavorite();
   },
 
-  // 拉取远程词库（gitee），优先使用远程，失败保留本地兜底
+  // 拉取远程词库（经云函数 giteeData 代理拉取，绕开小程序 request 域名白名单与 gitee 的 302 重定向）
   loadWordPairs: function () {
     var cacheKey = 'whoisspy_wordpairs';
     var cached = wx.getStorageSync(cacheKey);
     if (cached && cached.length) {
       WORD_PAIRS = cached;
     }
-    wx.request({
-      url: WORD_DATA_BASE + 'whoisspy-words.json',
-      dataType: 'json',
+    wx.cloud.callFunction({
+      name: 'giteeData',
+      data: { url: WORD_DATA_BASE + 'whoisspy-words.json' },
       success: function (res) {
-        if (res && res.data && res.data.length) {
-          WORD_PAIRS = res.data;
-          wx.setStorageSync(cacheKey, res.data);
+        var data = res && res.result && res.result.data;
+        if (data && Array.isArray(data) && data.length) {
+          WORD_PAIRS = data;
+          wx.setStorageSync(cacheKey, data);
         }
       },
       fail: function () {
-        // 网络不通 / 域名未配置，保留本地兜底词库
+        // 云函数调用失败，保留本地兜底词库
       }
     });
   },

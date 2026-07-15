@@ -1,18 +1,76 @@
 <view class="container">
-  <!-- 顶部搜索 -->
-  <view class="search-bar">
-    <input class="search-input" placeholder="搜索元素（名称/符号/原子序数）" bindinput="onSearch" value="{{searchKey}}" />
+  <!-- 加载中 -->
+  <view wx:if="{{loading}}" class="state-box">
+    <text class="state-emoji">🔄</text>
+    <text class="state-text">元素数据加载中…</text>
   </view>
-  
-  <!-- 分类筛选 -->
-  <scroll-view class="category-bar" scroll-x="true" enhanced="{{true}}" show-scrollbar="{{false}}">
-    <view class="cat-item {{filterCategory===''?'active':''}}" bindtap="onFilterCategory" data-cat="">全部</view>
-    <view wx:for="{{categories}}" wx:key="key" class="cat-item {{filterCategory===item.key?'active':''}}" style="background:{{filterCategory===item.key?item.color:'#f0f0f0'}};color:{{filterCategory===item.key?'#fff':'#333'}}" bindtap="onFilterCategory" data-cat="{{item.key}}">
-      {{item.name}}
+
+  <!-- 加载失败 -->
+  <view wx:elif="{{loadError}}" class="state-box">
+    <text class="state-emoji">😢</text>
+    <text class="state-text">元素数据加载失败</text>
+    <text class="state-sub">{{loadErrorMsg}}</text>
+    <view class="retry-btn" bindtap="onRetry">重新加载</view>
+  </view>
+
+  <!-- 正常内容 -->
+  <block wx:else>
+    <!-- 顶部搜索 -->
+    <view class="search-bar">
+      <input class="search-input" placeholder="搜索元素（名称/符号/原子序数）" bindinput="onSearch" value="{{searchKey}}" />
     </view>
-  </scroll-view>
-  
-  <!-- 元素详情弹窗 -->
+
+    <!-- 分类筛选 -->
+    <scroll-view class="category-bar" scroll-x="true" enhanced="{{true}}" show-scrollbar="{{false}}">
+      <view class="cat-item {{filterCategory===''?'active':''}}" bindtap="onFilterCategory" data-cat="">全部</view>
+      <view wx:for="{{categories}}" wx:key="key" class="cat-item {{filterCategory===item.key?'active':''}}" style="background:{{filterCategory===item.key?item.color:'#f0f0f0'}};color:{{filterCategory===item.key?'#fff':'#333'}}" bindtap="onFilterCategory" data-cat="{{item.key}}">
+        {{item.name}}
+      </view>
+    </scroll-view>
+
+    <!-- 周期表网格 -->
+    <scroll-view class="table-scroll" scroll-x="true" scroll-y="true" enhanced="{{true}}">
+      <view class="periodic-grid">
+        <!-- 表头：族号 -->
+        <view class="grid-row header-row">
+          <view class="row-label"></view>
+          <view wx:for="{{18}}" wx:key="*this" class="group-header">{{item}}</view>
+        </view>
+
+        <!-- 主表 7个周期 -->
+        <view wx:for="{{periods}}" wx:key="index" class="grid-row">
+          <view class="row-label period-label">第{{index+1}}周期</view>
+          <view wx:for="{{item.cells}}" wx:for-item="cell" wx:key="z" class="element-cell {{cell.isEmpty?'empty':''}} {{cell.isLanthanide?'lanthanide-row':''}} {{cell.isActinide?'actinide-row':''}}" style="background:{{cell.color}};opacity:{{cell.opacity}}" bindtap="onTapElement" data-z="{{cell.z}}">
+            <block wx:if="{{!cell.isEmpty}}">
+              <text class="cell-z">{{cell.z}}</text>
+              <text class="cell-symbol">{{cell.symbol}}</text>
+              <text class="cell-name">{{cell.name}}</text>
+            </block>
+          </view>
+        </view>
+
+        <!-- 镧系锕系分离行 -->
+        <view class="grid-row separator-row">
+          <view class="row-label separator-label">镧系</view>
+          <view wx:for="{{lanthanides}}" wx:key="z" class="element-cell" style="background:{{item.color}};opacity:{{item.opacity}}" bindtap="onTapElement" data-z="{{item.z}}">
+            <text class="cell-z">{{item.z}}</text>
+            <text class="cell-symbol">{{item.symbol}}</text>
+            <text class="cell-name">{{item.name}}</text>
+          </view>
+        </view>
+        <view class="grid-row separator-row">
+          <view class="row-label separator-label">锕系</view>
+          <view wx:for="{{actinides}}" wx:key="z" class="element-cell" style="background:{{item.color}};opacity:{{item.opacity}}" bindtap="onTapElement" data-z="{{item.z}}">
+            <text class="cell-z">{{item.z}}</text>
+            <text class="cell-symbol">{{item.symbol}}</text>
+            <text class="cell-name">{{item.name}}</text>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+  </block>
+
+  <!-- 元素详情弹窗（最外层，z-index 最高） -->
   <view class="detail-mask" wx:if="{{showDetail}}" bindtap="onCloseDetail">
     <view class="detail-card" catchtap="">
       <view class="detail-header" style="background:{{detailColor}}">
@@ -74,45 +132,4 @@
       <view class="detail-close" bindtap="onCloseDetail">关闭</view>
     </view>
   </view>
-  
-  <!-- 周期表网格 -->
-  <scroll-view class="table-scroll" scroll-x="true" scroll-y="true" enhanced="{{true}}">
-    <view class="periodic-grid">
-      <!-- 表头：族号 -->
-      <view class="grid-row header-row">
-        <view class="row-label"></view>
-        <view wx:for="{{18}}" wx:key="*this" class="group-header">{{item}}</view>
-      </view>
-      
-      <!-- 主表 7个周期 -->
-      <view wx:for="{{periods}}" wx:key="index" class="grid-row">
-        <view class="row-label period-label">第{{index+1}}周期</view>
-        <view wx:for="{{item.cells}}" wx:for-item="cell" wx:key="z" class="element-cell {{cell.isEmpty?'empty':''}} {{cell.isLanthanide?'lanthanide-row':''}} {{cell.isActinide?'actinide-row':''}}" style="background:{{cell.color}};opacity:{{cell.opacity}}" bindtap="onTapElement" data-z="{{cell.z}}">
-          <block wx:if="{{!cell.isEmpty}}">
-            <text class="cell-z">{{cell.z}}</text>
-            <text class="cell-symbol">{{cell.symbol}}</text>
-            <text class="cell-name">{{cell.name}}</text>
-          </block>
-        </view>
-      </view>
-      
-      <!-- 镧系锕系分离行 -->
-      <view class="grid-row separator-row">
-        <view class="row-label separator-label">镧系</view>
-        <view wx:for="{{lanthanides}}" wx:key="z" class="element-cell" style="background:{{item.color}};opacity:{{item.opacity}}" bindtap="onTapElement" data-z="{{item.z}}">
-          <text class="cell-z">{{item.z}}</text>
-          <text class="cell-symbol">{{item.symbol}}</text>
-          <text class="cell-name">{{item.name}}</text>
-        </view>
-      </view>
-      <view class="grid-row separator-row">
-        <view class="row-label separator-label">锕系</view>
-        <view wx:for="{{actinides}}" wx:key="z" class="element-cell" style="background:{{item.color}};opacity:{{item.opacity}}" bindtap="onTapElement" data-z="{{item.z}}">
-          <text class="cell-z">{{item.z}}</text>
-          <text class="cell-symbol">{{item.symbol}}</text>
-          <text class="cell-name">{{item.name}}</text>
-        </view>
-      </view>
-    </view>
-  </scroll-view>
 </view>
