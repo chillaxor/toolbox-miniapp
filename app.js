@@ -38,15 +38,21 @@ App({
       data: { url: 'https://gitee.com/b64882/qian_data/raw/master/feature-flags.json' },
       success: function (res) {
         var data = (res && res.result && res.result.data) || {};
-        var flags = { tanxiang: !!(data && data.tanxiang) };
+        if (typeof data !== 'object' || Array.isArray(data)) data = {};
+        var flags = data;
         try { wx.setStorageSync('feature_flags', flags); } catch (e) {}
         self.globalData.featureFlags = flags;
         try {
-          var pages = getCurrentPages();
-          if (pages && pages.length) {
-            var tabBar = pages[pages.length - 1].getTabBar && pages[pages.length - 1].getTabBar();
-            if (tabBar && tabBar.refreshFlags) tabBar.refreshFlags(flags);
-          }
+          var pages = getCurrentPages() || [];
+          pages.forEach(function (p) {
+            try {
+              if (p.getTabBar && p.getTabBar && p.getTabBar()) {
+                var tb = p.getTabBar();
+                if (tb.refreshFlags) tb.refreshFlags(flags);
+              }
+              if (p.applyFeatureFlags) p.applyFeatureFlags(flags);
+            } catch (e) {}
+          });
         } catch (e) {}
       },
       fail: function () {
@@ -136,6 +142,15 @@ App({
 
   globalData: {
     systemInfo: null,
-    featureFlags: { tanxiang: false }
+    featureFlags: {
+      tanxiang: false,
+      game2048: false,
+      whoisspy: false,
+      witchpoison: false,
+      stacking: false,
+      snake: false,
+      gomoku: false,
+      whackmole: false
+    }
   }
 });

@@ -11,6 +11,8 @@ Page({
   },
 
   onLoad: function () {
+    var app = getApp();
+    this._flags = (app.globalData && app.globalData.featureFlags) || wx.getStorageSync('feature_flags') || {};
     this.initCategoryList();
   },
 
@@ -18,7 +20,12 @@ Page({
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       this.getTabBar().setData({ selected: 0 });
     }
-    // 每次显示时刷新（收藏状态可能变化）
+    var app = getApp();
+    var flags = (app.globalData && app.globalData.featureFlags) || {};
+    if (flags && Object.keys(flags).length) {
+      this._flags = flags;
+      this.applyFeatureFlags(flags);
+    }
   },
 
   /**
@@ -49,17 +56,25 @@ Page({
       cat.icon = categoryIcons[cat.id] || '📦';
     });
 
-    var currentTools = toolsData.getToolsByCategory(categoryList[0].id);
-    var category = categoryList[0];
-    currentTools.forEach(function(tool) {
-      tool.color = category.color;
-      tool.bgColor = category.bgColor;
-    });
+    var currentTools = this.getVisibleTools(categoryList[0].id);
 
     this.setData({ 
       categoryList: categoryList,
       currentTools: currentTools
     });
+  },
+
+  getVisibleTools: function (categoryId) {
+    var app = getApp();
+    var flags = this._flags || (app.globalData && app.globalData.featureFlags) || {};
+    var raw = toolsData.getToolsByCategory(categoryId);
+    var visible = raw.filter(function (t) { return flags[t.id] !== false; });
+    var cat = toolsData.getCategoryById(categoryId);
+    visible.forEach(function (t) {
+      t.color = cat.color;
+      t.bgColor = cat.bgColor;
+    });
+    return visible;
   },
 
   /**
@@ -68,12 +83,7 @@ Page({
   onCategoryTap: function (e) {
     var index = e.currentTarget.dataset.index;
     var category = this.data.categoryList[index];
-    var currentTools = toolsData.getToolsByCategory(category.id);
-    
-    currentTools.forEach(function(tool) {
-      tool.color = category.color;
-      tool.bgColor = category.bgColor;
-    });
+    var currentTools = this.getVisibleTools(category.id);
 
     this.setData({
       activeCategoryIndex: index,
@@ -94,7 +104,9 @@ Page({
     }
 
     var keyword = searchText.toLowerCase();
-    var allTools = toolsData.TOOLS;
+    var app = getApp();
+    var flags = this._flags || (app.globalData && app.globalData.featureFlags) || {};
+    var allTools = toolsData.TOOLS.filter(function (t) { return flags[t.id] !== false; });
     var results = [];
 
     for (var i = 0; i < allTools.length; i++) {
@@ -133,6 +145,16 @@ Page({
    */
   clearSearch: function () {
     this.setData({ searchText: '', searchResults: [] });
+  },
+
+
+  applyFeatureFlags: function (flags) {
+    if (!flags) return;
+    this._flags = flags;
+    var active = this.data.categoryList[this.data.activeCategoryIndex];
+    if (!active) return;
+    var currentTools = this.getVisibleTools(active.id);
+    this.setData({ currentTools: currentTools });
   },
 
   /**
