@@ -8,6 +8,7 @@ App({
         env: 'cloud1-d9gm1qla9bebafa31',
         traceUser: true
       });
+      this.loadFeatureFlags();
     }
     // 全局音频选项：尊重手机静音键（静音时木鱼/木槌等音效不发声，符合预期）
     // 必须在最早（onLaunch）设置，对全局 InnerAudioContext 生效
@@ -27,6 +28,30 @@ App({
 
   onHide: function () {
     console.log('[App] onHide');
+  },
+
+
+  loadFeatureFlags: function () {
+    var self = this;
+    wx.cloud.callFunction({
+      name: 'giteeData',
+      data: { url: 'https://gitee.com/b64882/qian_data/raw/master/feature-flags.json' },
+      success: function (res) {
+        var data = (res && res.result && res.result.data) || {};
+        var flags = { tanxiang: !!(data && data.tanxiang) };
+        try { wx.setStorageSync('feature_flags', flags); } catch (e) {}
+        self.globalData.featureFlags = flags;
+        try {
+          var pages = getCurrentPages();
+          if (pages && pages.length) {
+            var tabBar = pages[pages.length - 1].getTabBar && pages[pages.length - 1].getTabBar();
+            if (tabBar && tabBar.refreshFlags) tabBar.refreshFlags(flags);
+          }
+        } catch (e) {}
+      },
+      fail: function () {
+      }
+    });
   },
 
   /**
@@ -110,6 +135,7 @@ App({
   },
 
   globalData: {
-    systemInfo: null
+    systemInfo: null,
+    featureFlags: { tanxiang: false }
   }
 });

@@ -154,6 +154,13 @@ Page({
   knockAudio: null,
 
   onLoad: function () {
+    var flags = wx.getStorageSync('feature_flags')
+      || (getApp() && getApp().globalData && getApp().globalData.featureFlags)
+      || { tanxiang: false };
+    if (!flags.tanxiang) {
+      wx.reLaunch({ url: '/pages/index/index' });
+      return;
+    }
     this.restoreStats();
     this.restoreBurning();
     // 加载签文数据
@@ -172,6 +179,9 @@ Page({
   },
 
   onShow: function () {
+    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
+      this.getTabBar().setData({ selected: 1 });
+    }
     this.restoreBurning();
   },
 

@@ -841,3 +841,7 @@
   border-radius: 16rpx;
   border: 1rpx solid rgba(232, 200, 122, 0.3);
 }
+
+page {
+  padding-bottom: calc(110rpx + env(safe-area-inset-bottom));
+}

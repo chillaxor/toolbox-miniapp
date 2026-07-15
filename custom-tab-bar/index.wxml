@@ -1,0 +1,15 @@
+<view class="tab-bar">
+  <view
+    wx:for="{{list}}"
+    wx:key="pagePath"
+    wx:for-index="i"
+    wx:for-item="item"
+    wx:if="{{!item.flagKey || flags[item.flagKey]}}"
+    class="tab-bar-item {{selected === i ? 'active' : ''}}"
+    data-path="{{item.pagePath}}"
+    bindtap="switchTab"
+  >
+    <image class="tab-icon" src="{{selected === i ? item.selectedIcon : item.icon}}"></image>
+    <view class="tab-text" style="color: {{selected === i ? selectedColor : color}}">{{item.text}}</view>
+  </view>
+</view>

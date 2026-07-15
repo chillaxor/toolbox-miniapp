@@ -15,6 +15,9 @@ Page({
   },
 
   onShow: function () {
+    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
+      this.getTabBar().setData({ selected: 0 });
+    }
     // 每次显示时刷新（收藏状态可能变化）
   },
 

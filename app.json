@@ -62,7 +62,6 @@
     "pages/tools/todolist/index",
     "pages/tools/vote/index",
     "pages/tools/mirror/index",
-    "pages/tools/voicenote/index",
     "pages/tools/asciiart/index",
     "pages/tools/teleprompter/index",
     "pages/tools/scoreboard/index",
@@ -113,7 +112,6 @@
     "pages/tools/geo-quiz/index",
     "pages/tools/tang-poetry/index",
     "pages/tools/math-formulas/index",
-    "pages/tools/cert-expiry/index",
     "pages/tools/cal-wallpaper/index",
     "pages/tools/onestroke/index",
     "pages/tools/periodic-table/index",
@@ -136,6 +134,7 @@
     "backgroundColor": "#F5F5F5"
   },
   "tabBar": {
+    "custom": true,
     "color": "#999999",
     "selectedColor": "#333333",
     "backgroundColor": "#FFFFFF",

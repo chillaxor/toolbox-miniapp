@@ -8,7 +8,12 @@ Page({
   },
 
   onLoad: function () { this.loadStats(); },
-  onShow: function () { this.loadStats(); },
+  onShow: function () {
+    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
+      this.getTabBar().setData({ selected: 3 });
+    }
+    this.loadStats();
+  },
 
   loadStats: function () {
     var history = storage.getHistory();

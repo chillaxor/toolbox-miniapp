@@ -176,3 +176,7 @@
   font-size: 28rpx;
   color: var(--color-hint);
 }
+
+page {
+  padding-bottom: calc(110rpx + env(safe-area-inset-bottom));
+}
