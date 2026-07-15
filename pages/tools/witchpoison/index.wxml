@@ -1,0 +1,119 @@
+<view class="container">
+  <!-- 顶部标题 -->
+  <view class="topbar">
+    <text class="logo">🧙‍♀️</text>
+    <text class="title">女巫的毒药</text>
+  </view>
+
+  <!-- SETUP 设置 -->
+  <block wx:if="{{phase==='setup'}}">
+    <view class="panel">
+      <view class="sec-label">游戏模式</view>
+      <view class="chip-row">
+        <view class="chip {{mode==='single'?'chip-on':''}}" bindtap="selectMode" data-mode="single">👤 单人</view>
+        <view class="chip {{mode==='double'?'chip-on':''}}" bindtap="selectMode" data-mode="double">👥 双人</view>
+      </view>
+
+      <block wx:if="{{mode==='double'}}">
+        <view class="sec-label">双人玩法</view>
+        <view class="chip-row">
+          <view class="chip {{subMode==='witch'?'chip-on':''}}" bindtap="selectSub" data-sub="witch">🧪 女巫模式</view>
+          <view class="chip {{subMode==='duel'?'chip-on':''}}" bindtap="selectSub" data-sub="duel">⚔️ 对决模式</view>
+        </view>
+      </block>
+
+      <view class="sec-label">内容主题</view>
+      <view class="chip-row">
+        <view class="chip {{themeId==='gem'?'chip-on':''}}" bindtap="selectTheme" data-theme="gem">🔮 魔法宝石</view>
+        <view class="chip {{themeId==='star'?'chip-on':''}}" bindtap="selectTheme" data-theme="star">⭐ 闪亮星星</view>
+        <view class="chip {{themeId==='fruit'?'chip-on':''}}" bindtap="selectTheme" data-theme="fruit">🍎 水果乐园</view>
+        <view class="chip {{themeId==='snack'?'chip-on':''}}" bindtap="selectTheme" data-theme="snack">🍪 零食派对</view>
+      </view>
+
+      <view class="sec-label">物品数量</view>
+      <view class="chip-row">
+        <view class="chip {{count===5?'chip-on':''}}" bindtap="selectCount" data-count="5">5 个</view>
+        <view class="chip {{count===10?'chip-on':''}}" bindtap="selectCount" data-count="10">10 个</view>
+        <view class="chip {{count===15?'chip-on':''}}" bindtap="selectCount" data-count="15">15 个</view>
+        <view class="chip {{count===30?'chip-on':''}}" bindtap="selectCount" data-count="30">30 个</view>
+        <view class="chip {{count===60?'chip-on':''}}" bindtap="selectCount" data-count="60">60 个</view>
+      </view>
+
+      <view class="btn-primary" bindtap="onStart">开始游戏 🪄</view>
+      <view class="tip">单人：女巫藏毒药，你来猜 · 双人：同设备轮流玩</view>
+    </view>
+  </block>
+
+  <!-- COVER 防偷看遮罩 -->
+  <block wx:if="{{phase==='cover'}}">
+    <view class="cover">
+      <text class="cover-emoji">🤫</text>
+      <text class="cover-text">{{coverText}}</text>
+      <view class="btn-primary" bindtap="onCoverContinue">我准备好了 ✅</view>
+    </view>
+  </block>
+
+  <!-- HIDE 女巫藏毒药 -->
+  <block wx:if="{{phase==='hide'}}">
+    <view class="hint">{{hint}}</view>
+    <view class="board">
+      <view wx:for="{{items}}" wx:key="index" class="item" bindtap="onPick" data-index="{{index}}">
+        <view wx:if="{{item.kind==='shape'}}">
+          <view wx:if="{{item.shape==='circle'}}" class="circle" style="background:{{item.color}};"></view>
+          <text wx:else class="star" style="color:{{item.color}}">★</text>
+        </view>
+        <text wx:else class="emoji">{{item.emoji}}</text>
+      </view>
+    </view>
+    <view class="tip">悄悄点 1 个物品，它就是毒药</view>
+  </block>
+
+  <!-- GUESS 猜毒药 -->
+  <block wx:if="{{phase==='guess'}}">
+    <view class="hint">{{hint}}</view>
+    <view wx:if="{{mode==='double'}}" class="scorebar">
+      <text class="sc">玩家1 胜 {{score1}}</text>
+      <text class="sc">玩家2 胜 {{score2}}</text>
+    </view>
+    <view class="board">
+      <view wx:for="{{items}}" wx:key="index" class="item {{item.state}}" bindtap="onPick" data-index="{{index}}">
+        <view wx:if="{{item.kind==='shape'}}">
+          <view wx:if="{{item.shape==='circle'}}" class="circle" style="background:{{item.color}};"></view>
+          <text wx:else class="star" style="color:{{item.color}}">★</text>
+        </view>
+        <text wx:else class="emoji">{{item.emoji}}</text>
+        <view wx:if="{{item.state==='safe'}}" class="badge badge-safe">✅</view>
+        <view wx:if="{{item.state==='poison'}}" class="badge badge-poison">💥</view>
+      </view>
+    </view>
+    <view wx:if="{{mode==='single'}}" class="combo">连击 {{combo}} · 最佳 {{best}}</view>
+  </block>
+
+  <!-- RESULT 结算 -->
+  <block wx:if="{{phase==='result'}}">
+    <view class="result-title">{{resultTitle}}</view>
+    <view class="result-sub">{{resultSub}}</view>
+    <view wx:if="{{mode==='double'}}" class="scorebar">
+      <text class="sc">玩家1 胜 {{score1}}</text>
+      <text class="sc">玩家2 胜 {{score2}}</text>
+    </view>
+    <view class="board">
+      <view wx:for="{{items}}" wx:key="index" class="item {{item.state}}">
+        <view wx:if="{{item.kind==='shape'}}">
+          <view wx:if="{{item.shape==='circle'}}" class="circle" style="background:{{item.color}};"></view>
+          <text wx:else class="star" style="color:{{item.color}}">★</text>
+        </view>
+        <text wx:else class="emoji">{{item.emoji}}</text>
+        <view wx:if="{{item.state==='safe'}}" class="badge badge-safe">✅</view>
+        <view wx:if="{{item.state==='poison'}}" class="badge badge-poison">💥</view>
+      </view>
+    </view>
+    <view class="action-row">
+      <view class="btn-primary" bindtap="onNextRound">再来一局 🔁</view>
+    </view>
+    <view class="action-row">
+      <view class="btn-ghost" bindtap="onBackSetup">换主题 / 设置</view>
+      <view class="btn-ghost" bindtap="onExit">返回首页</view>
+    </view>
+  </block>
+</view>

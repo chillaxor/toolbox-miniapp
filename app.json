@@ -125,7 +125,8 @@
     "pages/tools/paperclean/index",
     "pages/tools/lovecard/index",
     "pages/tools/pixelavatar/index",
-    "pages/tools/watermarkremove/index"
+    "pages/tools/watermarkremove/index",
+    "pages/tools/witchpoison/index"
   ],
   "window": {
     "backgroundTextStyle": "light",
