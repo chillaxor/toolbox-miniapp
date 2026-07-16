@@ -19,6 +19,12 @@ Page({
   _previousScore: 0,
 
   onLoad: function () {
+    var __flags = wx.getStorageSync('feature_flags')
+      || (getApp() && getApp().globalData && getApp().globalData.featureFlags) || {};
+    if (!__flags.game2048) {
+      wx.reLaunch({ url: '/pages/index/index' });
+      return;
+    }
     var best = wx.getStorageSync('game2048_best') || 0;
     this.setData({ bestScore: best });
     this.newGame();

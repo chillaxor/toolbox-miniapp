@@ -45,6 +45,12 @@ Page({
   },
 
   onLoad: function () {
+    var __flags = wx.getStorageSync('feature_flags')
+      || (getApp() && getApp().globalData && getApp().globalData.featureFlags) || {};
+    if (!__flags.whoisspy) {
+      wx.reLaunch({ url: '/pages/index/index' });
+      return;
+    }
     try {
       this.checkFavorite();
       this.loadWordPairs();

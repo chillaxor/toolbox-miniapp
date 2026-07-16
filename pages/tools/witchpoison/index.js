@@ -56,6 +56,12 @@ Page({
   },
 
   onLoad: function () {
+    var __flags = wx.getStorageSync('feature_flags')
+      || (getApp() && getApp().globalData && getApp().globalData.featureFlags) || {};
+    if (!__flags.witchpoison) {
+      wx.reLaunch({ url: '/pages/index/index' });
+      return;
+    }
     var best = 0;
     try { best = wx.getStorageSync('wp_best') || 0; } catch (e) {}
     this.setData({ best: best });

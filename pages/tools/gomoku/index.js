@@ -20,6 +20,12 @@ Page({
   padding: 0,
 
   onLoad: function () {
+    var __flags = wx.getStorageSync('feature_flags')
+      || (getApp() && getApp().globalData && getApp().globalData.featureFlags) || {};
+    if (!__flags.gomoku) {
+      wx.reLaunch({ url: '/pages/index/index' });
+      return;
+    }
     var sysInfo = wx.getSystemInfoSync();
     var screenWidth = sysInfo.windowWidth;
     var boardSize = Math.floor(screenWidth * 0.94);

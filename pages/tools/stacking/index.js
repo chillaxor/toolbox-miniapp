@@ -41,6 +41,12 @@ Page({
   _baseOffsetY: 0,
 
   onLoad: function () {
+    var __flags = wx.getStorageSync('feature_flags')
+      || (getApp() && getApp().globalData && getApp().globalData.featureFlags) || {};
+    if (!__flags.stacking) {
+      wx.reLaunch({ url: '/pages/index/index' });
+      return;
+    }
     this._loadBest();
     this.checkFavorite();
   },

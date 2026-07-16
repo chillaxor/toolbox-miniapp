@@ -26,6 +26,12 @@ Page({
   },
 
   onLoad: function () {
+    var __flags = wx.getStorageSync('feature_flags')
+      || (getApp() && getApp().globalData && getApp().globalData.featureFlags) || {};
+    if (!__flags.snake) {
+      wx.reLaunch({ url: '/pages/index/index' });
+      return;
+    }
     this.checkFavorite();
     var best = wx.getStorageSync('toolbox_snake_best') || 0;
     this.setData({ bestScore: best });

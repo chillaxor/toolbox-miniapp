@@ -20,6 +20,12 @@ Page({
   _interval: 800,
 
   onLoad: function () {
+    var __flags = wx.getStorageSync('feature_flags')
+      || (getApp() && getApp().globalData && getApp().globalData.featureFlags) || {};
+    if (!__flags.whackmole) {
+      wx.reLaunch({ url: '/pages/index/index' });
+      return;
+    }
     this.checkFavorite();
     var best = wx.getStorageSync('whackmole_best') || 0;
     this.setData({ bestScore: best });
