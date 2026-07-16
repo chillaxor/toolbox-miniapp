@@ -1,6 +1,6 @@
-// 女巫的毒药 · 小程序工具
-// 核心玩法：一人藏毒药，另一人逐个试，点到毒药就中招
-// 单人 = 对战电脑女巫；双人 = 同设备热座（女巫模式 / 对决模式）
+// 神秘陷阱 · 小程序工具
+// 核心玩法：一人藏陷阱，另一人逐个试，点到陷阱就中招
+// 单人 = 对战电脑守护者；双人 = 同设备热座（守护模式 / 对决模式）
 
 // 内容主题包：彩色圆圈 / 五角星 / 水果 / 零食
 var THEMES = {
@@ -34,15 +34,15 @@ Page({
   data: {
     phase: 'setup',          // setup | cover | hide | guess | result
     mode: 'single',          // single | double
-    subMode: 'witch',        // witch | duel（仅 double）
+    subMode: 'guardian',     // guardian | duel（仅 double）
     themeId: 'gem',
     count: 6,
     items: [],
-    poisonIndex: -1,         // 单人 / 女巫模式：隐藏的毒药
-    poisonA: -1,             // 对决模式：玩家1 的毒药
-    poisonB: -1,             // 对决模式：玩家2 的毒药
-    witch: 1,                // 女巫模式：当前女巫（1 / 2）
-    hider: 1,               // 对决模式：正在藏毒药的玩家
+    trapIndex: -1,           // 单人 / 守护模式：隐藏的陷阱
+    trapA: -1,               // 对决模式：玩家1 的陷阱
+    trapB: -1,               // 对决模式：玩家2 的陷阱
+    guardian: 1,             // 守护模式：当前守护者（1 / 2）
+    hider: 1,               // 对决模式：正在藏陷阱的玩家
     guessTurn: 'A',          // 对决模式：当前猜测方
     combo: 0,
     best: 0,
@@ -65,7 +65,7 @@ Page({
   selectMode: function (e) {
     var m = e.currentTarget.dataset.mode;
     this.setData({ mode: m });
-    if (m === 'single') { this.setData({ subMode: 'witch' }); }
+    if (m === 'single') { this.setData({ subMode: 'guardian' }); }
   },
   selectSub: function (e) {
     this.setData({ subMode: e.currentTarget.dataset.sub });
@@ -80,51 +80,51 @@ Page({
   onStart: function () {
     if (this.data.mode === 'single') {
       this.startSingle();
-    } else if (this.data.subMode === 'witch') {
-      this.startWitchRound(1);
+    } else if (this.data.subMode === 'guardian') {
+      this.startGuardianRound(1);
     } else {
       this.startDuel();
     }
   },
 
-  // 根据主题 + 数量生成棋盘
+  // 根据主题 + 数量生成棋盘（允许重复物品）
   buildItems: function () {
     var t = THEMES[this.data.themeId];
-    var list;
-    if (t.kind === 'emoji') {
-      list = t.emoji.map(function (em, idx) {
-        return { kind: 'emoji', emoji: em, label: t.labels[idx], state: 'idle' };
-      });
-    } else {
-      list = t.colors.map(function (c, idx) {
-        return { kind: 'shape', shape: t.shape, color: c, label: t.labels[idx], state: 'idle' };
-      });
+    var list = [];
+    var itemCount = t.kind === 'emoji' ? t.emoji.length : t.colors.length;
+    for (var i = 0; i < this.data.count; i++) {
+      var idx = randInt(itemCount);
+      if (t.kind === 'emoji') {
+        list.push({ kind: 'emoji', emoji: t.emoji[idx], label: t.labels[idx], state: 'idle' });
+      } else {
+        list.push({ kind: 'shape', shape: t.shape, color: t.colors[idx], label: t.labels[idx], state: 'idle' });
+      }
     }
-    this.setData({ items: list.slice(0, this.data.count) });
+    this.setData({ items: list });
   },
 
-  // ---------- 单人：电脑女巫藏毒药 ----------
+  // ---------- 单人：电脑守护者藏陷阱 ----------
   startSingle: function () {
     this.buildItems();
-    var poison = randInt(this.data.count);
+    var trap = randInt(this.data.count);
     this.setData({
-      poisonIndex: poison,
+      trapIndex: trap,
       combo: 0,
       phase: 'guess',
-      hint: '女巫熬好毒药啦～点一个物品试吃'
+      hint: '守护者布好陷阱啦～点一个物品试试'
     });
   },
 
-  // ---------- 双人·女巫模式 ----------
-  startWitchRound: function (witch) {
+  // ---------- 双人·守护模式 ----------
+  startGuardianRound: function (guardian) {
     this.buildItems();
     this.setData({
-      poisonIndex: -1,
-      witch: witch,
+      trapIndex: -1,
+      guardian: guardian,
       phase: 'cover',
-      coverText: witch === 1
-        ? '把手机交给玩家1（女巫），偷偷选 1 颗毒药藏好'
-        : '把手机交给玩家2（女巫），偷偷选 1 颗毒药藏好'
+      coverText: guardian === 1
+        ? '把手机交给玩家1（守护者），偷偷选 1 个陷阱藏好'
+        : '把手机交给玩家2（守护者），偷偷选 1 个陷阱藏好'
     });
   },
 
@@ -132,12 +132,12 @@ Page({
   startDuel: function () {
     this.buildItems();
     this.setData({
-      poisonA: -1,
-      poisonB: -1,
+      trapA: -1,
+      trapB: -1,
       hider: 1,
       guessTurn: 'A',
       phase: 'cover',
-      coverText: '把手机交给玩家1，偷偷选 1 颗「你的毒药」'
+      coverText: '把手机交给玩家1，偷偷选 1 个「你的陷阱」'
     });
   },
 
@@ -145,45 +145,45 @@ Page({
   onCoverContinue: function () {
     if (this.data.phase !== 'cover') return;
     if (this.data.mode === 'single') return;
-    if (this.data.subMode === 'witch') {
-      if (this.data.poisonIndex < 0) {
+    if (this.data.subMode === 'guardian') {
+      if (this.data.trapIndex < 0) {
         this.setData({
           phase: 'hide',
-          hint: (this.data.witch === 1 ? '玩家1' : '玩家2') + '：点 1 个物品设为毒药'
+          hint: (this.data.guardian === 1 ? '玩家1' : '玩家2') + '：点 1 个物品设为陷阱'
         });
       } else {
         this.setData({ phase: 'guess', hint: '轮到你猜啦，点一个试试' });
       }
     } else {
-      if (this.data.hider === 1 && this.data.poisonA < 0) {
-        this.setData({ phase: 'hide', hint: '玩家1：点 1 个设为你的毒药' });
-      } else if (this.data.hider === 2 && this.data.poisonB < 0) {
-        this.setData({ phase: 'hide', hint: '玩家2：点 1 个设为你的毒药' });
+      if (this.data.hider === 1 && this.data.trapA < 0) {
+        this.setData({ phase: 'hide', hint: '玩家1：点 1 个设为你的陷阱' });
+      } else if (this.data.hider === 2 && this.data.trapB < 0) {
+        this.setData({ phase: 'hide', hint: '玩家2：点 1 个设为你的陷阱' });
       }
     }
   },
 
-  // ---------- 藏毒药（双人 hide 阶段） ----------
+  // ---------- 藏陷阱（双人 hide 阶段） ----------
   onHidePick: function (i) {
-    if (this.data.subMode === 'witch') {
-      var witch = this.data.witch;
+    if (this.data.subMode === 'guardian') {
+      var guardian = this.data.guardian;
       this.setData({
-        poisonIndex: i,
+        trapIndex: i,
         phase: 'cover',
-        coverText: witch === 1
+        coverText: guardian === 1
           ? '交给玩家2，准备好开始猜'
           : '交给玩家1，准备好开始猜'
       });
     } else {
       if (this.data.hider === 1) {
         this.setData({
-          poisonA: i, hider: 2, phase: 'cover',
-          coverText: '把手机交给玩家2，偷偷选 1 颗「你的毒药」'
+          trapA: i, hider: 2, phase: 'cover',
+          coverText: '把手机交给玩家2，偷偷选 1 个「你的陷阱」'
         });
       } else {
         this.setData({
-          poisonB: i, guessTurn: 'A', phase: 'guess',
-          hint: '轮流选，点到对方的毒药就输'
+          trapB: i, guessTurn: 'A', phase: 'guess',
+          hint: '轮流选，点到对方的陷阱就输'
         });
       }
     }
@@ -196,16 +196,16 @@ Page({
     if (phase === 'hide') { this.onHidePick(i); return; }
     if (phase !== 'guess') return;
     if (this.data.mode === 'single') this.pickSingle(i);
-    else if (this.data.subMode === 'witch') this.pickWitch(i);
+    else if (this.data.subMode === 'guardian') this.pickGuardian(i);
     else this.pickDuel(i);
     try { wx.vibrateShort({ type: 'light' }); } catch (err) {}
   },
 
-  // 统计：还剩几个「安全的空闲物品」（不含毒药）
-  idleSafeCount: function (items, poisonIdx) {
+  // 统计：还剩几个「安全的空闲物品」（不含陷阱）
+  idleSafeCount: function (items, trapIdx) {
     var c = 0;
     for (var k = 0; k < items.length; k++) {
-      if (items[k].state === 'idle' && k !== poisonIdx) c++;
+      if (items[k].state === 'idle' && k !== trapIdx) c++;
     }
     return c;
   },
@@ -222,8 +222,8 @@ Page({
     var items = this.data.items;
     if (items[i].state !== 'idle') return;
     var combo = this.data.combo;
-    if (i === this.data.poisonIndex) {
-      items[i].state = 'poison';
+    if (i === this.data.trapIndex) {
+      items[i].state = 'trap';
       var best = this.data.best;
       if (combo > best) { best = combo; try { wx.setStorageSync('wp_best', best); } catch (e) {} }
       this.setData({
@@ -235,14 +235,14 @@ Page({
     } else {
       items[i].state = 'safe';
       combo++;
-      if (this.idleSafeCount(items, this.data.poisonIndex) === 0) {
-        items[this.data.poisonIndex].state = 'poison';
+      if (this.idleSafeCount(items, this.data.trapIndex) === 0) {
+        items[this.data.trapIndex].state = 'trap';
         var best2 = this.data.best;
         if (combo > best2) { best2 = combo; try { wx.setStorageSync('wp_best', best2); } catch (e) {} }
         this.setData({
           items: items, phase: 'result',
           resultTitle: '通关啦！全部安全 🎉',
-          resultSub: '连击 ' + combo + '，完美避开毒药！',
+          resultSub: '连击 ' + combo + '，完美避开陷阱！',
           combo: combo, best: best2
         });
       } else {
@@ -251,20 +251,20 @@ Page({
     }
   },
 
-  // ---------- 双人·女巫模式猜测 ----------
-  pickWitch: function (i) {
+  // ---------- 双人·守护模式猜测 ----------
+  pickGuardian: function (i) {
     var items = this.data.items;
     if (items[i].state !== 'idle') return;
-    var witch = this.data.witch;
-    var guesser = witch === 1 ? 2 : 1;
-    if (i === this.data.poisonIndex) {
-      items[i].state = 'poison';
-      this.endRound(witch, guesser + ' 中招！玩家' + witch + '（女巫）赢这局', i);
+    var guardian = this.data.guardian;
+    var guesser = guardian === 1 ? 2 : 1;
+    if (i === this.data.trapIndex) {
+      items[i].state = 'trap';
+      this.endRound(guardian, guesser + ' 中招！玩家' + guardian + '（守护者）赢这局', i);
     } else {
       items[i].state = 'safe';
-      if (this.idleSafeCount(items, this.data.poisonIndex) === 0) {
-        items[this.data.poisonIndex].state = 'poison';
-        this.endRound(guesser, '玩家' + guesser + ' 全身而退，赢这局！', this.data.poisonIndex);
+      if (this.idleSafeCount(items, this.data.trapIndex) === 0) {
+        items[this.data.trapIndex].state = 'trap';
+        this.endRound(guesser, '玩家' + guesser + ' 全身而退，赢这局！', this.data.trapIndex);
       } else {
         this.setData({ items: items, hint: '安全～ 继续选' });
       }
@@ -276,11 +276,11 @@ Page({
     var items = this.data.items;
     if (items[i].state !== 'idle') return;
     var turn = this.data.guessTurn;
-    var opp = turn === 'A' ? this.data.poisonB : this.data.poisonA;
+    var opp = turn === 'A' ? this.data.trapB : this.data.trapA;
     if (i === opp) {
-      items[i].state = 'poison';
+      items[i].state = 'trap';
       var winner = turn === 'A' ? 2 : 1;
-      this.endDuel(winner, '玩家' + turn + ' 选到对方的毒药，中招！玩家' + winner + ' 赢', i);
+      this.endDuel(winner, '玩家' + turn + ' 选到对方的陷阱，中招！玩家' + winner + ' 赢', i);
     } else {
       items[i].state = 'safe';
       if (this.idleCount(items) === 0) {
@@ -342,6 +342,6 @@ Page({
   },
 
   onShareAppMessage: function () {
-    return { title: '女巫的毒药·你能猜中哪颗是毒药吗？', path: '/pages/tools/witchpoison/index' };
+    return { title: '神秘陷阱·你能猜中哪颗是陷阱吗？', path: '/pages/tools/witchpoison/index' };
   }
 });

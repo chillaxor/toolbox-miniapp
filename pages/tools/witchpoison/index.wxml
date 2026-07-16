@@ -1,8 +1,8 @@
 <view class="container">
   <!-- 顶部标题 -->
   <view class="topbar">
-    <text class="logo">🧙‍♀️</text>
-    <text class="title">女巫的毒药</text>
+    <text class="logo">🔮</text>
+    <text class="title">神秘陷阱</text>
   </view>
 
   <!-- SETUP 设置 -->
@@ -17,7 +17,7 @@
       <block wx:if="{{mode==='double'}}">
         <view class="sec-label">双人玩法</view>
         <view class="chip-row">
-          <view class="chip {{subMode==='witch'?'chip-on':''}}" bindtap="selectSub" data-sub="witch">🧪 女巫模式</view>
+          <view class="chip {{subMode==='guardian'?'chip-on':''}}" bindtap="selectSub" data-sub="guardian">🛡️ 守护模式</view>
           <view class="chip {{subMode==='duel'?'chip-on':''}}" bindtap="selectSub" data-sub="duel">⚔️ 对决模式</view>
         </view>
       </block>
@@ -40,7 +40,7 @@
       </view>
 
       <view class="btn-primary" bindtap="onStart">开始游戏 🪄</view>
-      <view class="tip">单人：女巫藏毒药，你来猜 · 双人：同设备轮流玩</view>
+      <view class="tip">单人：守护者藏陷阱，你来猜 · 双人：同设备轮流玩</view>
     </view>
   </block>
 
@@ -53,7 +53,7 @@
     </view>
   </block>
 
-  <!-- HIDE 女巫藏毒药 -->
+  <!-- HIDE 守护者藏陷阱 -->
   <block wx:if="{{phase==='hide'}}">
     <view class="hint">{{hint}}</view>
     <view class="board">
@@ -65,10 +65,10 @@
         <text wx:else class="emoji">{{item.emoji}}</text>
       </view>
     </view>
-    <view class="tip">悄悄点 1 个物品，它就是毒药</view>
+    <view class="tip">悄悄点 1 个物品，它就是陷阱</view>
   </block>
 
-  <!-- GUESS 猜毒药 -->
+  <!-- GUESS 猜陷阱 -->
   <block wx:if="{{phase==='guess'}}">
     <view class="hint">{{hint}}</view>
     <view wx:if="{{mode==='double'}}" class="scorebar">
@@ -83,7 +83,7 @@
         </view>
         <text wx:else class="emoji">{{item.emoji}}</text>
         <view wx:if="{{item.state==='safe'}}" class="badge badge-safe">✅</view>
-        <view wx:if="{{item.state==='poison'}}" class="badge badge-poison">💥</view>
+        <view wx:if="{{item.state==='trap'}}" class="badge badge-poison">💥</view>
       </view>
     </view>
     <view wx:if="{{mode==='single'}}" class="combo">连击 {{combo}} · 最佳 {{best}}</view>

@@ -134,7 +134,7 @@ const TOOLS = [
   { id: 'lovecard', name: '情话卡片', category: 'fun', icon: '💕', path: '/pages/tools/lovecard/index', description: '每日情话·精美卡片·保存分享' },
   { id: 'pixelavatar', name: '像素头像', category: 'image', icon: '👾', path: '/pages/tools/pixelavatar/index', description: '输入名字生成专属像素风头像' },
   { id: 'watermarkremove', name: '去水印', category: 'image', icon: '🧽', path: '/pages/tools/watermarkremove/index', description: 'AI智能去水印+手动涂抹修补' },
-  { id: 'witchpoison', name: '女巫的毒药', category: 'fun', icon: '🧪', path: '/pages/tools/witchpoison/index', description: '魔法毒药猜猜看·单人双人都能玩' },
+  { id: 'witchpoison', name: '神秘陷阱', category: 'fun', icon: '🧪', path: '/pages/tools/witchpoison/index', description: '神秘陷阱猜猜看·单人双人都能玩' },
 ];
 
 /**
