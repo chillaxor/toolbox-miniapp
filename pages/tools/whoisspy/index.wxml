@@ -62,26 +62,29 @@
       <view class="viewing-grid">
         <view wx:for="{{players}}" wx:key="id" class="vcard vcard-{{item.status}}">
           <text class="vcard-no">玩家 {{item.id}}</text>
-          <block wx:if="{{item.status === 'current'}}">
-            <block wx:if="{{item.revealed}}">
-              <text class="vcard-word">{{item.word}}</text>
-              <text class="vcard-py" wx:if="{{item.pinyin}}">{{item.pinyin}}</text>
-              <text class="vcard-role {{item.isSpy ? 'is-spy' : 'is-civ'}}">{{item.isSpy ? '卧底' : '平民'}}</text>
+          <view class="vcard-body">
+            <block wx:if="{{item.status === 'current'}}">
+              <block wx:if="{{item.revealed}}">
+                <text class="vcard-word">{{item.word}}</text>
+                <text class="vcard-py" wx:if="{{item.pinyin}}">{{item.pinyin}}</text>
+                <text class="vcard-role {{item.isSpy ? 'is-spy' : 'is-civ'}}">{{item.isSpy ? '卧底' : '平民'}}</text>
+              </block>
+              <block wx:else>
+                <text class="vcard-q">❓</text>
+                <view class="vcard-btn" bindtap="onReveal">👀 点击查看</view>
+              </block>
             </block>
             <block wx:else>
-              <text class="vcard-q">❓</text>
-              <view class="vcard-btn" bindtap="onReveal">👀 点击查看</view>
+              <text class="vcard-q done">✓</text>
+              <text class="vcard-done">已查看</text>
             </block>
-          </block>
-          <block wx:else>
-            <text class="vcard-q done">✓</text>
-            <text class="vcard-done">已查看</text>
-          </block>
+          </view>
         </view>
       </view>
-      <view class="next-btn" bindtap="onNextPlayer">
+      <view class="next-btn {{!viewingRevealed ? 'next-disabled' : ''}}" bindtap="onNextPlayer">
         {{allViewed ? '✅ 全部查看完毕，开始讨论' : '➡️ 下一位玩家'}}
       </view>
+      <view class="reshuffle-btn" bindtap="onReshuffle">🔄 词不合适？换词重开</view>
     </view>
   </view>
 
@@ -121,9 +124,11 @@
       <view class="result-grid">
         <view class="rcard" wx:for="{{players}}" wx:key="id">
           <text class="rc-no">玩家 {{item.id}}</text>
-          <text class="rc-word">{{item.word}}</text>
-          <text class="rc-py" wx:if="{{item.pinyin}}">{{item.pinyin}}</text>
-          <text class="rc-role {{item.isSpy ? 'is-spy' : 'is-civ'}}">{{item.isSpy ? '🕵️ 卧底' : '👥 平民'}}</text>
+          <view class="rc-body">
+            <text class="rc-word">{{item.word}}</text>
+            <text class="rc-py" wx:if="{{item.pinyin}}">{{item.pinyin}}</text>
+            <text class="rc-role {{item.isSpy ? 'is-spy' : 'is-civ'}}">{{item.isSpy ? '🕵️ 卧底' : '👥 平民'}}</text>
+          </view>
         </view>
       </view>
       <view class="action-btns" style="margin-top: 32rpx;">
@@ -136,16 +141,20 @@
   <view wx:if="{{state === 'showwords'}}">
     <view class="card result-card">
       <text class="result-title">🎯 词语揭晓</text>
-      <view class="result-grid two-cols">
+      <view class="result-grid">
         <view class="rcard">
           <text class="rc-label">👥 平民词</text>
-          <text class="rc-word">{{civilianWord}}</text>
-          <text class="rc-py" wx:if="{{civilianPinyin}}">{{civilianPinyin}}</text>
+          <view class="rc-body">
+            <text class="rc-word">{{civilianWord}}</text>
+            <text class="rc-py" wx:if="{{civilianPinyin}}">{{civilianPinyin}}</text>
+          </view>
         </view>
         <view class="rcard">
           <text class="rc-label">🕵️ 卧底词</text>
-          <text class="rc-word">{{spyWord}}</text>
-          <text class="rc-py" wx:if="{{spyPinyin}}">{{spyPinyin}}</text>
+          <view class="rc-body">
+            <text class="rc-word">{{spyWord}}</text>
+            <text class="rc-py" wx:if="{{spyPinyin}}">{{spyPinyin}}</text>
+          </view>
         </view>
       </view>
       <view class="action-btns" style="margin-top: 32rpx;">

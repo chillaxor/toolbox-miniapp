@@ -127,11 +127,13 @@
 /* 自定义词语输入 */
 .word-input {
   margin-top: 22rpx;
-  padding: 26rpx 30rpx;
+  padding: 34rpx 36rpx;
+  min-height: 104rpx;
   background: #FFF9F0;
   color: #333;
   border-radius: 26rpx;
-  font-size: 32rpx;
+  font-size: 40rpx;
+  line-height: 1.4;
   font-weight: 600;
   border: 4rpx solid #FFE3C2;
 }
@@ -311,6 +313,32 @@
   box-shadow: 0 12rpx 28rpx rgba(77, 150, 255, 0.4);
 }
 .next-btn:active {
+  transform: scale(0.97);
+}
+/* 未查看时禁用「下一位玩家」按钮 */
+.next-disabled {
+  background: #C7D2E8;
+  color: #fff;
+  box-shadow: none;
+}
+.next-disabled:active {
+  transform: none;
+}
+/* 换词重开按钮 */
+.reshuffle-btn {
+  width: 100%;
+  height: 92rpx;
+  line-height: 92rpx;
+  text-align: center;
+  font-size: 30rpx;
+  font-weight: 800;
+  color: #FF6B6B;
+  background: #FFF0E6;
+  border: 4rpx solid #FFD9C2;
+  border-radius: 999rpx;
+  margin-top: 18rpx;
+}
+.reshuffle-btn:active {
   transform: scale(0.97);
 }
 
@@ -522,62 +550,67 @@
   margin: 12rpx auto 0;
 }
 
-/* ===== 查看阶段：N 张卡片网格（每位玩家一张） ===== */
+/* ===== 查看阶段：每位玩家一整条横排卡片 ===== */
 .viewing-grid {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 20rpx;
-  justify-content: center;
   margin-bottom: 30rpx;
 }
 .vcard {
-  flex: 1 1 28%;
-  min-width: 180rpx;
+  width: 100%;
   box-sizing: border-box;
   background: #F2F6FF;
   border: 4rpx solid #E0E9FF;
   border-radius: 28rpx;
-  padding: 30rpx 16rpx;
+  padding: 26rpx 32rpx;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  justify-content: center;
-  min-height: 224rpx;
+  justify-content: space-between;
+  min-height: 120rpx;
 }
 .vcard-current {
   background: #FFF7FB;
   border-color: #FF9F45;
   box-shadow: 0 10rpx 26rpx rgba(255, 159, 69, 0.35);
-  transform: scale(1.03);
 }
 .vcard-done, .vcard-pending {
   opacity: 0.65;
 }
 .vcard-no {
-  font-size: 30rpx;
+  flex-shrink: 0;
+  font-size: 32rpx;
   font-weight: 800;
   color: #3A4A6B;
-  margin-bottom: 16rpx;
+}
+.vcard-body {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 20rpx;
+  min-width: 0;
 }
 .vcard-q {
-  font-size: 80rpx;
+  font-size: 60rpx;
   line-height: 1;
-  margin-bottom: 16rpx;
 }
 .vcard-q.done {
+  font-size: 48rpx;
   color: #4ECCA3;
 }
 .vcard-done {
-  font-size: 26rpx;
+  font-size: 28rpx;
   color: #9AA7C2;
   font-weight: 700;
 }
 .vcard-btn {
-  margin-top: 8rpx;
-  padding: 16rpx 30rpx;
+  padding: 16rpx 36rpx;
   background: linear-gradient(135deg, #FF6B6B, #FF9F45);
   color: #fff;
-  font-size: 18rpx;
+  font-size: 28rpx;
   font-weight: 800;
   border-radius: 999rpx;
   box-shadow: 0 8rpx 18rpx rgba(255, 107, 107, 0.35);
@@ -590,7 +623,6 @@
   font-weight: 800;
   color: #FF6B6B;
   letter-spacing: 4rpx;
-  margin-bottom: 10rpx;
 }
 .vcard-py {
   font-size: 26rpx;
@@ -599,9 +631,9 @@
   background: #EAF3FF;
   padding: 4rpx 18rpx;
   border-radius: 999rpx;
-  margin-bottom: 14rpx;
 }
 .vcard-role {
+  flex-shrink: 0;
   font-size: 28rpx;
   font-weight: 800;
   color: #fff;
@@ -615,49 +647,52 @@
   background: linear-gradient(135deg, #4ECCA3, #36B9A0);
 }
 
-/* ===== 结果 / 揭晓：N 张卡片网格（每位玩家一张） ===== */
+/* ===== 结果 / 揭晓：每位玩家一整条横排卡片（与查看阶段统一） ===== */
 .result-grid {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 20rpx;
-  justify-content: center;
   margin-bottom: 10rpx;
 }
-.result-grid.two-cols .rcard {
-  flex: 1 1 40%;
-}
 .rcard {
-  flex: 1 1 28%;
-  min-width: 180rpx;
+  width: 100%;
   box-sizing: border-box;
   background: #F2F6FF;
   border: 4rpx solid #E0E9FF;
   border-radius: 28rpx;
-  padding: 28rpx 16rpx;
+  padding: 26rpx 32rpx;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  justify-content: center;
-  min-height: 200rpx;
+  justify-content: space-between;
+  min-height: 120rpx;
+}
+.rc-body {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 20rpx;
+  min-width: 0;
 }
 .rc-no {
-  font-size: 30rpx;
+  flex-shrink: 0;
+  font-size: 32rpx;
   font-weight: 800;
   color: #3A4A6B;
-  margin-bottom: 12rpx;
 }
 .rc-label {
-  font-size: 28rpx;
+  flex-shrink: 0;
+  font-size: 32rpx;
   font-weight: 800;
   color: #4D96FF;
-  margin-bottom: 10rpx;
 }
 .rc-word {
   font-size: 48rpx;
   font-weight: 800;
   color: #FF6B6B;
   letter-spacing: 4rpx;
-  margin-bottom: 8rpx;
 }
 .rc-py {
   font-size: 24rpx;
@@ -666,9 +701,9 @@
   background: #EAF3FF;
   padding: 4rpx 16rpx;
   border-radius: 999rpx;
-  margin-bottom: 12rpx;
 }
 .rc-role {
+  flex-shrink: 0;
   font-size: 28rpx;
   font-weight: 800;
   color: #fff;

@@ -233,6 +233,11 @@ Page({
   onNextPlayer: function () {
     var players = this.data.players;
     var cur = this.data.currentPlayer;
+    // 必须先查看当前玩家身份，未查看不能递给下一位
+    if (!players[cur] || !players[cur].revealed) {
+      wx.showToast({ title: '请先点击查看身份', icon: 'none' });
+      return;
+    }
     players[cur].status = 'done';
     var next = cur + 1;
     if (next >= this.data.playerCount) {
@@ -243,6 +248,17 @@ Page({
       this.setData({ players: players, currentPlayer: next, viewingRevealed: false });
     }
     this.updateProgress();
+  },
+
+  // 查看阶段：词不合适，换词重开
+  // 随机局：直接换一组新词重新开始（保留人数/卧底数设置）
+  // 自定义局：回到设置页让用户重填词语
+  onReshuffle: function () {
+    if (this.data.useCustom) {
+      this.setData({ state: 'setup' });
+    } else {
+      this.startGame();
+    }
   },
 
   onStartVoting: function () {
