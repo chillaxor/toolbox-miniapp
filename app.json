@@ -123,7 +123,9 @@
     "pages/tools/lovecard/index",
     "pages/tools/pixelavatar/index",
     "pages/tools/watermarkremove/index",
-    "pages/tools/witchpoison/index"
+    "pages/tools/witchpoison/index",
+    "pages/tools/commandreaction/index",
+    "pages/tools/drawguess/index"
   ],
   "window": {
     "backgroundTextStyle": "light",

@@ -1,0 +1,108 @@
+<view class="page">
+  <view class="fav" bindtap="toggleFavorite">{{isFavorite ? '★' : '☆'}}</view>
+
+  <!-- ============ SETUP ============ -->
+  <block wx:if="{{phase==='setup'}}">
+    <view class="title">🎨 多图编号抢答画猜</view>
+    <view class="desc">点开始 → 屏幕出 1~{{count}} 编号图卡 → App 读题 → 线下用笔在纸上画出 1~{{count}} → 主持人选号 → 线下开抢回答</view>
+
+    <view class="sec-label">图卡数量</view>
+    <view class="chip-row">
+      <view wx:for="{{countOptions}}" wx:key="*this" class="chip {{count===item?'chip-on':''}}" bindtap="selectCount" data-c="{{item}}">{{item}}张</view>
+    </view>
+
+    <view class="sec-label">玩家（2~4人，抢答记分）</view>
+    <view class="player-list">
+      <view wx:for="{{players}}" wx:key="name" class="player-tag" style="background:{{item.color}}22;border-color:{{item.color}}">
+        <text>{{item.name}}</text>
+        <text class="del" catchtap="removePlayer" data-idx="{{index}}">✕</text>
+      </view>
+      <view wx:if="{{canAddPlayer}}" class="player-add" bindtap="openAddPlayer">＋加玩家</view>
+    </view>
+
+    <view class="btn-primary" bindtap="onStart">开始游戏 🪄</view>
+    <view class="tip">默认 1 名玩家也可单人计分</view>
+  </block>
+
+  <!-- ============ SHOW / 读题 ============ -->
+  <block wx:if="{{phase==='show'}}">
+    <view class="phase-tip">把 1~{{count}} 画在纸上 · {{ttsAvailable?'点击开始读题，App 会念出来':'未配置语音插件，将顺序高亮，请主持人代念'}}</view>
+    <view class="card-grid">
+      <view wx:for="{{rounds}}" wx:key="num" class="card {{readIndex===item.num?'card-read':''}}">
+        <view class="card-num">{{item.num}}</view>
+        <view class="card-word">{{item.word}}</view>
+      </view>
+    </view>
+    <view class="btn-row">
+      <view class="btn-ghost" bindtap="startRead">{{reading?'读题中…':'开始/重读'}}</view>
+      <view class="btn-primary" bindtap="goQuiz">进入抢答 ▶</view>
+    </view>
+  </block>
+
+  <!-- ============ QUIZ / 抢答 ============ -->
+  <block wx:if="{{phase==='quiz'}}">
+    <view class="score-bar">
+      <view wx:for="{{players}}" wx:key="name" class="score-chip" style="background:{{item.color}}22;color:{{item.color}}">{{item.name}} {{item.score}}</view>
+    </view>
+
+    <block wx:if="{{quizState==='pick'}}">
+      <view class="phase-tip">主持人点一个编号开始抢答（已答的会变灰）</view>
+      <view class="num-grid">
+        <view wx:for="{{numCells}}" wx:key="n" class="num-cell {{item.used?'num-used':''}}" bindtap="pickNumber" data-n="{{item.n}}">{{item.n}}</view>
+      </view>
+      <view class="btn-row">
+        <view class="btn-ghost" bindtap="backSetup">退出</view>
+        <view class="btn-primary" bindtap="endGame">结束看战绩 🏁</view>
+      </view>
+    </block>
+
+    <block wx:if="{{quizState==='answer'}}">
+      <view class="big-num">{{currentNum}}</view>
+      <view class="phase-tip">{{revealed?('答案：'+answerWord):'谁先抢答正确？点对应的玩家'}}</view>
+
+      <view class="player-btns">
+        <view wx:for="{{players}}" wx:key="name" class="pbtn" style="background:{{item.color}}" bindtap="tapPlayer" data-idx="{{index}}">
+          <text class="pname">{{item.name}}</text>
+          <text class="pscore">{{item.score}}分</text>
+        </view>
+      </view>
+
+      <view wx:if="{{floatText}}" class="float-score" style="color:{{players[floatPlayer].color}}">+{{floatText}}</view>
+
+      <view class="btn-row">
+        <view class="btn-ghost" bindtap="noOne">无人答对</view>
+        <view wx:if="{{!revealed}}" class="btn-ghost" bindtap="revealOnly">揭晓</view>
+        <view wx:if="{{revealed}}" class="btn-primary" bindtap="nextQuestion">下一题 ▶</view>
+      </view>
+    </block>
+  </block>
+
+  <!-- ============ RESULT ============ -->
+  <block wx:if="{{phase==='result'}}">
+    <view class="title">🏆 战绩</view>
+    <view class="best">历史最佳单局：{{bestScore}} 分</view>
+    <view class="rank-list">
+      <view wx:for="{{ranked}}" wx:key="name" class="rank-item" style="border-left-color:{{item.color}}">
+        <text class="rank-no">第{{index+1}}名</text>
+        <text class="rank-name">{{item.name}}</text>
+        <text class="rank-score">{{item.score}}分</text>
+      </view>
+    </view>
+    <view class="btn-row">
+      <view class="btn-ghost" bindtap="backSetup">返回设置</view>
+      <view class="btn-primary" bindtap="replay">再来一局 🔁</view>
+    </view>
+  </block>
+
+  <!-- 加玩家弹层 -->
+  <view wx:if="{{showAddPlayer}}" class="mask" bindtap="closeAddPlayer">
+    <view class="modal" catchtap="preventBubble">
+      <view class="modal-title">添加玩家</view>
+      <input class="modal-input" placeholder="输入名字" value="{{playerDraft}}" bindinput="onPlayerDraftInput" confirm-type="done" bindconfirm="confirmAddPlayer" />
+      <view class="btn-row">
+        <view class="btn-ghost" bindtap="closeAddPlayer">取消</view>
+        <view class="btn-primary" bindtap="confirmAddPlayer">确定</view>
+      </view>
+    </view>
+  </view>
+</view>

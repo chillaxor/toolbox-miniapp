@@ -140,7 +140,7 @@
 }
 .item:active { transform: scale(0.92); }
 .item.safe { opacity: 0.45; }
-.item.poison {
+.item.trap {
   box-shadow: 0 0 0 6rpx #FF5470, 0 10rpx 26rpx rgba(255, 84, 112, 0.5);
   animation: shake 0.4s ease;
 }
@@ -233,4 +233,50 @@
   align-items: center;
   justify-content: center;
   border: 3rpx solid #E6DCF5;
+}
+
+/* 结果弹窗 */
+.popup-mask {
+  position: fixed;
+  left: 0; top: 0; right: 0; bottom: 0;
+  background: rgba(60, 30, 80, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  animation: fadeIn 0.2s ease;
+}
+.popup {
+  width: 560rpx;
+  max-width: 86%;
+  background: #fff;
+  border-radius: 40rpx;
+  padding: 60rpx 50rpx 50rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 24rpx 70rpx rgba(90, 40, 120, 0.35);
+  animation: popIn 0.28s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+}
+.popup-emoji { font-size: 140rpx; line-height: 1; margin-bottom: 24rpx; }
+.popup-title {
+  font-size: 44rpx;
+  font-weight: bold;
+  color: #5B3A8C;
+  text-align: center;
+  margin-bottom: 16rpx;
+}
+.popup-sub {
+  font-size: 28rpx;
+  color: #8A78A8;
+  text-align: center;
+  line-height: 1.5;
+  margin-bottom: 44rpx;
+}
+.popup-btn { margin-top: 0; }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
 }

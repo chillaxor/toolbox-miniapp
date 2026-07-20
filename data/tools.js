@@ -135,6 +135,8 @@ const TOOLS = [
   { id: 'pixelavatar', name: '像素头像', category: 'image', icon: '👾', path: '/pages/tools/pixelavatar/index', description: '输入名字生成专属像素风头像' },
   { id: 'watermarkremove', name: '去水印', category: 'image', icon: '🧽', path: '/pages/tools/watermarkremove/index', description: 'AI智能去水印+手动涂抹修补' },
   { id: 'witchpoison', name: '神秘陷阱', category: 'fun', icon: '🧪', path: '/pages/tools/witchpoison/index', description: '神秘陷阱猜猜看·单人双人都能玩' },
+  { id: 'commandreaction', name: '指令反应', category: 'fun', icon: '🕹️', path: '/pages/tools/commandreaction/index', description: '手机下指令·你来做动作·测反应抗干扰' },
+  { id: 'drawguess', name: '多图编号抢答画猜', category: 'fun', icon: '🎨', path: '/pages/tools/drawguess/index', description: '多图编号·线下画·抢答猜词·聚会必备' }
 ];
 
 /**

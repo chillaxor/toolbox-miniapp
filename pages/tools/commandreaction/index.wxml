@@ -1,0 +1,61 @@
+<view class="page">
+  <!-- 收藏 -->
+  <view class="fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</view>
+
+  <!-- ===== 开始页 ===== -->
+  <block wx:if="{{phase==='setup'}}">
+    <view class="hero">
+      <view class="hero-emoji">🕹️</view>
+      <view class="hero-title">指令反应</view>
+      <view class="hero-sub">手机下指令 · 你来做动作 · 测反应 + 抗干扰</view>
+    </view>
+    <view class="rules">
+      <view class="rule">📣 屏幕出现身体动作（如「抬手」），立刻做出来，再点「我做到啦」</view>
+      <view class="rule">🛑 出现「别动！」时，稳住别点确认，撑过去就得分</view>
+      <view class="rule">⚡ 反应越快分越高，连续答对还有连击加成</view>
+      <view class="rule">❤️ 三条命，点错 / 抢动扣一条，耗尽即结束</view>
+    </view>
+    <view class="best">最佳得分：{{bestScore}}</view>
+    <view class="btn-primary" bindtap="startGame">开始游戏 🕹️</view>
+  </block>
+
+  <!-- ===== 游戏页 ===== -->
+  <block wx:if="{{phase==='playing'}}">
+    <view class="hud">
+      <view class="hud-item">第 {{round}} 题</view>
+      <view class="hud-item">分 {{score}}</view>
+      <view class="hud-item">连击 {{combo}}</view>
+      <view class="hud-item">❤️ {{lives}}</view>
+    </view>
+
+    <view class="cmd-card {{cmdType==='hold' ? 'cmd-hold' : ''}} {{feedback==='correct' ? 'flash-ok' : ''}} {{feedback==='wrong' ? 'flash-bad' : ''}}">
+      <view class="cmd-emoji">{{cmdEmoji}}</view>
+      <view class="cmd-text">{{cmdText}}</view>
+      <view class="cmd-hint" wx:if="{{cmdType==='action'}}">做动作，然后点「我做到啦」</view>
+      <view class="cmd-hint" wx:if="{{cmdType==='hold'}}">稳住！千万别点确认</view>
+
+      <view class="hold-bar" wx:if="{{cmdType==='hold' && holdActive}}">
+        <view class="hold-bar-fill" style="animation-duration:{{holdDuration}}ms;"></view>
+      </view>
+
+      <view class="gain" wx:if="{{feedback==='correct'}}">+{{lastGain}}</view>
+      <view class="wrong-tip" wx:if="{{feedback==='wrong'}}">{{wrongReason}}</view>
+    </view>
+
+    <view class="confirm-btn {{locked ? 'is-locked' : ''}}" bindtap="onConfirm">我做到啦 ✅</view>
+  </block>
+
+  <!-- ===== 结果页 ===== -->
+  <block wx:if="{{phase==='result'}}">
+    <view class="result-card">
+      <view class="result-emoji">🏁</view>
+      <view class="result-title">命数耗尽！</view>
+      <view class="result-row"><text>总得分</text><text class="big">{{resultScore}}</text></view>
+      <view class="result-row"><text>最高连击</text><text>{{resultCombo}}</text></view>
+      <view class="result-row"><text>平均反应</text><text>{{resultAvg}} ms</text></view>
+      <view class="result-best">最佳得分：{{bestScore}}</view>
+      <view class="btn-primary" bindtap="startGame">再来一局 🔁</view>
+      <view class="btn-ghost" bindtap="backToSetup">返回首页</view>
+    </view>
+  </block>
+</view>

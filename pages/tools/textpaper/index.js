@@ -152,7 +152,6 @@ Page({
     this.updateTextConfig({ text: '' });
     this.setData({ currentPage: 1 });
   },
-
   insertSample: function () {
     this.updateTextConfig({ text: SAMPLE_TEXT });
     this.setData({ currentPage: 1 });
