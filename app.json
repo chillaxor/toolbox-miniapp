@@ -125,7 +125,9 @@
     "pages/tools/watermarkremove/index",
     "pages/tools/witchpoison/index",
     "pages/tools/commandreaction/index",
-    "pages/tools/drawguess/index"
+    "pages/tools/drawguess/index",
+    "pages/tools/guessword/index",
+    "pages/tools/clueguess/index"
   ],
   "window": {
     "backgroundTextStyle": "light",

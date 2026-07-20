@@ -1,0 +1,61 @@
+<view class="page">
+  <view class="fav" bindtap="toggleFavorite">{{isFavorite ? '★ 已收藏' : '☆ 收藏'}}</view>
+
+  <!-- 设置 -->
+  <block wx:if="{{phase==='setup'}}">
+    <view class="hero">📱 头顶猜词</view>
+    <view class="howto">
+      <view>· 1 人把手机放在额头（屏幕朝外顶在头上），另 1 人看屏幕描述词语。</view>
+      <view>· 猜对点「✓ 猜对」，不会点「✗ 跳过」。</view>
+      <view>· 也可把手机向下翻一下自动切到下一个词（需在下方开启）。</view>
+    </view>
+
+    <view class="sec-label">每局词数</view>
+    <view class="chip-row">
+      <view class="chip {{roundLen==='20'?'chip-on':''}}" bindtap="selectLen" data-len="20">20 个</view>
+      <view class="chip {{roundLen==='40'?'chip-on':''}}" bindtap="selectLen" data-len="40">40 个</view>
+      <view class="chip {{roundLen==='all'?'chip-on':''}}" bindtap="selectLen" data-len="all">全部</view>
+    </view>
+
+    <view class="sec-label">翻手机切词</view>
+    <view class="switch-row" bindtap="toggleFlip">
+      <view class="switch {{flipOn?'switch-on':''}}"><view class="knob"></view></view>
+      <view class="switch-tip">{{flipOn ? '已开启·翻一下手机切词' : '已关闭·只用按钮'}}</view>
+    </view>
+
+    <view class="btn-primary" bindtap="onStart">开始游戏 🚀</view>
+    <view class="tip">描述的人点屏幕按钮；猜的人翻手机切词</view>
+  </block>
+
+  <!-- 游戏中 -->
+  <block wx:elif="{{phase==='playing'}}">
+    <view class="progress">第 {{progress}} / {{total}} 题</view>
+    <view class="card {{feedback==='correct'?'card-correct':''}} {{feedback==='skip'?'card-skip':''}}">
+      <view class="word">{{currentWord}}</view>
+    </view>
+    <view class="stat-row">
+      <view class="stat correct">✓ {{correct}}</view>
+      <view class="stat skip">✗ {{skipped}}</view>
+    </view>
+    <view class="btn-row">
+      <view class="btn-skip" bindtap="skipWord">✗ 跳过</view>
+      <view class="btn-correct" bindtap="onCorrect">✓ 猜对</view>
+    </view>
+    <view wx:if="{{flipOn}}" class="flip-tip">把手机向下翻一下 = 跳过 ⤵️</view>
+  </block>
+
+  <!-- 结果 -->
+  <block wx:elif="{{phase==='result'}}">
+    <view class="result-emoji">{{isBest ? '🎉' : '📱'}}</view>
+    <view class="result-title">{{isBest ? '新纪录！' : '本局结束'}}</view>
+    <view class="result-stats">
+      <view class="r-card">猜对<view class="r-num">{{correct}}</view></view>
+      <view class="r-card">跳过<view class="r-num">{{skipped}}</view></view>
+      <view class="r-card">最佳<view class="r-num">{{best}}</view></view>
+    </view>
+    <view class="btn-row">
+      <view class="btn-ghost" bindtap="onBackSetup">返回设置</view>
+      <view class="btn-primary inline" bindtap="replay">再来一局</view>
+    </view>
+  </block>
+</view>
