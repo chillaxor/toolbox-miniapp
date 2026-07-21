@@ -1,0 +1,54 @@
+<view class="page">
+  <!-- ===== 开始页 ===== -->
+  <block wx:if="{{phase==='setup'}}">
+    <view class="title">🚰 水管连接</view>
+    <view class="desc">旋转管道，把水从 💧 进水口一路引到 🚰 出水口</view>
+
+    <view class="sec-label">网格大小</view>
+    <view class="chip-row">
+      <view wx:for="{{sizeOptions}}" wx:key="*this" class="chip {{size===item?'chip-on':''}}" bindtap="selectSize" data-n="{{item}}">{{item}}×{{item}}</view>
+    </view>
+    <view class="tip">格子越大越难 · 纯靠空间想象力，没有计时压力</view>
+
+    <view class="btn-primary" bindtap="startGame">开始挑战 🔧</view>
+  </block>
+
+  <!-- ===== 游戏 / 通关 ===== -->
+  <block wx:if="{{phase==='play' || phase==='win'}}">
+    <view class="topbar">
+      <view class="hud">步数 {{moves}}</view>
+      <view class="ops">
+        <view class="op" bindtap="retry">重玩</view>
+        <view class="op" bindtap="nextLevel">换关</view>
+        <view class="op" bindtap="backSetup">返回</view>
+      </view>
+    </view>
+
+    <view class="board-wrap">
+      <view class="board" style="width:{{boardPx}}rpx;height:{{boardPx}}rpx;">
+        <view wx:for="{{cells}}" wx:key="index" class="cell" style="width:{{cell}}rpx;height:{{cell}}rpx;" bindtap="rotateCell" data-idx="{{index}}">
+          <view wx:if="{{item.n}}" class="arm {{item.watered?'wet':''}}" style="{{st_n}}"></view>
+          <view wx:if="{{item.e}}" class="arm {{item.watered?'wet':''}}" style="{{st_e}}"></view>
+          <view wx:if="{{item.s}}" class="arm {{item.watered?'wet':''}}" style="{{st_s}}"></view>
+          <view wx:if="{{item.w}}" class="arm {{item.watered?'wet':''}}" style="{{st_w}}"></view>
+          <view class="node {{item.watered?'wet':''}}" style="{{st_node}}"></view>
+          <view wx:if="{{item.isSource}}" class="marker marker-in">💧</view>
+          <view wx:if="{{item.isOutlet}}" class="marker marker-out">🚰</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="tip">点格子旋转管道，让蓝色水路从 💧 连通到 🚰</view>
+
+    <!-- 通关弹层 -->
+    <view wx:if="{{phase==='win'}}" class="win-mask">
+      <view class="win-card">
+        <view class="win-emoji">🎉</view>
+        <view class="win-title">水流出来啦！</view>
+        <view class="win-sub">用了 {{moves}} 步接通水路</view>
+        <view class="btn-primary" bindtap="nextLevel">下一关 🔁</view>
+        <view class="btn-ghost" bindtap="backSetup">返回首页</view>
+      </view>
+    </view>
+  </block>
+</view>

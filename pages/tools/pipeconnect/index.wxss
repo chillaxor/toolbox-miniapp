@@ -1,0 +1,195 @@
+.page {
+  min-height: 100vh;
+  box-sizing: border-box;
+  padding: 40rpx 30rpx 60rpx;
+  background: linear-gradient(160deg, #0b486b 0%, #1565a0 50%, #3a9ad9 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #fff;
+}
+
+/* ===== 开始页 ===== */
+.title {
+  font-size: 60rpx;
+  font-weight: 800;
+  margin-top: 40rpx;
+  letter-spacing: 4rpx;
+}
+.desc {
+  font-size: 26rpx;
+  opacity: 0.9;
+  margin-top: 14rpx;
+  text-align: center;
+}
+.sec-label {
+  font-size: 30rpx;
+  font-weight: 700;
+  margin: 50rpx 0 18rpx;
+}
+.chip-row {
+  display: flex;
+  gap: 20rpx;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.chip {
+  padding: 20rpx 40rpx;
+  border-radius: 40rpx;
+  background: rgba(255,255,255,0.14);
+  color: #fff;
+  font-size: 30rpx;
+  border: 3rpx solid transparent;
+}
+.chip-on {
+  background: #fff;
+  color: #1565a0;
+  font-weight: 700;
+}
+.tip {
+  font-size: 22rpx;
+  opacity: 0.85;
+  margin-top: 26rpx;
+  text-align: center;
+  max-width: 620rpx;
+}
+
+.btn-primary {
+  margin-top: 50rpx;
+  width: 100%;
+  max-width: 620rpx;
+  height: 96rpx;
+  border-radius: 48rpx;
+  background: linear-gradient(90deg, #4fc3f7, #2196f3);
+  color: #fff;
+  font-size: 34rpx;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 12rpx 30rpx rgba(33,150,243,0.4);
+}
+.btn-ghost {
+  margin-top: 22rpx;
+  width: 100%;
+  max-width: 620rpx;
+  height: 88rpx;
+  border-radius: 44rpx;
+  background: rgba(255,255,255,0.16);
+  color: #fff;
+  font-size: 30rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ===== 游戏顶栏 ===== */
+.topbar {
+  width: 100%;
+  max-width: 620rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 10rpx 0 24rpx;
+}
+.hud {
+  font-size: 30rpx;
+  font-weight: 700;
+  background: rgba(255,255,255,0.16);
+  padding: 12rpx 26rpx;
+  border-radius: 24rpx;
+}
+.ops { display: flex; gap: 16rpx; }
+.op {
+  font-size: 26rpx;
+  background: rgba(255,255,255,0.16);
+  padding: 12rpx 22rpx;
+  border-radius: 24rpx;
+}
+
+/* ===== 棋盘 ===== */
+.board-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 20rpx 0;
+}
+.board {
+  display: flex;
+  flex-wrap: wrap;
+  background: rgba(0,0,0,0.18);
+  border-radius: 22rpx;
+  box-shadow: 0 16rpx 40rpx rgba(0,0,0,0.3);
+}
+.cell {
+  position: relative;
+  box-sizing: border-box;
+  background: rgba(255,255,255,0.05);
+  border: 1rpx solid rgba(255,255,255,0.08);
+}
+.arm {
+  position: absolute;
+  background: #8d97a8;
+  border-radius: 8rpx;
+  transition: background 0.25s ease;
+}
+.arm.wet { background: linear-gradient(180deg, #6fd0ff, #2196f3); }
+.node {
+  position: absolute;
+  background: #8d97a8;
+  border-radius: 50%;
+  transition: background 0.25s ease;
+}
+.node.wet { background: #2196f3; }
+
+/* 进水口 / 出水口 标记（置于端点格内侧，避免溢出屏幕） */
+.marker {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 46rpx;
+  height: 46rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  background: rgba(255,255,255,0.92);
+  box-shadow: 0 3rpx 8rpx rgba(0,0,0,0.3);
+  z-index: 2;
+}
+.marker-in { left: 6rpx; }
+.marker-out { right: 6rpx; }
+
+/* ===== 通关弹层 ===== */
+.win-mask {
+  position: fixed;
+  left: 0; top: 0; right: 0; bottom: 0;
+  background: rgba(10,40,60,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+.win-card {
+  width: 560rpx;
+  max-width: 86%;
+  background: #fff;
+  border-radius: 40rpx;
+  padding: 56rpx 44rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #0b486b;
+  box-shadow: 0 24rpx 70rpx rgba(0,0,0,0.4);
+}
+.win-emoji { font-size: 120rpx; }
+.win-title {
+  font-size: 44rpx;
+  font-weight: 800;
+  margin-top: 10rpx;
+}
+.win-sub {
+  font-size: 28rpx;
+  color: #4a6b80;
+  margin: 16rpx 0 30rpx;
+}
