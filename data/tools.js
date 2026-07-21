@@ -139,6 +139,7 @@ const TOOLS = [
   { id: 'drawguess', name: '多图编号抢答画猜', category: 'fun', icon: '🎨', path: '/pages/tools/drawguess/index', description: '多图编号·线下画·抢答猜词·聚会必备' },
   { id: 'guessword', name: '头顶猜词', category: 'fun', icon: '📱', path: '/pages/tools/guessword/index', description: '手机顶头上·对面描述·翻手机切词·双人聚会' },
   { id: 'clueguess', name: '小小侦探', category: 'fun', icon: '🕵️', path: '/pages/tools/clueguess/index', description: '搜集线索·缩圈排除·指认凶手·侦探徽章' },
+  { id: 'friendship', name: '友谊修复', category: 'fun', icon: '🤝', path: '/pages/tools/friendship/index', description: '模拟吵架·识别情绪·选对方式和解·关系升温' },
   { id: 'pipeconnect', name: '水管连接', category: 'fun', icon: '🚰', path: '/pages/tools/pipeconnect/index', description: '旋转管道连通水路·考验空间想象力' },
   { id: 'codeblock', name: '编程启蒙', category: 'study', icon: '🤖', path: '/pages/tools/codeblock/index', description: '拖拽指令块控制角色移动·图形化编程启蒙' }
 ];

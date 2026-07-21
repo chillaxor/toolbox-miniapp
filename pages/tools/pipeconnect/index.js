@@ -175,6 +175,12 @@ Page({
   },
 
   onLoad: function () {
+    var __flags = wx.getStorageSync('feature_flags')
+      || (getApp() && getApp().globalData && getApp().globalData.featureFlags) || {};
+    if (!__flags.pipeconnect) {
+      wx.reLaunch({ url: '/pages/index/index' });
+      return;
+    }
     this.computeStyles(this.data.size);
   },
 

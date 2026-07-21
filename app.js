@@ -2,14 +2,14 @@ App({
   onLaunch: function () {
     // 小程序启动时执行
     console.log('[App] onLaunch');
-    // 初始化云开发环境
+    // 初始化云开发环境（仅其他云函数需要；远程开关已改用 wx.request，不再依赖云）
     if (wx.cloud) {
       wx.cloud.init({
         env: 'cloud1-d9gm1qla9bebafa31',
         traceUser: true
       });
-      this.loadFeatureFlags();
     }
+    this.loadFeatureFlags();
     // 全局音频选项：尊重手机静音键（静音时木鱼/木槌等音效不发声，符合预期）
     // 必须在最早（onLaunch）设置，对全局 InnerAudioContext 生效
     if (wx.setInnerAudioOption) {
@@ -33,31 +33,60 @@ App({
 
   loadFeatureFlags: function () {
     var self = this;
-    wx.cloud.callFunction({
-      name: 'giteeData',
-      data: { url: 'https://gitee.com/b64882/qian_data/raw/master/feature-flags.json' },
-      success: function (res) {
-        var data = (res && res.result && res.result.data) || {};
-        if (typeof data !== 'object' || Array.isArray(data)) data = {};
-        var flags = data;
-        try { wx.setStorageSync('feature_flags', flags); } catch (e) {}
-        self.globalData.featureFlags = flags;
-        try {
-          var pages = getCurrentPages() || [];
-          pages.forEach(function (p) {
-            try {
-              if (p.getTabBar && p.getTabBar && p.getTabBar()) {
-                var tb = p.getTabBar();
-                if (tb.refreshFlags) tb.refreshFlags(flags);
-              }
-              if (p.applyFeatureFlags) p.applyFeatureFlags(flags);
-            } catch (e) {}
-          });
-        } catch (e) {}
-      },
-      fail: function () {
-      }
-    });
+    // 主源：gitee raw（会 302 跳 CDN）；镜像：jsDelivr 直出，作为回退
+    var PRIMARY = 'https://gitee.com/b64882/qian_data/raw/master/feature-flags.json';
+    var MIRROR = 'https://cdn.jsdelivr.net/gh/b64882/qian_data@master/feature-flags.json';
+
+    // 上次成功的缓存，网络全失败时兜底，避免开关整体熄灭
+    var cached = null;
+    try { cached = wx.getStorageSync('feature_flags'); } catch (e) {}
+
+    function applyFlags(flags) {
+      if (typeof flags !== 'object' || !flags || Array.isArray(flags)) flags = {};
+      try { wx.setStorageSync('feature_flags', flags); } catch (e) {}
+      self.globalData.featureFlags = flags;
+      try {
+        var pages = getCurrentPages() || [];
+        pages.forEach(function (p) {
+          try {
+            if (p.getTabBar && p.getTabBar && p.getTabBar()) {
+              var tb = p.getTabBar();
+              if (tb.refreshFlags) tb.refreshFlags(flags);
+            }
+            if (p.applyFeatureFlags) p.applyFeatureFlags(flags);
+          } catch (e) {}
+        });
+      } catch (e) {}
+    }
+
+    function tryLoad(url, isMirror) {
+      wx.request({
+        url: url,
+        method: 'GET',
+        timeout: 8000,
+        success: function (res) {
+          if (res && res.statusCode === 200 && res.data) {
+            var data = res.data;
+            if (typeof data === 'string') {
+              try { data = JSON.parse(data); } catch (e) { data = null; }
+            }
+            if (data && typeof data === 'object' && !Array.isArray(data)) {
+              applyFlags(data);
+              return;
+            }
+          }
+          // 主源没拿到有效 JSON：还有镜像就试镜像，否则回落缓存
+          if (!isMirror) tryLoad(MIRROR, true);
+          else if (cached) applyFlags(cached);
+        },
+        fail: function () {
+          if (!isMirror) tryLoad(MIRROR, true);
+          else if (cached) applyFlags(cached);
+        }
+      });
+    }
+
+    tryLoad(PRIMARY, false);
   },
 
   /**
@@ -150,7 +179,14 @@ App({
       stacking: false,
       snake: false,
       gomoku: false,
-      whackmole: false
+      whackmole: false,
+      commandreaction: false,
+      drawguess: false,
+      guessword: false,
+      clueguess: false,
+      friendship: false,
+      pipeconnect: false,
+      codeblock: false
     }
   }
 });

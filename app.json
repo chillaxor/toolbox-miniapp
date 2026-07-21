@@ -129,7 +129,8 @@
     "pages/tools/guessword/index",
     "pages/tools/clueguess/index",
     "pages/tools/pipeconnect/index",
-    "pages/tools/codeblock/index"
+    "pages/tools/codeblock/index",
+    "pages/tools/friendship/index"
   ],
   "window": {
     "backgroundTextStyle": "light",

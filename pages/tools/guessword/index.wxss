@@ -4,6 +4,7 @@
   padding: 40rpx 32rpx 60rpx;
   box-sizing: border-box;
   position: relative;
+  overflow-y: auto;
 }
 
 .fav {
@@ -146,10 +147,11 @@
 }
 
 .word {
-  font-size: 96rpx;
+  font-size: 130rpx;
   font-weight: 800;
   color: #333;
   text-align: center;
+  line-height: 1.15;
 }
 
 .card-correct {
@@ -258,4 +260,26 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+/* ---------- 横屏适配：手机横过来，宽大、高小，压缩上下间距、放大词语 ---------- */
+@media (orientation: landscape) {
+  .page { padding: 20rpx 48rpx 30rpx; }
+
+  .hero { font-size: 44rpx; margin: 12rpx 0; }
+  .howto { font-size: 24rpx; padding: 18rpx 22rpx; line-height: 1.6; }
+  .sec-label { margin: 18rpx 0 10rpx; }
+  .btn-primary { margin-top: 24rpx; }
+
+  .progress { font-size: 28rpx; margin: 10rpx 0 14rpx; }
+  .card { min-height: 200rpx; padding: 28rpx 40rpx; }
+  .word { font-size: 170rpx; }
+  .stat-row { margin: 14rpx 0; gap: 80rpx; }
+  .stat { font-size: 30rpx; }
+  .btn-row { max-width: 72%; margin-left: auto; margin-right: auto; }
+  .btn-skip, .btn-correct { height: 84rpx; }
+  .flip-tip { margin-top: 14rpx; }
+
+  .result-emoji { font-size: 80rpx; margin: 10rpx 0 6rpx; }
+  .result-title { font-size: 34rpx; margin-bottom: 18rpx; }
 }

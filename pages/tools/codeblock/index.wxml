@@ -8,9 +8,20 @@
     </view>
   </view>
 
+  <view class="level-nav">
+    <view class="lv-btn {{level > 0 ? '' : 'disabled'}}" bindtap="prevLevel">‹ 上一关</view>
+    <view class="lv-info">
+      <text class="lv-name">{{levelName}}</text>
+      <text class="lv-page">（{{level + 1}}/{{totalLevels}}）</text>
+    </view>
+    <view class="lv-btn {{level < totalLevels - 1 ? '' : 'disabled'}}" bindtap="nextLevel">下一关 ›</view>
+  </view>
+
   <view class="map-wrap">
     <view class="map" style="width:{{mapSize}}rpx;height:{{mapSize}}rpx;background-size:{{cell}}rpx {{cell}}rpx;">
       <view class="target" style="left:{{target.col * cell}}rpx;top:{{target.row * cell}}rpx;width:{{cell}}rpx;height:{{cell}}rpx;">⭐</view>
+      <view wx:for="{{obstacles}}" wx:key="index" class="obstacle"
+        style="left:{{item.col * cell}}rpx;top:{{item.row * cell}}rpx;width:{{cell}}rpx;height:{{cell}}rpx;">🧱</view>
       <view class="char" style="width:{{cell}}rpx;height:{{cell}}rpx;transform:translate({{charCol * cell}}rpx, {{charRow * cell}}rpx) rotate({{charDir * 90}}deg);">🤖</view>
     </view>
   </view>

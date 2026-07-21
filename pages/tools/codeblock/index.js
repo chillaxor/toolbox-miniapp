@@ -10,6 +10,16 @@ const BLOCK_DEFS = [
   { type: 'repeat', label: '重复', icon: '∞', color: '#BA7517' }
 ];
 
+// 关卡定义：start = {row,col,dir}（dir: 0上 1右 2下 3左）；obstacles 为 [row,col] 数组
+const LEVELS = [
+  { name: '第1关 · 出发', start: { row: 5, col: 0, dir: 0 }, target: { row: 0, col: 5 }, obstacles: [] },
+  { name: '第2关 · 拐个弯', start: { row: 5, col: 0, dir: 0 }, target: { row: 5, col: 5 }, obstacles: [] },
+  { name: '第3关 · 绕柱子', start: { row: 5, col: 0, dir: 0 }, target: { row: 5, col: 5 }, obstacles: [[5, 2], [5, 3], [5, 4]] },
+  { name: '第4关 · 重复秀', start: { row: 5, col: 0, dir: 0 }, target: { row: 0, col: 5 }, obstacles: [] },
+  { name: '第5关 · 小迷宫', start: { row: 5, col: 0, dir: 0 }, target: { row: 5, col: 5 }, obstacles: [[3, 1], [3, 2], [3, 3], [3, 4]] },
+  { name: '第6关 · 大挑战', start: { row: 5, col: 0, dir: 0 }, target: { row: 0, col: 5 }, obstacles: [[4, 0], [3, 0], [2, 0], [1, 0]] }
+];
+
 function blockDef(type) {
   for (var i = 0; i < BLOCK_DEFS.length; i++) {
     if (BLOCK_DEFS[i].type === type) return BLOCK_DEFS[i];
@@ -23,7 +33,11 @@ Page({
     mapSize: MAP_SIZE,
     cell: CELL,
     blocks: BLOCK_DEFS,
+    totalLevels: LEVELS.length,
+    level: 0,
+    levelName: '',
     target: { row: 0, col: GRID - 1 },
+    obstacles: [],
     charRow: GRID - 1,
     charCol: 0,
     charDir: 0, // 0上 1右 2下 3左
@@ -37,9 +51,16 @@ Page({
   },
 
   onLoad: function () {
+    var __flags = wx.getStorageSync('feature_flags')
+      || (getApp() && getApp().globalData && getApp().globalData.featureFlags) || {};
+    if (!__flags.codeblock) {
+      wx.reLaunch({ url: '/pages/index/index' });
+      return;
+    }
     this._id = 0;
     this._dragType = null;
     this.programRect = null;
+    this.loadLevel(0, false);
   },
 
   onReady: function () {
@@ -59,6 +80,44 @@ Page({
         };
       }
     }).exec();
+  },
+
+  // ---------- 关卡 ----------
+  loadLevel: function (idx, keepProgram) {
+    if (idx < 0 || idx >= LEVELS.length) return;
+    var lv = LEVELS[idx];
+    var obs = (lv.obstacles || []).map(function (o) {
+      return { row: o[0], col: o[1] };
+    });
+    var patch = {
+      level: idx,
+      levelName: lv.name,
+      obstacles: obs,
+      target: lv.target,
+      charRow: lv.start.row,
+      charCol: lv.start.col,
+      charDir: lv.start.dir,
+      running: false
+    };
+    if (!keepProgram) patch.program = [];
+    this.setData(patch);
+  },
+
+  prevLevel: function () {
+    if (this.data.running) return;
+    if (this.data.level > 0) this.loadLevel(this.data.level - 1, false);
+  },
+
+  nextLevel: function () {
+    if (this.data.running) return;
+    if (this.data.level < LEVELS.length - 1) this.loadLevel(this.data.level + 1, false);
+  },
+
+  isBlocked: function (r, c) {
+    for (var i = 0; i < this.data.obstacles.length; i++) {
+      if (this.data.obstacles[i].row === r && this.data.obstacles[i].col === c) return true;
+    }
+    return false;
   },
 
   // ---------- 拖拽 ----------
@@ -134,7 +193,8 @@ Page({
 
   resetChar: function () {
     if (this.data.running) return;
-    this.setData({ charRow: GRID - 1, charCol: 0, charDir: 0 });
+    // 角色归位到当前关起点，但保留已编好的程序
+    this.loadLevel(this.data.level, true);
   },
 
   // ---------- 运行 ----------
@@ -181,10 +241,20 @@ Page({
       var col = self.data.charCol;
       if (row === self.data.target.row && col === self.data.target.col) {
         self.setData({ running: false });
+        var idx = self.data.level;
+        var isLast = idx >= LEVELS.length - 1;
         wx.showModal({
           title: '过关啦 🎉',
-          content: '用了 ' + expanded.length + ' 步把机器人送到终点！',
-          showCancel: false
+          content: self.data.levelName + ' 完成！用了 ' + expanded.length + ' 步。',
+          confirmText: isLast ? '再玩一遍' : '下一关 ›',
+          cancelText: '重玩本关',
+          success: function (r) {
+            if (r.confirm) {
+              self.loadLevel(isLast ? 0 : idx + 1, false);
+            } else {
+              self.loadLevel(idx, false);
+            }
+          }
         });
         return;
       }
@@ -198,15 +268,19 @@ Page({
     var col = this.data.charCol;
     var dir = this.data.charDir;
     if (b.type === 'forward') {
-      if (dir === 0 && row > 0) row--;
-      else if (dir === 1 && col < GRID - 1) col++;
-      else if (dir === 2 && row < GRID - 1) row++;
-      else if (dir === 3 && col > 0) col--;
+      var nr = row, nc = col;
+      if (dir === 0 && row > 0) nr = row - 1;
+      else if (dir === 1 && col < GRID - 1) nc = col + 1;
+      else if (dir === 2 && row < GRID - 1) nr = row + 1;
+      else if (dir === 3 && col > 0) nc = col - 1;
+      if (!this.isBlocked(nr, nc)) { row = nr; col = nc; }
     } else if (b.type === 'back') {
-      if (dir === 0 && row < GRID - 1) row++;
-      else if (dir === 1 && col > 0) col--;
-      else if (dir === 2 && row > 0) row--;
-      else if (dir === 3 && col < GRID - 1) col++;
+      var br = row, bc = col;
+      if (dir === 0 && row < GRID - 1) br = row + 1;
+      else if (dir === 1 && col > 0) bc = col - 1;
+      else if (dir === 2 && row > 0) br = row - 1;
+      else if (dir === 3 && col < GRID - 1) bc = col + 1;
+      if (!this.isBlocked(br, bc)) { row = br; col = bc; }
     } else if (b.type === 'left') {
       dir = (dir + 3) % 4;
     } else if (b.type === 'right') {

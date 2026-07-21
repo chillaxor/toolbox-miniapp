@@ -1,0 +1,143 @@
+<view class="page">
+
+  <!-- ============ 首页：场景选择 ============ -->
+  <block wx:if="{{phase==='home'}}">
+    <view class="home-head">
+      <text class="home-title">🤝 友谊修复</text>
+      <text class="home-sub">和朋友吵架了？选对方式，和好如初～</text>
+      <view class="home-progress">已和解 {{homeProgress}}</view>
+    </view>
+    <view class="scene-list">
+      <view wx:for="{{scenesView}}" wx:key="id" class="scene-card" data-idx="{{index}}" bindtap="startScene">
+        <view class="scene-emoji">{{item.a.emoji}}{{item.b.emoji}}</view>
+        <view class="scene-info">
+          <text class="scene-name">{{item.title}}</text>
+          <text class="scene-stars">{{item.stars}}</text>
+        </view>
+        <view wx:if="{{item.repaired}}" class="scene-done">✓ 已和解</view>
+        <view wx:else class="scene-go">开始 ›</view>
+      </view>
+    </view>
+    <view class="btn ghost badge-btn" bindtap="showBadges">🏅 我的徽章</view>
+  </block>
+
+  <!-- ============ 第1幕：冲突发生 ============ -->
+  <block wx:elif="{{phase==='story'}}">
+    <view class="topbar">
+      <text class="case-title">{{cur.title}}</text>
+      <text class="case-stars">{{cur.stars}}</text>
+    </view>
+    <view class="scene-desc">{{cur.scene}}</view>
+    <view class="stage">
+      <view class="actors">
+        <view class="actor"><text class="actor-emoji">{{cur.a.emoji}}</text><text class="actor-name">{{cur.a.name}}</text></view>
+        <text class="actor-vs">VS</text>
+        <view class="actor"><text class="actor-emoji">{{cur.b.emoji}}</text><text class="actor-name">{{cur.b.name}}</text></view>
+      </view>
+      <view class="bubbles">
+        <view wx:for="{{cur.bubbles}}" wx:key="text" class="bubble {{item.who==='a'?'left':'right'}}">
+          <text>{{item.text}}</text>
+        </view>
+      </view>
+    </view>
+    <view class="hint-bar">🔍 先观察：他们现在是什么心情？</view>
+    <view class="btn primary big" bindtap="toMood">继续 →</view>
+    <view class="btn ghost" bindtap="goHome">← 返回</view>
+  </block>
+
+  <!-- ============ 第2幕：情绪识别 ============ -->
+  <block wx:elif="{{phase==='mood'}}">
+    <view class="topbar">
+      <text class="case-title">{{cur.title}}</text>
+      <text class="case-stars">{{cur.stars}}</text>
+    </view>
+    <view class="mood-q">
+      <text class="mood-prompt">{{cur.moods[moodIdx].prompt}}</text>
+    </view>
+    <view class="mood-opts">
+      <view wx:for="{{cur.moods[moodIdx].options}}" wx:key="label" class="mood-opt" data-oidx="{{index}}" bindtap="chooseMood">
+        <text class="mood-emoji">{{item.emoji}}</text>
+        <text class="mood-label">{{item.label}}</text>
+      </view>
+    </view>
+    <view wx:if="{{moodFeedback}}" class="mood-feedback {{moodRight ? 'ok' : 'wrong'}}">{{moodFeedback}}</view>
+    <view wx:if="{{moodRight}}" class="btn primary big" bindtap="continueMood">继续 →</view>
+    <view class="btn ghost" bindtap="goHome">← 返回</view>
+  </block>
+
+  <!-- ============ 第3幕：应对选择 ============ -->
+  <block wx:elif="{{phase==='choose'}}">
+    <view class="topbar">
+      <text class="case-title">{{cur.title}}</text>
+      <text class="case-stars">{{cur.stars}}</text>
+    </view>
+    <view class="choose-tip">如果你是 <text class="hl">{{cur.a.name}}</text>，你会怎么做？</view>
+
+    <view wx:if="{{!breathed}}" class="breath-btn" bindtap="doBreath">🌬️ 先深呼吸（让心情平静一点）</view>
+    <view wx:elif="{{showBreath}}" class="breath-playing">
+      <text class="breath-emoji">😮‍💨</text>
+      <text class="breath-text">呼… 吸… 好多了</text>
+    </view>
+    <view wx:else class="breath-done">🌬️ 已深呼吸</view>
+
+    <view class="choice-list">
+      <view wx:for="{{cur.choices}}" wx:key="key" class="choice-item choice-{{item.key}}" data-key="{{item.key}}" bindtap="chooseOption">
+        <text class="choice-key">{{item.key}}</text>
+        <text class="choice-text">{{item.text}}</text>
+      </view>
+    </view>
+    <view class="btn ghost" bindtap="goHome">← 返回</view>
+  </block>
+
+  <!-- ============ 第4幕：结果反馈 ============ -->
+  <block wx:elif="{{phase==='result'}}">
+    <view class="topbar">
+      <text class="case-title">{{cur.title}}</text>
+    </view>
+    <view class="result-card">
+      <view class="relation">
+        <text class="rel-emoji">{{tier.emoji}}</text>
+        <text class="rel-label">{{tier.label}}</text>
+        <view class="rel-bar">
+          <view class="rel-fill" style="width:{{relation}}%;"></view>
+        </view>
+        <text class="rel-num">关系值 {{relation}}/100</text>
+      </view>
+      <view class="result-text">{{result}}</view>
+      <view class="result-tip">{{tip}}</view>
+    </view>
+
+    <view wx:if="{{newBadges.length > 0}}" class="new-badges">
+      <text class="nb-title">🎉 解锁新徽章！</text>
+      <view class="nb-list">
+        <view wx:for="{{newBadges}}" wx:key="name" class="nb-item">
+          <text class="nb-emoji">{{item.emoji}}</text>
+          <text class="nb-name">{{item.name}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="actions">
+      <view class="btn primary big" bindtap="retry">⏪ 时光倒流（再试一次）</view>
+      <view class="btn ghost big" bindtap="nextScene">🔁 下一个场景</view>
+      <view class="btn ghost big" bindtap="goHome">🏠 回首页</view>
+    </view>
+  </block>
+
+  <!-- ============ 徽章墙 ============ -->
+  <view wx:if="{{showBadges}}" class="mask" bindtap="hideBadges">
+    <view class="badge-wall" catchtap="noop">
+      <text class="bw-title">🏅 我的徽章</text>
+      <view class="bw-grid">
+        <view wx:for="{{badgesView}}" wx:key="id" class="bw-item {{item.owned ? 'owned' : ''}}">
+          <text class="bw-emoji">{{item.emoji}}</text>
+          <text class="bw-name">{{item.name}}</text>
+          <text class="bw-desc">{{item.desc}}</text>
+          <text class="bw-flag {{item.owned ? '' : 'lock'}}">{{item.owned ? '已获得' : '未解锁'}}</text>
+        </view>
+      </view>
+      <view class="btn ghost" bindtap="hideBadges">关闭</view>
+    </view>
+  </view>
+
+</view>

@@ -55,6 +55,12 @@ Page({
   },
 
   onLoad: function () {
+    var __flags = wx.getStorageSync('feature_flags')
+      || (getApp() && getApp().globalData && getApp().globalData.featureFlags) || {};
+    if (!__flags.drawguess) {
+      wx.reLaunch({ url: '/pages/index/index' });
+      return;
+    }
     this._si = null;
     try {
       this._si = requirePlugin('WechatSI');

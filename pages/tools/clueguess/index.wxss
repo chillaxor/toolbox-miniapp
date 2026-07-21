@@ -169,14 +169,18 @@
   box-shadow: 0 8rpx 20rpx rgba(255, 206, 88, 0.38);
 }
 .clue-icon { font-size: 48rpx; line-height: 1; flex-shrink: 0; }
-.clue-icon.q { opacity: 0.5; }
+.clue-icon.q { font-size: 60rpx; opacity: 0.7; }
 .clue-body { display: flex; flex-direction: column; gap: 8rpx; min-width: 0; flex: 1; }
 .clue-text {
   font-size: 27rpx;
   color: #443d5c;
   line-height: 1.5;
 }
-.clue-text.dim { color: #a59cc0; }
+.clue-text.dim {
+  font-size: 31rpx;
+  font-weight: 700;
+  color: #7C5BE0;
+}
 .clue-tag {
   font-size: 21rpx;
   font-weight: 700;

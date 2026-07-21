@@ -1,4 +1,5 @@
 {
   "navigationBarTitleText": "头顶猜词",
-  "usingComponents": {}
+  "usingComponents": {},
+  "pageOrientation": "landscape"
 }
