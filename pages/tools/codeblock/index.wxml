@@ -1,0 +1,55 @@
+<view class="page">
+  <view class="topbar">
+    <text class="title">🤖 编程启蒙</text>
+    <view class="topbtns">
+      <view class="btn run {{running ? 'disabled' : ''}}" bindtap="run">▶ 运行</view>
+      <view class="btn reset" bindtap="resetChar">↺ 重置</view>
+      <view class="btn clear" bindtap="clearProgram">清空</view>
+    </view>
+  </view>
+
+  <view class="map-wrap">
+    <view class="map" style="width:{{mapSize}}rpx;height:{{mapSize}}rpx;background-size:{{cell}}rpx {{cell}}rpx;">
+      <view class="target" style="left:{{target.col * cell}}rpx;top:{{target.row * cell}}rpx;width:{{cell}}rpx;height:{{cell}}rpx;">⭐</view>
+      <view class="char" style="width:{{cell}}rpx;height:{{cell}}rpx;transform:translate({{charCol * cell}}rpx, {{charRow * cell}}rpx) rotate({{charDir * 90}}deg);">🤖</view>
+    </view>
+  </view>
+
+  <view class="palette">
+    <text class="sec-title">指令块 · 拖到下方程序区</text>
+    <view class="palette-row">
+      <view class="block" wx:for="{{blocks}}" wx:key="type"
+        style="background:{{item.color}};"
+        data-type="{{item.type}}"
+        catchtouchstart="onBlockTouchStart"
+        catchtouchmove="onBlockTouchMove"
+        catchtouchend="onBlockTouchEnd">
+        <text class="b-icon">{{item.icon}}</text>
+        <text class="b-label">{{item.label}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view id="programZone" class="program">
+    <text class="sec-title">我的程序（{{program.length}}）</text>
+    <view wx:if="{{program.length === 0}}" class="empty">把指令拖进来 · 重复块放要循环的指令后面 →</view>
+    <scroll-view wx:else scroll-y class="prog-list" scroll-into-view="{{scrollIntoId}}" scroll-with-animation>
+      <view class="prog-wrap">
+        <view class="prog-block" wx:for="{{program}}" wx:key="id" id="pb{{item.id}}"
+          style="border-color:{{item.color}};background:{{item.color}}1A;">
+        <text class="p-label">{{item.label}}</text>
+        <view wx:if="{{item.type === 'repeat'}}" class="times">
+          <text class="tbtn" catchtap="onDecTimes" data-index="{{index}}">−</text>
+          <text class="tnum">{{item.times}}</text>
+          <text class="tbtn" catchtap="onIncTimes" data-index="{{index}}">+</text>
+        </view>
+        <text class="p-del" catchtap="onRemoveBlock" data-index="{{index}}">×</text>
+      </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <view wx:if="{{dragging}}" class="drag-float" style="left:{{drag.x}}px;top:{{drag.y}}px;background:{{dragColor}};">
+    <text>{{dragLabel}}</text>
+  </view>
+</view>

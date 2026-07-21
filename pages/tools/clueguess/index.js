@@ -1,293 +1,268 @@
-const storage = require('../../utils/storage.js');
+const storage = require('../../../utils/storage.js');
+const BADGE_KEY = 'detective_badges';
 
-const BEST_KEY = 'clueguess_best';
+// 案件库：运行时优先从 gitee 拉取（wx.request 直连，不走云函数），拉到就用远程；
+// 拉不到则用本地 data/clueguess_cases.js（4 条）兜底。动脑玩法：线索需玩家自己判断排除谁。
+// 每个案件：生活化、无暴力；线索 eliminate 并集恰好排除"除凶手外的所有人"。
+const FALLBACK_CASES = require('../../../data/clueguess_cases.js');
+const CASES_URL = 'https://gitee.com/b64882/qian_data/raw/master/clueguess_cases.json';
+// gitee 的 raw 链接会 302 跳转到 raw.giteeusercontent.com，部分基础库不自动跟随跨域 302，
+// 用 jsDelivr 镜像（同一份 gitee 文件，无 302）做自动回退，提升 wx.request 成功率。
+const CASES_URL_MIRROR = 'https://cdn.jsdelivr.net/gh/b64882/qian_data@master/clueguess_cases.json';
+const CASES_CACHE_KEY = 'detective_cases_cache';
+
+// 计算每个嫌疑人的显示状态：out 已排除 / pick 指认中 / sel 推理选中 / in 在场
+function statesOf(suspects, remaining, accusing, picked) {
+  return suspects.map(function (_, i) {
+    if (remaining.indexOf(i) === -1) return 'out';
+    if (accusing) return 'pick';
+    if (picked.indexOf(i) >= 0) return 'sel';
+    return 'in';
+  });
+}
 
 Page({
   data: {
-    phase: 'setup',          // setup | play | result
-    rangeN: 50,
-    roundsEach: 3,
-    rangeSel: [20, 50, 100],
-    roundsSel: [2, 3, 5],
-
-    // 双人对战
-    players: [
-      { name: '玩家1', score: 0, details: [] },
-      { name: '玩家2', score: 0, details: [] }
-    ],
-    curPlayerIdx: 0,
-    roundSeq: 1,
-    totalRounds: 6,
-    roundLabel: '',
-
-    // 当前关
-    ans: 0,
-    cells: [],               // [{ num, candidate }]
-    clues: [],               // [{ text }]
-    usedClues: 0,
-    maxClues: 0,
-    canNextClue: true,
-    revealed: false,
-    win: false,
-    guessNum: 0,
-    answerNum: 0,
-    roundGain: 0,
-
-    // 结果
-    winnerText: '',
-    draw: false,
-    p0win: false,
-    p1win: false,
-    best: 0,
-
-    isFavorite: false
+    phase: 'intro',        // intro | investigate | win
+    ci: 0,
+    cases: FALLBACK_CASES,
+    cur: null,
+    foundCount: 0,
+    totalClues: 0,
+    remaining: [],
+    states: [],
+    accusing: false,
+    pendingClue: -1,       // 正在推理哪条线索（-1 表示没有）
+    picked: [],            // 推理时选中的嫌疑人
+    wrongHint: '',
+    badges: 0
   },
 
   onLoad: function () {
-    this.setData({ isFavorite: storage.isFavorite('clueguess') });
+    var badges = 0;
+    try { badges = Number(storage.get(BADGE_KEY) || 0); } catch (e) {}
+    this.setData({ badges: badges });
+    this.startCase();
+    this.loadCases();   // 优先从 gitee 拉取最新 100 题，本地文件兜底
   },
 
-  // ---------- setup ----------
-  selectRange: function (e) {
-    this.setData({ rangeN: Number(e.currentTarget.dataset.v) });
-  },
-  selectRounds: function (e) {
-    this.setData({ roundsEach: Number(e.currentTarget.dataset.v) });
-  },
-
-  onStart: function () {
-    var roundsEach = this.data.roundsEach;
-    this.setData({
-      players: [
-        { name: '玩家1', score: 0, details: [] },
-        { name: '玩家2', score: 0, details: [] }
-      ],
-      curPlayerIdx: 0,
-      roundSeq: 1,
-      totalRounds: roundsEach * 2,
-      phase: 'play'
-    });
-    this.startRound();
-  },
-
-  // ---------- 出题 + 线索生成 ----------
-  startRound: function () {
-    var N = this.data.rangeN;
-    var ans = randInt(N);                 // 1..N 谜底
-    var clues = buildClues(ans, N);       // 由粗到细的线索序列（含 test 函数）
-    // 预计算每条线索后的候选快照，用于逐步缩圈
-    var cur = [];
-    for (var i = 1; i <= N; i++) cur.push(i);
-    var snapshots = [];
-    for (var c = 0; c < clues.length; c++) {
-      var testFn = clues[c].test;
-      cur = cur.filter(function (x) { return testFn(x); });
-      snapshots.push(cur.slice());
-    }
-    // 初始全亮
-    var cells = [];
-    for (var k = 1; k <= N; k++) cells.push({ num: k, candidate: true });
-
-    this._clues = clues;
-    this._snapshots = snapshots;
-
-    var idx = this.data.curPlayerIdx;
-    var label = '第 ' + this.data.roundSeq + ' / ' + this.data.totalRounds + ' 关 · ' + (idx === 0 ? '玩家1' : '玩家2');
-    this.setData({
-      ans: ans,
-      cells: cells,
-      clues: [],
-      usedClues: 0,
-      maxClues: clues.length,
-      canNextClue: clues.length > 0,
-      revealed: false,
-      win: false,
-      guessNum: 0,
-      answerNum: ans,
-      roundGain: 0,
-      roundLabel: label
-    });
-  },
-
-  // ---------- 逐步解锁线索（缩圈） ----------
-  nextClue: function () {
-    if (this.data.revealed) return;
-    if (this.data.usedClues >= this.data.maxClues) return;
-    var idx = this.data.usedClues;
-    var clue = this._clues[idx];
-    var snap = this._snapshots[idx];
-    var keep = {};
-    for (var i = 0; i < snap.length; i++) keep[snap[i]] = true;
-    var cells = this.data.cells.map(function (cell) {
-      return { num: cell.num, candidate: !!keep[cell.num] };
-    });
-    var clues = this.data.clues.concat([{ text: (idx + 1) + '. ' + clue.text }]);
-    var nextUsed = idx + 1;
-    this.setData({
-      cells: cells,
-      clues: clues,
-      usedClues: nextUsed,
-      canNextClue: nextUsed < this.data.maxClues
-    });
-  },
-
-  // ---------- 点亮的编号 = 提交猜测 ----------
-  onCellTap: function (e) {
-    if (this.data.revealed) return;
-    var num = Number(e.currentTarget.dataset.num);
-    var cell = this.data.cells[num - 1];
-    if (!cell.candidate) return;          // 已灰的不能选
-    var K = this.data.usedClues;
-    var win = (num === this.data.ans);
-    var gain = win ? Math.max(100, 1000 - K * 120) : 0;
-
-    var players = this.data.players;
-    var p = players[this.data.curPlayerIdx];
-    p.details.push({ win: win, clues: K, gain: gain });
-    p.score += gain;
-    players[this.data.curPlayerIdx] = p;
-
-    this.setData({
-      players: players,
-      revealed: true,
-      canNextClue: false,
-      win: win,
-      guessNum: num,
-      roundGain: gain
-    });
-    wx.vibrateShort({ type: win ? 'light' : 'heavy' });
-  },
-
-  // ---------- 下一关 / 结束 ----------
-  nextRound: function () {
-    var roundsEach = this.data.roundsEach;
-    var curPlayerIdx = this.data.curPlayerIdx;
-    var curDone = this.data.players[curPlayerIdx].details.length;
-    if (curDone >= roundsEach) {
-      curPlayerIdx = 1 - curPlayerIdx;    // 换人
-    }
-    var totalDone = this.data.players[0].details.length + this.data.players[1].details.length;
-    if (totalDone >= roundsEach * 2) {
-      // 结束
-      var p0 = this.data.players[0].score;
-      var p1 = this.data.players[1].score;
-      var draw = (p0 === p1);
-      var p0win = (p0 > p1);
-      var winnerText = draw ? '🤝 平局！' : (p0win ? '🏆 玩家1 获胜！' : '🏆 玩家2 获胜！');
-      var best = storage.getSync(BEST_KEY, 0);
-      var top = Math.max(p0, p1);
-      if (top > best) { storage.setSync(BEST_KEY, top); best = top; }
-      storage.addHistory({ toolId: 'clueguess', toolName: '线索缩圈猜编号', category: 'fun', summary: '双人对战 ' + p0 + ':' + p1 });
-      this.setData({ phase: 'result', draw: draw, p0win: p0win, winnerText: winnerText, best: best });
+  // 从 gitee 拉取案件库（wx.request 直连，不走云函数）；
+  // 主用 gitee 链接，失败自动回退 jsDelivr 镜像；两者都失败则保持本地兜底，不影响游戏。
+  loadCases: function () {
+    var self = this;
+    var cached = null;
+    try { cached = wx.getStorageSync(CASES_CACHE_KEY); } catch (e) {}
+    if (cached && Array.isArray(cached) && cached.length) {
+      self.applyCases(cached);
       return;
     }
-    this.setData({ curPlayerIdx: curPlayerIdx, roundSeq: totalDone + 1, phase: 'play' });
-    this.startRound();
+    var urls = [CASES_URL, CASES_URL_MIRROR];
+    var tryIdx = 0;
+    function tryNext() {
+      if (tryIdx >= urls.length) return; // 全部失败，保持本地兜底案件
+      var url = urls[tryIdx++];
+      wx.request({
+        url: url,
+        method: 'GET',
+        timeout: 8000,
+        success: function (res) {
+          if (res.statusCode !== 200) { tryNext(); return; }
+          var data = res.data;
+          if (typeof data === 'string') {
+            try { data = JSON.parse(data); } catch (err) { tryNext(); return; }
+          }
+          if (data && Array.isArray(data) && data.length) {
+            try { wx.setStorageSync(CASES_CACHE_KEY, data); } catch (e) {}
+            self.applyCases(data);
+          } else {
+            tryNext();
+          }
+        },
+        fail: function () { tryNext(); }
+      });
+    }
+    tryNext();
   },
 
-  // ---------- result ----------
-  onBackSetup: function () {
-    this.setData({ phase: 'setup' });
+  // 用新案件库替换；若还在开场介绍，立即以新数据重开当前案件
+  applyCases: function (cases) {
+    this.setData({ cases: cases });
+    if (this.data.phase === 'intro') this.startCase();
   },
-  replay: function () {
-    var first = this.data.curPlayerIdx === 0 ? 1 : 0;   // 交换先手
-    this.setData({
-      players: [
-        { name: '玩家1', score: 0, details: [] },
-        { name: '玩家2', score: 0, details: [] }
-      ],
-      curPlayerIdx: first,
-      roundSeq: 1,
-      totalRounds: this.data.roundsEach * 2,
-      phase: 'play'
-    });
-    this.startRound();
-  },
-  toggleFavorite: function () {
-    var f = storage.toggleFavorite('clueguess');
-    this.setData({ isFavorite: f });
-  },
-  onShareAppMessage: function () {
-    var p = this.data.players;
-    return {
-      title: '线索缩圈猜编号：' + p[0].name + ' ' + p[0].score + ' : ' + p[1].score + ' ' + p[1].name,
-      path: '/pages/tools/clueguess/index'
+
+  startCase: function () {
+    var c = this.data.cases[this.data.ci];
+    var cur = {
+      title: c.title,
+      scene: c.scene,
+      suspects: c.suspects,
+      culprit: c.culprit,
+      clues: c.clues.map(function (cl) {
+        return { icon: cl.icon, text: cl.text, eliminate: cl.eliminate, found: false, resolved: false };
+      })
     };
+    var remaining = cur.suspects.map(function (_, i) { return i; });
+    this.setData({
+      cur: cur,
+      phase: 'intro',
+      foundCount: 0,
+      totalClues: cur.clues.length,
+      remaining: remaining,
+      states: statesOf(cur.suspects, remaining, false, []),
+      accusing: false,
+      pendingClue: -1,
+      picked: [],
+      wrongHint: ''
+    });
+  },
+
+  beginInvestigate: function () {
+    this.setData({ phase: 'investigate' });
+  },
+
+  // 点线索：翻开看内容，并进入"推理排除谁"状态
+  tapClue: function (e) {
+    if (this.data.phase !== 'investigate') return;
+    var idx = Number(e.currentTarget.dataset.idx);
+    var cur = this.data.cur;
+    var clue = cur.clues[idx];
+    if (clue.resolved) return; // 已推理完成，不再处理
+    // 若这条线索要排除的人已被其它线索排除了，直接标记完成，避免"选谁都不对的死局"
+    var rem = this.data.remaining;
+    var alreadyOut = clue.eliminate.every(function (i) { return rem.indexOf(i) === -1; });
+    if (alreadyOut) {
+      var clues = cur.clues.slice();
+      clues[idx] = Object.assign({}, clues[idx], { found: true, resolved: true });
+      var resolvedCount = clues.filter(function (c) { return c.resolved; }).length;
+      this.setData({
+        cur: Object.assign({}, cur, { clues: clues }),
+        foundCount: resolvedCount,
+        wrongHint: '🔍 这条线索的人已经被其它线索排除了！'
+      });
+      return;
+    }
+    var clues2 = cur.clues.slice();
+    clues2[idx] = Object.assign({}, clues2[idx], { found: true });
+    this.setData({
+      cur: Object.assign({}, cur, { clues: clues2 }),
+      pendingClue: idx,
+      picked: [],
+      wrongHint: ''
+    });
+  },
+
+  // 点嫌疑人：推理选中 / 指认，二选一取决于当前模式
+  tapSuspect: function (e) {
+    // —— 指认模式 ——
+    if (this.data.accusing) {
+      var idx = Number(e.currentTarget.dataset.idx);
+      if (this.data.remaining.indexOf(idx) === -1) return; // 已排除的不能指认
+      var cur = this.data.cur;
+      if (idx === cur.culprit) {
+        var badges = this.data.badges + 1;
+        try { storage.set(BADGE_KEY, badges); } catch (err) {}
+        this.setData({ accusing: false, phase: 'win', badges: badges, picked: [], pendingClue: -1 });
+      } else {
+        var undone = cur.clues.filter(function (cl) { return !cl.resolved; }).length;
+        var hint = undone > 0
+          ? '再想想～还有 ' + undone + ' 条线索没推理完哦'
+          : '再想想，对比一下每条线索吧';
+        this.setData({
+          accusing: false,
+          wrongHint: hint,
+          states: statesOf(cur.suspects, this.data.remaining, false, []),
+          picked: []
+        });
+      }
+      return;
+    }
+    // —— 推理模式：选中/取消要排除的嫌疑人 ——
+    if (this.data.pendingClue < 0) return;
+    var sidx = Number(e.currentTarget.dataset.idx);
+    if (this.data.remaining.indexOf(sidx) === -1) return; // 已排除的不能选
+    var picked = this.data.picked.slice();
+    var p = picked.indexOf(sidx);
+    if (p >= 0) picked.splice(p, 1); else picked.push(sidx);
+    this.setData({
+      picked: picked,
+      wrongHint: '',
+      states: statesOf(this.data.cur.suspects, this.data.remaining, false, picked)
+    });
+  },
+
+  // 确认对某条线索的排除判断
+  confirmEliminate: function () {
+    var pc = this.data.pendingClue;
+    if (pc < 0) return;
+    var cur = this.data.cur;
+    var clue = cur.clues[pc];
+    var remaining = this.data.remaining;
+    var target = clue.eliminate.filter(function (i) { return remaining.indexOf(i) >= 0; });
+    var picked = this.data.picked.slice().sort(function (a, b) { return a - b; });
+    var tgt = target.slice().sort(function (a, b) { return a - b; });
+    var same = picked.length === tgt.length &&
+      picked.every(function (v, i) { return v === tgt[i]; });
+    if (same) {
+      var newRemaining = remaining.filter(function (i) { return target.indexOf(i) === -1; });
+      var clues = cur.clues.slice();
+      clues[pc] = Object.assign({}, clues[pc], { resolved: true });
+      var resolvedCount = clues.filter(function (c) { return c.resolved; }).length;
+      var allDone = resolvedCount === clues.length;
+      this.setData({
+        cur: Object.assign({}, cur, { clues: clues }),
+        remaining: newRemaining,
+        states: statesOf(cur.suspects, newRemaining, false, []),
+        pendingClue: -1,
+        picked: [],
+        foundCount: resolvedCount,
+        wrongHint: allDone ? '🎉 线索都用完啦，剩下的就是真凶！点"指认凶手"' : '👍 推理正确！'
+      });
+    } else {
+      var hint = this.data.picked.length === 0
+        ? '点一点这条线索能排除的小伙伴吧～'
+        : '再看看线索，还有谁符合呢？';
+      this.setData({
+        wrongHint: hint,
+        picked: [],
+        states: statesOf(cur.suspects, remaining, false, [])
+      });
+    }
+  },
+
+  // 暂时不想推理这条线索
+  closeReasoning: function () {
+    this.setData({
+      pendingClue: -1,
+      picked: [],
+      wrongHint: '',
+      states: statesOf(this.data.cur.suspects, this.data.remaining, false, [])
+    });
+  },
+
+  accuse: function () {
+    if (this.data.phase !== 'investigate') return;
+    this.setData({
+      accusing: true,
+      pendingClue: -1,
+      picked: [],
+      wrongHint: '',
+      states: statesOf(this.data.cur.suspects, this.data.remaining, true, [])
+    });
+  },
+
+  closeAccuse: function () {
+    this.setData({
+      accusing: false,
+      states: statesOf(this.data.cur.suspects, this.data.remaining, false, [])
+    });
+  },
+
+  nextCase: function () {
+    var ci = (this.data.ci + 1) % this.data.cases.length;
+    this.setData({ ci: ci }, this.startCase);
+  },
+
+  resetCase: function () {
+    this.startCase();
   }
 });
-
-// ============ 工具函数 ============
-function randInt(n) { return Math.floor(Math.random() * n) + 1; }
-
-// 由粗到细生成线索，保证 ans 始终在候选内，且大致层层减半
-function buildClues(ans, N) {
-  var candidates = [];
-  for (var i = 1; i <= N; i++) candidates.push(i);
-  var clues = [];
-  var guard = 0;
-  while (candidates.length > 3 && guard < 12) {
-    guard++;
-    var c = pickClue(candidates, ans);
-    if (!c) break;
-    clues.push(c);
-    var testFn = c.test;
-    candidates = candidates.filter(function (x) { return testFn(x); });
-  }
-  return clues;
-}
-
-function pickClue(cands, ans) {
-  // 1) 二分切（约减半，且保留 ans 所在侧）
-  if (cands.length >= 4) {
-    var sorted = cands.slice().sort(function (a, b) { return a - b; });
-    var mid = sorted[Math.floor(sorted.length / 2)];
-    if (ans > mid) {
-      return { text: '编号 > ' + mid, test: function (x) { return x > mid; } };
-    }
-    return { text: '编号 ≤ ' + mid, test: function (x) { return x <= mid; } };
-  }
-  // 2) 奇偶
-  var odd = cands.filter(function (x) { return x % 2 === 1; });
-  var even = cands.filter(function (x) { return x % 2 === 0; });
-  if (odd.length > 0 && even.length > 0 && odd.length !== cands.length && even.length !== cands.length) {
-    if (ans % 2 === 0) {
-      return { text: '编号是偶数', test: function (x) { return x % 2 === 0; } };
-    }
-    return { text: '编号是奇数', test: function (x) { return x % 2 === 1; } };
-  }
-  // 3) 整除余数
-  var ds = [3, 4, 5];
-  for (var i = 0; i < ds.length; i++) {
-    var d = ds[i];
-    var r = ans % d;
-    var side = cands.filter(function (x) { return x % d === r; });
-    if (side.length > 0 && side.length < cands.length) {
-      return {
-        text: r === 0 ? ('编号能被 ' + d + ' 整除') : ('编号除以 ' + d + ' 余 ' + r),
-        test: function (x) { return x % d === r; }
-      };
-    }
-  }
-  // 4) 位数
-  var isSingle = ans < 10;
-  var singleSide = cands.filter(function (x) { return x < 10; });
-  if (singleSide.length > 0 && singleSide.length < cands.length) {
-    return { text: isSingle ? '编号是个位数' : '编号是两位数', test: function (x) { return isSingle ? x < 10 : x >= 10; } };
-  }
-  // 5) 数字和
-  var sum = digitSum(ans);
-  var sumSide = cands.filter(function (x) { return digitSum(x) === sum; });
-  if (sumSide.length > 0 && sumSide.length < cands.length) {
-    return { text: '各位数字之和等于 ' + sum, test: function (x) { return digitSum(x) === sum; } };
-  }
-  // 6) 首位
-  var head = firstDigit(ans);
-  var headSide = cands.filter(function (x) { return firstDigit(x) === head; });
-  if (headSide.length > 0 && headSide.length < cands.length) {
-    return { text: '编号的首位是 ' + head, test: function (x) { return firstDigit(x) === head; } };
-  }
-  return null;
-}
-
-function digitSum(n) { var s = 0; while (n > 0) { s += n % 10; n = Math.floor(n / 10); } return s; }
-function firstDigit(n) { while (n >= 10) n = Math.floor(n / 10); return n; }

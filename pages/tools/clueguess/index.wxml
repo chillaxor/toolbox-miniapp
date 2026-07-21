@@ -1,88 +1,115 @@
 <view class="page">
-  <view class="fav" bindtap="toggleFavorite">{{isFavorite ? '★ 已收藏' : '☆ 收藏'}}</view>
 
-  <!-- ============ SETUP ============ -->
-  <block wx:if="{{phase==='setup'}}">
-    <view class="title">🔎 线索缩圈猜编号</view>
-    <view class="sub">系统悄悄选一个编号，线索层层缩小，看谁用最少线索猜中</view>
-
-    <view class="sec-label">编号范围</view>
-    <view class="chip-row">
-      <view wx:for="{{rangeSel}}" wx:key="*this" class="chip {{rangeN===item?'chip-on':''}}" bindtap="selectRange" data-v="{{item}}">{{item}} 个</view>
+  <!-- ============ 案件简介 ============ -->
+  <block wx:if="{{phase==='intro'}}">
+    <view class="intro">
+      <view class="intro-badge">🕵️ 小小侦探</view>
+      <text class="intro-title">{{cur.title}}</text>
+      <view class="case-card">
+        <text class="case-scene">{{cur.scene}}</text>
+      </view>
+      <view class="suspect-preview">
+        <view wx:for="{{cur.suspects}}" wx:key="name" class="sp-item">
+          <text class="sp-emoji">{{item.emoji}}</text>
+          <text class="sp-name">{{item.name}}</text>
+        </view>
+      </view>
+      <view class="intro-tip">🔍 看线索 · 推理谁被排除 · 剩下的就是真凶</view>
+      <view class="btn primary big" bindtap="beginInvestigate">开始侦查</view>
     </view>
-
-    <view class="sec-label">每人关卡数</view>
-    <view class="chip-row">
-      <view wx:for="{{roundsSel}}" wx:key="*this" class="chip {{roundsEach===item?'chip-on':''}}" bindtap="selectRounds" data-v="{{item}}">{{item}} 关</view>
-    </view>
-
-    <view class="btn-primary" bindtap="onStart">开始对战 🎮</view>
-    <view class="tip">双人对战：轮流各玩 {{roundsEach}} 关，各自独立谜底，比谁总分高</view>
   </block>
 
-  <!-- ============ PLAY ============ -->
-  <block wx:if="{{phase==='play'}}">
+  <!-- ============ 侦查 ============ -->
+  <block wx:elif="{{phase==='investigate'}}">
     <view class="topbar">
-      <view class="round-label">{{roundLabel}}</view>
-      <view class="score-now">{{curPlayerIdx===0 ? players[0].name : players[1].name}} 当前：{{curPlayerIdx===0 ? players[0].score : players[1].score}} 分</view>
-    </view>
-
-    <view class="clue-box">
-      <view wx:if="{{clues.length===0}}" class="clue-empty">点「下一条线索」开始缩小范围</view>
-      <view wx:for="{{clues}}" wx:key="text" class="clue-item">{{item.text}}</view>
-    </view>
-
-    <view class="grid">
-      <view wx:for="{{cells}}" wx:key="num"
-            class="cell {{item.candidate ? 'on' : 'off'}} {{revealed && item.num===answerNum ? 'right' : ''}} {{revealed && !win && item.num===guessNum ? 'wrong' : ''}}"
-            bindtap="onCellTap" data-num="{{item.num}}">{{item.num}}</view>
-    </view>
-
-    <view class="play-tip">亮着的编号 = 还可能的答案，点它提交你的猜测</view>
-
-    <block wx:if="{{!revealed}}">
-      <view class="btn-primary {{canNextClue ? '' : 'btn-disabled'}}" bindtap="nextClue">下一条线索（{{usedClues}}/{{maxClues}}）</view>
-    </block>
-
-    <block wx:if="{{revealed}}">
-      <view class="reveal {{win ? 'reveal-win' : 'reveal-lose'}}">
-        <view class="reveal-title">{{win ? '🎉 猜中啦！' : '💥 猜错了'}}</view>
-        <view class="reveal-sub">{{win ? ('+' + roundGain + ' 分（用了 ' + usedClues + ' 条线索）') : ('答案是 ' + answerNum + '，本关 0 分')}}</view>
+      <view class="topbar-left">
+        <text class="topbar-emoji">🕵️</text>
+        <text class="case-title">{{cur.title}}</text>
       </view>
-      <view class="btn-primary" bindtap="nextRound">{{roundSeq>=totalRounds ? '查看战绩' : '下一关 →'}}</view>
-    </block>
+      <text class="badge-count">🎖️ {{badges}}</text>
+    </view>
+
+    <view class="case-card scene-card">
+      <text class="case-scene">{{cur.scene}}</text>
+    </view>
+
+    <view class="section">
+      <view class="sec-head">
+        <text class="sec-title">🔎 现场线索</text>
+        <text class="sec-prog">已推理 {{foundCount}}/{{totalClues}}</text>
+      </view>
+      <view class="clue-grid">
+        <view wx:for="{{cur.clues}}" wx:key="text"
+          class="clue-card {{item.found ? 'found' : ''}} {{item.resolved ? 'done' : ''}} {{pendingClue===index ? 'active' : ''}}"
+          data-idx="{{index}}" bindtap="tapClue">
+          <block wx:if="{{item.found}}">
+            <text class="clue-icon">{{item.icon}}</text>
+            <view class="clue-body">
+              <text class="clue-text">{{item.text}}</text>
+              <text wx:if="{{item.resolved}}" class="clue-tag ok">✓ 已推理</text>
+              <text wx:elif="{{pendingClue===index}}" class="clue-tag thinking">🤔 在想排除谁…</text>
+              <text wx:else class="clue-tag todo">点我推理排除谁</text>
+            </view>
+          </block>
+          <block wx:else>
+            <text class="clue-icon q">❓</text>
+            <text class="clue-text dim">点击搜查</text>
+          </block>
+        </view>
+      </view>
+    </view>
+
+    <view class="section">
+      <view class="sec-head">
+        <text class="sec-title">🎯 嫌疑圈</text>
+        <text class="sec-prog">剩余 {{remaining.length}} 人</text>
+      </view>
+
+      <view wx:if="{{pendingClue>=0}}" class="reason-bar">
+        <text class="reason-tip">这条线索能排除谁？点对应的小伙伴</text>
+        <view class="reason-actions">
+          <view class="btn primary" bindtap="confirmEliminate">就这些 →</view>
+          <view class="btn ghost" bindtap="closeReasoning">先跳过</view>
+        </view>
+      </view>
+
+      <view class="suspect-grid">
+        <view wx:for="{{cur.suspects}}" wx:key="name"
+          class="suspect {{states[index]}}"
+          data-idx="{{index}}" bindtap="tapSuspect">
+          <text class="s-emoji">{{item.emoji}}</text>
+          <text class="s-name">{{item.name}}</text>
+          <text wx:if="{{states[index]==='out'}}" class="s-cross">❌</text>
+          <text wx:if="{{states[index]==='pick'}}" class="s-pick">指认</text>
+          <text wx:if="{{states[index]==='sel'}}" class="s-sel">✓</text>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{wrongHint}}" class="hint">{{wrongHint}}</view>
+
+    <view class="actions">
+      <view wx:if="{{!accusing}}" class="btn primary big" bindtap="accuse">👉 指认凶手</view>
+      <view wx:else class="btn ghost big" bindtap="closeAccuse">← 返回侦查</view>
+      <view class="actions-row">
+        <view class="btn ghost" bindtap="resetCase">↺ 重新侦查</view>
+        <view class="btn ghost" bindtap="nextCase">🔁 换一案</view>
+      </view>
+    </view>
   </block>
 
-  <!-- ============ RESULT ============ -->
-  <block wx:if="{{phase==='result'}}">
-    <view class="title">🏁 对战结果</view>
-    <view class="vs">
-      <view class="vs-side {{p0win ? 'win' : ''}}">
-        <view class="vs-name">{{players[0].name}}</view>
-        <view class="vs-score">{{players[0].score}}</view>
+  <!-- ============ 破案 ============ -->
+  <block wx:elif="{{phase==='win'}}">
+    <view class="win">
+      <view class="win-medal">🎖️</view>
+      <text class="win-title">破案成功！</text>
+      <view class="case-card win-card">
+        <text class="win-sub">真正的"凶手"是 {{cur.suspects[cur.culprit].emoji}} {{cur.suspects[cur.culprit].name}}</text>
       </view>
-      <view class="vs-mid">VS</view>
-      <view class="vs-side {{p1win ? 'win' : ''}}">
-        <view class="vs-name">{{players[1].name}}</view>
-        <view class="vs-score">{{players[1].score}}</view>
-      </view>
+      <text class="win-badges">你已获得 {{badges}} 枚侦探徽章</text>
+      <view class="btn primary big" bindtap="nextCase">🔁 下一个案件</view>
+      <view class="btn ghost big" bindtap="resetCase">↺ 再查一次</view>
     </view>
-
-    <view class="winner">{{winnerText}}</view>
-    <view class="best-line">历史最高总分：{{best}}</view>
-
-    <view class="detail">
-      <view class="detail-row detail-head">
-        <view>关卡</view><view>{{players[0].name}}</view><view>{{players[1].name}}</view>
-      </view>
-      <view wx:for="{{players[0].details}}" wx:key="index" class="detail-row">
-        <view>第 {{index+1}} 关</view>
-        <view class="{{item.win ? 'ok' : 'no'}}">{{item.win ? ('+' + item.gain + ' / ' + item.clues + '条') : '✗'}}</view>
-        <view class="{{players[1].details[index].win ? 'ok' : 'no'}}">{{players[1].details[index].win ? ('+' + players[1].details[index].gain + ' / ' + players[1].details[index].clues + '条') : '✗'}}</view>
-      </view>
-    </view>
-
-    <view class="btn-primary" bindtap="replay">再来一局（交换先手）</view>
-    <view class="btn-ghost" bindtap="onBackSetup">返回设置</view>
   </block>
+
 </view>

@@ -1,6 +1,6 @@
-var storage = require('../../utils/storage.js');
+var storage = require('../../../utils/storage.js');
 // 复用「多图编号抢答画猜」的同一份词库（本地副本，纯 word 数组）
-var WORDS = require('../../data/drawguess_words.js');
+var WORDS = require('../../../data/drawguess_words.js');
 
 var FLIP_THRESHOLD = 55;   // 相对起始姿态的翻动角度阈值（度）
 var FLIP_REARM = 25;       // 回到该偏差内才允许再次触发

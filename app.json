@@ -128,7 +128,8 @@
     "pages/tools/drawguess/index",
     "pages/tools/guessword/index",
     "pages/tools/clueguess/index",
-    "pages/tools/pipeconnect/index"
+    "pages/tools/pipeconnect/index",
+    "pages/tools/codeblock/index"
   ],
   "window": {
     "backgroundTextStyle": "light",
