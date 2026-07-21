@@ -101,7 +101,7 @@
   <!-- RESULT 结算 -->
   <block wx:if="{{phase==='result'}}">
     <view class="board" style="gap:{{gap}}rpx;">
-      <view wx:for="{{items}}" wx:key="index" class="item {{item.state}}">
+      <view wx:for="{{items}}" wx:key="index" class="item {{item.state}}" style="width:{{cellSize}}rpx;height:{{cellSize}}rpx;">
         <template is="wpItem" data="{{item, circleSize, starSize, emojiSize}}"/>
         <view wx:if="{{item.state==='safe'}}" class="badge badge-safe" style="min-width:{{badgeSize}}rpx;height:{{badgeSize}}rpx;font-size:{{badgeFont}}rpx;top:-{{badgeOff}}rpx;right:-{{badgeOff}}rpx;">✅</view>
         <view wx:if="{{item.state==='trap'}}" class="badge badge-poison" style="min-width:{{badgeSize}}rpx;height:{{badgeSize}}rpx;font-size:{{badgeFont}}rpx;top:-{{badgeOff}}rpx;right:-{{badgeOff}}rpx;">💥</view>

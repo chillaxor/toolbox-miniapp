@@ -58,7 +58,7 @@
 
     <block wx:if="{{quizState==='answer'}}">
       <view class="big-num">{{currentNum}}</view>
-      <view class="phase-tip">{{revealed?('答案：'+answerWord):'谁先抢答正确？点对应的玩家'}}</view>
+      <view class="phase-tip">{{revealed?('答案：'+answerWord+' · 点「下一题」继续，或点玩家补加分'):'点抢答正确的玩家 → 弹出答案核对后确认加分'}}</view>
 
       <view class="player-btns">
         <view wx:for="{{players}}" wx:key="name" class="pbtn" style="background:{{item.color}}" bindtap="tapPlayer" data-idx="{{index}}">

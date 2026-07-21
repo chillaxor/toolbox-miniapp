@@ -43,6 +43,7 @@ Page({
     quizState: 'pick',         // pick | answer
     currentNum: 0,
     revealed: false,
+    awarded: false,            // 本题是否已结算（加过分），用于锁定再加分
     numCells: [],              // [{n, used}]
     answerWord: '',
     floatText: '',             // 浮动 +分（数字字符串）
@@ -175,6 +176,7 @@ Page({
       quizState: 'pick',
       currentNum: 0,
       revealed: false,
+      awarded: false,
       answerWord: ''
     });
   },
@@ -254,44 +256,60 @@ Page({
       quizState: 'answer',
       currentNum: n,
       revealed: false,
+      awarded: false,
       answerWord: round.word
     });
   },
 
-  // 主持人点对应玩家 = 该玩家抢答正确
+  // 主持人点对应玩家 = 该玩家抢答（需核对答案后确认是否正确）
   tapPlayer: function (e) {
-    if (this.data.quizState !== 'answer' || this.data.revealed) return;
+    if (this.data.quizState !== 'answer' || this.data.awarded) return;
     var idx = Number(e.currentTarget.dataset.idx);
-    if (this._comboPlayer === idx) {
-      this._comboCount += 1;
-    } else {
-      this._comboPlayer = idx;
-      this._comboCount = 1;
-    }
-    var bonus = 100 * this._comboCount; // 连击：100/200/300...
-    var players = this.data.players.slice();
-    players[idx] = Object.assign({}, players[idx], { score: players[idx].score + bonus });
-    var numCells = this.data.numCells.slice();
-    numCells[this.data.currentNum - 1].used = true;
-    this.setData({
-      players: players,
-      numCells: numCells,
-      revealed: true,
-      floatText: String(bonus),
-      floatPlayer: idx
-    });
-    wx.vibrateShort({ type: 'light' });
     var self = this;
-    setTimeout(function () { self.setData({ floatText: '', floatPlayer: -1 }); }, 900);
+    var name = this.data.players[idx].name;
+    // 弹确认框，框内直接显示正确答案，主持人核对后再决定是否加分
+    wx.showModal({
+      title: name + ' 答对了吗？',
+      content: '正确答案：' + this.data.answerWord,
+      confirmText: '答对 ✓',
+      cancelText: '答错',
+      success: function (res) {
+        // 答错 / 取消：不加分，本题保持可继续（可换人或揭晓答案）
+        if (!res.confirm) return;
+        // 二次守卫：防止弹窗期间状态已变化
+        if (self.data.quizState !== 'answer' || self.data.awarded) return;
+        if (self._comboPlayer === idx) {
+          self._comboCount += 1;
+        } else {
+          self._comboPlayer = idx;
+          self._comboCount = 1;
+        }
+        var bonus = 100 * self._comboCount; // 连击：100/200/300...
+        var players = self.data.players.slice();
+        players[idx] = Object.assign({}, players[idx], { score: players[idx].score + bonus });
+        var numCells = self.data.numCells.slice();
+        numCells[self.data.currentNum - 1].used = true;
+        self.setData({
+          players: players,
+          numCells: numCells,
+          revealed: true,
+          awarded: true,
+          floatText: String(bonus),
+          floatPlayer: idx
+        });
+        wx.vibrateShort({ type: 'light' });
+        setTimeout(function () { self.setData({ floatText: '', floatPlayer: -1 }); }, 900);
+      }
+    });
   },
 
   noOne: function () {
-    if (this.data.quizState !== 'answer' || this.data.revealed) return;
+    if (this.data.quizState !== 'answer' || this.data.awarded) return;
     this._comboPlayer = -1;
     this._comboCount = 0;
     var numCells = this.data.numCells.slice();
     numCells[this.data.currentNum - 1].used = true;
-    this.setData({ numCells: numCells, revealed: true });
+    this.setData({ numCells: numCells, revealed: true, awarded: true });
   },
 
   revealOnly: function () {
@@ -300,7 +318,7 @@ Page({
   },
 
   nextQuestion: function () {
-    this.setData({ quizState: 'pick', currentNum: 0, revealed: false, answerWord: '' });
+    this.setData({ quizState: 'pick', currentNum: 0, revealed: false, awarded: false, answerWord: '' });
   },
 
   endGame: function () {
@@ -343,6 +361,7 @@ Page({
       quizState: 'pick',
       currentNum: 0,
       revealed: false,
+      awarded: false,
       answerWord: ''
     });
   },

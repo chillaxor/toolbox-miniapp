@@ -53,11 +53,6 @@
   opacity: 0.95;
   margin: 10rpx 0;
 }
-.best {
-  margin-top: 36rpx;
-  font-size: 30rpx;
-  opacity: 0.9;
-}
 
 /* 主按钮 */
 .btn-primary {
@@ -91,7 +86,7 @@
 .hud {
   width: 100%;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   margin-top: 20rpx;
   padding: 18rpx 10rpx;
   box-sizing: border-box;
@@ -100,7 +95,7 @@
   font-size: 26rpx;
   font-weight: 600;
   background: rgba(255,255,255,0.14);
-  padding: 10rpx 18rpx;
+  padding: 10rpx 24rpx;
   border-radius: 20rpx;
 }
 
@@ -120,10 +115,6 @@
   position: relative;
   box-shadow: 0 20rpx 50rpx rgba(0,0,0,0.3);
 }
-.cmd-card.cmd-hold {
-  background: linear-gradient(160deg, #ffd9d9, #ffb3b3);
-  color: #b71c1c;
-}
 .cmd-emoji { font-size: 150rpx; line-height: 1; }
 .cmd-text {
   font-size: 76rpx;
@@ -137,120 +128,17 @@
   opacity: 0.7;
 }
 
-/* 别动倒计时条 */
-.hold-bar {
-  margin-top: 30rpx;
+/* 切换倒计时条（纯视觉提示，无需点击） */
+.time-bar {
+  margin-top: 40rpx;
   width: 80%;
-  height: 22rpx;
-  background: rgba(183,28,28,0.18);
+  height: 20rpx;
+  background: rgba(43,16,85,0.15);
   border-radius: 12rpx;
   overflow: hidden;
 }
-.hold-bar-fill {
+.time-bar-fill {
   height: 100%;
-  width: 100%;
-  background: #e53935;
+  background: linear-gradient(90deg, #FF6B9D, #FFC371);
   border-radius: 12rpx;
-  transform-origin: left center;
-  animation-name: holdShrink;
-  animation-timing-function: linear;
-  animation-fill-mode: forwards;
-}
-@keyframes holdShrink {
-  from { transform: scaleX(1); }
-  to   { transform: scaleX(0); }
-}
-
-/* 反馈 */
-.gain {
-  position: absolute;
-  top: 30rpx;
-  right: 36rpx;
-  font-size: 48rpx;
-  font-weight: 800;
-  color: #2e9e4f;
-  animation: pop 0.5s ease;
-}
-.wrong-tip {
-  position: absolute;
-  bottom: 26rpx;
-  font-size: 28rpx;
-  font-weight: 700;
-  color: #e53935;
-}
-.flash-ok { animation: okFlash 0.5s ease; }
-.flash-bad { animation: badShake 0.5s ease; }
-@keyframes pop {
-  0% { transform: scale(0.4); opacity: 0; }
-  60% { transform: scale(1.2); opacity: 1; }
-  100% { transform: scale(1); opacity: 1; }
-}
-@keyframes okFlash {
-  0% { box-shadow: 0 0 0 0 #4caf50; }
-  50% { box-shadow: 0 0 0 16rpx rgba(76,175,80,0.7); }
-  100% { box-shadow: 0 20rpx 50rpx rgba(0,0,0,0.3); }
-}
-@keyframes badShake {
-  0%,100% { transform: translateX(0); }
-  20% { transform: translateX(-18rpx); }
-  40% { transform: translateX(18rpx); }
-  60% { transform: translateX(-12rpx); }
-  80% { transform: translateX(12rpx); }
-}
-
-/* 确认按钮 */
-.confirm-btn {
-  margin-top: 70rpx;
-  width: 100%;
-  height: 110rpx;
-  border-radius: 55rpx;
-  background: linear-gradient(90deg, #42e695, #3bb2b8);
-  color: #fff;
-  font-size: 38rpx;
-  font-weight: 800;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 12rpx 30rpx rgba(59,178,184,0.45);
-}
-.confirm-btn.is-locked {
-  opacity: 0.45;
-  filter: grayscale(0.4);
-}
-
-/* ===== 结果页 ===== */
-.result-card {
-  margin-top: 90rpx;
-  width: 100%;
-  background: rgba(255,255,255,0.96);
-  border-radius: 40rpx;
-  padding: 56rpx 40rpx;
-  box-sizing: border-box;
-  color: #2b1055;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  box-shadow: 0 20rpx 50rpx rgba(0,0,0,0.3);
-}
-.result-emoji { font-size: 110rpx; }
-.result-title {
-  font-size: 46rpx;
-  font-weight: 800;
-  margin-top: 10rpx;
-}
-.result-row {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 30rpx;
-  margin-top: 26rpx;
-  padding-bottom: 18rpx;
-  border-bottom: 2rpx solid rgba(43,16,85,0.1);
-}
-.result-row .big { font-size: 56rpx; font-weight: 800; color: #FF6B9D; }
-.result-best {
-  margin-top: 30rpx;
-  font-size: 28rpx;
-  opacity: 0.8;
 }
