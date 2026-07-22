@@ -16,6 +16,15 @@ Page({
 
   onLoad: function () {
     this.checkFavorite();
+    this.renderQuotes();
+    var self = this;
+    quotesUtil.loadQuotes({
+      success: function () { self.renderQuotes(); }
+    });
+  },
+
+  // 用当前 QUOTES（本地兜底 / 远程拉取后）渲染一次
+  renderQuotes: function () {
     var categories = quotesUtil.getCategories();
     var todayQuote = quotesUtil.getTodayQuote();
     var totalCount = quotesUtil.getTotalCount();
