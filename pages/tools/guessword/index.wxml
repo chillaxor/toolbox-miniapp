@@ -1,13 +1,10 @@
-<view class="page">
-  <view class="fav" bindtap="toggleFavorite">{{isFavorite ? '★ 已收藏' : '☆ 收藏'}}</view>
-
+<view class="page {{phase==='playing' ? 'play' : ''}}" bindtap="nextWord">
   <!-- 设置 -->
   <block wx:if="{{phase==='setup'}}">
     <view class="hero">📱 头顶猜词</view>
     <view class="howto">
-      <view>· 1 人把手机放在额头（屏幕朝外顶在头上），另 1 人看屏幕描述词语。</view>
-      <view>· 猜对点「✓ 猜对」，不会点「✗ 跳过」。</view>
-      <view>· 也可把手机向下翻一下自动切到下一个词（需在下方开启）。</view>
+      <view>· 1 人把手机横放在额头（屏幕朝外），另 1 人看屏幕描述词语。</view>
+      <view>· 猜完/不会，把手机向下翻一下自动换词，或轻触屏幕换词。</view>
     </view>
 
     <view class="sec-label">每局词数</view>
@@ -20,38 +17,35 @@
     <view class="sec-label">翻手机切词</view>
     <view class="switch-row" bindtap="toggleFlip">
       <view class="switch {{flipOn?'switch-on':''}}"><view class="knob"></view></view>
-      <view class="switch-tip">{{flipOn ? '已开启·翻一下手机切词' : '已关闭·只用按钮'}}</view>
+      <view class="switch-tip">{{flipOn ? '已开启·翻一下手机换词' : '已关闭·只用轻触'}}</view>
     </view>
 
     <view class="btn-primary" bindtap="onStart">开始游戏 🚀</view>
-    <view class="tip">描述的人点屏幕按钮；猜的人翻手机切词</view>
   </block>
 
-  <!-- 游戏中 -->
+  <!-- 游戏中：横屏，顶部进度条 + 居中大字 + 底部提示 -->
   <block wx:elif="{{phase==='playing'}}">
-    <view class="progress">第 {{progress}} / {{total}} 题</view>
-    <view class="card {{feedback==='correct'?'card-correct':''}} {{feedback==='skip'?'card-skip':''}}">
-      <view class="word">{{currentWord}}</view>
+    <view class="play-top">
+      <view class="play-bar"><view class="play-bar-fill" style="width:{{progressPercent}}%"></view></view>
+      <view class="play-count">{{progress}} <text class="muted">/ {{total}}</text></view>
     </view>
-    <view class="stat-row">
-      <view class="stat correct">✓ {{correct}}</view>
-      <view class="stat skip">✗ {{skipped}}</view>
+
+    <view class="play-stage">
+      <view class="play-word {{pulse ? 'pulse' : ''}}" style="font-size:{{wordSize}}rpx">{{currentWord}}</view>
     </view>
-    <view class="btn-row">
-      <view class="btn-skip" bindtap="skipWord">✗ 跳过</view>
-      <view class="btn-correct" bindtap="onCorrect">✓ 猜对</view>
+
+    <view class="play-foot">
+      <view class="play-flip" wx:if="{{flipOn}}">📱 向下翻手机换词</view>
+      <view class="play-tap">轻触屏幕 · 换下一个 ▸</view>
     </view>
-    <view wx:if="{{flipOn}}" class="flip-tip">把手机向下翻一下 = 跳过 ⤵️</view>
   </block>
 
   <!-- 结果 -->
   <block wx:elif="{{phase==='result'}}">
-    <view class="result-emoji">{{isBest ? '🎉' : '📱'}}</view>
-    <view class="result-title">{{isBest ? '新纪录！' : '本局结束'}}</view>
+    <view class="result-emoji">🎉</view>
+    <view class="result-title">本局结束</view>
     <view class="result-stats">
-      <view class="r-card">猜对<view class="r-num">{{correct}}</view></view>
-      <view class="r-card">跳过<view class="r-num">{{skipped}}</view></view>
-      <view class="r-card">最佳<view class="r-num">{{best}}</view></view>
+      <view class="r-card">共 {{total}} 词<view class="r-num">{{total}}</view></view>
     </view>
     <view class="btn-row">
       <view class="btn-ghost" bindtap="onBackSetup">返回设置</view>

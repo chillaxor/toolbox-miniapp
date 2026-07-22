@@ -1,0 +1,86 @@
+<view class="page">
+  <!-- 设置 -->
+  <block wx:if="{{phase==='setup'}}">
+    <view class="hero">🙃 反着来</view>
+    <view class="howto">屏幕让你往东，你偏往西。指令和反应之间永远"反着来"才得分：说点左你就点右、说别点你偏点、错题你点"对"。反应越快、连击越高分越多。</view>
+
+    <view class="sec-label">模式</view>
+    <view class="chip-row">
+      <view class="chip {{mode==='classic'?'chip-on':''}}" bindtap="selectMode" data-m="classic">经典·3命</view>
+      <view class="chip {{mode==='endless'?'chip-on':''}}" bindtap="selectMode" data-m="endless">无尽</view>
+    </view>
+    <view class="chip-row">
+      <view class="chip {{mode==='timed'?'chip-on':''}}" bindtap="selectMode" data-m="timed">限时·60秒</view>
+      <view class="chip {{mode==='hell'?'chip-on':''}}" bindtap="selectMode" data-m="hell">地狱·从10关</view>
+    </view>
+
+    <view class="btn-primary" bindtap="onStart">开始挑战 🚀</view>
+  </block>
+
+  <!-- 游戏中 -->
+  <block wx:elif="{{phase==='playing'}}">
+    <view class="hud">
+      <view class="stat">分 <text class="hl">{{score}}</text></view>
+      <view class="stat" wx:if="{{mode==='classic'||mode==='hell'}}">❤️ {{lives}}</view>
+      <view class="stat" wx:if="{{mode==='timed'}}">⏱ {{timeLeft}}</view>
+      <view class="stat">Lv{{level}}</view>
+      <view class="stat">连{{combo}}</view>
+      <view class="quit" catchtap="endGame">结束</view>
+    </view>
+
+    <!-- 准备 -->
+    <view wx:if="{{ready}}" class="ready">准备…<view class="ready-sub">看清指令，反着来！</view></view>
+
+    <!-- 题目 -->
+    <block wx:elif="{{q}}">
+      <view class="instr-wrap">
+        <view wx:if="{{q.decoy}}" class="decoy">{{q.decoy}}</view>
+        <view class="instr {{q.blink?'blink':''}}" style="{{q.instrStyle}}">{{q.instruction}}</view>
+      </view>
+
+      <view class="timebar"><view class="timefill" style="width:{{q.timePct}}%"></view></view>
+
+      <!-- 双目标：方向 / 颜色 / 真假 -->
+      <view wx:if="{{q.type==='dirLR'||q.type==='dirUD'||q.type==='color'||q.type==='truefalse'}}" class="targets two">
+        <view wx:for="{{q.targets}}" wx:key="id"
+              class="tgt {{item.cls}}"
+              data-id="{{item.id}}" catchtap="onTapTarget">{{item.label}}</view>
+      </view>
+
+      <!-- 单按钮：文字反转 -->
+      <view wx:elif="{{q.type==='word'}}" class="targets one">
+        <view class="tgt word-btn" data-id="{{q.targets[0].id}}" catchtap="onTapTarget">{{q.targets[0].label}}</view>
+      </view>
+
+      <!-- 动作反转：长按 / 快点击 -->
+      <view wx:elif="{{q.type==='action'}}" class="targets one">
+        <view class="tgt act-btn"
+              catchtouchstart="onActStart" catchtouchend="onActEnd">{{q.actLabel}}</view>
+      </view>
+
+      <!-- 数量反转：点非3下 -->
+      <view wx:elif="{{q.type==='count'}}" class="targets one">
+        <view class="tgt cnt-btn" catchtap="onCntTap">{{q.cntLabel}}</view>
+        <view class="cnt-num">{{cntNum}}</view>
+      </view>
+    </block>
+
+    <!-- 反馈闪 -->
+    <view wx:if="{{feedback==='correct'}}" class="flash ok">✓</view>
+    <view wx:if="{{feedback==='wrong'}}" class="flash bad">{{wrongTip}}</view>
+  </block>
+
+  <!-- 结果 -->
+  <block wx:elif="{{phase==='result'}}">
+    <view class="result-emoji">🎯</view>
+    <view class="result-title">得分 {{score}}</view>
+    <view class="stars">{{starsText}}</view>
+    <view class="result-line">完成 {{totalDone}} 题 · 正确 {{correctDone}} · 最高连击 {{bestCombo}}</view>
+    <view class="result-line">历史最高 {{best}}</view>
+    <view wx:if="{{bestCombo>=10}}" class="master">🌟 反向大师：你真的很会反着来！</view>
+    <view class="btn-row">
+      <view class="btn-ghost" bindtap="backSetup">返回</view>
+      <view class="btn-primary inline" bindtap="replay">再来一局</view>
+    </view>
+  </block>
+</view>

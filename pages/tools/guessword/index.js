@@ -1,10 +1,18 @@
-var storage = require('../../../utils/storage.js');
 // 复用「多图编号抢答画猜」的同一份词库（本地副本，纯 word 数组）
 var WORDS = require('../../../data/drawguess_words.js');
 
 var FLIP_THRESHOLD = 55;   // 相对起始姿态的翻动角度阈值（度）
 var FLIP_REARM = 25;       // 回到该偏差内才允许再次触发
-var ADVANCE_DELAY = 320;   // 翻牌动画间隔（ms）
+var ADVANCE_DELAY = 280;   // 换词动画间隔（ms）
+
+function shuffle(arr) {
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = a[i]; a[i] = a[j]; a[j] = t;
+  }
+  return a;
+}
 
 Page({
   data: {
@@ -15,12 +23,9 @@ Page({
     index: 0,
     total: 0,
     progress: 0,
-    correct: 0,
-    skipped: 0,
-    feedback: '',            // '' | 'correct' | 'skip'
-    isFavorite: false,
-    best: 0,
-    isBest: false
+    progressPercent: 0,
+    wordSize: 220,           // 横屏词字号（按词长自适应）
+    pulse: false
   },
 
   onLoad: function () {
@@ -30,14 +35,23 @@ Page({
       wx.reLaunch({ url: '/pages/index/index' });
       return;
     }
+    this.setOri('portrait');
   },
 
   onShow: function () {
-    this.setData({ isFavorite: storage.isFavorite('guessword') });
+    // 设置/结果页竖屏，游戏页横屏；从后台切回也保持正确方向
+    this.setOri(this.data.phase === 'playing' ? 'landscape' : 'portrait');
   },
 
   onHide: function () {
     this.stopFlip();
+  },
+
+  // 运行时切换页面方向（需页面 json 配 pageOrientation: "auto"）
+  setOri: function (ori) {
+    try {
+      wx.setPageOrientation({ orientation: ori, fail: function () {} });
+    } catch (e) {}
   },
 
   onUnload: function () {
@@ -53,19 +67,9 @@ Page({
     this.setData({ flipOn: !this.data.flipOn });
   },
 
-  toggleFavorite: function () {
-    var f = storage.toggleFavorite('guessword');
-    this.setData({ isFavorite: f });
-  },
-
   // ---------- 开局 ----------
   onStart: function () {
-    var list = WORDS.slice();
-    // Fisher-Yates 洗牌（词库本地副本，离线可用，不依赖网络）
-    for (var i = list.length - 1; i > 0; i--) {
-      var j = Math.floor(Math.random() * (i + 1));
-      var t = list[i]; list[i] = list[j]; list[j] = t;
-    }
+    var list = shuffle(WORDS);
     var n = this.data.roundLen;
     if (n !== 'all') {
       var cnt = parseInt(n, 10);
@@ -76,79 +80,69 @@ Page({
     this.setData({
       phase: 'playing',
       total: list.length,
-      correct: 0,
-      skipped: 0,
-      feedback: ''
+      progress: 1,
+      index: 0,
+      currentWord: list[0],
+      wordSize: this._fitSize(list[0]),
+      progressPercent: list.length ? Math.round(1 / list.length * 100) : 0
     });
-    this.loadCurrent();
+    this.setOri('landscape');
     this.startFlip();
   },
 
-  loadCurrent: function () {
-    var i = this._idx;
-    if (i >= this._deck.length) { this.finish(); return; }
-    this.setData({
-      index: i,
-      currentWord: this._deck[i],
-      progress: i + 1,
-      feedback: ''
-    });
+  // 按词长计算横屏字号，保证大字又不溢出
+  _fitSize: function (word) {
+    var n = (word || '').length;
+    if (n <= 1) return 300;
+    if (n <= 2) return 220;
+    if (n <= 3) return 160;
+    if (n <= 4) return 130;
+    return 100;
   },
 
-  // ---------- 答题 ----------
-  onCorrect: function () { this.advance('correct'); },
-  skipWord: function () { this.advance('skip'); },
-
-  advance: function (result) {
+  // ---------- 游戏中：翻手机 / 轻触 换词 ----------
+  nextWord: function () {
     if (this.data.phase !== 'playing') return;
     if (this._busy) return;
     this._busy = true;
     var self = this;
-    var correct = this.data.correct + (result === 'correct' ? 1 : 0);
-    var skipped = this.data.skipped + (result === 'skip' ? 1 : 0);
-    this.setData({ correct: correct, skipped: skipped, feedback: result });
-    try { wx.vibrateShort({ type: result === 'correct' ? 'medium' : 'light' }); } catch (e) {}
+    this._idx += 1;
+    if (this._idx >= this._deck.length) {
+      this._busy = false;
+      this.finish();
+      return;
+    }
+    this.setData({
+      index: this._idx,
+      currentWord: this._deck[this._idx],
+      progress: this._idx + 1,
+      wordSize: this._fitSize(this._deck[this._idx]),
+      progressPercent: this._deck.length ? Math.round((this._idx + 1) / this._deck.length * 100) : 0,
+      pulse: true
+    });
     setTimeout(function () {
-      self._idx += 1;
       self._busy = false;
-      if (self._idx >= self._deck.length) {
-        self.finish();
-      } else {
-        self.loadCurrent();
-      }
+      self.setData({ pulse: false });
     }, ADVANCE_DELAY);
   },
 
   // ---------- 结束 ----------
   finish: function () {
     this.stopFlip();
-    var prevBest = storage.getSync('guessword_best', 0);
-    var isBest = this.data.correct > prevBest;
-    if (isBest) storage.setSync('guessword_best', this.data.correct);
-    storage.addHistory({
-      toolId: 'guessword',
-      toolName: '头顶猜词',
-      category: 'fun',
-      summary: '猜对' + this.data.correct + '·跳过' + this.data.skipped
-    });
-    this.setData({
-      phase: 'result',
-      best: Math.max(prevBest, this.data.correct),
-      isBest: isBest
-    });
+    this.setData({ phase: 'result' });
+    this.setOri('portrait');
   },
 
   onBackSetup: function () {
     this.stopFlip();
     this.setData({
       phase: 'setup',
-      feedback: '',
       currentWord: '',
       index: 0,
       progress: 0,
-      correct: 0,
-      skipped: 0
+      progressPercent: 0
     });
+    this.setOri('portrait');
   },
 
   replay: function () {
@@ -171,7 +165,7 @@ Page({
       while (d < -180) d += 360;
       if (self._armed && Math.abs(d) > FLIP_THRESHOLD) {
         self._armed = false;       // 防连触发，需回到中位才重新武装
-        self.skipWord();           // 翻手机 = 跳过切下一个
+        self.nextWord();           // 翻手机 = 换下一个词
       } else if (!self._armed && Math.abs(d) < FLIP_REARM) {
         self._armed = true;
       }
@@ -182,9 +176,9 @@ Page({
         wx.onDeviceMotionChange(self._motionHandler);
       },
       fail: function () {
-        // 设备方向不可用（如被系统权限拦截）→ 静默回退到按钮
+        // 设备方向不可用（如被系统权限拦截）→ 静默回退到轻触
         self.setData({ flipOn: false });
-        wx.showToast({ title: '翻手机不可用·用按钮切词', icon: 'none' });
+        wx.showToast({ title: '翻手机不可用·轻触换词', icon: 'none' });
       }
     });
   },

@@ -1,0 +1,49 @@
+<view class="page">
+  <!-- 设置 -->
+  <block wx:if="{{phase==='setup'}}">
+    <view class="hero">🚫 别按这个按钮</view>
+    <view class="howto">屏幕上会冒出各种诱人的按钮，忍住别碰！坚持越久分越高。所有漂浮按钮都是陷阱——唯一能安全点的是右上角"结束"。</view>
+
+    <view class="sec-label">难度</view>
+    <view class="chip-row">
+      <view class="chip {{difficulty==='normal'?'chip-on':''}}" bindtap="selectDifficulty" data-d="normal">普通</view>
+      <view class="chip {{difficulty==='hard'?'chip-on':''}}" bindtap="selectDifficulty" data-d="hard">困难</view>
+      <view class="chip {{difficulty==='hell'?'chip-on':''}}" bindtap="selectDifficulty" data-d="hell">地狱</view>
+    </view>
+
+    <view class="btn-primary" bindtap="onStart">开始挑战 🧘</view>
+  </block>
+
+  <!-- 游戏中 -->
+  <block wx:elif="{{phase==='playing'}}">
+    <view class="hud">
+      <view class="stat">坚持 <text class="hl">{{seconds}}</text> 秒</view>
+      <view class="stat small">最高 <text class="hl">{{best}}</text></view>
+      <view class="quit" bindtap="endGame">结束</view>
+    </view>
+
+    <view class="play">
+      <view wx:for="{{buttons}}" wx:key="id"
+            class="trap {{item.cls}}"
+            style="left:{{item.left}}%;top:{{item.top}}%;width:{{item.w}}%;"
+            data-id="{{item.id}}" bindtap="tapButton">
+        <text wx:if="{{item.label}}">{{item.label}}</text>
+      </view>
+    </view>
+
+    <view class="hint">🧘 深呼吸，忍住！别碰任何按钮</view>
+  </block>
+
+  <!-- 结果 -->
+  <block wx:elif="{{phase==='result'}}">
+    <view class="result-emoji">💥</view>
+    <view class="result-title">你坚持了 {{seconds}} 秒</view>
+    <view class="result-score">得分 <text class="hl">{{seconds}}</text> · 最高 {{best}}</view>
+    <view class="rating">评级：{{rating}}</view>
+    <view class="taunt">{{trapTaunt}}</view>
+    <view class="btn-row">
+      <view class="btn-ghost" bindtap="backSetup">返回</view>
+      <view class="btn-primary inline" bindtap="replay">再来一局</view>
+    </view>
+  </block>
+</view>

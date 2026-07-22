@@ -1,42 +1,130 @@
 .page {
   min-height: 100vh;
   background: linear-gradient(160deg, #6a5acd, #8a6fd6);
-  padding: 40rpx 32rpx 60rpx;
+  padding: 40rpx 48rpx 60rpx;
   box-sizing: border-box;
   position: relative;
+  display: flex;
+  flex-direction: column;
   overflow-y: auto;
 }
 
-.fav {
-  position: absolute;
-  top: 24rpx;
-  right: 28rpx;
+/* 游戏中：横屏锁定不滚动，深色调高级背景，三行布局 */
+.page.play {
+  overflow: hidden;
+  background: radial-gradient(120% 80% at 50% 38%, #3b2d72 0%, #261b4e 52%, #18103a 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: stretch;
+  padding: 44rpx 56rpx 48rpx;
+}
+
+.play-top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.play-bar {
+  width: 100%;
+  height: 12rpx;
+  border-radius: 8rpx;
+  background: rgba(255, 255, 255, 0.16);
+  overflow: hidden;
+}
+
+.play-bar-fill {
+  height: 100%;
+  border-radius: 8rpx;
+  background: linear-gradient(90deg, #7CFC9B, #4be0c4);
+  transition: width .25s ease;
+}
+
+.play-count {
   color: #fff;
-  font-size: 28rpx;
-  opacity: 0.92;
+  font-size: 32rpx;
+  font-weight: 700;
+  letter-spacing: 1rpx;
+}
+
+.play-count .muted {
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 500;
+}
+
+.play-stage {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 0 30rpx;
+  box-sizing: border-box;
+}
+
+.play-word {
+  color: #fff;
+  font-weight: 800;
+  letter-spacing: 4rpx;
+  text-align: center;
+  line-height: 1.1;
+  white-space: nowrap;
+  text-shadow: 0 8rpx 36rpx rgba(0, 0, 0, 0.4);
+}
+
+.play-word.pulse {
+  animation: pop .22s cubic-bezier(.2, .8, .3, 1);
+}
+
+@keyframes pop {
+  0% { transform: scale(0.86); opacity: 0.4; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.play-foot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.play-flip {
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+  font-size: 26rpx;
+  padding: 12rpx 30rpx;
+  border-radius: 40rpx;
+}
+
+.play-tap {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 24rpx;
+  letter-spacing: 2rpx;
 }
 
 .hero {
   color: #fff;
-  font-size: 56rpx;
+  font-size: 48rpx;
   font-weight: 800;
   text-align: center;
-  margin: 30rpx 0 20rpx;
+  margin: 20rpx 0;
 }
 
 .howto {
   background: rgba(255, 255, 255, 0.14);
   border-radius: 20rpx;
-  padding: 24rpx;
+  padding: 20rpx 24rpx;
   color: rgba(255, 255, 255, 0.92);
-  font-size: 26rpx;
-  line-height: 1.8;
+  font-size: 24rpx;
+  line-height: 1.7;
 }
 
 .sec-label {
   color: #fff;
   font-size: 28rpx;
-  margin: 36rpx 0 16rpx;
+  margin: 28rpx 0 14rpx;
   font-weight: 600;
 }
 
@@ -48,7 +136,7 @@
 .chip {
   flex: 1;
   text-align: center;
-  padding: 24rpx 0;
+  padding: 22rpx 0;
   background: rgba(255, 255, 255, 0.16);
   color: #fff;
   border-radius: 16rpx;
@@ -102,7 +190,7 @@
 }
 
 .btn-primary {
-  margin-top: 48rpx;
+  margin-top: 40rpx;
   height: 92rpx;
   border-radius: 46rpx;
   background: #fff;
@@ -119,105 +207,11 @@
   flex: 1;
 }
 
-.tip {
-  text-align: center;
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 24rpx;
-  margin-top: 20rpx;
-}
-
-/* 游戏中 */
-.progress {
-  text-align: center;
-  color: #fff;
-  font-size: 30rpx;
-  margin: 20rpx 0 30rpx;
-}
-
-.card {
-  background: #fff;
-  border-radius: 28rpx;
-  min-height: 360rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 40rpx;
-  box-shadow: 0 16rpx 40rpx rgba(0, 0, 0, 0.2);
-  transition: box-shadow .2s;
-}
-
-.word {
-  font-size: 130rpx;
-  font-weight: 800;
-  color: #333;
-  text-align: center;
-  line-height: 1.15;
-}
-
-.card-correct {
-  box-shadow: 0 0 0 8rpx #7CFC9B, 0 16rpx 40rpx rgba(0, 0, 0, 0.2);
-}
-
-.card-skip {
-  box-shadow: 0 0 0 8rpx #FFB347, 0 16rpx 40rpx rgba(0, 0, 0, 0.2);
-}
-
-.stat-row {
-  display: flex;
-  justify-content: center;
-  gap: 60rpx;
-  margin: 28rpx 0;
-}
-
-.stat {
-  color: #fff;
-  font-size: 34rpx;
-  font-weight: 700;
-}
-
-.btn-row {
-  display: flex;
-  gap: 24rpx;
-  margin-top: 10rpx;
-}
-
-.btn-skip {
-  flex: 1;
-  height: 100rpx;
-  border-radius: 50rpx;
-  background: rgba(255, 255, 255, 0.18);
-  color: #fff;
-  font-size: 32rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.btn-correct {
-  flex: 1;
-  height: 100rpx;
-  border-radius: 50rpx;
-  background: #7CFC9B;
-  color: #1c5e34;
-  font-weight: 800;
-  font-size: 32rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.flip-tip {
-  text-align: center;
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 24rpx;
-  margin-top: 24rpx;
-}
-
 /* 结果 */
 .result-emoji {
   text-align: center;
-  font-size: 100rpx;
-  margin: 30rpx 0 10rpx;
+  font-size: 96rpx;
+  margin: 20rpx 0;
 }
 
 .result-title {
@@ -238,16 +232,21 @@
   flex: 1;
   background: rgba(255, 255, 255, 0.16);
   border-radius: 20rpx;
-  padding: 30rpx 0;
+  padding: 28rpx 0;
   text-align: center;
   color: #fff;
   font-size: 26rpx;
 }
 
 .r-num {
-  font-size: 56rpx;
+  font-size: 52rpx;
   font-weight: 800;
-  margin-top: 8rpx;
+  margin-top: 6rpx;
+}
+
+.btn-row {
+  display: flex;
+  gap: 24rpx;
 }
 
 .btn-ghost {
@@ -260,26 +259,4 @@
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-/* ---------- 横屏适配：手机横过来，宽大、高小，压缩上下间距、放大词语 ---------- */
-@media (orientation: landscape) {
-  .page { padding: 20rpx 48rpx 30rpx; }
-
-  .hero { font-size: 44rpx; margin: 12rpx 0; }
-  .howto { font-size: 24rpx; padding: 18rpx 22rpx; line-height: 1.6; }
-  .sec-label { margin: 18rpx 0 10rpx; }
-  .btn-primary { margin-top: 24rpx; }
-
-  .progress { font-size: 28rpx; margin: 10rpx 0 14rpx; }
-  .card { min-height: 200rpx; padding: 28rpx 40rpx; }
-  .word { font-size: 170rpx; }
-  .stat-row { margin: 14rpx 0; gap: 80rpx; }
-  .stat { font-size: 30rpx; }
-  .btn-row { max-width: 72%; margin-left: auto; margin-right: auto; }
-  .btn-skip, .btn-correct { height: 84rpx; }
-  .flip-tip { margin-top: 14rpx; }
-
-  .result-emoji { font-size: 80rpx; margin: 10rpx 0 6rpx; }
-  .result-title { font-size: 34rpx; margin-bottom: 18rpx; }
 }

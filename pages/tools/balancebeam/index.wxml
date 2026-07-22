@@ -1,0 +1,99 @@
+<view class="page">
+
+  <!-- 设置 -->
+  <block wx:if="{{phase==='setup'}}">
+    <view class="setup">
+      <view class="hero">⚖️</view>
+      <view class="title">平衡木</view>
+      <view class="sub">左右倾斜手机，让小球稳稳待在木条上</view>
+
+      <view class="card">
+        <view class="card-label">选择难度</view>
+        <view class="diff-row">
+          <view class="diff {{diff==='easy'?'on':''}}" data-d="easy" bindtap="chooseDiff">
+            <view class="diff-name">轻松</view>
+            <view class="diff-desc">木条宽 · 风小</view>
+          </view>
+          <view class="diff {{diff==='normal'?'on':''}}" data-d="normal" bindtap="chooseDiff">
+            <view class="diff-name">标准</view>
+            <view class="diff-desc">中等 · 有阵风</view>
+          </view>
+          <view class="diff {{diff==='hard'?'on':''}}" data-d="hard" bindtap="chooseDiff">
+            <view class="diff-name">地狱</view>
+            <view class="diff-desc">又窄 · 风大</view>
+          </view>
+        </view>
+      </view>
+
+      <view class="rules">
+        <view class="rule">📱 把手机竖着拿，屏幕正对自己</view>
+        <view class="rule">↔️ 轻轻左右倾斜控制小球滚动</view>
+        <view class="rule">⏱️ 木条会慢慢变窄，还有突发阵风</view>
+        <view class="rule">🏆 坚持越久分越高，掉下去就结束</view>
+      </view>
+
+      <view class="best-line">当前难度最佳：{{best}} 秒</view>
+      <button class="btn-primary" bindtap="onStart">开始挑战</button>
+    </view>
+  </block>
+
+  <!-- 准备 + 游戏 -->
+  <block wx:elif="{{phase==='ready' || phase==='playing'}}">
+    <view class="hud">
+      <view class="hud-item">
+        <text class="hud-t">坚持</text>
+        <text class="hud-v">{{time}}s</text>
+      </view>
+      <view class="hud-diff">{{diffLabel}}</view>
+      <view class="hud-item right">
+        <text class="hud-t">最佳</text>
+        <text class="hud-v">{{best}}s</text>
+      </view>
+    </view>
+
+    <view class="stage">
+      <!-- 阵风箭头 -->
+      <view wx:if="{{gustDir===-1}}" class="gust left">💨</view>
+      <view wx:if="{{gustDir===1}}" class="gust right">💨</view>
+
+      <!-- 木条 -->
+      <view class="beam" style="width:{{beamW}}rpx; left:{{beamLeft}}rpx;">
+        <view class="beam-top"></view>
+      </view>
+
+      <!-- 小球 -->
+      <view class="ball {{falling?'falling':''}}"
+            style="left:{{ballLeft}}rpx; transform: translateY({{ballTop}}rpx);"></view>
+
+      <!-- 准备倒计时 -->
+      <view wx:if="{{phase==='ready'}}" class="ready-mask">
+        <view class="ready-num">{{countdown}}</view>
+        <view class="ready-tip">把手机放平，准备好…</view>
+      </view>
+    </view>
+
+    <!-- 倾斜指示器 -->
+    <view class="tilt-bar">
+      <view class="tilt-track">
+        <view class="tilt-mid"></view>
+        <view class="tilt-dot" style="transform: translateX({{tiltPct}}rpx);"></view>
+      </view>
+      <view class="tilt-hint">← 倾斜手机控制小球 →</view>
+    </view>
+  </block>
+
+  <!-- 结算 -->
+  <block wx:elif="{{phase==='result'}}">
+    <view class="result">
+      <view class="res-emoji">{{ isNewBest ? '🎉' : '⚖️' }}</view>
+      <view class="res-title">{{ isNewBest ? '新纪录！' : '掉下来啦' }}</view>
+      <view class="res-time">{{resTime}}<text class="res-unit">秒</text></view>
+      <view class="res-stars">{{starsText}}</view>
+      <view class="res-tip">{{tipText}}</view>
+      <view class="res-best">历史最佳：{{best}} 秒</view>
+      <button class="btn-primary" bindtap="replay">再来一次</button>
+      <button class="btn-ghost" bindtap="backSetup">换个难度</button>
+    </view>
+  </block>
+
+</view>

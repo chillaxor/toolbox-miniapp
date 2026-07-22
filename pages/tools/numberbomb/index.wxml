@@ -1,0 +1,50 @@
+<view class="page">
+  <!-- 设置 -->
+  <block wx:if="{{phase==='setup'}}">
+    <view class="hero">💣 数字炸弹</view>
+    <view class="howto">轮流点数字，谁点中藏起来的"炸弹数字"谁就爆炸！点中安全数字会把安全区间收窄，越到后面越危险。</view>
+
+    <view class="sec-label">玩家人数</view>
+    <view class="chip-row">
+      <view class="chip {{players===2?'chip-on':''}}" bindtap="selectPlayers" data-n="2">2 人</view>
+      <view class="chip {{players===3?'chip-on':''}}" bindtap="selectPlayers" data-n="3">3 人</view>
+      <view class="chip {{players===4?'chip-on':''}}" bindtap="selectPlayers" data-n="4">4 人</view>
+    </view>
+
+    <view class="sec-label">数字范围</view>
+    <view class="chip-row">
+      <view class="chip {{rangeMax===50?'chip-on':''}}" bindtap="selectRange" data-max="50">1–50</view>
+      <view class="chip {{rangeMax===100?'chip-on':''}}" bindtap="selectRange" data-max="100">1–100</view>
+      <view class="chip {{rangeMax===200?'chip-on':''}}" bindtap="selectRange" data-max="200">1–200</view>
+    </view>
+
+    <view class="btn-primary" bindtap="onStart">开始游戏 🚀</view>
+  </block>
+
+  <!-- 游戏中 -->
+  <block wx:elif="{{phase==='playing'}}">
+    <view class="hud">
+      <view class="range">安全区间 <text class="hl">{{lo}}</text> – <text class="hl">{{hi}}</text></view>
+      <view class="turn" style="color:{{turnColor}}">轮到 {{turnName}} 🔥</view>
+    </view>
+
+    <view class="danger-tip" wx:if="{{danger}}">⚠️ 只剩 1 个数字，必中炸弹！</view>
+
+    <view class="grid">
+      <view wx:for="{{cells}}" wx:key="n"
+            class="cell {{item.disabled ? 'cell-off' : ''}}"
+            data-n="{{item.n}}" bindtap="tapCell">{{item.n}}</view>
+    </view>
+  </block>
+
+  <!-- 结果 -->
+  <block wx:elif="{{phase==='result'}}">
+    <view class="boom">💥</view>
+    <view class="boom-title" style="color:{{turnColor}}">{{explodedName}} 踩到炸弹！</view>
+    <view class="boom-num">炸弹数字：<text class="hl">{{explodeNum}}</text></view>
+    <view class="btn-row">
+      <view class="btn-ghost" bindtap="backSetup">返回设置</view>
+      <view class="btn-primary inline" bindtap="replay">再来一局</view>
+    </view>
+  </block>
+</view>

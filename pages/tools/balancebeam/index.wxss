@@ -1,0 +1,364 @@
+page {
+  height: 100%;
+}
+
+.page {
+  min-height: 100vh;
+  background: linear-gradient(165deg, #1d2b4a 0%, #24365c 50%, #16223c 100%);
+  padding: 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  color: #fff;
+}
+
+/* ============ 设置页 ============ */
+.setup {
+  flex: 1;
+  padding: 60rpx 48rpx calc(60rpx + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hero {
+  font-size: 120rpx;
+  line-height: 1;
+  margin-top: 20rpx;
+}
+
+.title {
+  font-size: 56rpx;
+  font-weight: 800;
+  margin-top: 20rpx;
+  letter-spacing: 4rpx;
+}
+
+.sub {
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.65);
+  margin-top: 16rpx;
+  text-align: center;
+}
+
+.card {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.06);
+  border: 2rpx solid rgba(255, 255, 255, 0.1);
+  border-radius: 24rpx;
+  padding: 32rpx 28rpx;
+  margin-top: 48rpx;
+}
+
+.card-label {
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 22rpx;
+}
+
+.diff-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.diff {
+  width: 31%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 3rpx solid rgba(255, 255, 255, 0.12);
+  border-radius: 18rpx;
+  padding: 26rpx 10rpx;
+  text-align: center;
+  transition: all .15s;
+}
+
+.diff.on {
+  background: linear-gradient(150deg, #4facfe, #43e0c0);
+  border-color: #7ff0d8;
+  box-shadow: 0 8rpx 24rpx rgba(79, 172, 254, 0.35);
+}
+
+.diff-name {
+  font-size: 32rpx;
+  font-weight: 700;
+}
+
+.diff-desc {
+  font-size: 21rpx;
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 10rpx;
+}
+
+.diff.on .diff-desc {
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.rules {
+  width: 100%;
+  margin-top: 36rpx;
+}
+
+.rule {
+  font-size: 25rpx;
+  color: rgba(255, 255, 255, 0.72);
+  line-height: 2.1;
+}
+
+.best-line {
+  font-size: 26rpx;
+  color: #7ff0d8;
+  margin-top: 36rpx;
+}
+
+.btn-primary {
+  width: 100%;
+  margin-top: 28rpx;
+  background: linear-gradient(135deg, #4facfe, #43e0c0);
+  color: #08243a;
+  font-size: 34rpx;
+  font-weight: 700;
+  border-radius: 48rpx;
+  padding: 22rpx 0;
+  border: none;
+}
+
+.btn-primary::after { border: none; }
+
+.btn-ghost {
+  width: 100%;
+  margin-top: 20rpx;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 30rpx;
+  border: 2rpx solid rgba(255, 255, 255, 0.25);
+  border-radius: 48rpx;
+  padding: 20rpx 0;
+}
+
+.btn-ghost::after { border: none; }
+
+/* ============ 游戏 HUD ============ */
+.hud {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: calc(24rpx + env(safe-area-inset-top)) 40rpx 20rpx;
+}
+
+.hud-item {
+  display: flex;
+  flex-direction: column;
+  min-width: 140rpx;
+}
+
+.hud-item.right { align-items: flex-end; }
+
+.hud-t {
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.hud-v {
+  font-size: 40rpx;
+  font-weight: 800;
+  color: #7ff0d8;
+}
+
+.hud-diff {
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.1);
+  padding: 8rpx 24rpx;
+  border-radius: 40rpx;
+}
+
+/* ============ 舞台 ============ */
+.stage {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* 木条 */
+.beam {
+  position: absolute;
+  top: 52%;
+  height: 26rpx;
+  border-radius: 13rpx;
+  background: linear-gradient(180deg, #d9a566, #b9793a);
+  box-shadow: 0 10rpx 30rpx rgba(0, 0, 0, 0.35);
+  transition: width .12s linear, left .12s linear;
+}
+
+.beam-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 8rpx;
+  border-radius: 13rpx 13rpx 0 0;
+  background: rgba(255, 255, 255, 0.35);
+}
+
+/* 小球 */
+.ball {
+  position: absolute;
+  top: calc(52% - 64rpx);
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  background: radial-gradient(circle at 32% 30%, #fff, #ff7a9c 45%, #e23e6b 100%);
+  box-shadow: 0 8rpx 20rpx rgba(226, 62, 107, 0.5);
+}
+
+.ball.falling {
+  transition: transform .6s cubic-bezier(.4, .1, .8, 1), left .6s ease-in;
+  opacity: 0.9;
+}
+
+/* 阵风 */
+.gust {
+  position: absolute;
+  top: 40%;
+  font-size: 60rpx;
+  opacity: 0.85;
+  animation: gustflash .55s ease;
+}
+
+.gust.left { left: 40rpx; transform: scaleX(-1); }
+.gust.right { right: 40rpx; }
+
+@keyframes gustflash {
+  0% { opacity: 0; transform: translateX(0) scaleX(1); }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+
+/* 准备倒计时 */
+.ready-mask {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 18, 36, 0.35);
+}
+
+.ready-num {
+  font-size: 180rpx;
+  font-weight: 900;
+  color: #7ff0d8;
+  text-shadow: 0 10rpx 40rpx rgba(127, 240, 216, 0.5);
+  animation: pop .4s ease;
+}
+
+.ready-tip {
+  font-size: 28rpx;
+  color: rgba(255, 255, 255, 0.85);
+  margin-top: 20rpx;
+}
+
+@keyframes pop {
+  0% { transform: scale(0.5); opacity: 0.2; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* 倾斜指示器 */
+.tilt-bar {
+  padding: 24rpx 60rpx calc(40rpx + env(safe-area-inset-bottom));
+}
+
+.tilt-track {
+  position: relative;
+  height: 14rpx;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 7rpx;
+}
+
+.tilt-mid {
+  position: absolute;
+  left: 50%;
+  top: -6rpx;
+  width: 4rpx;
+  height: 26rpx;
+  margin-left: -2rpx;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 2rpx;
+}
+
+.tilt-dot {
+  position: absolute;
+  top: -9rpx;
+  left: 50%;
+  width: 32rpx;
+  height: 32rpx;
+  margin-left: -16rpx;
+  border-radius: 50%;
+  background: #4facfe;
+  box-shadow: 0 0 16rpx rgba(79, 172, 254, 0.7);
+  transition: transform .08s linear;
+}
+
+.tilt-hint {
+  text-align: center;
+  font-size: 23rpx;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 18rpx;
+}
+
+/* ============ 结算 ============ */
+.result {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60rpx 60rpx calc(60rpx + env(safe-area-inset-bottom));
+}
+
+.res-emoji {
+  font-size: 120rpx;
+  line-height: 1;
+}
+
+.res-title {
+  font-size: 44rpx;
+  font-weight: 800;
+  margin-top: 20rpx;
+}
+
+.res-time {
+  font-size: 110rpx;
+  font-weight: 900;
+  color: #7ff0d8;
+  margin-top: 24rpx;
+  line-height: 1;
+}
+
+.res-unit {
+  font-size: 40rpx;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  margin-left: 8rpx;
+}
+
+.res-stars {
+  font-size: 52rpx;
+  color: #ffd76a;
+  letter-spacing: 8rpx;
+  margin-top: 28rpx;
+}
+
+.res-tip {
+  font-size: 27rpx;
+  color: rgba(255, 255, 255, 0.75);
+  margin-top: 26rpx;
+  text-align: center;
+}
+
+.res-best {
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.55);
+  margin-top: 20rpx;
+  margin-bottom: 44rpx;
+}

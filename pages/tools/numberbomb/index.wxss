@@ -1,0 +1,199 @@
+.page {
+  min-height: 100vh;
+  background: linear-gradient(160deg, #6a5acd, #8a6fd6);
+  padding: 40rpx 40rpx calc(60rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.hero {
+  color: #fff;
+  font-size: 56rpx;
+  font-weight: 800;
+  text-align: center;
+  margin: 20rpx 0 16rpx;
+  text-shadow: 0 6rpx 24rpx rgba(0, 0, 0, 0.25);
+}
+
+.howto {
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 20rpx;
+  padding: 22rpx 26rpx;
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 25rpx;
+  line-height: 1.7;
+}
+
+.sec-label {
+  color: #fff;
+  font-size: 28rpx;
+  margin: 30rpx 0 14rpx;
+  font-weight: 600;
+}
+
+.chip-row {
+  display: flex;
+  gap: 20rpx;
+}
+
+.chip {
+  flex: 1;
+  text-align: center;
+  padding: 24rpx 0;
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+  border-radius: 16rpx;
+  font-size: 30rpx;
+  transition: .15s;
+}
+
+.chip-on {
+  background: #fff;
+  color: #6a5acd;
+  font-weight: 700;
+}
+
+.btn-primary {
+  margin-top: 44rpx;
+  height: 96rpx;
+  border-radius: 48rpx;
+  background: #fff;
+  color: #6a5acd;
+  font-size: 33rpx;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10rpx 30rpx rgba(0, 0, 0, 0.18);
+}
+
+.btn-primary.inline {
+  margin-top: 0;
+  flex: 1;
+}
+
+/* ---------- 游戏中 ---------- */
+.hud {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12rpx;
+  margin-bottom: 18rpx;
+}
+
+.range {
+  color: #fff;
+  font-size: 30rpx;
+  background: rgba(0, 0, 0, 0.18);
+  padding: 12rpx 28rpx;
+  border-radius: 40rpx;
+}
+
+.range .hl {
+  font-weight: 800;
+  font-size: 34rpx;
+}
+
+.turn {
+  font-size: 36rpx;
+  font-weight: 800;
+}
+
+.danger-tip {
+  text-align: center;
+  color: #FFE08A;
+  font-size: 26rpx;
+  font-weight: 700;
+  margin-bottom: 14rpx;
+  animation: blink 1s steps(2, start) infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0.45; }
+}
+
+.grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 16rpx;
+  align-content: start;
+  overflow-y: auto;
+}
+
+.cell {
+  aspect-ratio: 1 / 1;
+  min-height: 72rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.92);
+  color: #4b3aa0;
+  font-size: 30rpx;
+  font-weight: 700;
+  border-radius: 16rpx;
+  transition: transform .1s, background .15s;
+}
+
+.cell:active {
+  transform: scale(0.9);
+}
+
+.cell-off {
+  background: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.28);
+}
+
+/* ---------- 结果 ---------- */
+.boom {
+  text-align: center;
+  font-size: 140rpx;
+  margin: 60rpx 0 10rpx;
+  animation: shake .5s ease;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-16rpx) rotate(-6deg); }
+  40% { transform: translateX(16rpx) rotate(6deg); }
+  60% { transform: translateX(-10rpx); }
+  80% { transform: translateX(10rpx); }
+}
+
+.boom-title {
+  text-align: center;
+  font-size: 42rpx;
+  font-weight: 800;
+  color: #fff;
+}
+
+.boom-num {
+  text-align: center;
+  color: #fff;
+  font-size: 30rpx;
+  margin: 20rpx 0 50rpx;
+}
+
+.boom-num .hl {
+  font-weight: 800;
+  font-size: 38rpx;
+  color: #FFE08A;
+}
+
+.btn-row {
+  display: flex;
+  gap: 24rpx;
+}
+
+.btn-ghost {
+  flex: 1;
+  height: 96rpx;
+  border-radius: 48rpx;
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+  font-size: 31rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

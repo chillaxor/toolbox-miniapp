@@ -1,0 +1,286 @@
+.page {
+  min-height: 100vh;
+  background: linear-gradient(160deg, #2b2350, #3d3170);
+  padding: 40rpx 40rpx calc(60rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- 设置 ---------- */
+.hero {
+  color: #fff;
+  font-size: 56rpx;
+  font-weight: 800;
+  text-align: center;
+  margin: 20rpx 0 16rpx;
+  text-shadow: 0 6rpx 24rpx rgba(0, 0, 0, 0.25);
+}
+
+.howto {
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 20rpx;
+  padding: 22rpx 26rpx;
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 25rpx;
+  line-height: 1.7;
+}
+
+.sec-label {
+  color: #fff;
+  font-size: 28rpx;
+  margin: 30rpx 0 14rpx;
+  font-weight: 600;
+}
+
+.chip-row {
+  display: flex;
+  gap: 20rpx;
+}
+
+.chip {
+  flex: 1;
+  text-align: center;
+  padding: 24rpx 0;
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+  border-radius: 16rpx;
+  font-size: 30rpx;
+  transition: .15s;
+}
+
+.chip-on {
+  background: #fff;
+  color: #3d3170;
+  font-weight: 700;
+}
+
+.btn-primary {
+  margin-top: 44rpx;
+  height: 96rpx;
+  border-radius: 48rpx;
+  background: #fff;
+  color: #3d3170;
+  font-size: 33rpx;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10rpx 30rpx rgba(0, 0, 0, 0.18);
+}
+
+.btn-primary.inline {
+  margin-top: 0;
+  flex: 1;
+}
+
+/* ---------- 游戏中 ---------- */
+.hud {
+  display: flex;
+  align-items: center;
+  gap: 18rpx;
+  margin-bottom: 16rpx;
+}
+
+.stat {
+  background: rgba(0, 0, 0, 0.22);
+  color: #fff;
+  font-size: 30rpx;
+  padding: 12rpx 24rpx;
+  border-radius: 40rpx;
+}
+
+.stat.small {
+  font-size: 26rpx;
+  opacity: 0.92;
+}
+
+.stat .hl {
+  font-weight: 800;
+  font-size: 34rpx;
+  color: #FFE08A;
+}
+
+.quit {
+  margin-left: auto;
+  background: rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 24rpx;
+  padding: 12rpx 26rpx;
+  border-radius: 40rpx;
+}
+
+/* 游戏区：深色背景，让"伪装按钮"能融入 */
+.play {
+  position: relative;
+  flex: 1;
+  background: #232038;
+  border-radius: 24rpx;
+  overflow: hidden;
+  box-shadow: inset 0 0 60rpx rgba(0, 0, 0, 0.35);
+}
+
+.trap {
+  position: absolute;
+  min-height: 84rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 12rpx 8rpx;
+  border-radius: 16rpx;
+  color: #fff;
+  font-size: 24rpx;
+  font-weight: 700;
+  line-height: 1.25;
+  box-sizing: border-box;
+  box-shadow: 0 6rpx 18rpx rgba(0, 0, 0, 0.3);
+  transition: transform .08s;
+}
+
+.trap:active {
+  transform: scale(0.92);
+}
+
+/* —— 按类型区分外观 —— */
+.t-blink {
+  background: #e23b3b;
+  animation: blinkcol .5s steps(1, end) infinite;
+}
+
+@keyframes blinkcol {
+  0% { background: #e23b3b; }
+  50% { background: #2fbf5d; }
+}
+
+.t-count {
+  background: linear-gradient(135deg, #ff7a18, #ff3d3d);
+}
+
+.t-reward {
+  background: linear-gradient(135deg, #ffd54a, #f7a000);
+  color: #5a3b00;
+  box-shadow: 0 0 24rpx rgba(255, 213, 74, 0.7);
+}
+
+.t-system {
+  background: linear-gradient(135deg, #3b82f6, #1e40af);
+}
+
+.t-vibrate {
+  background: linear-gradient(135deg, #ff4d8d, #c81d5e);
+  animation: pulse 0.6s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+}
+
+/* 伪装：和游戏区同色，几乎看不见，靠误触 */
+.t-camo {
+  background: #232038;
+  color: rgba(255, 255, 255, 0.10);
+  border: 1rpx solid rgba(255, 255, 255, 0.06);
+  box-shadow: none;
+}
+
+.t-move {
+  background: linear-gradient(135deg, #22d3ee, #0e7490);
+}
+
+.t-split {
+  background: linear-gradient(135deg, #34d399, #059669);
+  border: 2rpx dashed rgba(255, 255, 255, 0.7);
+}
+
+.t-fakeend {
+  background: #4b5563;
+  color: #e5e7eb;
+}
+
+.t-friend {
+  background: linear-gradient(135deg, #14b8a6, #0f766e);
+}
+
+.hint {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 26rpx;
+  margin-top: 18rpx;
+  animation: breathe 1.6s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+
+/* ---------- 结果 ---------- */
+.result-emoji {
+  text-align: center;
+  font-size: 140rpx;
+  margin: 60rpx 0 10rpx;
+  animation: shake .5s ease;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-16rpx) rotate(-6deg); }
+  40% { transform: translateX(16rpx) rotate(6deg); }
+  60% { transform: translateX(-10rpx); }
+  80% { transform: translateX(10rpx); }
+}
+
+.result-title {
+  text-align: center;
+  color: #fff;
+  font-size: 44rpx;
+  font-weight: 800;
+}
+
+.result-score {
+  text-align: center;
+  color: #fff;
+  font-size: 30rpx;
+  margin: 16rpx 0 10rpx;
+}
+
+.result-score .hl {
+  font-weight: 800;
+  font-size: 38rpx;
+  color: #FFE08A;
+}
+
+.rating {
+  text-align: center;
+  color: #FFE08A;
+  font-size: 32rpx;
+  font-weight: 800;
+  margin: 8rpx 0;
+}
+
+.taunt {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 26rpx;
+  margin: 18rpx 30rpx 40rpx;
+  line-height: 1.6;
+}
+
+.btn-row {
+  display: flex;
+  gap: 24rpx;
+}
+
+.btn-ghost {
+  flex: 1;
+  height: 96rpx;
+  border-radius: 48rpx;
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+  font-size: 31rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

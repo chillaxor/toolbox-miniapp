@@ -141,7 +141,11 @@ const TOOLS = [
   { id: 'clueguess', name: '小小侦探', category: 'fun', icon: '🕵️', path: '/pages/tools/clueguess/index', description: '搜集线索·缩圈排除·指认凶手·侦探徽章' },
   { id: 'friendship', name: '友谊修复', category: 'fun', icon: '🤝', path: '/pages/tools/friendship/index', description: '模拟吵架·识别情绪·选对方式和解·关系升温' },
   { id: 'pipeconnect', name: '水管连接', category: 'fun', icon: '🚰', path: '/pages/tools/pipeconnect/index', description: '旋转管道连通水路·考验空间想象力' },
-  { id: 'codeblock', name: '编程启蒙', category: 'study', icon: '🤖', path: '/pages/tools/codeblock/index', description: '拖拽指令块控制角色移动·图形化编程启蒙' }
+  { id: 'codeblock', name: '编程启蒙', category: 'study', icon: '🤖', path: '/pages/tools/codeblock/index', description: '拖拽指令块控制角色移动·图形化编程启蒙' },
+  { id: 'numberbomb', name: '数字炸弹', category: 'fun', icon: '💣', path: '/pages/tools/numberbomb/index', description: '轮流点数字·谁点中藏起来的炸弹谁就爆炸·聚会必备' },
+  { id: 'dontpress', name: '别按这个按钮', category: 'fun', icon: '🚫', path: '/pages/tools/dontpress/index', description: '各种诱惑按钮·忍住不按·坚持越久分越高·反直觉挑战' },
+  { id: 'reverse', name: '反着来', category: 'fun', icon: '🙃', path: '/pages/tools/reverse/index', description: '屏幕让你点左你偏点右·反向反应挑战·连击计分' },
+  { id: 'balancebeam', name: '平衡木', category: 'fun', icon: '⚖️', path: '/pages/tools/balancebeam/index', description: '左右倾斜手机·保持小球在木条上不掉落·坚持越久分越高' }
 ];
 
 /**

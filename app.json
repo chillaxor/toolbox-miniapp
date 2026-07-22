@@ -130,7 +130,11 @@
     "pages/tools/clueguess/index",
     "pages/tools/pipeconnect/index",
     "pages/tools/codeblock/index",
-    "pages/tools/friendship/index"
+    "pages/tools/friendship/index",
+    "pages/tools/numberbomb/index",
+    "pages/tools/dontpress/index",
+    "pages/tools/reverse/index",
+    "pages/tools/balancebeam/index"
   ],
   "window": {
     "backgroundTextStyle": "light",

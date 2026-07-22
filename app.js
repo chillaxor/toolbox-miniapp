@@ -186,7 +186,11 @@ App({
       clueguess: false,
       friendship: false,
       pipeconnect: false,
-      codeblock: false
+      codeblock: false,
+      numberbomb: false,
+      dontpress: false,
+      reverse: false,
+      balancebeam: false
     }
   }
 });
