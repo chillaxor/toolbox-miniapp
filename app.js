@@ -172,7 +172,7 @@ App({
       witchpoison: false,
       stacking: false,
       snake: false,
-      snakebattle: true,
+      snakebattle: false,
       gomoku: false,
       whackmole: false,
       commandreaction: false,
