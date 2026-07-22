@@ -1,0 +1,57 @@
+<!-- packages/toolsA/game2048/index.wxml -->
+<wxs src="./index.wxs" module="tile" />
+<view class="container">
+  <!-- 头部 -->
+  <view class="header">
+    <view class="logo">2048</view>
+    <view class="scores-row">
+      <view class="score-box">
+        <view class="score-label">分数</view>
+        <view class="score-val">{{score}}</view>
+      </view>
+      <view class="score-box">
+        <view class="score-label">最高</view>
+        <view class="score-val">{{bestScore}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 操作栏 -->
+  <view class="controls">
+    <view class="ctrl-btn" bindtap="newGame">🔄 重新开始</view>
+    <view class="ctrl-btn" bindtap="undoMove">↩️ 撤销</view>
+  </view>
+
+  <!-- 方块区域 -->
+  <view class="board" bindtouchstart="touchStart" bindtouchend="touchEnd">
+    <view class="grid-row" wx:for="{{grid}}" wx:key="index" wx:for-item="row">
+      <view class="grid-cell" wx:for="{{row}}" wx:key="index" wx:for-item="cell"
+        style="background:{{tile.getTileColor(cell)}}">
+        <text class="cell-text" wx:if="{{cell > 0}}"
+          style="color:{{tile.getTileTextColor(cell)}};font-size:{{tile.getTileFontSize(cell)}}">
+          {{cell}}
+        </text>
+      </view>
+    </view>
+
+    <!-- 胜利遮罩 -->
+    <view class="overlay" wx:if="{{won}}">
+      <view class="overlay-title">🎉 你赢了！</view>
+      <view class="overlay-score">得分：{{score}}</view>
+      <view class="overlay-btns">
+        <view class="ov-btn" bindtap="continuePlaying">继续挑战</view>
+        <view class="ov-btn ov-btn2" bindtap="newGame">重新开始</view>
+      </view>
+    </view>
+
+    <!-- 失败遮罩 -->
+    <view class="overlay" wx:if="{{gameOver && !won}}">
+      <view class="overlay-title">😵 挑战结束</view>
+      <view class="overlay-score">最终得分：{{score}}</view>
+      <view class="ov-btn" bindtap="newGame">再来一局</view>
+    </view>
+  </view>
+
+  <!-- 提示 -->
+  <view class="tip">👆 滑动屏幕合并数字，目标达到 2048！</view>
+</view>

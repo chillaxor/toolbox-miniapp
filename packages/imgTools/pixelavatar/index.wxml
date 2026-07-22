@@ -1,0 +1,83 @@
+<!--packages/imgTools/pixelavatar/index.wxml-->
+<view class="container">
+
+  <!-- 收藏按钮 -->
+  <view class="fav-btn" bindtap="toggleFavorite">
+    <text>{{isFavorite ? '⭐' : '☆'}}</text>
+  </view>
+
+  <!-- 主预览 -->
+  <view class="preview-area">
+    <view class="preview-box" style="background-color: {{currentBg}};">
+      <canvas type="2d" id="previewCanvas" class="preview-canvas"></canvas>
+    </view>
+  </view>
+
+  <!-- 种子输入 -->
+  <view class="section">
+    <view class="section-label">种子文字</view>
+    <view class="seed-row">
+      <input class="seed-input" value="{{seed}}" bindinput="onSeedInput" placeholder="输入名字/昵称/任意文字" maxlength="30" />
+      <button class="random-btn" bindtap="onRandomSeed">🎲</button>
+    </view>
+  </view>
+
+  <!-- 风格选择 -->
+  <view class="section">
+    <view class="section-label">头像风格</view>
+    <scroll-view class="style-scroll" scroll-x enable-flex>
+      <view class="style-list">
+        <view
+          wx:for="{{styles}}"
+          wx:key="id"
+          class="style-item {{selectedStyle === item.id ? 'active' : ''}}"
+          data-id="{{item.id}}"
+          bindtap="onStyleSelect"
+        >
+          <text class="style-icon">{{item.icon}}</text>
+          <text class="style-name">{{item.name}}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 调色板选择 -->
+  <view class="section">
+    <view class="section-label">配色方案</view>
+    <scroll-view class="palette-scroll" scroll-x enable-flex>
+      <view class="palette-list">
+        <view
+          wx:for="{{palettes}}"
+          wx:key="id"
+          class="palette-item {{selectedPalette === item.id ? 'active' : ''}}"
+          data-id="{{item.id}}"
+          bindtap="onPaletteSelect"
+        >
+          <view class="palette-colors" style="background-color: {{item.bg}};">
+            <view wx:for="{{item.fg}}" wx:for-item="color" wx:key="*this" class="palette-dot" style="background-color: {{color}};"></view>
+          </view>
+          <text class="palette-name">{{item.name}}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 批量变体 -->
+  <view class="section">
+    <view class="section-label">变体选择 <text class="hint-text">点击替换主图</text></view>
+    <view class="batch-grid">
+      <view wx:for="{{9}}" wx:key="index" class="batch-item" data-idx="{{index}}" bindtap="onBatchSelect">
+        <canvas type="2d" id="batchCanvas{{index}}" class="batch-canvas"></canvas>
+      </view>
+    </view>
+  </view>
+
+  <!-- 保存按钮 -->
+  <view class="btn-row">
+    <button class="save-btn" bindtap="saveImage">💾 保存头像到相册</button>
+  </view>
+
+  <!-- 隐藏导出画布 -->
+  <canvas type="2d" id="exportCanvas" class="offscreen-canvas"></canvas>
+
+</view>

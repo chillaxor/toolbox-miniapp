@@ -1,0 +1,112 @@
+<!--packages/toolsB/neontext/index.wxml-->
+<view class="container">
+
+  <!-- 编辑模式 -->
+  <view class="edit-panel" wx:if="{{!isFullscreen}}">
+
+    <!-- 预览区域 -->
+    <view class="preview-area" style="background-color: #0a0a0a;">
+      <view class="neon-text-wrapper">
+        <!-- flicker 效果 -->
+        <block wx:if="{{animations[selectedAnimation].name === 'flicker'}}">
+          <text class="neon-text neon-flicker" style="font-size: {{fontSize}}rpx; color: {{currentColor}}; --neon-color: {{currentColor}};">{{inputText || '流光文字'}}</text>
+        </block>
+        <!-- pulse 效果 -->
+        <block wx:elif="{{animations[selectedAnimation].name === 'pulse'}}">
+          <text class="neon-text neon-pulse" style="font-size: {{fontSize}}rpx; color: {{currentColor}}; --neon-color: {{currentColor}};">{{inputText || '流光文字'}}</text>
+        </block>
+        <!-- rainbow 效果 -->
+        <block wx:elif="{{animations[selectedAnimation].name === 'rainbow'}}">
+          <text class="neon-text neon-rainbow" style="font-size: {{fontSize}}rpx; color: {{currentColor}}; --neon-color: {{currentColor}};">{{inputText || '流光文字'}}</text>
+        </block>
+        <!-- wave 效果 -->
+        <block wx:elif="{{animations[selectedAnimation].name === 'wave'}}">
+          <view class="neon-wave-wrapper">
+            <text wx:for="{{chars}}" wx:key="index" class="neon-text neon-wave" style="font-size: {{fontSize}}rpx; color: {{currentColor}}; --neon-color: {{currentColor}}; animation-delay: {{item.delay}}s;">{{item.char}}</text>
+          </view>
+        </block>
+      </view>
+    </view>
+
+    <!-- 控制面板 -->
+    <view class="control-panel">
+
+      <!-- 文字输入 -->
+      <view class="section">
+        <view class="section-label">输入文字</view>
+        <input class="text-input" value="{{inputText}}" bindinput="onInputChange" placeholder="请输入霓虹文字..." maxlength="20" />
+      </view>
+
+      <!-- 颜色选择 -->
+      <view class="section">
+        <view class="section-label">灯光颜色</view>
+        <view class="color-row">
+          <view
+            wx:for="{{themes}}"
+            wx:key="name"
+            class="color-dot {{selectedTheme === index ? 'active' : ''}}"
+            style="background-color: {{item.color}}; --dot-color: {{item.color}};"
+            data-index="{{index}}"
+            bindtap="onThemeSelect"
+          ></view>
+        </view>
+      </view>
+
+      <!-- 动画选择 -->
+      <view class="section">
+        <view class="section-label">动画效果</view>
+        <view class="anim-row">
+          <view
+            wx:for="{{animations}}"
+            wx:key="name"
+            class="anim-btn {{selectedAnimation === index ? 'active' : ''}}"
+            data-index="{{index}}"
+            bindtap="onAnimationSelect"
+          >{{item.label}}</view>
+        </view>
+      </view>
+
+      <!-- 字号滑块 -->
+      <view class="section">
+        <view class="section-label">字号大小: {{fontSize}}rpx</view>
+        <slider class="font-slider" min="28" max="100" value="{{fontSize}}" activeColor="{{currentColor}}" block-size="20" bindchange="onFontSizeChange" />
+      </view>
+
+      <!-- 操作按钮 -->
+      <view class="btn-row">
+        <view class="action-btn primary-btn" bindtap="enterFullscreen">全屏预览</view>
+        <view class="action-btn secondary-btn" bindtap="saveImage">保存图片</view>
+      </view>
+
+    </view>
+  </view>
+
+  <!-- 全屏模式 -->
+  <view class="fullscreen" wx:if="{{isFullscreen}}" bindtap="exitFullscreen">
+    <view class="fullscreen-content">
+      <!-- flicker -->
+      <block wx:if="{{animations[selectedAnimation].name === 'flicker'}}">
+        <text class="neon-text neon-flicker fullscreen-text" style="font-size: {{fontSize * 2}}rpx; color: {{currentColor}}; --neon-color: {{currentColor}};">{{inputText}}</text>
+      </block>
+      <!-- pulse -->
+      <block wx:elif="{{animations[selectedAnimation].name === 'pulse'}}">
+        <text class="neon-text neon-pulse fullscreen-text" style="font-size: {{fontSize * 2}}rpx; color: {{currentColor}}; --neon-color: {{currentColor}};">{{inputText}}</text>
+      </block>
+      <!-- rainbow -->
+      <block wx:elif="{{animations[selectedAnimation].name === 'rainbow'}}">
+        <text class="neon-text neon-rainbow fullscreen-text" style="font-size: {{fontSize * 2}}rpx; color: {{currentColor}}; --neon-color: {{currentColor}};">{{inputText}}</text>
+      </block>
+      <!-- wave -->
+      <block wx:elif="{{animations[selectedAnimation].name === 'wave'}}">
+        <view class="neon-wave-wrapper">
+          <text wx:for="{{chars}}" wx:key="index" class="neon-text neon-wave fullscreen-text" style="font-size: {{fontSize * 2}}rpx; color: {{currentColor}}; --neon-color: {{currentColor}}; animation-delay: {{item.delay}}s;">{{item.char}}</text>
+        </view>
+      </block>
+    </view>
+    <view class="fullscreen-hint">轻触屏幕退出全屏</view>
+  </view>
+
+  <!-- 隐藏画布用于保存图片 -->
+  <canvas type="2d" id="neonCanvas" class="offscreen-canvas"></canvas>
+
+</view>

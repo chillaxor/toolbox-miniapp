@@ -1,0 +1,546 @@
+/* packages/imgTools/text2img/index.wxss */
+.container {
+  min-height: 100vh;
+  background: #f5f5f5;
+  padding-bottom: 40rpx;
+}
+
+/* 预览区域 */
+.preview-area {
+  padding: 30rpx;
+  display: flex;
+  justify-content: center;
+}
+
+.preview-card {
+  width: 650rpx;
+  min-height: 400rpx;
+  border-radius: 16rpx;
+  overflow: hidden;
+  box-shadow: 0 8rpx 30rpx rgba(0,0,0,0.12);
+}
+
+/* 简约白模板 */
+.tpl-minimal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60rpx 50rpx;
+  min-height: 350rpx;
+}
+
+.tpl-minimal-line {
+  width: 60rpx;
+  height: 4rpx;
+  margin: 20rpx 0;
+  opacity: 0.6;
+}
+
+.tpl-minimal-title {
+  text-align: center;
+  line-height: 1.8;
+  font-weight: 500;
+  letter-spacing: 4rpx;
+  word-break: break-all;
+}
+
+.tpl-minimal-author {
+  margin-top: 30rpx;
+  font-size: 26rpx;
+  opacity: 0.6;
+}
+
+/* 经典卡片模板 */
+.tpl-card {
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60rpx 50rpx;
+  min-height: 350rpx;
+}
+
+.tpl-card-icon {
+  font-size: 80rpx;
+  color: #e74c3c;
+  font-family: Georgia, serif;
+  line-height: 1;
+  margin-bottom: 10rpx;
+  opacity: 0.8;
+}
+
+.tpl-card-text {
+  text-align: center;
+  line-height: 1.8;
+  font-style: italic;
+  word-break: break-all;
+}
+
+.tpl-card-author {
+  margin-top: 30rpx;
+  font-size: 26rpx;
+  opacity: 0.6;
+}
+
+/* 诗意古风模板 */
+.tpl-chinese {
+  background: #faf6f0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60rpx 50rpx;
+  min-height: 350rpx;
+  position: relative;
+}
+
+.tpl-chinese-border {
+  border: 2rpx solid;
+  padding: 40rpx 35rpx;
+  width: 100%;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.tpl-chinese-border::before,
+.tpl-chinese-border::after {
+  content: '';
+  position: absolute;
+  width: 16rpx;
+  height: 16rpx;
+  border: 2rpx solid;
+  border-color: inherit;
+}
+
+.tpl-chinese-border::before {
+  top: -4rpx;
+  left: -4rpx;
+  border-right: none;
+  border-bottom: none;
+}
+
+.tpl-chinese-border::after {
+  bottom: -4rpx;
+  right: -4rpx;
+  border-left: none;
+  border-top: none;
+}
+
+.tpl-chinese-text {
+  text-align: center;
+  line-height: 2;
+  letter-spacing: 6rpx;
+  word-break: break-all;
+}
+
+.tpl-chinese-seal {
+  margin-top: 25rpx;
+  font-size: 24rpx;
+  padding: 6rpx 16rpx;
+  border: 2rpx solid;
+  border-radius: 4rpx;
+  opacity: 0.7;
+}
+
+/* 渐变背景模板 */
+.tpl-gradient {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60rpx 50rpx;
+  min-height: 350rpx;
+}
+
+.tpl-gradient-text {
+  text-align: center;
+  line-height: 1.8;
+  font-weight: 600;
+  text-shadow: 0 2rpx 8rpx rgba(0,0,0,0.1);
+  word-break: break-all;
+}
+
+.tpl-gradient-author {
+  margin-top: 30rpx;
+  font-size: 26rpx;
+  opacity: 0.8;
+}
+
+/* 便签纸模板 */
+.tpl-note {
+  background: #fffde7;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 70rpx 50rpx 50rpx;
+  min-height: 350rpx;
+  position: relative;
+  background-image: repeating-linear-gradient(
+    transparent, transparent 58rpx, #e8e4d0 58rpx, #e8e4d0 60rpx
+  );
+}
+
+.tpl-note-pin {
+  position: absolute;
+  top: 20rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24rpx;
+  height: 24rpx;
+  background: #e74c3c;
+  border-radius: 50%;
+  box-shadow: 0 2rpx 6rpx rgba(0,0,0,0.3);
+}
+
+.tpl-note-text {
+  text-align: center;
+  line-height: 60rpx;
+  word-break: break-all;
+}
+
+.tpl-note-author {
+  margin-top: 20rpx;
+  font-size: 26rpx;
+  opacity: 0.6;
+  align-self: flex-end;
+}
+
+/* 深色高级模板 */
+.tpl-dark {
+  background: #1a1a2e;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60rpx 50rpx;
+  min-height: 350rpx;
+  position: relative;
+}
+
+.tpl-dark-decor {
+  width: 40rpx;
+  height: 3rpx;
+  background: rgba(255,255,255,0.3);
+  margin-bottom: 30rpx;
+}
+
+.tpl-dark-decor.bottom {
+  margin-bottom: 0;
+  margin-top: 30rpx;
+}
+
+.tpl-dark-text {
+  text-align: center;
+  line-height: 1.8;
+  font-weight: 300;
+  letter-spacing: 4rpx;
+  word-break: break-all;
+}
+
+.tpl-dark-author {
+  margin-top: 25rpx;
+  font-size: 26rpx;
+  opacity: 0.5;
+}
+
+/* 朋友圈金句模板 */
+.tpl-quote {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 50rpx;
+  min-height: 400rpx;
+}
+
+.tpl-quote-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tpl-quote-text {
+  text-align: center;
+  line-height: 1.8;
+  font-weight: 600;
+  word-break: break-all;
+}
+
+.tpl-quote-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 30rpx;
+  padding-top: 20rpx;
+  border-top: 1rpx solid rgba(255,255,255,0.2);
+}
+
+.tpl-quote-author {
+  font-size: 26rpx;
+  opacity: 0.8;
+}
+
+.tpl-quote-date {
+  font-size: 22rpx;
+  opacity: 0.6;
+}
+
+/* 撕边纸模板 */
+.tpl-torn {
+  background: #f0ece4;
+  padding: 8rpx;
+  min-height: 350rpx;
+  position: relative;
+}
+
+.tpl-torn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 12rpx;
+  background: linear-gradient(135deg, #f0ece4 33.33%, transparent 33.33%) -12rpx 0,
+    linear-gradient(225deg, #f0ece4 33.33%, transparent 33.33%) -12rpx 0;
+  background-size: 24rpx 12rpx;
+}
+
+.tpl-torn::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 12rpx;
+  background: linear-gradient(315deg, #f0ece4 33.33%, transparent 33.33%) 0 0,
+    linear-gradient(45deg, #f0ece4 33.33%, transparent 33.33%) 0 0;
+  background-size: 24rpx 12rpx;
+}
+
+.tpl-torn-inner {
+  background: #faf8f3;
+  padding: 50rpx 45rpx;
+  margin: 12rpx 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300rpx;
+}
+
+.tpl-torn-text {
+  text-align: center;
+  line-height: 1.8;
+  word-break: break-all;
+}
+
+.tpl-torn-author {
+  margin-top: 30rpx;
+  font-size: 26rpx;
+  opacity: 0.6;
+  align-self: flex-end;
+}
+
+/* 编辑面板 */
+.edit-panel {
+  padding: 0 30rpx;
+}
+
+.section {
+  margin-bottom: 30rpx;
+}
+
+.section-label {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 600;
+  margin-bottom: 16rpx;
+}
+
+.optional-tag {
+  font-weight: 400;
+  color: #999;
+  font-size: 24rpx;
+}
+
+.text-input {
+  width: 100%;
+  min-height: 120rpx;
+  background: #fff;
+  border-radius: 12rpx;
+  padding: 20rpx;
+  font-size: 28rpx;
+  color: #333;
+  box-sizing: border-box;
+  line-height: 1.6;
+}
+
+.author-input {
+  width: 100%;
+  height: 80rpx;
+  background: #fff;
+  border-radius: 12rpx;
+  padding: 0 20rpx;
+  font-size: 28rpx;
+  color: #333;
+  box-sizing: border-box;
+}
+
+/* 模板选择 */
+.template-scroll {
+  white-space: nowrap;
+}
+
+.template-list {
+  display: flex;
+  gap: 20rpx;
+  padding: 10rpx 0;
+}
+
+.template-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.template-preview {
+  width: 100rpx;
+  height: 80rpx;
+  border-radius: 12rpx;
+  border: 3rpx solid transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.template-item.active .template-preview {
+  border-color: #333;
+}
+
+.tpl-minimal-preview {
+  background: #fff;
+}
+
+.tpl-card-preview {
+  background: #fff;
+}
+
+.tpl-chinese-preview {
+  background: #faf6f0;
+}
+
+.tpl-gradient-preview {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.tpl-note-preview {
+  background: #fffde7;
+}
+
+.tpl-dark-preview {
+  background: #1a1a2e;
+}
+
+.tpl-quote-preview {
+  background: linear-gradient(135deg, #f093fb, #f5576c);
+}
+
+.tpl-torn-preview {
+  background: #f0ece4;
+}
+
+.tpl-mini-dot {
+  width: 30rpx;
+  height: 4rpx;
+  border-radius: 2rpx;
+}
+
+.template-name {
+  font-size: 22rpx;
+  color: #666;
+  margin-top: 8rpx;
+}
+
+.template-item.active .template-name {
+  color: #333;
+  font-weight: 600;
+}
+
+/* 颜色选择 */
+.color-row {
+  display: flex;
+  gap: 18rpx;
+  flex-wrap: wrap;
+}
+
+.color-dot {
+  width: 52rpx;
+  height: 52rpx;
+  border-radius: 50%;
+  position: relative;
+  transition: transform 0.2s;
+}
+
+.color-dot.active {
+  transform: scale(1.2);
+  box-shadow: 0 0 0 4rpx rgba(0,0,0,0.15);
+}
+
+/* 渐变选择 */
+.gradient-list {
+  display: flex;
+  gap: 16rpx;
+  flex-wrap: wrap;
+}
+
+.gradient-item {
+  width: 80rpx;
+  height: 56rpx;
+  border-radius: 10rpx;
+  border: 3rpx solid transparent;
+}
+
+.gradient-item.active {
+  border-color: #333;
+  transform: scale(1.1);
+}
+
+/* 按钮 */
+.btn-row {
+  margin-top: 20rpx;
+  padding-bottom: 30rpx;
+}
+
+.action-btn {
+  width: 100%;
+  height: 88rpx;
+  line-height: 88rpx;
+  text-align: center;
+  border-radius: 44rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+  border: none;
+}
+
+.save-btn {
+  background: #333 !important;
+  color: #fff !important;
+}
+
+.save-btn::after {
+  border: none;
+}
+
+/* 隐藏画布 */
+.offscreen-canvas {
+  position: fixed;
+  left: -9999rpx;
+  top: -9999rpx;
+  width: 750px;
+  height: 1000px;
+}

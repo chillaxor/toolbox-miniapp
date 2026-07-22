@@ -1,0 +1,88 @@
+<!-- packages/toolsB/mbtitest/index.wxml -->
+<view class="container">
+  <!-- 介绍页 -->
+  <view class="intro" wx:if="{{state === 'intro'}}">
+    <view class="intro-icon">🧬</view>
+    <view class="intro-title">MBTI 人格测试</view>
+    <view class="intro-subtitle">发现真实的自己</view>
+    <view class="intro-desc">
+      <text>通过 28 道选择题</text>
+      <text>探索你的性格类型</text>
+      <text>了解你是哪一种人格</text>
+    </view>
+    <view class="intro-types">
+      <text class="type-tag">16种人格</text>
+      <text class="type-tag">4个维度</text>
+      <text class="type-tag">28道题</text>
+    </view>
+    <button class="start-btn" bindtap="startTest">开始测试</button>
+
+    <!-- 历史记录 -->
+    <view class="history-section" wx:if="{{historyList.length > 0}}">
+      <view class="history-title">📜 测试记录</view>
+      <view class="history-list">
+        <view class="history-item" wx:for="{{historyList}}" wx:key="index">
+          <text class="history-emoji">{{item.emoji}}</text>
+          <text class="history-type">{{item.type}}</text>
+          <text class="history-name">{{item.name}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 测试页 -->
+  <view class="testing" wx:if="{{state === 'testing'}}">
+    <view class="progress-bar">
+      <view class="progress-fill" style="width: {{progress}}%"></view>
+    </view>
+    <view class="question-count">{{currentQ + 1}} / {{totalQ}}</view>
+    <view class="question-text">{{question}}</view>
+    <view class="options">
+      <view class="option-btn" data-choice="A" bindtap="chooseOption">
+        <view class="option-letter">A</view>
+        <view class="option-text">{{optionA}}</view>
+      </view>
+      <view class="option-btn" data-choice="B" bindtap="chooseOption">
+        <view class="option-letter">B</view>
+        <view class="option-text">{{optionB}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 结果页 -->
+  <view class="result" wx:if="{{state === 'result'}}">
+    <view class="result-header">
+      <view class="result-emoji">{{resultEmoji}}</view>
+      <view class="result-type-code">{{resultType}}</view>
+      <view class="result-type-name">{{resultName}}</view>
+    </view>
+
+    <view class="result-desc">{{resultDesc}}</view>
+
+    <view class="traits-section">
+      <view class="trait-tag" wx:for="{{resultTraits}}" wx:key="index">{{item}}</view>
+    </view>
+
+    <!-- 维度分析 -->
+    <view class="dimensions-section">
+      <view class="dim-title">维度分析</view>
+      <view class="dim-item" wx:for="{{dimensions}}" wx:key="index">
+        <view class="dim-label">{{item.label}}</view>
+        <view class="dim-bar-wrap">
+          <view class="dim-bar">
+            <view class="dim-bar-left" style="width: {{item.leftPct}}%"></view>
+          </view>
+          <view class="dim-percent">
+            <text class="{{item.result === item.left ? 'dim-active' : ''}}">{{item.left}} {{item.leftPct}}%</text>
+            <text class="{{item.result === item.right ? 'dim-active' : ''}}">{{item.rightPct}}% {{item.right}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="result-actions">
+      <button class="restart-btn" bindtap="restartTest">重新测试</button>
+      <button class="share-btn" open-type="share">分享结果</button>
+    </view>
+  </view>
+</view>

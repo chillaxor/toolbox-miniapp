@@ -1,0 +1,98 @@
+<!--packages/toolsA/lovecard/index.wxml-->
+<view class="container">
+
+  <!-- 收藏按钮 -->
+  <view class="fav-btn" bindtap="toggleFavorite">
+    <text>{{isFavorite ? '⭐' : '☆'}}</text>
+  </view>
+
+  <!-- 预览卡片 -->
+  <view class="preview-area">
+    <view class="card-preview tpl-bg-{{selectedTemplate}}">
+      <view class="card-quote-mark">"</view>
+      <text class="card-text">{{currentQuote || '点击下方按钮获取情话'}}</text>
+      <view class="card-footer">
+        <text class="card-category">{{currentCategory}}</text>
+        <text class="card-date">{{today}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 模板选择 -->
+  <view class="section">
+    <view class="section-label">卡片风格</view>
+    <scroll-view class="tpl-scroll" scroll-x enable-flex>
+      <view class="tpl-list">
+        <view
+          wx:for="{{templates}}"
+          wx:key="id"
+          class="tpl-item {{selectedTemplate === item.id ? 'active' : ''}}"
+          data-id="{{item.id}}"
+          bindtap="onTemplateSelect"
+        >
+          <view class="tpl-dot" style="background: linear-gradient(135deg, {{item.bg1}}, {{item.bg2}});"></view>
+          <text class="tpl-name">{{item.name}}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 分类选择 -->
+  <view class="section">
+    <view class="section-label">情话分类</view>
+    <scroll-view class="cat-scroll" scroll-x enable-flex>
+      <view class="cat-list">
+        <view
+          wx:for="{{categories}}"
+          wx:key="id"
+          class="cat-item {{selectedCategory === item.id ? 'active' : ''}}"
+          data-id="{{item.id}}"
+          bindtap="onCategorySelect"
+        >
+          <text class="cat-icon">{{item.icon}}</text>
+          <text class="cat-name">{{item.name}}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 操作按钮组 -->
+  <view class="action-row">
+    <button class="mini-btn" bindtap="onRandomQuote">🎲 随机一条</button>
+    <button class="mini-btn" bindtap="onCopyQuote">📋 复制</button>
+    <button class="mini-btn" bindtap="onCollectQuote">{{isCollecting ? '💔 取消' : '❤️ 收藏'}}</button>
+  </view>
+
+  <!-- 手动输入 -->
+  <view class="section">
+    <view class="section-label">自己写情话 <text class="optional-tag">(可选)</text></view>
+    <textarea
+      class="custom-input"
+      value="{{customText}}"
+      bindinput="onCustomInput"
+      placeholder="写下你想对TA说的话..."
+      maxlength="100"
+      auto-height
+    />
+    <button class="use-custom-btn" bindtap="onUseCustom" wx:if="{{customText}}">使用自定义情话</button>
+  </view>
+
+  <!-- 收藏列表 -->
+  <view class="section" wx:if="{{collectedQuotes.length > 0}}">
+    <view class="section-label">❤️ 收藏的情话 ({{collectedQuotes.length}})</view>
+    <view class="collected-list">
+      <view class="collected-item" wx:for="{{collectedQuotes}}" wx:key="index">
+        <text class="collected-text">{{item}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 保存按钮 -->
+  <view class="btn-row">
+    <button class="save-btn" bindtap="saveImage">💾 保存卡片到相册</button>
+  </view>
+
+  <!-- 隐藏画布 -->
+  <canvas type="2d" id="cardCanvas" class="offscreen-canvas"></canvas>
+
+</view>
