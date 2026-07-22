@@ -145,15 +145,9 @@ App({
       wx.showModal({
         title: '🪪 证件到期提醒',
         content: lines.join('\n'),
-        showCancel: true,
-        cancelText: '知道了',
-        confirmText: '去查看',
-        confirmColor: '#667eea',
-        success: function (res) {
-          if (res.confirm) {
-            wx.navigateTo({ url: '/pages/tools/cert-expiry/index' });
-          }
-        }
+        showCancel: false,
+        confirmText: '知道了',
+        confirmColor: '#667eea'
       });
     } catch (e) {
       console.error('[App] checkCertExpiry error:', e);
@@ -178,6 +172,7 @@ App({
       witchpoison: false,
       stacking: false,
       snake: false,
+      snakebattle: true,
       gomoku: false,
       whackmole: false,
       commandreaction: false,

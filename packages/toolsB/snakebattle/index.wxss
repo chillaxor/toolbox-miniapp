@@ -1,0 +1,233 @@
+page {
+  background: #0a0e1a;
+}
+
+.container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #0a0e1a;
+  overflow: hidden;
+}
+
+/* 全屏画布 */
+.game-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  background: #0a0e1a;
+}
+
+/* 顶部 HUD */
+.hud-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding-left: 24rpx;
+  padding-right: 24rpx;
+  z-index: 10;
+  pointer-events: none;
+}
+.hud-back, .hud-fav {
+  pointer-events: auto;
+  width: 64rpx;
+  height: 64rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 44rpx;
+  color: #e6ecff;
+  background: rgba(255,255,255,0.08);
+  border-radius: 50%;
+  margin-top: 12rpx;
+}
+.hud-fav { color: #ffd54f; }
+.hud-fav.active { color: #ffd54f; }
+
+.hud-scores {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 12rpx 16rpx 0;
+  pointer-events: none;
+}
+.hs {
+  display: flex;
+  flex-direction: column;
+  min-width: 160rpx;
+  padding: 8rpx 16rpx;
+  border-radius: 16rpx;
+}
+.hs-a { background: rgba(59,130,246,0.18); align-items: flex-start; }
+.hs-b { background: rgba(239,68,68,0.18); align-items: flex-end; }
+.hs-row {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+.hs-row-r { justify-content: flex-end; }
+.hs-name {
+  font-size: 24rpx;
+  color: #e6ecff;
+  font-weight: 600;
+}
+.hs-score {
+  font-size: 42rpx;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.1;
+}
+.hs-heart {
+  font-size: 22rpx;
+  color: #ff5a7a;
+}
+.hs-buff {
+  font-size: 24rpx;
+  font-weight: 800;
+  margin: 0 2rpx;
+}
+
+/* 分屏提示 */
+.split-hint {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  pointer-events: none;
+  z-index: 5;
+}
+.split-side {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 40rpx;
+}
+.split-side.left { border-right: 2rpx dashed rgba(255,255,255,0.10); }
+.split-side text {
+  font-size: 22rpx;
+  color: rgba(255,255,255,0.25);
+}
+
+/* 底部暂停 */
+.hud-bottom {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  z-index: 10;
+  pointer-events: none;
+}
+.pause-btn {
+  pointer-events: auto;
+  width: 92rpx;
+  height: 92rpx;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40rpx;
+  color: #e6ecff;
+}
+
+/* 覆盖层 */
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(6,9,18,0.92);
+  z-index: 20;
+}
+.overlay-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40rpx;
+  width: 84%;
+}
+.overlay-title {
+  font-size: 52rpx;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 24rpx;
+  text-align: center;
+}
+.rules {
+  display: flex;
+  flex-direction: column;
+  gap: 14rpx;
+  margin-bottom: 36rpx;
+}
+.rule-line {
+  font-size: 26rpx;
+  color: #b9c4e0;
+  text-align: center;
+}
+.rule-props {
+  color: #ffd54f;
+  font-size: 23rpx;
+  margin-top: 6rpx;
+}
+.start-btn {
+  padding: 22rpx 80rpx;
+  background: linear-gradient(135deg, #3b82f6, #ef4444);
+  border-radius: 999rpx;
+  box-shadow: 0 6rpx 20rpx rgba(59,130,246,0.4);
+}
+.start-btn text {
+  font-size: 34rpx;
+  color: #fff;
+  font-weight: 700;
+}
+.back-link {
+  margin-top: 28rpx;
+}
+.back-link text {
+  font-size: 26rpx;
+  color: #6b7699;
+}
+
+.final {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 30rpx;
+  margin-bottom: 40rpx;
+}
+.final-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.final-name { font-size: 28rpx; font-weight: 600; }
+.final-name.blue { color: #60a5fa; }
+.final-name.red { color: #f87171; }
+.final-score {
+  font-size: 40rpx;
+  color: #fff;
+  font-weight: 800;
+  margin-top: 6rpx;
+}
+.final-vs {
+  font-size: 26rpx;
+  color: #8894b3;
+  font-weight: 700;
+}

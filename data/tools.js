@@ -99,6 +99,7 @@ const TOOLS = [
   { id: 'whackmole', name: '打地鼠', category: 'fun', icon: '🔨', path: '/packages/toolsA/whackmole/index', description: '限时打地鼠·考验手速' },
   { id: 'gomoku', name: '五子棋', category: 'fun', icon: '⚫', path: '/packages/toolsB/gomoku/index', description: '经典五子棋·双人对战' },
   { id: 'snake', name: '贪吃蛇', category: 'fun', icon: '🐍', path: '/packages/toolsB/snake/index', description: '经典贪吃蛇·滑动/按键操控·速度可调' },
+  { id: 'snakebattle', name: '贪吃蛇对战', category: 'fun', icon: '🐍', path: '/packages/toolsB/snakebattle/index', description: '同屏双人·吃对方尸体变长·撞墙撞身即死·滑动转向' },
   { id: 'shopping', name: '模拟超市购物', category: 'fun', icon: '🛒', path: '/packages/toolsA/shopping/index', description: '给预算选商品·学习理财找零' },
   { id: 'growth-tracker', name: '身高体重记录', category: 'life', icon: '📏', path: '/packages/toolsA/growth-tracker/index', description: '定期记录身高体重·生长曲线·标准对比' },
   { id: 'multiplication', name: '乘法口诀表', category: 'study', icon: '✖️', path: '/packages/toolsA/multiplication/index', description: '背诵九九乘法表·抽查练习·速度测试' },

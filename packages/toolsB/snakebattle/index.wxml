@@ -1,0 +1,87 @@
+<view class="container">
+
+  <!-- 顶部 HUD (叠加, 不挡滑动) -->
+  <view class="hud-top" style="padding-top:{{statusBar}}px">
+    <view class="hud-back" bindtap="onBack">‹</view>
+
+    <view class="hud-scores">
+      <!-- 蓝方 -->
+      <view class="hs hs-a">
+        <view class="hs-row">
+          <text class="hs-name">🔵 蓝方</text>
+          <text class="hs-score">{{aScore}}</text>
+        </view>
+        <view class="hs-row">
+          <text class="hs-heart" wx:for="{{aLivesArr}}" wx:key="*this">❤</text>
+          <text class="hs-buff" wx:for="{{aBuffs}}" wx:key="icon" style="color:{{item.color}}">{{item.icon}}</text>
+        </view>
+      </view>
+      <!-- 红方 -->
+      <view class="hs hs-b">
+        <view class="hs-row">
+          <text class="hs-score">{{bScore}}</text>
+          <text class="hs-name">红方 🔴</text>
+        </view>
+        <view class="hs-row hs-row-r">
+          <text class="hs-buff" wx:for="{{bBuffs}}" wx:key="icon" style="color:{{item.color}}">{{item.icon}}</text>
+          <text class="hs-heart" wx:for="{{bLivesArr}}" wx:key="*this">❤</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="hud-fav {{isFavorite ? 'active' : ''}}" bindtap="toggleFavorite">
+      <text>{{isFavorite ? '★' : '☆'}}</text>
+    </view>
+  </view>
+
+  <!-- 全屏画布 -->
+  <canvas type="2d" id="battleCanvas"
+    class="game-canvas"
+    style="width:{{canvasW}}px;height:{{canvasH}}px"
+    bindtouchstart="onTouchStart"
+    bindtouchend="onTouchEnd">
+  </canvas>
+
+  <!-- 分屏滑动提示 -->
+  <view class="split-hint" wx:if="{{gameState === 'playing'}}">
+    <view class="split-side left"><text>🔵 滑动转向</text></view>
+    <view class="split-side right"><text>滑动转向 🔴</text></view>
+  </view>
+
+  <!-- 底部暂停 -->
+  <view class="hud-bottom" wx:if="{{gameState === 'playing'}}" style="padding-bottom:calc(20rpx + env(safe-area-inset-bottom))">
+    <view class="pause-btn" bindtap="togglePause"><text>{{isPaused ? '▶' : '⏸'}}</text></view>
+  </view>
+
+  <!-- 开始 / 结束 覆盖层 -->
+  <view class="overlay" wx:if="{{gameState !== 'playing'}}">
+    <view class="overlay-content" wx:if="{{gameState === 'idle'}}">
+      <text class="overlay-title">🐍 贪吃蛇对战</text>
+      <view class="rules">
+        <text class="rule-line">🔵蓝方滑左半屏 · 🔴红方滑右半屏</text>
+        <text class="rule-line">🍬糖果+1节 · 💀吃对方尸体+3节</text>
+        <text class="rule-line">撞墙/撞身/撞对方即死 · 各3条命</text>
+        <text class="rule-line">出生2秒无敌 · 命先没的一方输</text>
+        <text class="rule-line rule-props">道具: ★无敌穿墙 ❄减速对方 ↔反向对方 磁吸食物 缩身减半</text>
+      </view>
+      <view class="start-btn" bindtap="startGame"><text>开始对战</text></view>
+    </view>
+
+    <view class="overlay-content" wx:if="{{gameState === 'over'}}">
+      <text class="overlay-title">{{resultTitle}}</text>
+      <view class="final">
+        <view class="final-col">
+          <text class="final-name blue">🔵 蓝方</text>
+          <text class="final-score">{{aScore}}分</text>
+        </view>
+        <text class="final-vs">VS</text>
+        <view class="final-col">
+          <text class="final-name red">🔴 红方</text>
+          <text class="final-score">{{bScore}}分</text>
+        </view>
+      </view>
+      <view class="start-btn" bindtap="startGame"><text>再来一局</text></view>
+      <view class="back-link" bindtap="onBack"><text>‹ 返回工具箱</text></view>
+    </view>
+  </view>
+</view>
