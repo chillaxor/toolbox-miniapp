@@ -121,9 +121,8 @@
         "todolist/index",
         "wordcount/index",
         "countdown/index",
-        "jsonformat/index",
-        "habit-checkin/index"
-      ]
+    "jsonformat/index"
+  ]
     },
     {
       "root": "packages/toolsB",
@@ -164,9 +163,8 @@
         "numberbomb/index",
         "whateat/index",
         "worldclock/index",
-        "workday/index",
-        "notes-manager/index"
-      ]
+    "workday/index"
+  ]
     }
   ],
   "window": {
