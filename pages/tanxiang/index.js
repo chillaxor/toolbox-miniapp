@@ -36,21 +36,14 @@ function fetchLingqianData() {
   });
 }
 
-// 香型图片分两部分：
-// 1) 1~3 写死，使用代码内置的本地图片（assets/blessing/incense_1~3.png），永远可用
-// 2) 4~24 从 Gitee raw 仓库拉取（图片后续上传到 qian_data 仓库 master 分支）
-//    运行时逐个校验可用性，拿到才合并进选择器，没拿到的不显示。
 var LOCAL_INCENSE = [
   { id: 'local-1', name: '', desc: '道法自然，清静无为', image: '../../assets/blessing/incense_1.png' },
-  { id: 'local-2', name: '', desc: '厚德载物，积善成德', image: '../../assets/blessing/incense_2.png' },
-  { id: 'local-3', name: '', desc: '诵经祈福，智慧增长', image: '../../assets/blessing/incense_3.png' }
 ];
 
 var INCENSE_IMG_BASE = 'https://gitee.com/b64882/qian_data/raw/master/';
-var GITEE_INCENSE_FROM = 4;
+var GITEE_INCENSE_FROM = 2;
 var GITEE_INCENSE_TO = 24;
 
-// 4~24 的 Gitee 候选（校验通过才合并进列表）
 function buildGiteeIncense() {
   var arr = [];
   for (var n = GITEE_INCENSE_FROM; n <= GITEE_INCENSE_TO; n++) {
@@ -64,21 +57,19 @@ function buildGiteeIncense() {
   return arr;
 }
 
-// 全量主表（本地 + Gitee 候选），用于按 id 反查（燃烧态恢复用）
 var ALL_INCENSE = LOCAL_INCENSE.concat(buildGiteeIncense());
 var INCENSE_BY_ID = {};
 ALL_INCENSE.forEach(function (it) { INCENSE_BY_ID[it.id] = it; });
 
-// 背景图：默认本地 bg_tanxiang.jpg；另外 2 张来自 Gitee（xrds.jpg / yu.jpg）
-// 与香型一致：Gitee 图运行时逐个校验，拿到才合并进选择器，没拿到不显示。
-var BG_LOCAL = [
-  { id: 'local', image: '../../assets/blessing/bg_tanxiang.jpg' }
+var BG_SOLID = [
+  { id: 'color-default', color: '#1a120b' }
 ];
 var BG_GITEE = [
-  { id: 'gitee-xrds', image: INCENSE_IMG_BASE + 'xrds.jpg' },
-  { id: 'gitee-yu', image: INCENSE_IMG_BASE + 'yu.jpg' }
+  { id: 'gitee-yu', image: INCENSE_IMG_BASE + 'yu.jpg' },
+  { id: 'gitee-tanxiang', image: INCENSE_IMG_BASE + 'bg_tanxiang.jpg' },
+  { id: 'gitee-xrds', image: INCENSE_IMG_BASE + 'xrds.jpg' }
 ];
-var BG_ALL = BG_LOCAL.concat(BG_GITEE);
+var BG_ALL = BG_SOLID.concat(BG_GITEE);
 var BG_BY_ID = {};
 BG_ALL.forEach(function (it) { BG_BY_ID[it.id] = it; });
 
@@ -137,9 +128,10 @@ Page({
     // 香型选择器
     showIncensePicker: false,
     incenseTypes: LOCAL_INCENSE,
-    // 背景图选择器（默认本地，Gitee 图校验后合并）
-    bgUrl: '../../assets/blessing/bg_tanxiang.jpg',
-    bgList: BG_LOCAL,
+    // 背景图选择器（默认单一纯色；Gitee 图校验后合并）
+    bgUrl: '',
+    bgColor: '#f57505',
+    bgList: BG_SOLID,
     selectedBg: 0,
     showBgPicker: false,
     // 佛祖签
@@ -539,32 +531,31 @@ Page({
   closeBgPicker: function () {
     this.setData({ showBgPicker: false });
   },
-  // 恢复上次选中的背景（按 id 反查，列表动态变化后也不错位）
+  applyBg: function (item) {
+    if (item.color) {
+      this.setData({ bgColor: item.color, bgUrl: '' });
+    } else {
+      this.setData({ bgUrl: item.image, bgColor: '' });
+    }
+  },
   restoreBg: function () {
-    var id = storage.getSync('tanxiang_bg_id', 'local');
-    var item = BG_BY_ID[id] || BG_LOCAL[0];
+    var id = storage.getSync('tanxiang_bg_id', 'color-default');
+    var item = BG_BY_ID[id] || BG_SOLID[0];
     var idx = -1;
     for (var i = 0; i < this.data.bgList.length; i++) {
       if (this.data.bgList[i].id === item.id) { idx = i; break; }
     }
-    this.setData({
-      bgUrl: item.image,
-      selectedBg: idx >= 0 ? idx : 0
-    });
+    this.applyBg(item);
+    this.setData({ selectedBg: idx >= 0 ? idx : 0 });
   },
   selectBg: function (e) {
     var idx = e.currentTarget.dataset.index;
     var item = this.data.bgList[idx];
     if (!item) return;
     storage.setSync('tanxiang_bg_id', item.id);
-    this.setData({
-      bgUrl: item.image,
-      selectedBg: idx,
-      showBgPicker: false
-    });
+    this.applyBg(item);
+    this.setData({ selectedBg: idx, showBgPicker: false });
   },
-  // 本地背景永远在；Gitee 背景逐个用 getImageInfo 校验，
-  // 拿到（图片存在且可加载）才合并进 bgList，没拿到不显示。
   loadBgList: function () {
     var that = this;
     var candidates = BG_GITEE;

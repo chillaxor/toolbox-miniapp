@@ -1,0 +1,126 @@
+<view class="page {{phase==='setup'?'setup':''}}">
+  <!-- ================= 设置 ================= -->
+  <block wx:if="{{phase==='setup'}}">
+    <view class="navbar">
+      <view class="nav-back" bindtap="navBack">‹ 返回</view>
+      <view class="nav-title">左右互搏</view>
+      <view class="nav-back nav-placeholder">‹ 返回</view>
+    </view>
+    <view class="hero">🥊 左右互搏</view>
+    <view class="howto">手机横放两人并排：<text class="em">左手答左边、右手答右边</text>，各答各题却互相干扰——致盲、变色、加速、偷题、互换时间，用能量放大招把对方搞崩！</view>
+
+    <view class="sec-label">对战模式</view>
+    <view class="mode-row">
+      <view class="mode {{mode==='timed'?'on':''}}" bindtap="selectMode" data-m="timed">
+        <view class="mode-name">限时</view><view class="mode-desc">60秒分高</view>
+      </view>
+      <view class="mode {{mode==='survival'?'on':''}}" bindtap="selectMode" data-m="survival">
+        <view class="mode-name">生存</view><view class="mode-desc">各3条命</view>
+      </view>
+      <view class="mode {{mode==='coop'?'on':''}}" bindtap="selectMode" data-m="coop">
+        <view class="mode-name">合作</view><view class="mode-desc">同题同答</view>
+      </view>
+    </view>
+
+    <view class="sec-label">难度（儿童友好）</view>
+    <view class="diff-row">
+      <view class="diff {{difficulty==='entry'?'on':''}}" bindtap="selectDiff" data-d="entry">入门</view>
+      <view class="diff {{difficulty==='easy'?'on':''}}" bindtap="selectDiff" data-d="easy">简单</view>
+      <view class="diff {{difficulty==='medium'?'on':''}}" bindtap="selectDiff" data-d="medium">中等</view>
+      <view class="diff {{difficulty==='hard'?'on':''}}" bindtap="selectDiff" data-d="hard">困难</view>
+      <view class="diff {{difficulty==='master'?'on':''}}" bindtap="selectDiff" data-d="master">大师</view>
+    </view>
+
+    <view class="single {{single?'on':''}}" bindtap="toggleSingle">
+      <view class="single-dot"></view>
+      <view class="single-txt">单手模式：一人左右开弓，左手答左、右手答右</view>
+    </view>
+
+    <view class="btn-primary" bindtap="onStart">开始对战 🚀</view>
+  </block>
+
+  <!-- ================= 游戏中 ================= -->
+  <block wx:elif="{{phase==='playing'}}">
+    <view class="topbar">
+      <view class="x" bindtap="backSetup">✕</view>
+      <view class="goal">{{goalText}}</view>
+      <view class="rt" wx:if="{{mode==='timed'}}">⏱ A{{sides[0].timeLeft}}s·B{{sides[1].timeLeft}}s</view>
+      <view class="rt" wx:elif="{{mode==='coop'}}">🤝 团队{{teamScore}}/{{coopGoal}}</view>
+      <view class="rt" wx:else>生存中</view>
+    </view>
+
+    <view class="arena">
+      <view class="panel" wx:for="{{sides}}" wx:for-item="s" wx:key="key">
+        <!-- 头部 -->
+        <view class="phead">
+          <view class="pname">{{s.key==='A'?'玩家A（左）':'玩家B（右）'}}</view>
+          <view class="pscore" wx:if="{{mode==='survival'}}">❤️ {{s.lives}}</view>
+          <view class="pscore" wx:else>⭐ {{s.score}}</view>
+        </view>
+        <view class="ebar"><view class="efill" style="width:{{s.energy}}%"></view></view>
+        <view class="badges">
+          <text class="badge" wx:if="{{s.combo > 0}}">🔥{{s.combo}}连</text>
+          <text class="badge" wx:if="{{s.shield}}">🛡️盾</text>
+          <text class="badge" wx:if="{{s.berserk > 0}}">⚡狂暴</text>
+          <text class="badge" wx:if="{{s.comeback > 0}}">🔥追分</text>
+        </view>
+
+        <!-- 题目区 -->
+        <view class="qarea {{s.pollute?'pollute':''}} {{s.wobble?'wobble':''}}">
+          <view class="qwrap">
+            <text class="cword" wx:if="{{s.q.kind==='color'}}" style="color:{{s.q.displayColor}}">{{s.q.displayText}}</text>
+            <view class="bigarrow" wx:elif="{{s.q.kind==='dir' || s.q.kind==='mirror'}}">{{s.q.arrow}}</view>
+            <view class="prompt" wx:else>{{s.q.promptText}}</view>
+            <view class="rule">{{s.q.ruleText}}</view>
+          </view>
+          <view class="occlude" wx:if="{{s.occlude}}">☁️</view>
+          <view class="sflash" wx:if="{{s.flash}}"><text class="sflash-txt">致盲</text></view>
+        </view>
+
+        <!-- 选项 -->
+        <view class="opts">
+          <view class="opt {{o.correct && s.showCorrect ? 'right' : ''}} {{s.answered || s.out || s.frozen || s.cooldown ? 'dis' : ''}}"
+                wx:for="{{s.q.options}}" wx:for-item="o" wx:for-index="oi" wx:key="key"
+                style="background:{{o.bg}}"
+                data-side="{{s.key}}" data-i="{{oi}}" bindtap="answer">{{o.label}}</view>
+        </view>
+
+        <!-- 干扰技能（合作模式无干扰） -->
+        <view class="skills" wx:if="{{mode==='timed' || mode==='survival'}}">
+          <view class="skill {{s.smallReady?'':'dis'}}" data-side="{{s.key}}" data-k="small" bindtap="useSkill">小 {{s.smallCost===0?'免费':s.smallCost}}</view>
+          <view class="skill {{s.midReady?'':'dis'}}" data-side="{{s.key}}" data-k="mid" bindtap="useSkill">中 {{s.midCost===0?'半价':s.midCost}}</view>
+          <view class="skill {{s.bigReady?'':'dis'}}" data-side="{{s.key}}" data-k="big" bindtap="useSkill">大 {{s.bigCost}}</view>
+        </view>
+
+        <view class="note" wx:if="{{s.note}}">{{s.note}}</view>
+        <view class="frozen" wx:if="{{s.frozen || s.cooldown}}">{{s.cooldown?'😌 冷静一下…':'❄️ 冻结中'}}</view>
+      </view>
+
+      <view class="divider"><text class="div-txt">分界线·不可越界</text></view>
+    </view>
+
+    <!-- 干扰记录 -->
+    <view class="logbox" wx:if="{{log.length > 0}}">
+      <view class="log-title">干扰记录</view>
+      <view class="logline" wx:for="{{log}}" wx:key="*this">{{item}}</view>
+    </view>
+  </block>
+
+  <!-- ================= 结果 ================= -->
+  <block wx:elif="{{phase==='result'}}">
+    <view class="navbar">
+      <view class="nav-back" bindtap="backSetup">‹ 设置</view>
+      <view class="nav-title">战绩</view>
+      <view class="nav-back nav-placeholder">‹ 设置</view>
+    </view>
+    <view class="result">
+      <view class="hero result-hero">{{winnerText}}</view>
+      <view class="summary">{{summary}}</view>
+      <view class="summary">{{modeText}}</view>
+      <view class="btn-row">
+        <view class="btn-ghost" bindtap="backSetup">返回设置</view>
+        <view class="btn-primary inline" bindtap="replay">再来一局</view>
+      </view>
+    </view>
+  </block>
+</view>

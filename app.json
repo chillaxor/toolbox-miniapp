@@ -134,7 +134,12 @@
     "pages/tools/numberbomb/index",
     "pages/tools/dontpress/index",
     "pages/tools/reverse/index",
-    "pages/tools/balancebeam/index"
+    "pages/tools/balancebeam/index",
+    "pages/tools/grabcolor/index",
+    "pages/tools/subtract/index",
+    "pages/tools/nim/index",
+    "pages/tools/leftright/index",
+    "pages/tools/splitball/index"
   ],
   "window": {
     "backgroundTextStyle": "light",

@@ -1,0 +1,84 @@
+<view class="page {{phase==='playing'?'play':''}}">
+  <view class="flashlayer {{flash}}"></view>
+
+  <!-- 设置 -->
+  <block wx:if="{{phase==='setup'}}">
+    <view class="hero">🌈 抢颜色</view>
+    <view class="howto">中间蹦出一个带颜色的字。<text class="em">看字的「颜色」</text>（不是字的意思！）就抢点自己这边对应的颜色。字义和颜色打架时，手快脑稳者胜！</view>
+
+    <view class="sec-label">游戏模式</view>
+    <view class="mode-row">
+      <view class="mode {{mode==='classic'?'on':''}}" bindtap="selectMode" data-m="classic">
+        <view class="mode-name">经典</view><view class="mode-desc">先得 10 分</view>
+      </view>
+      <view class="mode {{mode==='timed'?'on':''}}" bindtap="selectMode" data-m="timed">
+        <view class="mode-name">限时</view><view class="mode-desc">60 秒分高</view>
+      </view>
+      <view class="mode {{mode==='survival'?'on':''}}" bindtap="selectMode" data-m="survival">
+        <view class="mode-name">生存</view><view class="mode-desc">各 3 条命</view>
+      </view>
+      <view class="mode {{mode==='coop'?'on':''}}" bindtap="selectMode" data-m="coop">
+        <view class="mode-name">合作</view><view class="mode-desc">联手战 AI</view>
+      </view>
+    </view>
+
+    <view class="btn-primary" bindtap="onStart">开始游戏 🚀</view>
+  </block>
+
+  <!-- 游戏中（横屏：左按钮 / 中比分+大字 / 右按钮 三段式，vw/vh 自适应一屏） -->
+  <block wx:elif="{{phase==='playing'}}">
+    <view class="topbar">
+      <view class="goal">{{goalText}}</view>
+      <view class="rt" wx:if="{{mode==='timed'}}">⏱ {{timeLeft}}s</view>
+      <view class="rt" wx:else>第 {{round}} 轮</view>
+    </view>
+
+    <view class="arena">
+      <view class="pcol pcol-a">
+        <view class="col-name">玩家A</view>
+        <view wx:for="{{activeColors}}" wx:key="key" class="cbtn" style="background:{{item.hex}}" data-key="{{item.key}}" bindtap="tapA">{{item.name}}</view>
+      </view>
+
+      <view class="stage">
+        <view class="scoreboard">
+          <view class="side side-a">
+            <view class="pname" wx:if="{{mode==='coop'}}">🤝 队伍</view>
+            <view class="pname" wx:else>玩家A</view>
+            <view class="pscore" wx:if="{{mode==='survival'}}">❤️ {{livesA}}</view>
+            <view class="pscore" wx:elif="{{mode==='coop'}}">{{teamScore}}</view>
+            <view class="pscore" wx:else>{{scoreA}}</view>
+          </view>
+          <view class="side side-b">
+            <view class="pname" wx:if="{{mode==='coop'}}">🤖 AI</view>
+            <view class="pname" wx:else>玩家B</view>
+            <view class="pscore" wx:if="{{mode==='survival'}}">❤️ {{livesB}}</view>
+            <view class="pscore" wx:elif="{{mode==='coop'}}">{{aiScore}}</view>
+            <view class="pscore" wx:else>{{scoreB}}</view>
+          </view>
+        </view>
+
+        <view class="center">
+          <text class="word" style="color:{{wordColor}}">{{wordText}}</text>
+          <view class="result-line" wx:if="{{resultLine}}">{{resultLine}}</view>
+        </view>
+      </view>
+
+      <view class="pcol pcol-b">
+        <view class="col-name" wx:if="{{mode==='coop'}}">玩家B（队友）</view>
+        <view class="col-name" wx:else>玩家B</view>
+        <view wx:for="{{activeColors}}" wx:key="key" class="cbtn" style="background:{{item.hex}}" data-key="{{item.key}}" bindtap="tapB">{{item.name}}</view>
+      </view>
+    </view>
+  </block>
+
+  <!-- 结果 -->
+  <block wx:elif="{{phase==='result'}}">
+    <view class="hero result-hero">{{winnerText}}</view>
+    <view class="summary">{{summary}}</view>
+    <view class="summary">{{modeText}}</view>
+    <view class="btn-row">
+      <view class="btn-ghost" bindtap="backSetup">返回设置</view>
+      <view class="btn-primary inline" bindtap="replay">再来一局</view>
+    </view>
+  </block>
+</view>

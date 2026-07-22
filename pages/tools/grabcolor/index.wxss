@@ -1,0 +1,262 @@
+.page {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #1c1c2e, #2a2a44);
+  padding: 24rpx 32rpx calc(20rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* 游戏中锁横屏：占满整屏、不滚动，vw/vh 自适应任何机型比例 */
+.page.play {
+  height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
+  padding: 1vh 2vw calc(1vh + env(safe-area-inset-bottom));
+}
+.page.play .topbar {
+  flex: none;
+  height: 6vh;
+  padding: 0;
+  align-items: flex-end;
+}
+/* 横向三段式竞技区：左玩家按钮 / 中比分+大字 / 右玩家按钮 */
+.page.play .arena {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 2vw;
+}
+.page.play .pcol {
+  width: 23vw;
+  flex: none;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto repeat(3, 1fr);
+  gap: 1.4vh 1.4vw;
+  align-content: center;
+}
+.page.play .col-name {
+  grid-column: 1 / 3;
+  font-size: 3.4vw;
+  margin-bottom: 0;
+}
+.page.play .cbtn {
+  height: auto;
+  min-height: 0;
+  font-size: 4vw;
+  border-radius: 12rpx;
+  box-shadow: inset 0 0 0 2rpx rgba(255, 255, 255, 0.28);
+}
+.page.play .stage {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.page.play .scoreboard {
+  flex: none;
+  padding: 1vh 0 0;
+  justify-content: center;
+  gap: 3vw;
+}
+.page.play .side { min-width: 0; }
+.page.play .pscore { font-size: 6vw; }
+.page.play .pname { font-size: 3vw; }
+.page.play .center {
+  flex: 1;
+  min-height: 0;
+}
+.page.play .word {
+  font-size: 20vw;
+  line-height: 1;
+}
+.page.play .result-line {
+  font-size: 4vw;
+  margin-top: 1.5vh;
+  padding: 1vh 3vw;
+}
+
+/* 结算闪光层 */
+.flashlayer {
+  position: absolute;
+  left: 0; top: 0; right: 0; bottom: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .15s ease;
+  z-index: 5;
+}
+.flashlayer.green  { background: rgba(52, 199, 89, 0.42);  opacity: 1; }
+.flashlayer.red    { background: rgba(255, 59, 48, 0.42);   opacity: 1; }
+.flashlayer.yellow { background: rgba(255, 214, 10, 0.42); opacity: 1; }
+.flashlayer.team   { background: rgba(10, 132, 255, 0.42); opacity: 1; }
+
+/* ---------- 设置 ---------- */
+.hero {
+  text-align: center;
+  font-size: 64rpx;
+  font-weight: 800;
+  color: #fff;
+  margin: 30rpx 0 16rpx;
+  letter-spacing: 4rpx;
+}
+.result-hero { margin-top: 60rpx; }
+.howto {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 26rpx;
+  line-height: 1.6;
+  text-align: center;
+  padding: 0 20rpx;
+  margin-bottom: 24rpx;
+}
+.howto .em { color: #FFD60A; font-weight: 700; }
+
+.sec-label {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 26rpx;
+  text-align: center;
+  margin: 10rpx 0 16rpx;
+}
+.mode-row {
+  display: flex;
+  gap: 16rpx;
+  justify-content: center;
+  padding: 0 10rpx;
+}
+.mode {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.08);
+  border: 2rpx solid transparent;
+  border-radius: 20rpx;
+  padding: 22rpx 8rpx;
+  text-align: center;
+  transition: all .15s;
+}
+.mode.on {
+  background: rgba(10, 132, 255, 0.22);
+  border-color: #0A84FF;
+}
+.mode-name { color: #fff; font-size: 32rpx; font-weight: 700; }
+.mode-desc { color: rgba(255, 255, 255, 0.6); font-size: 22rpx; margin-top: 6rpx; }
+
+.btn-primary {
+  margin: 40rpx 40rpx 0;
+  background: linear-gradient(90deg, #0A84FF, #5AC8FA);
+  color: #fff;
+  font-size: 34rpx;
+  font-weight: 700;
+  text-align: center;
+  padding: 26rpx;
+  border-radius: 999rpx;
+  box-shadow: 0 8rpx 24rpx rgba(10, 132, 255, 0.4);
+}
+.btn-primary.inline { margin: 0; flex: 1; }
+.btn-row { display: flex; gap: 20rpx; margin: 50rpx 40rpx 0; }
+.btn-ghost {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-size: 32rpx;
+  text-align: center;
+  padding: 26rpx;
+  border-radius: 999rpx;
+}
+
+/* ---------- 游戏中 ---------- */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4rpx 12rpx 10rpx;
+}
+.goal { color: rgba(255, 255, 255, 0.7); font-size: 26rpx; }
+.rt {
+  color: #FFD60A;
+  font-size: 30rpx;
+  font-weight: 700;
+  background: rgba(255, 214, 10, 0.12);
+  padding: 4rpx 18rpx;
+  border-radius: 999rpx;
+}
+
+.scoreboard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6rpx 12rpx;
+}
+.side { display: flex; flex-direction: column; align-items: center; min-width: 160rpx; }
+.pname { color: #fff; font-size: 26rpx; opacity: 0.85; }
+.pscore {
+  color: #fff;
+  font-size: 52rpx;
+  font-weight: 800;
+  margin-top: 2rpx;
+}
+.side-a .pscore { color: #FFD166; }
+.side-b .pscore { color: #4be0c4; }
+
+.center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.word {
+  font-size: 168rpx;
+  font-weight: 800;
+  line-height: 1;
+  text-shadow: 0 6rpx 20rpx rgba(0, 0, 0, 0.55);
+  letter-spacing: 6rpx;
+}
+.result-line {
+  margin-top: 16rpx;
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 8rpx 28rpx;
+  border-radius: 999rpx;
+}
+
+.pcol {
+  width: 42%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14rpx;
+}
+.col-name {
+  grid-column: 1 / 3;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 24rpx;
+  margin-bottom: 2rpx;
+}
+.cbtn {
+  height: 88rpx;
+  border-radius: 18rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 40rpx;
+  font-weight: 700;
+  text-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.45);
+  box-shadow: inset 0 0 0 2rpx rgba(255, 255, 255, 0.28);
+  transition: transform .08s;
+}
+.cbtn:active { transform: scale(0.92); }
+
+/* ---------- 结果 ---------- */
+.summary {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 32rpx;
+  margin-top: 18rpx;
+}

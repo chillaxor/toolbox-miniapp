@@ -145,7 +145,12 @@ const TOOLS = [
   { id: 'numberbomb', name: '数字炸弹', category: 'fun', icon: '💣', path: '/pages/tools/numberbomb/index', description: '轮流点数字·谁点中藏起来的炸弹谁就爆炸·聚会必备' },
   { id: 'dontpress', name: '别按这个按钮', category: 'fun', icon: '🚫', path: '/pages/tools/dontpress/index', description: '各种诱惑按钮·忍住不按·坚持越久分越高·反直觉挑战' },
   { id: 'reverse', name: '反着来', category: 'fun', icon: '🙃', path: '/pages/tools/reverse/index', description: '屏幕让你点左你偏点右·反向反应挑战·连击计分' },
-  { id: 'balancebeam', name: '平衡木', category: 'fun', icon: '⚖️', path: '/pages/tools/balancebeam/index', description: '左右倾斜手机·保持小球在木条上不掉落·坚持越久分越高' }
+  { id: 'balancebeam', name: '平衡木', category: 'fun', icon: '⚖️', path: '/pages/tools/balancebeam/index', description: '左右倾斜手机·保持小球在木条上不掉落·坚持越久分越高' },
+  { id: 'grabcolor', name: '抢颜色', category: 'fun', icon: '🌈', path: '/pages/tools/grabcolor/index', description: '斯特鲁普效应·字义和颜色打架·两人抢点正确颜色·手快脑稳者胜' },
+  { id: 'subtract', name: '减法游戏', category: 'fun', icon: '➖', path: '/pages/tools/subtract/index', description: '一堆石子轮流拿·拿到最后赢(可反转)·(K+1)倍数必胜策略·同屏双人' },
+  { id: 'nim', name: 'Nim游戏', category: 'fun', icon: '🪨', path: '/pages/tools/nim/index', description: '多堆石子轮流拿·Nim和必胜策略·正常/misère/限拿K/多堆/随机事件变体·同屏双人' },
+  { id: 'leftright', name: '左右互搏', category: 'fun', icon: '🥊', path: '/pages/tools/leftright/index', description: '屏幕左右分屏·两人各答各题却互相干扰·闪光/变色/加速/偷题·能量连击放大招·限时/生存/合作' },
+  { id: 'splitball', name: '分裂球', category: 'fun', icon: '⚽', path: '/pages/tools/splitball/index', description: '中央分裂双色球·点自己颜色得分·假球/变色/反弹/连发·限时/生存/无尽·斯特鲁普/互换/合作变体·同屏双人' }
 ];
 
 /**

@@ -1,0 +1,87 @@
+<view class="page">
+  <view class="flashlayer {{flash}}"></view>
+
+  <!-- 设置 -->
+  <block wx:if="{{phase==='setup'}}">
+    <view class="hero">➖ 减法游戏</view>
+    <view class="howto">一堆石子，两人轮流拿。每次拿 1~K 颗，<text class="em">拿到最后一颗者赢</text>（可切换成「拿最后输」）。谁先走到「(K+1) 的倍数」谁就掌握了必胜节奏！</view>
+
+    <view class="sec-label">选择难度</view>
+    <view class="preset-row">
+      <view wx:for="{{presets}}" wx:key="id" class="preset {{selectedPreset===item.id?'on':''}}" bindtap="selectPreset" data-p="{{item.id}}">
+        <view class="preset-name">{{item.name}}</view>
+        <view class="preset-desc">{{item.desc}}</view>
+      </view>
+    </view>
+
+    <view wx:if="{{selectedPreset==='custom'}}" class="custom">
+      <view class="stepper">
+        <view class="st-label">初始石子</view>
+        <view class="st-ctrl">
+          <view class="st-btn" bindtap="decInit">−</view>
+          <view class="st-val">{{customInit}}</view>
+          <view class="st-btn" bindtap="incInit">＋</view>
+        </view>
+      </view>
+      <view class="stepper">
+        <view class="st-label">每次最多拿</view>
+        <view class="st-ctrl">
+          <view class="st-btn" bindtap="decMax">−</view>
+          <view class="st-val">{{customMax}}</view>
+          <view class="st-btn" bindtap="incMax">＋</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="toggle-row" bindtap="toggleLastWin">
+      <view class="tg-label">拿最后一粒</view>
+      <view class="tg-val {{lastWin?'on':'off'}}">{{lastWin ? '赢 ✅' : '输 🔁'}}</view>
+    </view>
+    <view class="toggle-row" bindtap="toggleHint">
+      <view class="tg-label">显示必胜提示</view>
+      <view class="tg-val {{hintOn?'on':'off'}}">{{hintOn ? '开 💡' : '关'}}</view>
+    </view>
+
+    <view class="btn-primary" bindtap="onStart">开始游戏 🎮</view>
+  </block>
+
+  <!-- 游戏中 -->
+  <block wx:elif="{{phase==='playing'}}">
+    <view class="topinfo">
+      <view class="remain">剩余 <text class="remain-num">{{remaining}}</text></view>
+      <view class="rule">{{lastWin ? '拿最后赢' : '拿最后输'}} · 最多拿 {{maxTake}}</view>
+    </view>
+
+    <view class="stones">
+      <view wx:for="{{stones}}" wx:key="id" class="stone {{item.taken?'taken':''}} {{item.removing?'removing':''}}"></view>
+    </view>
+
+    <view class="status">{{status}}</view>
+
+    <view class="take-row">
+      <view wx:for="{{takeBtns}}" wx:key="n" class="take-btn {{item.disabled?'disabled':''}}" data-n="{{item.n}}" bindtap="take">{{item.n}}</view>
+    </view>
+
+    <view class="turn turn-{{current}}">👉 玩家{{current}} 回合</view>
+
+    <view wx:if="{{hintOn && hintOpen}}" class="hint">
+      建议拿 <text class="hint-num">{{hintTake}}</text> 颗 · {{hintWin ? '必胜 ✅' : '劣势·随便拿'}}
+    </view>
+
+    <view class="bottom-bar">
+      <view wx:if="{{hintOn}}" class="mini-btn" bindtap="toggleHintOpen">{{hintOpen ? '隐藏提示' : '提示 💡'}}</view>
+      <view class="mini-btn" bindtap="backSetup">设置</view>
+    </view>
+  </block>
+
+  <!-- 结果 -->
+  <block wx:elif="{{phase==='result'}}">
+    <view class="hero result-hero">{{winnerText}}</view>
+    <view class="summary">{{summary}}</view>
+    <view class="summary">{{modeText}}</view>
+    <view class="btn-row">
+      <view class="btn-ghost" bindtap="backSetup">返回设置</view>
+      <view class="btn-primary inline" bindtap="replay">再来一局</view>
+    </view>
+  </block>
+</view>

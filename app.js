@@ -190,7 +190,12 @@ App({
       numberbomb: false,
       dontpress: false,
       reverse: false,
-      balancebeam: false
+      balancebeam: false,
+      grabcolor: false,
+      subtract: false,
+      nim: false,
+      leftright: false,
+      splitball: false
     }
   }
 });

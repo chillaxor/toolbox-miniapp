@@ -1,0 +1,313 @@
+.page {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #0e1020;
+  font-family: -apple-system, "PingFang SC", "Helvetica Neue", sans-serif;
+}
+
+.game-canvas {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #0e1020;
+  z-index: 1;
+}
+
+/* ---------- 设置页 ---------- */
+.setup {
+  position: absolute;
+  left: 0; top: 0;
+  width: 100vw; height: 100vh;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow-y: auto;
+  padding: calc(env(safe-area-inset-top) + 24rpx) 0 calc(env(safe-area-inset-bottom) + 24rpx);
+  box-sizing: border-box;
+  background: radial-gradient(circle at 50% 20%, #1b2040 0%, #0e1020 70%);
+}
+
+.setup-back {
+  position: absolute;
+  top: calc(env(safe-area-inset-top) + 16rpx);
+  left: 24rpx;
+  z-index: 20;
+  font-size: 30rpx;
+  color: rgba(255, 255, 255, 0.85);
+  padding: 8rpx 22rpx;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1rpx solid rgba(255, 255, 255, 0.16);
+  border-radius: 14rpx;
+}
+
+.setup-card {
+  width: 86vw;
+  max-width: 760rpx;
+  margin: 24rpx auto;
+  padding: 40rpx 44rpx;
+  box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1rpx solid rgba(255, 255, 255, 0.12);
+  border-radius: 28rpx;
+}
+
+.game-title {
+  font-size: 64rpx;
+  font-weight: 800;
+  color: #fff;
+  text-align: center;
+  letter-spacing: 4rpx;
+}
+
+.game-sub {
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.55);
+  text-align: center;
+  margin-top: 12rpx;
+  margin-bottom: 36rpx;
+}
+
+.row {
+  margin-bottom: 28rpx;
+}
+
+.row-label {
+  font-size: 28rpx;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 14rpx;
+}
+
+.opts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+
+.opt {
+  padding: 16rpx 30rpx;
+  font-size: 28rpx;
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1rpx solid rgba(255, 255, 255, 0.15);
+  border-radius: 16rpx;
+}
+
+.opt.on {
+  background: linear-gradient(135deg, #5b8cff, #8a5bff);
+  color: #fff;
+  border-color: transparent;
+  font-weight: 700;
+}
+
+.toggles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+
+.toggle {
+  padding: 14rpx 26rpx;
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1rpx solid rgba(255, 255, 255, 0.14);
+  border-radius: 16rpx;
+}
+
+.toggle.on {
+  background: rgba(91, 140, 255, 0.25);
+  border-color: #5b8cff;
+  color: #fff;
+}
+
+.start-btn {
+  margin-top: 14rpx;
+  height: 92rpx;
+  line-height: 92rpx;
+  text-align: center;
+  font-size: 34rpx;
+  font-weight: 800;
+  color: #fff;
+  border-radius: 20rpx;
+  background: linear-gradient(135deg, #ff7a59, #ff5b8a);
+  box-shadow: 0 10rpx 30rpx rgba(255, 91, 138, 0.35);
+}
+
+.hint {
+  margin-top: 22rpx;
+  font-size: 23rpx;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.45);
+  text-align: center;
+}
+
+/* ---------- 游戏中 HUD ---------- */
+.hud {
+  position: absolute;
+  left: 0; top: 0;
+  width: 100vw; height: 100vh;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.hud-left, .hud-right {
+  position: absolute;
+  top: calc(env(safe-area-inset-top) + 20rpx);
+  width: 220rpx;
+  text-align: center;
+  color: #fff;
+}
+
+.hud-left { left: 24rpx; text-align: left; }
+.hud-right { right: 24rpx; text-align: right; }
+
+.who {
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+}
+
+.hud-right .who { justify-content: flex-end; }
+
+.dot {
+  display: inline-block;
+  width: 20rpx; height: 20rpx;
+  border-radius: 50%;
+  margin-right: 10rpx;
+}
+
+.score {
+  font-size: 76rpx;
+  font-weight: 800;
+  line-height: 1.1;
+  text-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.5);
+}
+
+.combo {
+  font-size: 26rpx;
+  color: #ffd23f;
+  font-weight: 700;
+}
+
+.lives {
+  font-size: 30rpx;
+  margin-top: 4rpx;
+}
+
+.hud-center {
+  position: absolute;
+  top: calc(env(safe-area-inset-top) + 18rpx);
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  color: #fff;
+}
+
+.timer {
+  font-size: 60rpx;
+  font-weight: 800;
+  text-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.5);
+}
+
+.ballcount {
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.6);
+  margin-top: 2rpx;
+}
+
+.banner {
+  position: absolute;
+  top: 38%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 18rpx 40rpx;
+  font-size: 38rpx;
+  font-weight: 800;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 20rpx;
+  white-space: nowrap;
+}
+
+.quit {
+  position: absolute;
+  bottom: calc(env(safe-area-inset-bottom) + 20rpx);
+  right: calc(env(safe-area-inset-right) + 20rpx);
+  width: 64rpx; height: 64rpx;
+  line-height: 60rpx;
+  text-align: center;
+  font-size: 34rpx;
+  color: rgba(255, 255, 255, 0.8);
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 50%;
+  pointer-events: auto;
+}
+
+/* ---------- 结果页 ---------- */
+.result {
+  position: absolute;
+  left: 0; top: 0;
+  width: 100vw; height: 100vh;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: calc(env(safe-area-inset-top) + 24rpx) 0 calc(env(safe-area-inset-bottom) + 24rpx);
+  box-sizing: border-box;
+  background: rgba(14, 16, 32, 0.82);
+}
+
+.result-card {
+  width: 80vw;
+  max-width: 680rpx;
+  padding: 50rpx 44rpx;
+  box-sizing: border-box;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1rpx solid rgba(255, 255, 255, 0.14);
+  border-radius: 28rpx;
+}
+
+.result-title {
+  font-size: 56rpx;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 28rpx;
+}
+
+.result-detail {
+  font-size: 30rpx;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.8);
+  white-space: pre-line;
+  margin-bottom: 40rpx;
+}
+
+.btn-row {
+  display: flex;
+  gap: 24rpx;
+  justify-content: center;
+}
+
+.btn {
+  flex: 1;
+  height: 84rpx;
+  line-height: 84rpx;
+  text-align: center;
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #fff;
+  border-radius: 18rpx;
+  background: linear-gradient(135deg, #5b8cff, #8a5bff);
+}
+
+.btn.ghost {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1rpx solid rgba(255, 255, 255, 0.2);
+}

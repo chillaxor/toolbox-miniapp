@@ -1,6 +1,6 @@
-<view class="page">
-  <!-- 背景图（高清竖图 JPEG，体积小，无遮罩） -->
-  <image class="bg" src="{{bgUrl}}" mode="aspectFill"></image>
+<view class="page" style="background-color:{{bgColor}}">
+  <!-- 背景图：有图时显示（来自 Gitee）；无图时由页面纯色兜底 -->
+  <image wx:if="{{bgUrl}}" class="bg" src="{{bgUrl}}" mode="aspectFill"></image>
 
   <!-- 顶部统计 -->
   <view class="stats">
@@ -126,7 +126,8 @@
       <scroll-view scroll-y class="bg-options">
         <view class="bg-grid">
           <view class="bg-cell {{selectedBg === index ? 'active' : ''}}" wx:for="{{bgList}}" wx:key="id" data-index="{{index}}" bindtap="selectBg">
-            <image class="bg-thumb" src="{{item.image}}" mode="aspectFill"></image>
+            <view wx:if="{{item.color}}" class="bg-thumb" style="background:{{item.color}}"></view>
+            <image wx:else class="bg-thumb" src="{{item.image}}" mode="aspectFill"></image>
           </view>
         </view>
       </scroll-view>

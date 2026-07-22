@@ -1,0 +1,81 @@
+<view class="page">
+  <!-- 全屏画布（始终在底层） -->
+  <canvas type="2d" id="game" class="game-canvas" bindtouchstart="onTap"></canvas>
+
+  <!-- 设置页 -->
+  <view wx:if="{{phase==='setup'}}" class="setup">
+    <view class="setup-back" bindtap="onHome">‹ 返回</view>
+    <view class="setup-card">
+      <view class="game-title">分裂球</view>
+      <view class="game-sub">中央分裂双色球 · 点自己颜色得分 · 同屏双人</view>
+
+      <view class="row">
+        <view class="row-label">模式</view>
+        <view class="opts">
+          <view wx:for="{{modes}}" wx:key="id" class="opt {{mode===item.id?'on':''}}" data-v="{{item.id}}" bindtap="selMode">{{item.name}}</view>
+        </view>
+      </view>
+
+      <view class="row">
+        <view class="row-label">难度</view>
+        <view class="opts">
+          <view wx:for="{{difficulties}}" wx:key="id" class="opt {{difficulty===item.id?'on':''}}" data-v="{{item.id}}" bindtap="selDiff">{{item.name}}</view>
+        </view>
+      </view>
+
+      <view class="row">
+        <view class="row-label">颜色数</view>
+        <view class="opts">
+          <view wx:for="{{colorOpts}}" wx:key="*this" class="opt {{colorCount===item?'on':''}}" data-v="{{item}}" bindtap="selColor">{{item}}</view>
+        </view>
+      </view>
+
+      <view class="row toggles">
+        <view class="toggle {{stroop?'on':''}}" bindtap="tglStroop">颜色反转(斯特鲁普)</view>
+        <view class="toggle {{colorSwap?'on':''}}" bindtap="tglSwap">颜色互换</view>
+        <view class="toggle {{coop?'on':''}}" bindtap="tglCoop">合作模式</view>
+        <view class="toggle {{advanced?'on':''}}" bindtap="tglAdv">进阶分裂1→3/4</view>
+      </view>
+
+      <view class="start-btn" bindtap="onStart">开始游戏</view>
+      <view class="hint">玩家A点左半屏·玩家B点右半屏 · 点中自己颜色 +1 · 点错对方颜色 对方 +1 · 灰色假球勿点</view>
+    </view>
+  </view>
+
+  <!-- 游戏中 HUD -->
+  <view wx:if="{{phase==='playing'}}" class="hud">
+    <view class="hud-left">
+      <view class="who"><text class="dot" style="background:{{colorAHex}}"></text>玩家A</view>
+      <view class="score">{{scoreA}}</view>
+      <view class="combo" wx:if="{{comboA>1}}">连击 ×{{comboA}}</view>
+      <view class="lives" wx:if="{{mode==='survival'}}">❤️ {{livesA}}</view>
+    </view>
+
+    <view class="hud-center">
+      <view class="timer">{{timeText}}</view>
+      <view class="ballcount">第 {{ballCount}} 球</view>
+    </view>
+
+    <view class="hud-right">
+      <view class="who"><text class="dot" style="background:{{colorBHex}}"></text>玩家B</view>
+      <view class="score">{{scoreB}}</view>
+      <view class="combo" wx:if="{{comboB>1}}">连击 ×{{comboB}}</view>
+      <view class="lives" wx:if="{{mode==='survival'}}">❤️ {{livesB}}</view>
+    </view>
+
+    <view wx:if="{{banner}}" class="banner">{{banner}}</view>
+    <view class="quit" bindtap="onQuit">✕</view>
+  </view>
+
+  <!-- 结果页 -->
+  <view wx:if="{{phase==='result'}}" class="result">
+    <view class="result-card">
+      <view class="result-title">{{resultTitle}}</view>
+      <view class="result-detail">{{resultDetail}}</view>
+      <view class="btn-row">
+        <view class="btn" bindtap="onRestart">再来一局</view>
+        <view class="btn ghost" bindtap="onBack">返回设置</view>
+      </view>
+    </view>
+  </view>
+</view>
