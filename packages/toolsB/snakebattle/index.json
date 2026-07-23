@@ -2,5 +2,6 @@
   "navigationStyle": "custom",
   "navigationBarTitleText": "贪吃蛇对战",
   "disableScroll": true,
+  "pageOrientation": "landscape",
   "usingComponents": {}
 }

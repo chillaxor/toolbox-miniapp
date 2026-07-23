@@ -60,11 +60,18 @@ Page({
       return;
     }
     this.checkFavorite();
+    // 先按当前(可能仍是竖屏)尺寸占位, onReady 时横屏尺寸才定稿
     this._computeSize();
   },
 
   onReady: function () {
+    // 页面横屏已生效, 用横屏尺寸重新计算并初始化画布
+    this._computeSize();
     this._initCanvas();
+    // 监听旋转/尺寸变化, 实时重算画布
+    var self = this;
+    this._onResize = function () { self._computeSize(); };
+    wx.onWindowResize(this._onResize);
   },
 
   onShow: function () {
@@ -78,6 +85,7 @@ Page({
   },
 
   onUnload: function () {
+    if (this._onResize) { wx.offWindowResize(this._onResize); this._onResize = null; }
     this._stopLoop();
   },
 
@@ -111,6 +119,15 @@ Page({
       canvasH: H,
       statusBar: sys.statusBarHeight || 20
     });
+    // 画布已初始化: 同步缩放并重绘, 适配横屏/旋转
+    if (this._canvas && this._ctx) {
+      var dpr = sys.pixelRatio || 2;
+      this._canvas.width = W * dpr;
+      this._canvas.height = H * dpr;
+      this._ctx.scale(dpr, dpr);
+      if (this.data.gameState === 'playing') this._render();
+      else this._drawIdle();
+    }
   },
 
   // ---------- Canvas ----------

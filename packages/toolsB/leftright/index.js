@@ -76,6 +76,7 @@ function genQuestion(diff, hard) {
     var a, b, ans;
     if (op === '+') { a = randInt(2, 9); b = randInt(2, 9); ans = a + b; }
     else { a = randInt(4, 12); b = randInt(2, a); ans = a - b; }
+    q.ans = ans;
     q.promptText = a + ' ' + op + ' ' + b + ' = ?';
     var opts = [ans];
     while (opts.length < 4) {
@@ -618,6 +619,12 @@ Page({
     var pages = (getCurrentPages && getCurrentPages()) || [];
     if (pages.length > 1) { try { wx.navigateBack(); } catch (e) { wx.reLaunch({ url: '/pages/index/index' }); } }
     else wx.reLaunch({ url: '/pages/index/index' });
+  },
+  // 直接回工具箱首页（无视页面栈，结束/卡住时都能去其他工具）
+  goHome: function () {
+    this._clearTimers();
+    this._setOri('portrait');
+    wx.reLaunch({ url: '/pages/index/index' });
   },
   replay: function () { this.onStart(); },
 

@@ -1,4 +1,5 @@
 {
+  "navigationStyle": "custom",
   "navigationBarTitleText": "头顶猜词",
   "usingComponents": {},
   "pageOrientation": "auto"

@@ -78,7 +78,7 @@
         </view>
 
         <!-- 选项 -->
-        <view class="opts">
+        <view class="opts {{s.wobble?'wobble':''}}">
           <view class="opt {{o.correct && s.showCorrect ? 'right' : ''}} {{s.answered || s.out || s.frozen || s.cooldown ? 'dis' : ''}}"
                 wx:for="{{s.q.options}}" wx:for-item="o" wx:for-index="oi" wx:key="key"
                 style="background:{{o.bg}}"
@@ -118,6 +118,7 @@
       <view class="summary">{{summary}}</view>
       <view class="summary">{{modeText}}</view>
       <view class="btn-row">
+        <view class="btn-ghost" bindtap="goHome">返回首页</view>
         <view class="btn-ghost" bindtap="backSetup">返回设置</view>
         <view class="btn-primary inline" bindtap="replay">再来一局</view>
       </view>

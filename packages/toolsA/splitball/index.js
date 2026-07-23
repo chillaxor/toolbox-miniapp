@@ -147,6 +147,13 @@ Page({
     });
   },
 
+  // 直接回工具箱首页（无视页面栈，结束/卡住时都能去其他工具）
+  goHome: function () {
+    this._stopLoop();
+    this._setOri('portrait');
+    wx.reLaunch({ url: '/pages/index/index' });
+  },
+
   // ---------- 开始 / 重开 / 返回 ----------
   onStart: function () {
     this._buildCfg();
@@ -349,11 +356,21 @@ Page({
     return iv;
   },
 
-  // 球速：约在间隔的 0.7 倍时间内飞越半屏
+  // 球速：用独立的「穿越半屏时间」曲线，随球数平滑加快但设下限，避免后期过快点不到
+  _crossTime: function () {
+    var n = this._ballCount;
+    var t;
+    if (n <= 10) t = 0.95;
+    else if (n <= 20) t = 0.82;
+    else if (n <= 30) t = 0.70;
+    else if (n <= 40) t = 0.62;
+    else t = 0.58;                              // 后期封顶：至少 0.58s 穿越半屏，留出反应时间
+    return t * (this._cfg.speedScale || 1);     // hard 难度略加速(speedScale<1)
+  },
+
   _ballSpeed: function () {
-    var iv = this._currentInterval();
     var halfW = this._W / 2;
-    return halfW / ((iv * 0.7) / 1000);
+    return halfW / this._crossTime();
   },
 
   _randColor: function () {

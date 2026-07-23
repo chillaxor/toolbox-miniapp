@@ -74,7 +74,7 @@
       <view class="result-detail">{{resultDetail}}</view>
       <view class="btn-row">
         <view class="btn" bindtap="onRestart">再来一局</view>
-        <view class="btn ghost" bindtap="onBack">返回设置</view>
+        <view class="btn ghost" bindtap="goHome">返回首页</view>
       </view>
     </view>
   </view>

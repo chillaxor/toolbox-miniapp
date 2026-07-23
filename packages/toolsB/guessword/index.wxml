@@ -1,6 +1,7 @@
 <view class="page {{phase==='playing' ? 'play' : ''}}" bindtap="nextWord">
   <!-- 设置 -->
   <block wx:if="{{phase==='setup'}}">
+    <view class="goback" bindtap="goHome">‹ 返回工具箱</view>
     <view class="hero">📱 头顶猜词</view>
     <view class="howto">
       <view>· 1 人把手机横放在额头（屏幕朝外），另 1 人看屏幕描述词语。</view>
@@ -48,7 +49,7 @@
       <view class="r-card">共 {{total}} 词<view class="r-num">{{total}}</view></view>
     </view>
     <view class="btn-row">
-      <view class="btn-ghost" bindtap="onBackSetup">返回设置</view>
+      <view class="btn-ghost" bindtap="goHome">返回首页</view>
       <view class="btn-primary inline" bindtap="replay">再来一局</view>
     </view>
   </block>

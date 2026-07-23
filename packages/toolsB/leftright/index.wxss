@@ -123,6 +123,7 @@ page { background: #15172b; height: 100vh; overflow: hidden; }
 }
 .panel {
   flex: 1; min-width: 0;
+  position: relative;               /* 让本侧的 .frozen 冻结遮罩锁在自己半屏内 */
   display: flex; flex-direction: column;
   padding: 1.2vh 1.2vw;
   gap: 0.8vh;
@@ -150,7 +151,7 @@ page { background: #15172b; height: 100vh; overflow: hidden; }
 .badges { display: flex; gap: 0.8vw; flex-wrap: wrap; min-height: 3.2vh; }
 .badge { font-size: 1.7vh; color: #fff; background: rgba(255,255,255,0.14); padding: 0.3vh 1.4vw; border-radius: 999rpx; white-space: nowrap; }
 
-.q-area {
+.qarea {
   flex: 1; min-height: 0;
   position: relative;
   display: flex; align-items: center; justify-content: center;
@@ -159,19 +160,20 @@ page { background: #15172b; height: 100vh; overflow: hidden; }
   overflow: hidden;
   padding: 1vh;
 }
-.q-wrap { display: flex; flex-direction: column; align-items: center; }
+.qwrap { display: flex; flex-direction: column; align-items: center; }
 .cword { font-size: 11vh; font-weight: 800; line-height: 1.1; text-shadow: 0 0.4vh 1.6vh rgba(0,0,0,0.5); }
 .bigarrow { font-size: 16vh; font-weight: 800; color: #fff; line-height: 1; text-shadow: 0 0.4vh 1.6vh rgba(0,0,0,0.5); }
 .prompt { font-size: 5vh; font-weight: 800; color: #fff; text-align: center; }
 .rule { margin-top: 1vh; font-size: 2.4vh; color: rgba(255,255,255,0.7); text-align: center; }
 
-/* 视觉干扰 */
-.q-area.pollute { background: #1b3a8a !important; }
-.q-area.pollute .prompt,
-.q-area.pollute .cword,
-.q-area.pollute .bigarrow,
-.q-area.pollute .rule { color: #FF3B30 !important; }
-.q-area.wobble .opt { animation: wobble .4s infinite; }
+/* 视觉干扰（均只作用于本 panel 半屏内） */
+.qarea.pollute { background: #1b3a8a !important; }
+.qarea.pollute .prompt,
+.qarea.pollute .cword,
+.qarea.pollute .bigarrow,
+.qarea.pollute .rule { color: #FF3B30 !important; }
+/* 按钮乱跳：wobble 状态同时挂在 .opts 上（选项在 qarea 之外，需就近作用） */
+.opts.wobble .opt { animation: wobble .4s infinite; }
 @keyframes wobble { 0%{transform:scale(1)} 50%{transform:scale(0.86)} 100%{transform:scale(1.08)} }
 
 .occlude {

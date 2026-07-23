@@ -35,12 +35,25 @@ Page({
       wx.reLaunch({ url: '/pages/index/index' });
       return;
     }
+    this._setLightBar();
     this.setOri('portrait');
   },
 
   onShow: function () {
     // 设置/结果页竖屏，游戏页横屏；从后台切回也保持正确方向
+    this._setLightBar();
     this.setOri(this.data.phase === 'playing' ? 'landscape' : 'portrait');
+  },
+
+  // 自定义导航栏下，把状态栏文字（时间/电量）设为白色，避免深色背景上消失
+  _setLightBar: function () {
+    try {
+      wx.setNavigationBarColor({
+        frontColor: '#ffffff',
+        backgroundColor: '#4a3a8c',
+        fail: function () {}
+      });
+    } catch (e) {}
   },
 
   onHide: function () {
@@ -149,24 +162,39 @@ Page({
     this.onStart();
   },
 
+  // 直接回工具箱首页（无视页面栈，结束/卡住时都能去其他工具）
+  goHome: function () {
+    this.stopFlip();
+    this.setOri('portrait');
+    wx.reLaunch({ url: '/pages/index/index' });
+  },
+
   // ---------- 翻手机切词（设备方向监听） ----------
   startFlip: function () {
     if (!this.data.flipOn) return;
     var self = this;
     this._beta0 = null;
+    this._gamma0 = null;
     this._armed = true;
     this._motionHandler = function (res) {
       if (self._beta0 === null || self._beta0 === undefined) {
         self._beta0 = res.beta;
+        self._gamma0 = res.gamma;
         return;
       }
-      var d = res.beta - self._beta0;
-      while (d > 180) d -= 360;
-      while (d < -180) d += 360;
-      if (self._armed && Math.abs(d) > FLIP_THRESHOLD) {
+      // 竖屏额头：向下翻手机改变 beta（绕X轴）；横屏额头：手机横置，向下翻改变 gamma（绕Y轴）
+      // 两轴都测，取相对初始姿态的最大偏移，保证横竖屏都能触发切词
+      var db = res.beta - self._beta0;
+      var dg = res.gamma - self._gamma0;
+      while (db > 180) db -= 360;
+      while (db < -180) db += 360;
+      while (dg > 180) dg -= 360;
+      while (dg < -180) dg += 360;
+      var dmax = Math.max(Math.abs(db), Math.abs(dg));
+      if (self._armed && dmax > FLIP_THRESHOLD) {
         self._armed = false;       // 防连触发，需回到中位才重新武装
         self.nextWord();           // 翻手机 = 换下一个词
-      } else if (!self._armed && Math.abs(d) < FLIP_REARM) {
+      } else if (!self._armed && dmax < FLIP_REARM) {
         self._armed = true;
       }
     };
