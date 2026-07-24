@@ -98,7 +98,6 @@
               <text class="feat-title">{{item.title}}</text>
               <text class="feat-sub">{{item.subtitle}}</text>
             </view>
-            <view class="feat-go">打开</view>
           </view>
         </view>
       </scroll-view>
