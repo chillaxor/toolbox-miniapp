@@ -1,23 +1,22 @@
 .tool-card {
   display: flex;
   align-items: center;
-  background-color: var(--color-card);
-  border-radius: 16rpx;
+  background-color: #ffffff;
+  border-radius: 24rpx;
   padding: 24rpx;
-  border-left: 8rpx solid var(--color-life);
-  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.06);
+  box-shadow: 0 8rpx 24rpx rgba(31, 38, 89, 0.07);
   transition: all 0.2s ease;
 }
 
 .tool-card-hover {
   transform: scale(0.97);
-  opacity: 0.9;
+  opacity: 0.95;
 }
 
 .tool-card-icon {
   width: 80rpx;
   height: 80rpx;
-  border-radius: 16rpx;
+  border-radius: 24rpx;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -36,13 +35,13 @@
 .tool-card-name {
   font-size: 30rpx;
   font-weight: 600;
-  color: var(--color-primary);
+  color: #2a2e3d;
   line-height: 1.4;
 }
 
 .tool-card-desc {
-  font-size: 24rpx;
-  color: var(--color-hint);
+  font-size: 23rpx;
+  color: #9aa0ad;
   margin-top: 4rpx;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -51,7 +50,7 @@
 
 .tool-card-arrow {
   font-size: 36rpx;
-  color: var(--color-hint);
+  color: #c8ccd6;
   margin-left: 12rpx;
   flex-shrink: 0;
 }

@@ -41,15 +41,17 @@
   <!-- 首页主体 -->
   <block wx:else>
 
-    <!-- 品牌头区（活力渐变） -->
+    <!-- 品牌头区（和谐暖色渐变 + 悬浮圆角卡片） -->
     <view class="hero">
+      <view class="hero-blob hero-blob-1"></view>
+      <view class="hero-blob hero-blob-2"></view>
       <view class="hero-top">
         <view class="hero-brand">拾光工具屋</view>
         <view class="hero-avatar">我</view>
       </view>
       <view class="hero-sub">
-      99+ 个小工具·随时待命
-      Be water,my friend.
+        <text class="hero-sub-line">99+个小工具·随时待命</text>
+        <text class="hero-sub-line hero-sub-en">Be water, my friend</text>
       </view>
     </view>
 
@@ -86,7 +88,6 @@
             class="feat-card"
             wx:for="{{featuredList}}"
             wx:key="id"
-            style="background:{{item.gradient}}"
             data-id="{{item.id}}"
             data-path="{{item.path}}"
             bindtap="onFeaturedTap"
@@ -103,7 +104,7 @@
       </scroll-view>
     </view>
 
-    <!-- 全部分类 -->
+    <!-- 全部分类（浅柔彩底 + 同色系图标块，整体协调） -->
     <view class="section">
       <view class="sec-head">
         <text class="sec-title">全部分类</text>
@@ -113,12 +114,12 @@
           class="cat-card"
           wx:for="{{categoryList}}"
           wx:key="id"
-          style="background:{{item.gradient}}"
+          style="background:{{item.bgColor}}"
           data-index="{{index}}"
           bindtap="onCategoryTap"
           hover-class="cat-card-hover"
         >
-          <text class="cat-emoji">{{item.icon}}</text>
+          <view class="cat-emoji" style="background:{{item.color}}">{{item.icon}}</view>
           <view class="cat-meta">
             <text class="cat-name">{{item.name}}</text>
             <text class="cat-count">{{item.count}} 个工具</text>
@@ -132,7 +133,6 @@
       <view class="sec-head">
         <view class="cat-dot" style="background:{{activeColor}}"></view>
         <text class="sec-title">{{activeCategoryName}}</text>
-        <text class="sec-count">{{currentTools.length}} 个</text>
       </view>
       <view class="tool-list">
         <view

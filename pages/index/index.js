@@ -114,7 +114,7 @@ Page({
   },
 
   _maybeLoadFeatured: function () {
-    var on = this._flags ? this._flags.useRemoteFeatured : true;
+    var on = this._flags && this._flags.useRemoteFeatured === true;
     if (on === false) {
       if (this._featuredFromRemote !== false) {
         this._featuredFromRemote = false;
