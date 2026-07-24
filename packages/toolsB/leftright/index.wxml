@@ -92,17 +92,11 @@
           <view class="skill {{s.bigReady?'':'dis'}}" data-side="{{s.key}}" data-k="big" bindtap="useSkill">大 {{s.bigCost}}</view>
         </view>
 
-        <view class="note" wx:if="{{s.note}}">{{s.note}}</view>
+        <view class="note">{{s.note}}</view>
         <view class="frozen" wx:if="{{s.frozen || s.cooldown}}">{{s.cooldown?'😌 冷静一下…':'❄️ 冻结中'}}</view>
       </view>
 
       <view class="divider"><text class="div-txt">分界线·不可越界</text></view>
-    </view>
-
-    <!-- 干扰记录 -->
-    <view class="logbox" wx:if="{{log.length > 0}}">
-      <view class="log-title">干扰记录</view>
-      <view class="logline" wx:for="{{log}}" wx:key="*this">{{item}}</view>
     </view>
   </block>
 

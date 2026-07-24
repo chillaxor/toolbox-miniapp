@@ -1,0 +1,219 @@
+<view class="container">
+
+  <!-- 全屏画布 -->
+  <canvas type="2d" id="warCanvas"
+    class="game-canvas"
+    style="width:{{canvasW}}px;height:{{canvasH}}px"
+    bindtouchstart="onTouchStart"
+    bindtouchmove="onTouchMove"
+    bindtouchend="onTouchEnd"
+    bindtouchcancel="onTouchEnd">
+  </canvas>
+
+  <!-- ========== 竖屏: 主菜单 + 设置 ========== -->
+  <view class="menu-page" wx:if="{{gameState === 'idle'}}" style="padding-top:{{statusBar}}px">
+    <view class="nav">
+      <view class="nav-back" bindtap="onBack">‹</view>
+      <text class="nav-title">🖌️ 画笔战争</text>
+      <view class="nav-fav {{isFavorite ? 'active' : ''}}" bindtap="toggleFavorite">{{isFavorite ? '★' : '☆'}}</view>
+    </view>
+
+    <scroll-view scroll-y class="menu-scroll">
+      <view class="hero">
+        <text class="hero-title">画线占地 · 双人对战</text>
+        <text class="hero-sub">线不能碰自己 / 对方 / 墙 · 占地多者赢</text>
+      </view>
+
+      <!-- 模式 -->
+      <view class="card">
+        <text class="card-title">🎮 游戏模式</text>
+        <view class="mode-row">
+          <view class="mode-item {{settings.mode === 'classic' ? 'sel' : ''}}" data-mode="classic" bindtap="setMode">
+            <text class="mode-ico">⭕</text>
+            <text class="mode-name">经典圈地</text>
+            <text class="mode-desc">画线封闭占地\n碰线即死</text>
+          </view>
+          <view class="mode-item {{settings.mode === 'paint' ? 'sel' : ''}}" data-mode="paint" bindtap="setMode">
+            <text class="mode-ico">🎨</text>
+            <text class="mode-name">领地染色</text>
+            <text class="mode-desc">轨迹即领地\n可互相覆盖</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 时长 / 难度 -->
+      <view class="card">
+        <text class="card-title">⏱️ 游戏时长</text>
+        <view class="seg-row">
+          <view class="seg {{settings.duration === 60 ? 'sel' : ''}}" data-v="60" bindtap="setDuration">60秒</view>
+          <view class="seg {{settings.duration === 90 ? 'sel' : ''}}" data-v="90" bindtap="setDuration">90秒</view>
+          <view class="seg {{settings.duration === 120 ? 'sel' : ''}}" data-v="120" bindtap="setDuration">120秒</view>
+        </view>
+        <text class="card-title mt">🚀 画笔速度</text>
+        <view class="seg-row">
+          <view class="seg {{settings.diff === 'easy' ? 'sel' : ''}}" data-v="easy" bindtap="setDiff">简单</view>
+          <view class="seg {{settings.diff === 'mid' ? 'sel' : ''}}" data-v="mid" bindtap="setDiff">中等</view>
+          <view class="seg {{settings.diff === 'hard' ? 'sel' : ''}}" data-v="hard" bindtap="setDiff">困难</view>
+        </view>
+      </view>
+
+      <!-- 颜色 -->
+      <view class="card">
+        <text class="card-title">🖍️ 画笔颜色</text>
+        <view class="color-line">
+          <text class="color-label">左方</text>
+          <view class="color-dots">
+            <view wx:for="{{colorsA}}" wx:key="id"
+              class="dot {{item.sel ? 'sel' : ''}} {{item.dis ? 'dis' : ''}}"
+              style="background:{{item.c}}" data-id="{{item.id}}" bindtap="pickColorA"></view>
+          </view>
+        </view>
+        <view class="color-line">
+          <text class="color-label">右方</text>
+          <view class="color-dots">
+            <view wx:for="{{colorsB}}" wx:key="id"
+              class="dot {{item.sel ? 'sel' : ''}} {{item.dis ? 'dis' : ''}}"
+              style="background:{{item.c}}" data-id="{{item.id}}" bindtap="pickColorB"></view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 开关 -->
+      <view class="card">
+        <view class="switch-line">
+          <text class="switch-label">⚡ 加速技能（每人2次）</text>
+          <view class="toggle {{settings.skills ? 'on' : ''}}" bindtap="toggleSkills"><view class="knob"></view></view>
+        </view>
+        <view class="switch-line">
+          <text class="switch-label">📳 音效震动</text>
+          <view class="toggle {{settings.sound ? 'on' : ''}}" bindtap="toggleSound"><view class="knob"></view></view>
+        </view>
+      </view>
+
+      <view class="btn-primary" bindtap="startGame"><text>开始游戏</text></view>
+      <view class="btn-ghost" bindtap="openTutorial"><text>📖 游戏教程</text></view>
+      <view class="tip-land">🔄 游戏需要横屏进行</view>
+      <view class="bottom-space"></view>
+    </scroll-view>
+  </view>
+
+  <!-- ========== 竖屏: 教程 ========== -->
+  <view class="menu-page" wx:if="{{gameState === 'tutorial'}}" style="padding-top:{{statusBar}}px">
+    <view class="nav">
+      <view class="nav-back" bindtap="closeTutorial">‹</view>
+      <text class="nav-title">📖 游戏教程</text>
+      <view class="nav-fav"></view>
+    </view>
+    <scroll-view scroll-y class="menu-scroll">
+      <view class="card tut">
+        <text class="tut-step">1️⃣ 怎么控制</text>
+        <text class="tut-text">手机横过来，两人各握一边。手指按住自己那半边屏幕，画笔就出发；朝哪个方向滑，画笔就朝哪拐弯；手指抬起画笔停下。</text>
+      </view>
+      <view class="card tut">
+        <text class="tut-step">2️⃣ 怎么占地（经典圈地）</text>
+        <view class="tut-demo">
+          <view class="demo-land"></view>
+          <view class="demo-loop"></view>
+          <text class="demo-pen">✏️</text>
+        </view>
+        <text class="tut-text">从自己的领地出发画一条线，绕一圈再回到自己领地，圈住的地方就全变成你的颜色！</text>
+      </view>
+      <view class="card tut">
+        <text class="tut-step">3️⃣ 什么时候会输</text>
+        <view class="tut-dead">
+          <view class="dead-item"><text class="dead-ico">💥</text><text>碰到自己画的线</text></view>
+          <view class="dead-item"><text class="dead-ico">💥</text><text>碰到对方画的线</text></view>
+          <view class="dead-item"><text class="dead-ico">🧱</text><text>撞到四周的墙</text></view>
+        </view>
+        <text class="tut-text">画笔阵亡后会变灰打 ×，已经占到的地还算数。时间到时，谁的地盘大谁赢！</text>
+      </view>
+      <view class="card tut">
+        <text class="tut-step">4️⃣ 领地染色模式</text>
+        <text class="tut-text">简单模式：画笔走过的地方直接变成你的颜色，不会死，还能把对方的颜色盖掉，适合小朋友热身。</text>
+      </view>
+      <view class="tip-land">🔄 游戏需要横屏进行</view>
+      <view class="btn-primary" bindtap="startGame"><text>我学会了，开始！</text></view>
+      <view class="bottom-space"></view>
+    </scroll-view>
+  </view>
+
+  <!-- ========== 横屏引导 ========== -->
+  <view class="rotate-page" wx:if="{{gameState === 'rotate'}}">
+    <view class="rotate-anim">
+      <view class="phone-icon"></view>
+    </view>
+    <text class="rotate-title">请横置手机，双方各握一边</text>
+    <view class="rotate-cancel" bindtap="cancelRotate"><text>‹ 返回</text></view>
+  </view>
+
+  <!-- ========== 倒计时 ========== -->
+  <view class="count-mask" wx:if="{{gameState === 'countdown'}}">
+    <text class="count-text {{countText === 'GO' ? 'go' : ''}}">{{countText}}</text>
+  </view>
+
+  <!-- ========== 对局 HUD（底部信息栏） ========== -->
+  <block wx:if="{{gameState === 'playing' || gameState === 'countdown'}}">
+    <view class="hud-exit" style="top:{{statusBar}}px" bindtap="endMatchEarly">✕</view>
+    <view class="info-bar">
+      <view class="ib-side">
+        <view class="ib-avatar" style="background:{{aColor}}">{{aDead ? '😴' : '✏️'}}</view>
+        <text class="ib-pct">{{aPct}}%</text>
+        <view wx:if="{{settings.skills}}"
+          class="skill-btn {{aSkillOn ? 'on' : ''}} {{aSkillDis ? 'dis' : ''}}"
+          style="border-color:{{aColor}}" bindtap="useSkillA">
+          <text class="skill-ico">⚡</text>
+        </view>
+      </view>
+
+      <view class="ib-center">
+        <text class="ib-time {{timeLow ? 'low' : ''}}">{{timeLeft}}</text>
+      </view>
+
+      <view class="ib-side ib-right">
+        <view wx:if="{{settings.skills}}"
+          class="skill-btn {{bSkillOn ? 'on' : ''}} {{bSkillDis ? 'dis' : ''}}"
+          style="border-color:{{bColor}}" bindtap="useSkillB">
+          <text class="skill-ico">⚡</text>
+        </view>
+        <text class="ib-pct">{{bPct}}%</text>
+        <view class="ib-avatar" style="background:{{bColor}}">{{bDead ? '😴' : '✏️'}}</view>
+      </view>
+    </view>
+  </block>
+
+  <!-- ========== 游戏中转竖屏 / 切后台 暂停 ========== -->
+  <view class="pause-mask" wx:if="{{gameState === 'playing' && oriPaused}}">
+    <block wx:if="{{resumeNum > 0}}">
+      <text class="resume-num">{{resumeNum}}</text>
+    </block>
+    <block wx:elif="{{pauseType === 'ori'}}">
+      <view class="rotate-anim small"><view class="phone-icon"></view></view>
+      <text class="pause-title">请横屏继续</text>
+    </block>
+    <block wx:else>
+      <text class="pause-title">⏸ 已暂停</text>
+      <view class="btn-primary slim" bindtap="resumeFromHide"><text>继续游戏</text></view>
+    </block>
+  </view>
+
+  <!-- ========== 结果页（横屏） ========== -->
+  <view class="over-mask" wx:if="{{gameState === 'over' && result}}">
+    <text class="over-title {{result.winner === 0 ? 'draw' : ''}}">{{result.title}}</text>
+    <view class="over-bars">
+      <view class="ob-row">
+        <text class="ob-name" style="color:{{aColor}}">{{aName}}方</text>
+        <view class="ob-track"><view class="ob-fill" style="width:{{result.aBarW}}%;background:{{aColor}}"></view></view>
+        <text class="ob-pct">{{result.aPct}}%</text>
+      </view>
+      <view class="ob-row">
+        <text class="ob-name" style="color:{{bColor}}">{{bName}}方</text>
+        <view class="ob-track"><view class="ob-fill" style="width:{{result.bBarW}}%;background:{{bColor}}"></view></view>
+        <text class="ob-pct">{{result.bPct}}%</text>
+      </view>
+    </view>
+    <view class="over-btns">
+      <view class="btn-primary slim" bindtap="playAgain"><text>🔁</text></view>
+      <view class="btn-ghost slim" bindtap="backToSettings"><text>⚙️</text></view>
+    </view>
+  </view>
+</view>

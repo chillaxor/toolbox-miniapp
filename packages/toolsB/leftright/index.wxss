@@ -148,11 +148,11 @@ page { background: #15172b; height: 100vh; overflow: hidden; }
 .ebar { height: 1.6vh; border-radius: 999rpx; background: rgba(255,255,255,0.12); overflow: hidden; }
 .efill { height: 100%; background: linear-gradient(90deg, #FFD60A, #FF9F0A); transition: width .25s; }
 
-.badges { display: flex; gap: 0.8vw; flex-wrap: wrap; min-height: 3.2vh; }
+.badges { display: flex; gap: 0.8vw; flex-wrap: nowrap; overflow: hidden; height: 3.4vh; }
 .badge { font-size: 1.7vh; color: #fff; background: rgba(255,255,255,0.14); padding: 0.3vh 1.4vw; border-radius: 999rpx; white-space: nowrap; }
 
 .qarea {
-  flex: 1; min-height: 0;
+  flex: 1; min-height: 26vh;
   position: relative;
   display: flex; align-items: center; justify-content: center;
   background: rgba(0,0,0,0.22);
@@ -216,20 +216,13 @@ page { background: #15172b; height: 100vh; overflow: hidden; }
 }
 .skill.dis { opacity: 0.38; }
 
-.note { text-align: center; font-size: 2.2vh; color: #FFD60A; min-height: 3vh; display: flex; align-items: center; justify-content: center; }
+.note { text-align: center; font-size: 2.2vh; color: #FFD60A; min-height: 3vh; max-height: 6vh; overflow: hidden; display: flex; align-items: center; justify-content: center; }
 .frozen {
   position: absolute; left: 0; top: 0; right: 0; bottom: 0;
   background: rgba(10,132,255,0.18);
   display: flex; align-items: center; justify-content: center;
   color: #fff; font-size: 3vh; font-weight: 700; border-radius: 2vh; z-index: 6;
 }
-
-.logbox {
-  flex: none; margin-top: 1vh; padding: 1vh 1.4vw;
-  background: rgba(0,0,0,0.25); border-radius: 1.4vh;
-}
-.log-title { color: rgba(255,255,255,0.5); font-size: 2vh; margin-bottom: 0.4vh; }
-.log-line { color: rgba(255,255,255,0.8); font-size: 2vh; line-height: 1.5; }
 
 /* ---------- 结果（横屏居中） ---------- */
 .result {

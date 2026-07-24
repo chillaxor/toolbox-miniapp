@@ -127,6 +127,7 @@
     {
       "root": "packages/toolsB",
       "pages": [
+        "grabnumber/index",
         "leftright/index",
         "pinyin-learn/index",
         "nim/index",
@@ -137,6 +138,7 @@
         "paper/index",
         "witchpoison/index",
         "snakebattle/index",
+        "paintwar/index",
         "daily-photo/index",
         "neontext/index",
         "poetry/index",

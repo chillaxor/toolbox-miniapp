@@ -100,6 +100,7 @@ const TOOLS = [
   { id: 'gomoku', name: '五子棋', category: 'fun', icon: '⚫', path: '/packages/toolsB/gomoku/index', description: '经典五子棋·双人对战' },
   { id: 'snake', name: '贪吃蛇', category: 'fun', icon: '🐍', path: '/packages/toolsB/snake/index', description: '经典贪吃蛇·滑动/按键操控·速度可调' },
   { id: 'snakebattle', name: '贪吃蛇对战', category: 'fun', icon: '🐍', path: '/packages/toolsB/snakebattle/index', description: '同屏双人·吃对方尸体变长·撞墙撞身即死·滑动转向' },
+  { id: 'paintwar', name: '画笔战争', category: 'fun', icon: '🖌️', path: '/packages/toolsB/paintwar/index', description: '同屏双人·画线圈地占领地盘·碰线碰墙即死·占地多者赢' },
   { id: 'shopping', name: '模拟超市购物', category: 'fun', icon: '🛒', path: '/packages/toolsA/shopping/index', description: '给预算选商品·学习理财找零' },
   { id: 'growth-tracker', name: '身高体重记录', category: 'life', icon: '📏', path: '/packages/toolsA/growth-tracker/index', description: '定期记录身高体重·生长曲线·标准对比' },
   { id: 'multiplication', name: '乘法口诀表', category: 'study', icon: '✖️', path: '/packages/toolsA/multiplication/index', description: '背诵九九乘法表·抽查练习·速度测试' },
@@ -146,7 +147,8 @@ const TOOLS = [
   { id: 'subtract', name: '减法游戏', category: 'fun', icon: '➖', path: '/packages/toolsA/subtract/index', description: '一堆石子轮流拿·拿到最后赢(可反转)·(K+1)倍数必胜策略·同屏双人' },
   { id: 'nim', name: 'Nim游戏', category: 'fun', icon: '🪨', path: '/packages/toolsB/nim/index', description: '多堆石子轮流拿·Nim和必胜策略·正常/misère/限拿K/多堆/随机事件变体·同屏双人' },
   { id: 'leftright', name: '左右互搏', category: 'fun', icon: '🥊', path: '/packages/toolsB/leftright/index', description: '屏幕左右分屏·两人各答各题却互相干扰·闪光/变色/加速/偷题·能量连击放大招·限时/生存/合作' },
-  { id: 'splitball', name: '分裂球', category: 'fun', icon: '⚽', path: '/packages/toolsA/splitball/index', description: '中央分裂双色球·点自己颜色得分·假球/变色/反弹/连发·限时/生存/无尽·斯特鲁普/互换/合作变体·同屏双人' }
+  { id: 'splitball', name: '分裂球', category: 'fun', icon: '⚽', path: '/packages/toolsA/splitball/index', description: '中央分裂双色球·点自己颜色得分·假球/变色/反弹/连发·限时/生存/无尽·斯特鲁普/互换/合作变体·同屏双人' },
+  { id: 'grabnumber', name: '抢数字', category: 'fun', icon: '🔢', path: '/packages/toolsB/grabnumber/index', description: '横屏双人各握一边·中央蹦数字·普通抢先得分禁止别点·倍数/含数/质数/平方数·限时/惩罚/干扰可调' }
 ];
 
 /**

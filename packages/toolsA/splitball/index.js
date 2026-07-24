@@ -225,7 +225,7 @@ Page({
       burstOn: diff !== 'kid',
       fakeProb: diff === 'hard' ? 0.2 : 0.14,
       changeProb: 0.32,
-      speedScale: diff === 'hard' ? 0.85 : 1.0,
+      speedScale: diff === 'hard' ? 0.9 : 1.0,
       intervalCap: diff === 'kid' ? 1000 : 0
     };
     if (d.coop) {
@@ -342,15 +342,15 @@ Page({
     }
   },
 
-  // 分阶段生成间隔（毫秒）
+  // 分阶段生成间隔（毫秒）—— 整体放慢，留出反应与点按时间
   _currentInterval: function () {
     var n = this._ballCount;
     var base;
-    if (n <= 10) base = 2000;
-    else if (n <= 20) base = 1500;
-    else if (n <= 30) base = 1000;
-    else if (n <= 40) base = 700;
-    else base = 500;
+    if (n <= 10) base = 2400;
+    else if (n <= 20) base = 2000;
+    else if (n <= 30) base = 1600;
+    else if (n <= 40) base = 1300;
+    else base = 1050;
     var iv = base * this._cfg.speedScale;
     if (this._cfg.intervalCap && iv < this._cfg.intervalCap) iv = this._cfg.intervalCap;
     return iv;
@@ -360,12 +360,12 @@ Page({
   _crossTime: function () {
     var n = this._ballCount;
     var t;
-    if (n <= 10) t = 0.95;
-    else if (n <= 20) t = 0.82;
-    else if (n <= 30) t = 0.70;
-    else if (n <= 40) t = 0.62;
-    else t = 0.58;                              // 后期封顶：至少 0.58s 穿越半屏，留出反应时间
-    return t * (this._cfg.speedScale || 1);     // hard 难度略加速(speedScale<1)
+    if (n <= 10) t = 1.5;
+    else if (n <= 20) t = 1.3;
+    else if (n <= 30) t = 1.1;
+    else if (n <= 40) t = 0.95;
+    else t = 0.85;                             // 后期封顶：至少 0.85s 穿越半屏，留出反应时间
+    return t * (this._cfg.speedScale || 1);    // hard 难度略加速(speedScale<1)
   },
 
   _ballSpeed: function () {
@@ -414,7 +414,7 @@ Page({
 
   _makeBall: function (side, now) {
     var W = this._W, H = this._H;
-    var r = Math.max(20, Math.min(W, H) * 0.052);
+    var r = Math.max(28, Math.min(W, H) * 0.085);
     var dir = side === 'L' ? -1 : (side === 'R' ? 1 : (Math.random() < 0.5 ? -1 : 1));
     var ang = (Math.random() * 0.7 - 0.35);
     var speed = this._ballSpeed() * (0.85 + Math.random() * 0.3);

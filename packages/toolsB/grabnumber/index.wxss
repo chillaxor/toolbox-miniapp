@@ -1,0 +1,312 @@
+page { background: #101024; }
+
+.page {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(160deg, #14142e, #23234a);
+  padding: calc(env(safe-area-inset-top) + 20rpx) 32rpx calc(30rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+/* 游戏中：锁横屏、占满整屏、不滚动，vw/vh 自适应 */
+.page.play {
+  height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
+  /* 横屏下 env(safe-area-inset-top) 为 0，状态栏会压在顶部，这里留足顶栏空白避免遮挡 */
+  padding: calc(env(safe-area-inset-top) + 5vh) 2vw calc(2vh + env(safe-area-inset-bottom));
+}
+
+/* ---------- 结算闪光层 ---------- */
+.flashlayer {
+  position: absolute;
+  left: 0; top: 0; right: 0; bottom: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .15s ease;
+  z-index: 5;
+}
+.flashlayer.green  { background: rgba(52, 199, 89, 0.34);  opacity: 1; }
+.flashlayer.red    { background: rgba(255, 59, 48, 0.34);  opacity: 1; }
+.flashlayer.yellow { background: rgba(255, 214, 10, 0.34); opacity: 1; }
+
+/* ==================== 设置页 ==================== */
+.goback {
+  align-self: flex-start;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 28rpx;
+  padding: 6rpx 20rpx;
+  background: rgba(0, 0, 0, 0.24);
+  border-radius: 30rpx;
+}
+.hero {
+  text-align: center;
+  font-size: 60rpx;
+  font-weight: 800;
+  color: #fff;
+  margin: 20rpx 0 14rpx;
+  letter-spacing: 4rpx;
+}
+.result-hero { margin-top: 80rpx; }
+.howto {
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 25rpx;
+  line-height: 1.7;
+  text-align: center;
+  padding: 0 12rpx;
+  margin-bottom: 20rpx;
+}
+.howto .em { color: #4be0c4; font-weight: 700; }
+.howto .em.bad { color: #FF6B6B; }
+
+.sec-label {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 25rpx;
+  margin: 22rpx 4rpx 12rpx;
+}
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14rpx;
+}
+.chip {
+  flex: 1;
+  min-width: 120rpx;
+  text-align: center;
+  padding: 20rpx 8rpx;
+  background: rgba(255, 255, 255, 0.08);
+  border: 2rpx solid transparent;
+  border-radius: 18rpx;
+  color: #fff;
+  font-size: 28rpx;
+}
+.chip.mini { min-width: 80rpx; flex: none; width: 96rpx; }
+.chip.on {
+  background: rgba(75, 224, 196, 0.2);
+  border-color: #4be0c4;
+  color: #eafffb;
+  font-weight: 700;
+}
+.forbid-desc {
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 23rpx;
+  margin: 12rpx 4rpx 0;
+  line-height: 1.5;
+}
+
+.switch-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 26rpx 4rpx 4rpx;
+}
+.switch-label { color: #fff; font-size: 28rpx; }
+.switch {
+  width: 96rpx;
+  height: 54rpx;
+  border-radius: 27rpx;
+  background: rgba(255, 255, 255, 0.22);
+  position: relative;
+  transition: .2s;
+  flex-shrink: 0;
+}
+.switch.on { background: #4be0c4; }
+.switch .knob {
+  position: absolute;
+  top: 5rpx; left: 5rpx;
+  width: 44rpx; height: 44rpx;
+  border-radius: 50%;
+  background: #fff;
+  transition: .2s;
+}
+.switch.on .knob { left: 47rpx; }
+
+.btn-primary {
+  margin: 40rpx 20rpx 0;
+  background: linear-gradient(90deg, #4be0c4, #3a9df0);
+  color: #06202a;
+  font-size: 34rpx;
+  font-weight: 800;
+  text-align: center;
+  padding: 26rpx;
+  border-radius: 999rpx;
+  box-shadow: 0 8rpx 24rpx rgba(75, 224, 196, 0.35);
+}
+.btn-primary.inline { margin: 0; flex: 1; color: #06202a; }
+.btn-row { display: flex; gap: 20rpx; margin: 56rpx 20rpx 0; }
+.btn-ghost {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-size: 32rpx;
+  text-align: center;
+  padding: 26rpx;
+  border-radius: 999rpx;
+}
+.btn-home {
+  margin: 26rpx auto 0;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 28rpx;
+  text-align: center;
+  padding: 14rpx 44rpx;
+  background: rgba(0, 0, 0, 0.24);
+  border-radius: 999rpx;
+}
+.summary {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 34rpx;
+  margin-top: 20rpx;
+}
+
+/* ==================== 对战（横屏） ==================== */
+.topbar {
+  flex: none;
+  height: 9vh;
+  min-height: 9vh;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2vw;
+  color: #fff;
+}
+.tb-left, .tb-right { font-size: 2.8vw; display: flex; align-items: center; gap: 1vw; line-height: 1; }
+.tb-score { font-size: 4vw; font-weight: 800; line-height: 1; }
+.tb-score.a { color: #FFD166; }
+.tb-score.b { color: #4be0c4; }
+.tb-mid { display: flex; flex-direction: column; align-items: center; line-height: 1.2; }
+.tb-time { color: #FFD60A; font-size: 3vw; font-weight: 700; line-height: 1; }
+.tb-round { color: rgba(255, 255, 255, 0.6); font-size: 2.2vw; }
+
+.arena {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 1.5vw;
+}
+
+/* 左右点击区：大面积、各占约 35% */
+.tapzone {
+  width: 34vw;
+  flex: none;
+  border-radius: 3vw;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: transform .06s, background .1s;
+}
+.tapzone-a { background: linear-gradient(180deg, rgba(255, 209, 102, 0.16), rgba(255, 209, 102, 0.06)); box-shadow: inset 0 0 0 3rpx rgba(255, 209, 102, 0.4); }
+.tapzone-b { background: linear-gradient(180deg, rgba(75, 224, 196, 0.16), rgba(75, 224, 196, 0.06)); box-shadow: inset 0 0 0 3rpx rgba(75, 224, 196, 0.4); }
+.tapzone:active { transform: scale(0.97); }
+.tapzone-a:active { background: rgba(255, 209, 102, 0.28); }
+.tapzone-b:active { background: rgba(75, 224, 196, 0.28); }
+.tz-name { color: #fff; font-size: 4.4vw; font-weight: 800; }
+.tz-hint { color: rgba(255, 255, 255, 0.55); font-size: 2.6vw; margin-top: 1vh; }
+.floattip {
+  position: absolute;
+  top: 14%;
+  font-size: 7vw;
+  font-weight: 800;
+  opacity: 0;
+  transition: opacity .18s, transform .5s;
+}
+.floattip.a { color: #FFD166; }
+.floattip.b { color: #4be0c4; }
+.floattip.show { opacity: 1; transform: translateY(-4vh); }
+
+/* 中央数字区：不可点击，两侧留安全空白防误触 */
+.numzone {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  padding: 0 1.5vw;
+}
+.num {
+  font-size: 16vw;
+  font-weight: 800;
+  line-height: 1;
+  background: #ffffff;
+  color: #17172e;
+  min-width: 30vw;
+  height: 28vw;
+  padding: 0 3vw;
+  box-sizing: border-box;
+  border-radius: 4vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 26rpx rgba(0, 0, 0, 0.5);
+}
+.num.forbidden {
+  background: #FF3B30;
+  color: #fff;
+  box-shadow: 0 0 0 6rpx rgba(255, 59, 48, 0.5), 0 8rpx 26rpx rgba(255, 59, 48, 0.4);
+  animation: forbidpulse 0.7s ease-in-out infinite;
+}
+.num.gone { opacity: 0.28; filter: grayscale(1); transition: opacity .3s; }
+@keyframes forbidpulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+.num.shake { animation: numshake 0.15s linear infinite; }
+@keyframes numshake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-6rpx); }
+  75% { transform: translateX(6rpx); }
+  100% { transform: translateX(0); }
+}
+.numtag {
+  margin-top: 1.6vh;
+  color: #fff;
+  background: #FF3B30;
+  font-size: 3vw;
+  font-weight: 700;
+  padding: 0.6vh 3vw;
+  border-radius: 999rpx;
+}
+.resultline {
+  margin-top: 1.4vh;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.4);
+  font-size: 2.8vw;
+  padding: 0.6vh 3vw;
+  border-radius: 999rpx;
+  text-align: center;
+  max-width: 96%;
+}
+
+/* 倒计时遮罩 */
+.countmask {
+  position: absolute;
+  left: 0; top: 0; right: 0; bottom: 0;
+  background: rgba(10, 10, 24, 0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+}
+.count-tip { color: rgba(255, 255, 255, 0.85); font-size: 3.6vw; margin-bottom: 2vh; }
+.count-num {
+  color: #4be0c4;
+  font-size: 26vw;
+  font-weight: 800;
+  line-height: 1;
+  animation: countpop 0.8s ease;
+}
+@keyframes countpop {
+  0% { transform: scale(0.4); opacity: 0.2; }
+  40% { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(1); }
+}

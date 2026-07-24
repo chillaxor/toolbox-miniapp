@@ -6,11 +6,11 @@ var RECENT_MAX = 8;
 
 var CATEGORY_DEFAULT_COUNTS = {
   'life': '20',
-  'date': '10',
-  'text': '15',
-  'image': '30',
-  'fun': '50',
-  'study': '25'
+  'date': '8',
+  'text': '10',
+  'image': '16',
+  'fun': '35',
+  'study': '15'
 };
 
 var FEATURED_PRIMARY = 'https://gitee.com/b64882/qian_data/raw/master/featured.json';

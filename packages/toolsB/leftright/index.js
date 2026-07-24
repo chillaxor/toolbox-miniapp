@@ -153,7 +153,6 @@ Page({
     sides: [makeSide('A', '玩家A'), makeSide('B', '玩家B')],
     coopGoal: 15,
     teamScore: 0,
-    log: [],
     winnerText: '', modeText: '', summary: ''
   },
 
@@ -224,11 +223,8 @@ Page({
     });
   },
 
-  _log: function (from, to, kind) {
-    var arr = this.data.log.concat([from + '→' + to + ' ' + (KIND_NAME[kind] || kind)]);
-    if (arr.length > 6) arr = arr.slice(arr.length - 6);
-    this.setData({ log: arr });
-  },
+  // 干扰记录不再展示（保留空函数，避免改动所有调用点）
+  _log: function () {},
 
   _modeName: function () {
     var m = this.data.mode;
@@ -250,7 +246,7 @@ Page({
     var b = makeSide('B', '玩家B');
     var patch = {
       phase: 'playing', mode: mode, difficulty: diff,
-      sides: [a, b], teamScore: 0, log: [],
+      sides: [a, b], teamScore: 0,
       winnerText: '', modeText: '', summary: '', goalText: ''
     };
     if (mode === 'timed') {
@@ -612,7 +608,7 @@ Page({
   backSetup: function () {
     this._clearTimers();
     this._setOri('portrait');
-    this.setData({ phase: 'setup', winnerText: '', modeText: '', summary: '', log: [] });
+    this.setData({ phase: 'setup', winnerText: '', modeText: '', summary: '' });
   },
   // 设置页返回首页（自定义导航栏后系统返回键消失，自绘返回）
   navBack: function () {

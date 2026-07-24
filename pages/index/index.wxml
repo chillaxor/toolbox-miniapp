@@ -47,7 +47,10 @@
         <view class="hero-brand">拾光工具屋</view>
         <view class="hero-avatar">我</view>
       </view>
-      <view class="hero-sub">99+个小工具 · 随时待命</view>
+      <view class="hero-sub">
+      99+ 个小工具·随时待命
+      Be water,my friend.
+      </view>
     </view>
 
     <!-- 最近使用 -->

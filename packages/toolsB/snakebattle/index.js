@@ -60,12 +60,12 @@ Page({
       return;
     }
     this.checkFavorite();
-    // 先按当前(可能仍是竖屏)尺寸占位, onReady 时横屏尺寸才定稿
+    // 设置/规则页用竖屏, 点开始后再切横屏
+    this._setOri('portrait');
     this._computeSize();
   },
 
   onReady: function () {
-    // 页面横屏已生效, 用横屏尺寸重新计算并初始化画布
     this._computeSize();
     this._initCanvas();
     // 监听旋转/尺寸变化, 实时重算画布
@@ -76,6 +76,12 @@ Page({
 
   onShow: function () {
     this.checkFavorite();
+    // 回到页面时按状态恢复方向
+    this._setOri(this.data.gameState === 'playing' ? 'landscape' : 'portrait');
+  },
+
+  _setOri: function (o) {
+    try { wx.setPageOrientation({ orientation: o, fail: function () {} }); } catch (e) {}
   },
 
   onHide: function () {
@@ -87,9 +93,11 @@ Page({
   onUnload: function () {
     if (this._onResize) { wx.offWindowResize(this._onResize); this._onResize = null; }
     this._stopLoop();
+    this._setOri('portrait');
   },
 
   onBack: function () {
+    this._setOri('portrait');
     wx.navigateBack({
       delta: 1,
       fail: function () { wx.reLaunch({ url: '/pages/index/index' }); }
@@ -174,6 +182,22 @@ Page({
 
   // ---------- 游戏开始 ----------
   startGame: function () {
+    var self = this;
+    if (this._starting) return;
+    this._starting = true;
+    // 先切横屏, 等旋转/尺寸生效后再正式开局
+    var sys = wx.getSystemInfoSync();
+    var needRotate = sys.windowHeight > sys.windowWidth; // 当前仍是竖屏
+    this._setOri('landscape');
+    if (needRotate) wx.showToast({ title: '请横屏握持手机', icon: 'none', duration: 900 });
+    setTimeout(function () {
+      self._starting = false;
+      self._computeSize();
+      self._beginMatch();
+    }, needRotate ? 900 : 120);
+  },
+
+  _beginMatch: function () {
     var now = Date.now();
     // 玩家A: 左上, 向右; 玩家B: 右下, 向左
     var A = this._makeSnake('topleft', DIRS.right, [

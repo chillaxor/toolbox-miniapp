@@ -1,0 +1,113 @@
+<view class="page {{phase==='playing'?'play':''}}">
+  <view class="flashlayer {{flash}}"></view>
+
+  <!-- ==================== 设置（竖屏） ==================== -->
+  <block wx:if="{{phase==='setup'}}">
+    <view class="goback" bindtap="goHome">‹ 返回工具箱</view>
+    <view class="hero">🔢 抢数字</view>
+    <view class="howto">横屏握持，双方各握一边。中央蹦出数字：<text class="em">普通数字抢先点自己那半屏得分</text>；<text class="em bad">禁止数字千万别点</text>——抢了要扣分、对手加分，都忍住不点则双方 +1。</view>
+
+    <view class="sec-label">数字范围（1 起）</view>
+    <view class="chip-row">
+      <view class="chip {{rangeMax===30?'on':''}}" bindtap="selectRange" data-v="30">1–30</view>
+      <view class="chip {{rangeMax===50?'on':''}}" bindtap="selectRange" data-v="50">1–50</view>
+      <view class="chip {{rangeMax===100?'on':''}}" bindtap="selectRange" data-v="100">1–100</view>
+    </view>
+
+    <view class="sec-label">禁止数字类型</view>
+    <view class="chip-row">
+      <view class="chip {{forbidType==='multiple'?'on':''}}" bindtap="selectForbid" data-v="multiple">固定倍数</view>
+      <view class="chip {{forbidType==='contains'?'on':''}}" bindtap="selectForbid" data-v="contains">含某数字</view>
+      <view class="chip {{forbidType==='prime'?'on':''}}" bindtap="selectForbid" data-v="prime">质数</view>
+      <view class="chip {{forbidType==='square'?'on':''}}" bindtap="selectForbid" data-v="square">平方数</view>
+    </view>
+    <view class="chip-row" wx:if="{{forbidType==='multiple'||forbidType==='contains'}}">
+      <view class="chip mini {{forbidValue===3?'on':''}}" bindtap="selectForbidValue" data-v="3">3</view>
+      <view class="chip mini {{forbidValue===4?'on':''}}" bindtap="selectForbidValue" data-v="4">4</view>
+      <view class="chip mini {{forbidValue===5?'on':''}}" bindtap="selectForbidValue" data-v="5">5</view>
+      <view class="chip mini {{forbidValue===7?'on':''}}" bindtap="selectForbidValue" data-v="7">7</view>
+      <view class="chip mini {{forbidValue===9?'on':''}}" bindtap="selectForbidValue" data-v="9">9</view>
+    </view>
+    <view class="forbid-desc">{{forbidDesc}}</view>
+
+    <view class="sec-label">游戏时长</view>
+    <view class="chip-row">
+      <view class="chip {{duration===30?'on':''}}" bindtap="selectDuration" data-v="30">30 秒</view>
+      <view class="chip {{duration===60?'on':''}}" bindtap="selectDuration" data-v="60">60 秒</view>
+      <view class="chip {{duration===120?'on':''}}" bindtap="selectDuration" data-v="120">2 分钟</view>
+      <view class="chip {{duration===180?'on':''}}" bindtap="selectDuration" data-v="180">3 分钟</view>
+    </view>
+
+    <view class="sec-label">速度递增</view>
+    <view class="chip-row">
+      <view class="chip {{speedStep===5?'on':''}}" bindtap="selectSpeed" data-v="5">每 5 轮</view>
+      <view class="chip {{speedStep===10?'on':''}}" bindtap="selectSpeed" data-v="10">每 10 轮</view>
+      <view class="chip {{speedStep===20?'on':''}}" bindtap="selectSpeed" data-v="20">每 20 轮</view>
+    </view>
+
+    <view class="sec-label">惩罚强度（抢了禁止数字扣分）</view>
+    <view class="chip-row">
+      <view class="chip {{penalty===1?'on':''}}" bindtap="selectPenalty" data-v="1">温和 −1</view>
+      <view class="chip {{penalty===2?'on':''}}" bindtap="selectPenalty" data-v="2">标准 −2</view>
+      <view class="chip {{penalty===3?'on':''}}" bindtap="selectPenalty" data-v="3">严厉 −3</view>
+    </view>
+
+    <view class="switch-row" bindtap="toggleInterfere">
+      <view class="switch-label">干扰机制（偶尔闪假数字）</view>
+      <view class="switch {{interfere?'on':''}}"><view class="knob"></view></view>
+    </view>
+
+    <view class="btn-primary" bindtap="onStart">开始游戏 🚀</view>
+  </block>
+
+  <!-- ==================== 对战（横屏） ==================== -->
+  <block wx:elif="{{phase==='playing'}}">
+    <!-- 顶部信息条 -->
+    <view class="topbar">
+      <view class="tb-left">🅰 <text class="tb-score a">{{scoreAText}}</text></view>
+      <view class="tb-mid">
+        <text class="tb-time">⏱ {{timeLeft}}s</text>
+        <text class="tb-round">第 {{round}} 轮</text>
+      </view>
+      <view class="tb-right"><text class="tb-score b">{{scoreBText}}</text> 🅱</view>
+    </view>
+
+    <view class="arena">
+      <!-- 玩家A 点击区（左） -->
+      <view class="tapzone tapzone-a" bindtap="tapA">
+        <view class="tz-name">玩家 A</view>
+        <view class="tz-hint">点这半屏抢</view>
+        <view class="floattip a {{floatA?'show':''}}">{{floatA}}</view>
+      </view>
+
+      <!-- 中央数字区（不可点，两侧留安全空白） -->
+      <view class="numzone">
+        <view class="num {{numState}} {{shake?'shake':''}}">{{number}}</view>
+      </view>
+
+      <!-- 玩家B 点击区（右） -->
+      <view class="tapzone tapzone-b" bindtap="tapB">
+        <view class="tz-name">玩家 B</view>
+        <view class="tz-hint">点这半屏抢</view>
+        <view class="floattip b {{floatB?'show':''}}">{{floatB}}</view>
+      </view>
+    </view>
+
+    <!-- 倒计时遮罩 -->
+    <view class="countmask" wx:if="{{countdown>0}}">
+      <view class="count-tip">请横屏握持·双方各握一边</view>
+      <view class="count-num">{{countdown}}</view>
+    </view>
+  </block>
+
+  <!-- ==================== 结果（竖屏） ==================== -->
+  <block wx:elif="{{phase==='result'}}">
+    <view class="hero result-hero">{{winnerText}}</view>
+    <view class="summary">{{summary}}</view>
+    <view class="btn-row">
+      <view class="btn-ghost" bindtap="backSetup">返回设置</view>
+      <view class="btn-primary inline" bindtap="replay">再来一局</view>
+    </view>
+    <view class="btn-home" bindtap="goHome">返回首页</view>
+  </block>
+</view>

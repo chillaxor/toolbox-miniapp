@@ -24,7 +24,7 @@ Page({
     total: 0,
     progress: 0,
     progressPercent: 0,
-    wordSize: 220,           // 横屏词字号（按词长自适应）
+    wordSize: 150,           // 横屏词字号（按词长自适应，开局由 _fitSize 重新计算）
     pulse: false
   },
 
@@ -103,14 +103,14 @@ Page({
     this.startFlip();
   },
 
-  // 按词长计算横屏字号，保证大字又不溢出
+  // 按词长计算横屏字号，整体偏小一档，避免横屏下被裁切看不全
   _fitSize: function (word) {
     var n = (word || '').length;
-    if (n <= 1) return 300;
-    if (n <= 2) return 220;
-    if (n <= 3) return 160;
-    if (n <= 4) return 130;
-    return 100;
+    if (n <= 1) return 200;
+    if (n <= 2) return 150;
+    if (n <= 3) return 115;
+    if (n <= 4) return 95;
+    return 78;
   },
 
   // ---------- 游戏中：翻手机 / 轻触 换词 ----------

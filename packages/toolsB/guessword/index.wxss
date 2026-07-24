@@ -78,8 +78,14 @@ page {
   font-weight: 800;
   letter-spacing: 4rpx;
   text-align: center;
-  line-height: 1.1;
-  white-space: nowrap;
+  line-height: 1.15;
+  /* 允许换行 + 限宽 100%，避免横屏下大字号被页面裁切看不全 */
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
+  padding: 0 16rpx;
+  box-sizing: border-box;
   text-shadow: 0 8rpx 36rpx rgba(0, 0, 0, 0.4);
 }
 

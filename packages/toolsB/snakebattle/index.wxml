@@ -1,4 +1,3 @@
-<page-meta orientation="landscape"></page-meta>
 <view class="container">
 
   <!-- 顶部 HUD (叠加, 不挡滑动) -->
@@ -59,7 +58,7 @@
     <view class="overlay-content" wx:if="{{gameState === 'idle'}}">
       <text class="overlay-title">🐍 贪吃蛇对战</text>
       <view class="rules">
-        <text class="rule-line">📱 横屏对战 · 🔵蓝方左半 · 🔴红方右半</text>
+        <text class="rule-line">📱 点开始后转横屏对战 · 🔵蓝方左半 · 🔴红方右半</text>
         <text class="rule-line">🔵蓝方滑左半屏 · 🔴红方滑右半屏</text>
         <text class="rule-line">🍬糖果+1节 · 💀吃对方尸体+3节</text>
         <text class="rule-line">撞墙/撞身/撞对方即死 · 各3条命</text>

@@ -103,7 +103,9 @@ App({
       nim: false,
       leftright: false,
       splitball: false,
-      useRemoteFeatured: false
+      grabnumber: false,
+      useRemoteFeatured: false,
+      paintwar:false
     }
   }
 });
