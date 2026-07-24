@@ -1,3 +1,4 @@
+var mediaCheck = require('../../../utils/mediaCheck.js');
 var GifEncoder = require('../../../utils/gif-encoder.js');
 var fs = wx.getFileSystemManager();
 
@@ -42,7 +43,7 @@ Page({
       wx.showToast({ title: '最多30张图片', icon: 'none' });
       return;
     }
-    wx.chooseMedia({
+    mediaCheck.chooseMediaWithCheck({
       count: remaining,
       mediaType: ['image'],
       sourceType: ['album'],

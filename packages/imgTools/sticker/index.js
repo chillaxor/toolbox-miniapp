@@ -1,3 +1,4 @@
+var mediaCheck = require('../../../utils/mediaCheck.js');
 var storage = require('../../../utils/storage.js');
 
 var THEMES = [
@@ -111,7 +112,7 @@ Page({
 
   onChooseImage: function () {
     var self = this;
-    wx.chooseImage({
+    mediaCheck.chooseImageWithCheck({
       count: 1,
       sizeType: ['compressed'],
       sourceType: ['album'],
@@ -123,7 +124,7 @@ Page({
 
   onCameraCapture: function () {
     var self = this;
-    wx.chooseImage({
+    mediaCheck.chooseImageWithCheck({
       count: 1,
       sizeType: ['compressed'],
       sourceType: ['camera'],

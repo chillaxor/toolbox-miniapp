@@ -1,3 +1,4 @@
+var mediaCheck = require('../../../utils/mediaCheck.js');
 var storage = require('../../../utils/storage.js');
 
 var CLOUD_ENV = 'cloud1-d9gm1qla9bebafa31';
@@ -119,7 +120,7 @@ Page({
 
   onChooseImage: function () {
     var self = this;
-    wx.chooseMedia({
+    mediaCheck.chooseMediaWithCheck({
       count: 1,
       mediaType: ['image'],
       sourceType: ['album', 'camera'],

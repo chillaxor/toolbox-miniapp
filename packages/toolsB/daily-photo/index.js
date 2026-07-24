@@ -1,3 +1,4 @@
+var mediaCheck = require('../../../utils/mediaCheck.js');
 var storageKey = 'daily-photo-data';
 
 Page({
@@ -118,7 +119,7 @@ Page({
 
   onTakePhoto: function () {
     var that = this;
-    wx.chooseMedia({
+    mediaCheck.chooseMediaWithCheck({
       count: 1,
       mediaType: ['image'],
       sourceType: ['camera', 'album'],
@@ -275,7 +276,7 @@ Page({
           that.setData({
             calSelectedDate: dateStr
           });
-          wx.chooseMedia({
+          mediaCheck.chooseMediaWithCheck({
             count: 1,
             mediaType: ['image'],
             sourceType: ['camera', 'album'],

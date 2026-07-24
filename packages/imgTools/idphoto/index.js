@@ -1,3 +1,4 @@
+var mediaCheck = require('../../../utils/mediaCheck.js');
 var storage = require('../../../utils/storage.js');
 
 // ============ 证件照规格 ============
@@ -310,7 +311,7 @@ Page({
   // ============ 照片选择 ============
   onChoosePhoto: function () {
     var that = this;
-    wx.chooseImage({
+    mediaCheck.chooseImageWithCheck({
       count: 1,
       sizeType: ['compressed'],
       sourceType: ['album', 'camera'],

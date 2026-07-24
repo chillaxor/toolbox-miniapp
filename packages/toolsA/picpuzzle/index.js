@@ -1,3 +1,4 @@
+var mediaCheck = require('../../../utils/mediaCheck.js');
 var storage = require('../../../utils/storage.js');
 
 var CUT_SIZE = 250; // 每块输出像素
@@ -45,7 +46,7 @@ Page({
   // ============ 选图 ============
   onChooseImage: function () {
     var self = this;
-    wx.chooseMedia({
+    mediaCheck.chooseMediaWithCheck({
       count: 1,
       mediaType: ['image'],
       success: function (res) {

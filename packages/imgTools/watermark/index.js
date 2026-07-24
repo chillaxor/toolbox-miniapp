@@ -1,3 +1,4 @@
+var mediaCheck = require('../../../utils/mediaCheck.js');
 var storage = require('../../../utils/storage.js');
 
 Page({
@@ -37,7 +38,7 @@ Page({
 
   choosePhoto: function () {
     var self = this;
-    wx.chooseImage({
+    mediaCheck.chooseImageWithCheck({
       count: 1,
       sizeType: ['original'],
       sourceType: ['album', 'camera'],

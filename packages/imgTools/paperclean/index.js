@@ -1,3 +1,4 @@
+var mediaCheck = require('../../../utils/mediaCheck.js');
 var storage = require('../../../utils/storage.js');
 
 // 云环境ID（与app.js中wx.cloud.init的env保持一致）
@@ -162,7 +163,7 @@ Page({
     }
 
     var self = this;
-    wx.chooseMedia({
+    mediaCheck.chooseMediaWithCheck({
       count: 1,
       mediaType: ['image'],
       sourceType: ['album', 'camera'],

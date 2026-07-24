@@ -1,0 +1,9 @@
+{
+  "name": "mediaCheck",
+  "version": "1.0.0",
+  "description": "多媒体内容安全识别（封装 /wxa/media_check_async）",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

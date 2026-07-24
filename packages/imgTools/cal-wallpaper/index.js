@@ -1,3 +1,4 @@
+var mediaCheck = require('../../../utils/mediaCheck.js');
 var storage = require('../../../utils/storage.js');
 var calendarUtil = require('../../../utils/calendar.js');
 
@@ -102,7 +103,7 @@ Page({
   // 选择背景图片
   chooseImage: function () {
     var that = this;
-    wx.chooseImage({
+    mediaCheck.chooseImageWithCheck({
       count: 1,
       sizeType: ['compressed'],
       sourceType: ['album', 'camera'],

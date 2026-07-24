@@ -1,3 +1,5 @@
+var mediaCheck = require('../../../utils/mediaCheck.js');
+
 Page({
   data: {
     images: [],        // {tempFilePath, width, height}
@@ -13,7 +15,7 @@ Page({
       wx.showToast({ title: '最多选择9张', icon: 'none' });
       return;
     }
-    wx.chooseMedia({
+    mediaCheck.chooseMediaWithCheck({
       count: remaining,
       mediaType: ['image'],
       sourceType: ['album'],

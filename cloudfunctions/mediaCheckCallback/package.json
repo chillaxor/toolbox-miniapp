@@ -1,0 +1,9 @@
+{
+  "name": "mediaCheckCallback",
+  "version": "1.0.0",
+  "description": "多媒体内容安全识别 - 异步结果回调",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

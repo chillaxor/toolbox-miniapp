@@ -1,3 +1,4 @@
+var mediaCheck = require('../../../utils/mediaCheck.js');
 var storage = require('../../../utils/storage.js');
 
 // 每格输出尺寸（像素），足够高清
@@ -20,7 +21,7 @@ Page({
   // ============ 选图 ============
   onChooseImage: function () {
     var self = this;
-    wx.chooseMedia({
+    mediaCheck.chooseMediaWithCheck({
       count: 1,
       mediaType: ['image'],
       success: function (res) {

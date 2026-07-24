@@ -1,3 +1,4 @@
+var mediaCheck = require('../../../utils/mediaCheck.js');
 var imgBase64Util = require('../../../utils/img-base64.js');
 var storage = require('../../../utils/storage.js');
 
@@ -11,7 +12,7 @@ Page({
 
   onChooseImage: function () {
     var self = this;
-    wx.chooseMedia({
+    mediaCheck.chooseMediaWithCheck({
       count: 1,
       mediaType: ['image'],
       success: function (res) {
