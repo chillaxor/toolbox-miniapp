@@ -1,0 +1,65 @@
+<view class="container">
+
+  <!-- 介绍页 -->
+  <view wx:if="{{state === 'intro'}}" class="page intro">
+    <view class="hero">🧮</view>
+    <view class="title">火柴棒算式</view>
+    <view class="subtitle">移动一根火柴，让算式变正确！</view>
+    <view class="desc">每一题都是一道「不对」的算式，动动脑筋，把其中一根火柴挪个位置，等式成立就赢啦～</view>
+
+    <view class="count-sel">
+      <text class="cs-label">每局题数</text>
+      <view class="cs-row">
+        <view wx:for="{{totalOptions}}" wx:key="*this" class="cs-item {{total === item ? 'cs-on' : ''}}" bindtap="onSelectCount" data-count="{{item}}">{{item}}题</view>
+      </view>
+    </view>
+
+    <button class="btn-primary" bindtap="startGame">开始挑战</button>
+
+    <view class="history" wx:if="{{historyList.length > 0}}">
+      <view class="h-title">最近成绩</view>
+      <view class="h-item" wx:for="{{historyList}}" wx:key="ts">
+        <text class="h-sum">{{item.summary}}</text>
+        <text class="h-time">{{item.dateText}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 游戏页 -->
+  <view wx:if="{{state === 'play'}}" class="page play">
+    <view class="topbar">
+      <view class="qnum">第 {{index + 1}} / {{total}} 题</view>
+      <view class="score">⭐ {{score}}</view>
+    </view>
+    <view class="progress"><view class="bar" style="width:{{progress}}%"></view></view>
+
+    <view class="tip">移动一根火柴，让等号成立 👇</view>
+
+    <view class="eqrow">
+      <view class="slot" wx:for="{{slots}}" wx:for-index="si" wx:key="id">
+        <view class="seg seg-{{sg.key}} {{sg.cls}}" wx:for="{{item.segs}}" wx:for-item="sg" wx:key="key" bindtap="onSegTap" data-slot="{{si}}" data-seg="{{sg.key}}"></view>
+      </view>
+    </view>
+
+    <view class="feedback {{feedbackOk ? 'fb-ok' : 'fb-no'}}" wx:if="{{feedbackText}}">{{feedbackText}}</view>
+    <view class="auto-tip" wx:if="{{solved}}">即将进入下一题…</view>
+
+    <view class="actions">
+      <button class="btn-mini" bindtap="onHint">💡 提示</button>
+      <button class="btn-mini" bindtap="onUndo">↩️ 撤销</button>
+    </view>
+  </view>
+
+  <!-- 成绩页 -->
+  <view wx:if="{{state === 'result'}}" class="page result">
+    <view class="hero">🎉</view>
+    <view class="title">挑战完成！</view>
+    <view class="stars">
+      <text wx:for="{{starList}}" wx:key="*this" class="star {{stars >= item ? 'on' : 'off'}}">★</text>
+    </view>
+    <view class="score-big">解开 {{score}} / {{total}} 题</view>
+    <button class="btn-primary" bindtap="restart">再玩一次</button>
+    <button class="btn-ghost" bindtap="goIntro">返回首页</button>
+  </view>
+
+</view>

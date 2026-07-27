@@ -1,0 +1,97 @@
+<!-- 介绍页 -->
+<view class="page" wx:if="{{state === 'intro'}}">
+  <view class="hero">
+    <view class="hero-emoji">🛒</view>
+    <view class="hero-title">我是小店主</view>
+    <view class="hero-sub">扮演小店主，帮顾客算钱、找零，练出好算术！</view>
+  </view>
+
+  <view class="shelf">
+    <view class="shelf-label">🏪 今日特价</view>
+    <view class="shelf-board">
+      <view class="good" wx:for="{{previewGoods}}" wx:key="name">
+        <view class="good-emoji">{{item.emoji}}</view>
+        <view class="good-name">{{item.name}}</view>
+        <view class="good-price">💰{{item.priceText}}</view>
+        <view class="good-num">￥{{item.priceNum}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="count-sel">
+    <view class="count-label">每局题数</view>
+    <view class="count-opts">
+      <view class="count-opt {{total === item ? 'count-on' : ''}}"
+            wx:for="{{totalOptions}}" wx:key="*this" bindtap="onSelectCount" data-count="{{item}}">
+        {{item}}题
+      </view>
+    </view>
+  </view>
+
+  <button class="btn-primary" bindtap="startGame">开始营业</button>
+
+  <view class="tips">
+    <view class="tip">🧮 算一算商品总价</view>
+    <view class="tip">💰 收钱后算出该找的零钱</view>
+    <view class="tip">⭐ 答完一题自动进入下一题</view>
+  </view>
+
+  <view class="history" wx:if="{{historyList.length > 0}}">
+    <view class="history-title">营业记录</view>
+    <view class="history-item" wx:for="{{historyList}}" wx:key="ts">
+      <text>得分 {{item.score}}/{{item.total}}</text>
+      <text class="history-date">{{item.dt}}</text>
+    </view>
+  </view>
+</view>
+
+<!-- 营业页 -->
+<view class="page" wx:if="{{state === 'shop'}}">
+  <view class="topbar">
+    <text>第 {{index + 1}} / {{total}} 单</text>
+    <text>得分 {{score}}</text>
+  </view>
+  <view class="progress"><view class="progress-inner" style="width:{{progress}}%"></view></view>
+
+  <view class="scene">{{scene}}</view>
+
+  <view class="shelf">
+    <view class="shelf-label">🏪 小小超市 · 货架</view>
+    <view class="shelf-board">
+      <view class="good" wx:for="{{items}}" wx:key="name">
+        <view class="good-qty" wx:if="{{item.qty > 1}}">×{{item.qty}}</view>
+        <view class="good-emoji">{{item.emoji}}</view>
+        <view class="good-name">{{item.name}}</view>
+        <view class="good-price">💰{{item.priceText}}</view>
+        <view class="good-num">￥{{item.priceNum}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="paid" wx:if="{{showPaid}}">💵 顾客付款：{{paidText}}</view>
+
+  <view class="question">{{questionText}}</view>
+
+  <view class="options">
+    <view class="{{item.cls}}" wx:for="{{options}}" wx:key="text" bindtap="onSelect" data-index="{{index}}">{{item.text}}</view>
+  </view>
+
+  <view class="feedback {{isCorrect ? 'fb-ok' : 'fb-no'}}" wx:if="{{answered}}">{{feedbackText}}</view>
+
+  <view class="auto-hint" wx:if="{{answered}}">{{autoHint}}</view>
+
+  <button class="btn-primary" wx:if="{{answered}}" bindtap="next">{{isLast ? '看成绩' : '下一单'}}</button>
+</view>
+
+<!-- 成绩页 -->
+<view class="page" wx:if="{{state === 'result'}}">
+  <view class="result-emoji">{{stars === 3 ? '🏆' : (stars === 2 ? '🎉' : '💪')}}</view>
+  <view class="result-title">{{stars === 3 ? '金牌小店主！' : (stars === 2 ? '优秀小店主！' : '继续加油！')}}</view>
+  <view class="result-score">得分 {{score}} / {{total}}</view>
+  <view class="stars">
+    <text wx:for="{{starList}}" wx:key="*this" class="star {{item <= stars ? 'star-on' : ''}}">★</text>
+  </view>
+  <button class="btn-primary" bindtap="restart">再营业一次</button>
+  <button class="btn-ghost" bindtap="goIntro">返回首页</button>
+  <button class="btn-ghost" open-type="share">分享给朋友</button>
+</view>

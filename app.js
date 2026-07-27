@@ -29,18 +29,20 @@ App({
 
     function applyFlags(flags) {
       if (typeof flags !== 'object' || !flags || Array.isArray(flags)) flags = {};
-      try { wx.setStorageSync('feature_flags', flags); } catch (e) {}
-      self.globalData.featureFlags = flags;
+      var base = self.globalData.featureFlags || {};
+      var merged = Object.assign({}, base, flags);
+      try { wx.setStorageSync('feature_flags', merged); } catch (e) {}
+      self.globalData.featureFlags = merged;
       try {
         var pages = getCurrentPages() || [];
         pages.forEach(function (p) {
-          try {
-            if (p.getTabBar && p.getTabBar && p.getTabBar()) {
-              var tb = p.getTabBar();
-              if (tb.refreshFlags) tb.refreshFlags(flags);
-            }
-            if (p.applyFeatureFlags) p.applyFeatureFlags(flags);
-          } catch (e) {}
+      try {
+        if (p.getTabBar && p.getTabBar && p.getTabBar()) {
+          var tb = p.getTabBar();
+          if (tb.refreshFlags) tb.refreshFlags(merged);
+        }
+        if (p.applyFeatureFlags) p.applyFeatureFlags(merged);
+      } catch (e) {}
         });
       } catch (e) {}
     }
@@ -105,7 +107,12 @@ App({
       splitball: false,
       grabnumber: false,
       useRemoteFeatured: false,
-      paintwar:false
+      paintwar:false,
+      coordinate: false,
+      matchstick: false,
+      moneyExchange: false,
+      moneyShop: false,
+      pizzaFraction: false
     }
   }
 });

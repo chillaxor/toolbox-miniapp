@@ -1,0 +1,56 @@
+.page { padding: 32rpx 28rpx 60rpx; min-height: 100vh; background: #FFF8F0; }
+
+/* 介绍页 */
+.intro { display: flex; flex-direction: column; align-items: center; }
+.big-emoji { font-size: 120rpx; margin-top: 30rpx; }
+.title { font-size: 44rpx; font-weight: 600; color: #6D4C41; margin-top: 12rpx; }
+.subtitle { font-size: 26rpx; color: #A1887F; margin-top: 12rpx; text-align: center; line-height: 1.6; }
+
+.shelf-preview { display: flex; justify-content: space-between; width: 100%; margin: 36rpx 0 10rpx; }
+.prev-good { width: 22%; background: #fff; border-radius: 18rpx; padding: 18rpx 0; text-align: center; box-shadow: 0 6rpx 18rpx rgba(230,81,0,0.08); border: 2rpx solid #FFE0B2; }
+.prev-emoji { font-size: 56rpx; }
+.prev-name { font-size: 24rpx; color: #8D6E63; margin-top: 6rpx; }
+
+.count-label { align-self: flex-start; font-size: 28rpx; color: #6D4C41; margin: 30rpx 0 14rpx; font-weight: 600; }
+.count-sel { display: flex; flex-wrap: wrap; width: 100%; }
+.count-item { padding: 16rpx 30rpx; margin: 0 16rpx 16rpx 0; background: #fff; border-radius: 40rpx; font-size: 28rpx; color: #8D6E63; border: 2rpx solid #FFE0B2; }
+.count-item.count-on { background: #FF8A4C; color: #fff; border-color: #FF8A4C; }
+
+.btn-primary { margin-top: 30rpx; width: 100%; background: #FF8A4C; color: #fff; font-size: 32rpx; font-weight: 600; text-align: center; padding: 24rpx 0; border-radius: 50rpx; box-shadow: 0 8rpx 20rpx rgba(255,138,76,0.35); }
+.btn-ghost { margin-top: 20rpx; width: 100%; background: #fff; color: #FF8A4C; font-size: 30rpx; text-align: center; padding: 22rpx 0; border-radius: 50rpx; border: 2rpx solid #FFCCB0; }
+
+.history { width: 100%; margin-top: 40rpx; }
+.hist-title { font-size: 26rpx; color: #A1887F; margin-bottom: 12rpx; }
+.hist-item { font-size: 26rpx; color: #8D6E63; padding: 12rpx 18rpx; background: #fff; border-radius: 12rpx; margin-bottom: 10rpx; }
+
+/* 游戏页 */
+.play { display: flex; flex-direction: column; align-items: center; }
+.topbar { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 14rpx; }
+.prog-text { font-size: 28rpx; color: #6D4C41; font-weight: 600; }
+.score-text { font-size: 28rpx; color: #FF8A4C; font-weight: 600; }
+.prog-bar { width: 100%; height: 14rpx; background: #FFE0B2; border-radius: 10rpx; overflow: hidden; }
+.prog-fill { height: 100%; background: #FF8A4C; border-radius: 10rpx; transition: width 0.3s ease; }
+
+.pizza-wrap { margin: 30rpx 0; display: flex; justify-content: center; }
+.pizza-canvas { width: 560rpx; height: 560rpx; }
+
+.question { font-size: 32rpx; color: #4E342E; text-align: center; line-height: 1.6; margin: 16rpx 0 24rpx; font-weight: 500; }
+
+.options { width: 100%; }
+.opt { width: 100%; background: #fff; border-radius: 18rpx; padding: 26rpx 0; text-align: center; font-size: 36rpx; color: #4E342E; margin-bottom: 18rpx; border: 3rpx solid #FFE0B2; }
+.opt.opt-correct { background: #E8F5E9; color: #2E7D32; border-color: #81C784; }
+.opt.opt-wrong { background: #FFEBEE; color: #C62828; border-color: #E57373; }
+
+.tap-hint { font-size: 26rpx; color: #8D6E63; background: #FFF3E0; padding: 16rpx 24rpx; border-radius: 14rpx; margin-bottom: 18rpx; }
+
+.feedback { width: 100%; text-align: center; font-size: 30rpx; font-weight: 600; padding: 20rpx 0; border-radius: 16rpx; margin-top: 8rpx; }
+.fb-ok { color: #2E7D32; background: #E8F5E9; }
+.fb-no { color: #C62828; background: #FFEBEE; }
+.auto-hint { font-size: 24rpx; color: #BCAAA4; margin-top: 12rpx; }
+
+/* 结果页 */
+.result { display: flex; flex-direction: column; align-items: center; margin-top: 80rpx; }
+.stars { margin: 30rpx 0; }
+.star { font-size: 80rpx; color: #E0E0E0; margin: 0 8rpx; }
+.star.star-on { color: #FFB300; }
+.score-big { font-size: 36rpx; color: #6D4C41; font-weight: 600; margin-bottom: 30rpx; }

@@ -1,0 +1,66 @@
+<view class="page">
+  <!-- 介绍页 -->
+  <view wx:if="{{state === 'intro'}}" class="intro">
+    <view class="big-emoji">🍕</view>
+    <view class="title">分披萨学分数</view>
+    <view class="subtitle">把一个披萨切成几份，认识 1/2、1/3、1/4、1/8</view>
+
+    <view class="shelf-preview">
+      <view class="prev-good"><view class="prev-emoji">🍕</view><view class="prev-name">1/2</view></view>
+      <view class="prev-good"><view class="prev-emoji">🍕</view><view class="prev-name">1/3</view></view>
+      <view class="prev-good"><view class="prev-emoji">🍕</view><view class="prev-name">1/4</view></view>
+      <view class="prev-good"><view class="prev-emoji">🍕</view><view class="prev-name">1/8</view></view>
+    </view>
+
+    <view class="count-label">每局题数</view>
+    <view class="count-sel">
+      <view wx:for="{{totalOptions}}" wx:key="*this" class="count-item {{total === item ? 'count-on' : ''}}" bindtap="onSelectCount" data-count="{{item}}">{{item}} 题</view>
+    </view>
+
+    <view class="btn-primary" bindtap="startGame">开始游戏</view>
+
+    <view wx:if="{{historyList.length > 0}}" class="history">
+      <view class="hist-title">练习记录</view>
+      <view wx:for="{{historyList}}" wx:key="ts" class="hist-item">{{item.summary}}</view>
+    </view>
+  </view>
+
+  <!-- 游戏页 -->
+  <view wx:if="{{state === 'play'}}" class="play">
+    <view class="topbar">
+      <view class="prog-text">第 {{index + 1}} / {{total}} 题</view>
+      <view class="score-text">⭐ {{score}}</view>
+    </view>
+    <view class="prog-bar"><view class="prog-fill" style="width:{{progress}}%"></view></view>
+
+    <view class="pizza-wrap">
+      <canvas type="2d" id="pizza" class="pizza-canvas" bindtouchstart="onPizzaTap"></canvas>
+    </view>
+
+    <view class="question">{{questionText}}</view>
+
+    <block wx:if="{{type === 'choice'}}">
+      <view class="options">
+        <view wx:for="{{options}}" wx:key="text" class="opt {{item.cls}}" bindtap="onSelect" data-index="{{index}}">{{item.text}}</view>
+      </view>
+    </block>
+
+    <block wx:if="{{type === 'tap'}}">
+      <view class="tap-hint">已点 {{pickedSet.length}} / {{needCount}} 块（点错可再点取消）</view>
+    </block>
+
+    <view wx:if="{{answered}}" class="feedback {{isCorrect ? 'fb-ok' : 'fb-no'}}">{{feedbackText}}</view>
+    <view wx:if="{{answered}}" class="auto-hint">即将进入下一题…</view>
+  </view>
+
+  <!-- 结果页 -->
+  <view wx:if="{{state === 'result'}}" class="result">
+    <view class="title">完成啦！</view>
+    <view class="stars">
+      <text wx:for="{{starList}}" wx:key="*this" class="star {{stars >= item ? 'star-on' : ''}}">★</text>
+    </view>
+    <view class="score-big">得分 {{score}} / {{total}}</view>
+    <view class="btn-primary" bindtap="restart">再玩一次</view>
+    <view class="btn-ghost" bindtap="goIntro">返回首页</view>
+  </view>
+</view>

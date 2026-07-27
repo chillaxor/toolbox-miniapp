@@ -148,7 +148,12 @@ const TOOLS = [
   { id: 'nim', name: 'Nim游戏', category: 'fun', icon: '🪨', path: '/packages/toolsB/nim/index', description: '多堆石子轮流拿·Nim和必胜策略·正常/misère/限拿K/多堆/随机事件变体·同屏双人' },
   { id: 'leftright', name: '左右互搏', category: 'fun', icon: '🥊', path: '/packages/toolsB/leftright/index', description: '屏幕左右分屏·两人各答各题却互相干扰·闪光/变色/加速/偷题·能量连击放大招·限时/生存/合作' },
   { id: 'splitball', name: '分裂球', category: 'fun', icon: '⚽', path: '/packages/toolsA/splitball/index', description: '中央分裂双色球·点自己颜色得分·假球/变色/反弹/连发·限时/生存/无尽·斯特鲁普/互换/合作变体·同屏双人' },
-  { id: 'grabnumber', name: '抢数字', category: 'fun', icon: '🔢', path: '/packages/toolsB/grabnumber/index', description: '横屏双人各握一边·中央蹦数字·普通抢先得分禁止别点·倍数/含数/质数/平方数·限时/惩罚/干扰可调' }
+  { id: 'grabnumber', name: '抢数字', category: 'fun', icon: '🔢', path: '/packages/toolsB/grabnumber/index', description: '横屏双人各握一边·中央蹦数字·普通抢先得分禁止别点·倍数/含数/质数/平方数·限时/惩罚/干扰可调' },
+  { id: 'moneyExchange', name: '钱币换算', category: 'study', icon: '💰', path: '/packages/toolsB/moneyExchange/index', description: '元角分换算练习·选择题闯关·适合小学生' },
+  { id: 'moneyShop', name: '我是小店主', category: 'study', icon: '🛒', path: '/packages/toolsB/moneyShop/index', description: '买卖游戏·算总价与找零·练算术' },
+  { id: 'pizzaFraction', name: '分披萨', category: 'study', icon: '🍕', path: '/packages/toolsB/pizzaFraction/index', description: '图形等分学 1/2、1/3、1/4、1/8·动画切分' },
+  { id: 'matchstick', name: '火柴棒算式', category: 'study', icon: '🧮', path: '/packages/toolsB/matchstick/index', description: '移动一根火柴让等式成立·七段数码管·练逻辑' },
+  { id: 'coordinate', name: '坐标寻宝', category: 'study', icon: '🗺️', path: '/packages/toolsB/coordinate/index', description: 'XY网格按提示找宝物·坐标(x,y)启蒙·坐标系入门' }
 ];
 
 /**

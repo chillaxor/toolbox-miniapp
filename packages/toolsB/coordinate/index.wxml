@@ -1,0 +1,90 @@
+<!-- packages/toolsB/coordinate/index.wxml -->
+<view class="container">
+
+  <!-- 介绍页 -->
+  <view wx:if="{{state === 'intro'}}" class="page intro">
+    <view class="hero">🗺️</view>
+    <view class="title">坐标寻宝</view>
+    <view class="subtitle">用两个数字 (x, y) 找出宝藏！</view>
+    <view class="desc">每个位置都能用「第几列、第几行」说出来。先数列（横着、从左往右 = x），再数行（竖着、从上往下 = y）。</view>
+
+    <view class="count-sel">
+      <text class="cs-label">每局题数</text>
+      <view class="cs-row">
+        <view wx:for="{{totalOptions}}" wx:key="*this"
+              class="cs-item {{total === item ? 'cs-on' : ''}}"
+              bindtap="onSelectCount" data-count="{{item}}">{{item}}题</view>
+      </view>
+    </view>
+
+    <button class="btn-primary" bindtap="startGame">开始寻宝</button>
+
+    <view class="history" wx:if="{{historyList.length > 0}}">
+      <view class="h-title">最近成绩</view>
+      <view class="h-item" wx:for="{{historyList}}" wx:key="ts">
+        <text class="h-sum">{{item.score}} / {{item.total}}</text>
+        <text class="h-time">{{item.timeText}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 游戏页 -->
+  <view wx:if="{{state === 'play'}}" class="page play">
+    <view class="topbar">
+      <view class="qnum">第 {{index + 1}} / {{total}} 题</view>
+      <view class="score">⭐ {{score}}</view>
+    </view>
+    <view class="progress"><view class="bar" style="width:{{progress}}%"></view></view>
+
+    <view class="prompt">{{prompt}}</view>
+
+    <view class="clue" wx:if="{{showStart}}">🧭 {{clueText}}</view>
+
+    <view class="legend">
+      <text class="lg-x">→ 列 x（横着数）</text>
+      <text class="lg-y">↓ 行 y（竖着数）</text>
+    </view>
+
+    <!-- 5×5 网格 -->
+    <view class="grid">
+      <view class="grid-head">
+        <view class="corner"></view>
+        <view class="col-head" wx:for="{{colNums}}" wx:key="*this">{{item}}</view>
+      </view>
+      <view class="grid-row" wx:for="{{gridRows}}" wx:for-item="row" wx:key="head">
+        <view class="row-head">{{row.head}}</view>
+        <view class="{{cell.cls}}" wx:for="{{row.cells}}" wx:for-item="cell" wx:key="key"
+              bindtap="onCellTap" data-x="{{cell.x}}" data-y="{{cell.y}}">
+          <text wx:if="{{cell.emoji}}" class="cell-emoji">{{cell.emoji}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 选项（题型 B：宝物坐标是什么） -->
+    <view class="options" wx:if="{{showOptions}}">
+      <view wx:for="{{options}}" wx:key="index"
+            class="opt-btn {{item.cls}}"
+            data-index="{{index}}" bindtap="onOptionTap">
+        <view class="opt-text">{{item.text}}</view>
+      </view>
+    </view>
+
+    <view class="feedback {{answered ? (isCorrect ? 'fb-ok' : 'fb-no') : ''}}" wx:if="{{feedbackText}}">{{feedbackText}}</view>
+    <view class="auto-tip" wx:if="{{answered}}">即将进入下一题…</view>
+
+    <button class="btn-primary" wx:if="{{answered}}" bindtap="next">{{isLast ? '看结果' : '下一题'}}</button>
+  </view>
+
+  <!-- 成绩页 -->
+  <view wx:if="{{state === 'result'}}" class="page result">
+    <view class="hero">🎉</view>
+    <view class="title">寻宝完成！</view>
+    <view class="stars">
+      <text wx:for="{{starList}}" wx:key="*this" class="star {{stars >= item ? 'on' : 'off'}}">★</text>
+    </view>
+    <view class="score-big">找到 {{score}} / {{total}} 个宝物</view>
+    <button class="btn-primary" bindtap="restart">再玩一次</button>
+    <button class="btn-ghost" bindtap="goIntro">返回首页</button>
+  </view>
+
+</view>

@@ -1,0 +1,62 @@
+<!-- packages/toolsB/moneyExchange/index.wxml -->
+<view class="container">
+  <!-- 介绍页 -->
+  <view class="intro" wx:if="{{state === 'intro'}}">
+    <view class="intro-icon">💰</view>
+    <view class="intro-title">钱币换算</view>
+    <view class="intro-subtitle">元 · 角 · 分 练习</view>
+    <view class="intro-desc">
+      <text>1 元 = 10 角</text>
+      <text>1 角 = 10 分</text>
+      <text>10 道小题，看你能对几道</text>
+    </view>
+    <button class="start-btn" bindtap="startGame">开始练习</button>
+
+    <view class="history-section" wx:if="{{historyList.length > 0}}">
+      <view class="history-title">📜 练习记录</view>
+      <view class="history-list">
+        <view class="history-item" wx:for="{{historyList}}" wx:key="index">
+          <text class="history-score">{{item.score}} / {{item.total}}</text>
+          <text class="history-time">{{item.timeText}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 答题页 -->
+  <view class="quiz" wx:if="{{state === 'quiz'}}">
+    <view class="progress-bar">
+      <view class="progress-fill" style="width: {{progress}}%"></view>
+    </view>
+    <view class="question-count">{{index + 1}} / {{total}}　得分 {{score}}</view>
+    <view class="question-text">{{questionText}}</view>
+
+    <view class="options">
+      <view
+        wx:for="{{options}}"
+        wx:key="index"
+        class="option-btn {{(answered && index === correctIndex) ? 'opt-correct' : ''}} {{(answered && index === selectedIndex && !isCorrect) ? 'opt-wrong' : ''}}"
+        data-index="{{index}}"
+        bindtap="onSelect">
+        <view class="option-text">{{item}}</view>
+      </view>
+    </view>
+
+    <view class="feedback" wx:if="{{answered}}">{{feedbackText}}</view>
+
+    <button class="next-btn" wx:if="{{answered}}" bindtap="next">{{isLast ? '看结果' : '下一题'}}</button>
+  </view>
+
+  <!-- 结果页 -->
+  <view class="result" wx:if="{{state === 'result'}}">
+    <view class="result-emoji">{{stars === 3 ? '🌟🌟🌟' : (stars === 2 ? '🌟🌟' : (stars === 1 ? '🌟' : '💪'))}}</view>
+    <view class="result-score">{{score}} / {{total}}</view>
+    <view class="result-comment">{{stars === 3 ? '太棒了，全对！' : (stars === 2 ? '不错，继续加油！' : (stars === 1 ? '有进步，再练练～' : '别灰心，多练习就会了'))}}</view>
+
+    <view class="result-actions">
+      <button class="restart-btn" bindtap="restart">再玩一次</button>
+      <button class="home-btn" bindtap="goIntro">返回首页</button>
+      <button class="share-btn" open-type="share">分享</button>
+    </view>
+  </view>
+</view>

@@ -164,7 +164,12 @@
         "numberbomb/index",
         "whateat/index",
         "worldclock/index",
-    "workday/index"
+    "workday/index",
+    "moneyExchange/index",
+    "moneyShop/index",
+    "pizzaFraction/index",
+    "matchstick/index",
+    "coordinate/index"
   ]
     }
   ],
