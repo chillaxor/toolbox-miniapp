@@ -57,7 +57,7 @@ const TOOLS = [
   { id: 'reaction', name: '反应测试', category: 'fun', icon: '⚡', path: '/packages/moreTools/reaction/index', description: '测试你的反应速度' },
   { id: 'anniversary', name: '纪念日', category: 'date', icon: '💕', path: '/packages/toolsB/anniversary/index', description: '重要日子倒计时·记录' },
   { id: 'gridcut', name: '九宫格切图', category: 'image', icon: '🧱', path: '/packages/imgTools/gridcut/index', description: '图片切割九宫格发布' },
-  { id: 'danmaku', name: '弹幕墙', category: 'fun', icon: '💬', path: '/packages/moreTools/danmaku/index', description: '输入文字生成彩色弹幕' },
+  // { id: 'danmaku', name: '弹幕墙', category: 'fun', icon: '💬', path: '/packages/moreTools/danmaku/index', description: '输入文字生成彩色弹幕' },
   { id: 'textdiff', name: '文本对比', category: 'text', icon: '🔍', path: '/packages/moreTools/textdiff/index', description: '两段文本逐行对比差异' },
   { id: 'memory', name: '记忆力训练', category: 'fun', icon: '🧠', path: '/packages/moreTools/memory/index', description: '方块闪烁记忆挑战' },
   { id: 'timediff', name: '时间差计算', category: 'date', icon: '⏲️', path: '/packages/toolsB/timediff/index', description: '两个时间点之间的差值' },
