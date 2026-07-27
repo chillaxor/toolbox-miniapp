@@ -48,7 +48,7 @@ const TOOLS = [
   { id: 'jokes', name: '解压文案', category: 'fun', icon: '😂', path: '/packages/moreTools/jokes/index', description: '随机笑话解压' },
   { id: 'luckywheel', name: '抽签助手', category: 'fun', icon: '🎯', path: '/packages/moreTools/luckywheel/index', description: '大转盘随机抽签' },
   { id: 'coincoin', name: '抛硬币', category: 'fun', icon: '🪙', path: '/packages/moreTools/coincoin/index', description: '随机正反面·统计概率' },
-  { id: 'sticker', name: '表情包制作', category: 'image', icon: '😀', path: '/packages/imgTools/sticker/index', description: '自定义表情包·加字加表情' },
+  // { id: 'sticker', name: '表情包制作', category: 'image', icon: '😀', path: '/packages/imgTools/sticker/index', description: '自定义表情包·加字加表情' },
   { id: 'password', name: '密码生成器', category: 'text', icon: '🔑', path: '/packages/moreTools/password/index', description: '随机安全密码生成' },
   { id: 'timestamp', name: '时间戳转换', category: 'text', icon: '⏱️', path: '/packages/moreTools/timestamp/index', description: 'Unix时间戳↔日期互转' },
   { id: 'textdedup', name: '文本去重排序', category: 'text', icon: '🔄', path: '/packages/moreTools/textdedup/index', description: '按行去重·排序处理' },
