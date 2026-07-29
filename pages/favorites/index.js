@@ -39,7 +39,15 @@ Page({
       for (var j = 0; j < favIds.length; j++) {
         var tool = toolsData.getToolById(favIds[j]);
         if (tool && tool.category === cat.id) {
-          tools.push(tool);
+          var badge = toolsData.getBadgeInfo(tool);
+          tools.push({
+            id: tool.id,
+            name: tool.name,
+            icon: tool.icon,
+            path: tool.path,
+            badgeType: badge.type,
+            badgeText: badge.text
+          });
         }
       }
       if (tools.length > 0) {

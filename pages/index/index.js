@@ -225,6 +225,9 @@ Page({
     visible.forEach(function (t) {
       t.color = cat.color;
       t.bgColor = cat.bgColor;
+      var badge = toolsData.getBadgeInfo(t);
+      t.badgeType = badge.type;
+      t.badgeText = badge.text;
     });
     return visible;
   },
@@ -282,6 +285,7 @@ Page({
       if (tool.name.toLowerCase().indexOf(keyword) !== -1 ||
           tool.description.toLowerCase().indexOf(keyword) !== -1) {
         var cat = toolsData.getCategoryById(tool.category);
+        var badge = toolsData.getBadgeInfo(tool);
         results.push({
           id: tool.id,
           name: tool.name,
@@ -289,7 +293,9 @@ Page({
           description: tool.description,
           path: tool.path,
           categoryColor: cat ? cat.color : '#FF6B35',
-          categoryBgColor: cat ? cat.bgColor : '#FFE5D9'
+          categoryBgColor: cat ? cat.bgColor : '#FFE5D9',
+          badgeType: badge.type,
+          badgeText: badge.text
         });
       }
     }

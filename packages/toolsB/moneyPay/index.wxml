@@ -1,0 +1,200 @@
+<view class="page">
+
+  <!-- ============ 介绍页 ============ -->
+  <view wx:if="{{state === 'intro'}}" class="intro">
+    <view class="title">👛 人民币购物练习</view>
+    <view class="desc">你来当小买家！认一认人民币，动手把钱放进托盘付钱，付大钱还要会算找零。和数学课本「认识人民币」一样哦～</view>
+
+    <view class="section-label">🪙 认一认（点点看）</view>
+    <view class="gallery">
+      <view class="g-item" wx:for="{{gallery}}" wx:key="index">
+        <view class="{{item.cls}}">{{item.label}}</view>
+        <text class="g-tag">{{item.tag}}</text>
+      </view>
+    </view>
+    <view class="tip-line">小知识：1元硬币和1元纸币，是一样多的钱！（还有更小的「分」，现在很少用啦）</view>
+
+    <view class="section-label">选难度</view>
+    <view class="pills">
+      <view wx:for="{{levels}}" wx:key="id"
+            class="{{level === item.id ? 'pill pill-on' : 'pill'}}"
+            bindtap="onSelectLevel" data-level="{{item.id}}">
+        <text class="pill-name">{{item.name}}</text>
+        <text class="pill-desc">{{item.desc}}</text>
+      </view>
+    </view>
+
+    <view class="section-label">每局题数</view>
+    <view class="pills">
+      <view wx:for="{{totalOptions}}" wx:key="*this"
+            class="{{total === item ? 'pill pill-sm pill-on' : 'pill pill-sm'}}"
+            bindtap="onSelectCount" data-count="{{item}}">{{item}} 题</view>
+    </view>
+
+    <button class="btn-start" bindtap="startGame">开始购物 🛒</button>
+
+    <view wx:if="{{historyList.length > 0}}" class="history">
+      <view class="section-label">最近成绩</view>
+      <view class="h-row" wx:for="{{historyList}}" wx:key="ts">
+        <text class="h-score">{{item.score}}/{{item.total}}</text>
+        <text class="h-star" wx:if="{{item.starCount > 0}}">⭐×{{item.starCount}}</text>
+        <text class="h-dt">{{item.dt}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- ============ 答题页 ============ -->
+  <view wx:elif="{{state === 'play'}}" class="play">
+    <view class="topbar">
+      <view class="progress-wrap"><view class="progress-bar" style="width: {{progress}}%;"></view></view>
+      <text class="score-txt">第 {{qIndex + 1}}/{{total}} 题 · 得分 {{score}}</text>
+    </view>
+
+    <!-- 题型 A：认一认 -->
+    <block wx:if="{{q.type === 'A'}}">
+      <view class="q-card">
+        <view class="q-text">{{q.question}}</view>
+
+        <block wx:if="{{q.mode === 'value' || q.mode === 'equiv'}}">
+          <view class="show-money-wrap">
+            <view class="{{q.showMoney.cls}} money-lg">{{q.showMoney.label}}</view>
+          </view>
+          <view class="opts">
+            <view wx:for="{{options}}" wx:key="index" class="{{item.cls}}"
+                  bindtap="onOptionTap" data-index="{{index}}">{{item.text}}</view>
+          </view>
+        </block>
+
+        <block wx:if="{{q.mode === 'find'}}">
+          <view class="find-grid">
+            <view wx:for="{{findCells}}" wx:key="index" class="{{item.cellCls}}"
+                  bindtap="onFindTap" data-index="{{index}}">
+              <view class="{{item.cls}}">{{item.label}}</view>
+            </view>
+          </view>
+        </block>
+      </view>
+    </block>
+
+    <!-- 题型 B：付钱 -->
+    <block wx:if="{{q.type === 'B'}}">
+      <view class="q-card">
+        <view class="price-tag">
+          <text class="pt-emoji">{{q.good.emoji}}</text>
+          <view class="pt-info">
+            <text class="pt-name">{{q.good.name}}</text>
+            <view class="pt-price"><text class="pt-cur">¥</text><text class="pt-y">{{q.priceYuan}}</text><text class="pt-d">.{{q.priceDec2}}</text></view>
+          </view>
+        </view>
+        <view class="q-text q-text-sm">把钱放进托盘，付正好 {{targetText}}</view>
+      </view>
+
+      <view class="{{trayCls}}">
+        <view class="tray-head">
+          <text class="tray-title">🍽️ 托盘</text>
+          <text class="tray-total">已放：{{trayTotalText}}</text>
+        </view>
+        <view class="tray-body">
+          <view wx:if="{{tray.length === 0}}" class="tray-empty">点下面钱包里的钱放进来</view>
+          <view wx:for="{{tray}}" wx:key="uid" class="tray-piece"
+                bindtap="onTrayTap" data-tindex="{{index}}">
+            <view class="{{item.cls}} money-sm">{{item.label}}</view>
+          </view>
+        </view>
+        <view wx:if="{{trayHint}}" class="tray-hint">{{trayHint}}</view>
+      </view>
+
+      <view class="wallet">
+        <view class="section-label">👛 你的钱包</view>
+        <view class="w-groups">
+          <view wx:for="{{srcGroups}}" wx:key="id" class="{{item.left === 0 ? 'w-group w-empty' : 'w-group'}}"
+                bindtap="onSourceTap" data-gindex="{{index}}">
+            <view class="{{item.cls}}">{{item.label}}</view>
+            <text class="w-count">×{{item.left}}</text>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <!-- 题型 C：找零 -->
+    <block wx:if="{{q.type === 'C'}}">
+      <view class="q-card">
+        <view class="price-tag">
+          <text class="pt-emoji">{{q.good.emoji}}</text>
+          <view class="pt-info">
+            <text class="pt-name">{{q.good.name}}</text>
+            <view class="pt-price"><text class="pt-cur">¥</text><text class="pt-y">{{q.priceYuan}}</text><text class="pt-d">.{{q.priceDec2}}</text></view>
+          </view>
+        </view>
+        <view class="paid-line">
+          <text class="paid-txt">钱包里只有一张大钱，你付给店主：</text>
+          <view class="{{q.paidCls}}">{{q.paidLabel}}</view>
+        </view>
+
+        <block wx:if="{{q.mode === 'fill'}}">
+          <view class="q-text q-text-sm">店主该找回多少钱？</view>
+          <view class="fill-row">
+            <input class="fill-input" type="number" maxlength="3" value="{{fillYuan}}" bindinput="onYuanInput" placeholder="0" />
+            <text class="fill-unit">元</text>
+            <input class="fill-input" type="number" maxlength="1" value="{{fillJiao}}" bindinput="onJiaoInput" placeholder="0" />
+            <text class="fill-unit">角</text>
+            <button class="{{canSubmit ? 'btn-submit' : 'btn-submit btn-dim'}}" bindtap="onSubmitChange">确定</button>
+          </view>
+          <view wx:if="{{fillHint}}" class="fill-hint">💡 {{fillHint}}</view>
+        </block>
+      </view>
+
+      <block wx:if="{{q.mode === 'pick'}}">
+        <view class="q-text q-text-sm center">你来当店主助手：从零钱盒拿出要找的钱 → {{targetText}}</view>
+        <view class="{{trayCls}}">
+          <view class="tray-head">
+            <text class="tray-title">🫱 找零盘</text>
+            <text class="tray-total">已拿：{{trayTotalText}}</text>
+          </view>
+          <view class="tray-body">
+            <view wx:if="{{tray.length === 0}}" class="tray-empty">点下面零钱盒里的钱拿出来</view>
+            <view wx:for="{{tray}}" wx:key="uid" class="tray-piece"
+                  bindtap="onTrayTap" data-tindex="{{index}}">
+              <view class="{{item.cls}} money-sm">{{item.label}}</view>
+            </view>
+          </view>
+          <view wx:if="{{trayHint}}" class="tray-hint">{{trayHint}}</view>
+        </view>
+        <view class="wallet">
+          <view class="section-label">🗃️ 零钱盒</view>
+          <view class="w-groups">
+            <view wx:for="{{srcGroups}}" wx:key="id" class="{{item.left === 0 ? 'w-group w-empty' : 'w-group'}}"
+                  bindtap="onSourceTap" data-gindex="{{index}}">
+              <view class="{{item.cls}}">{{item.label}}</view>
+              <text class="w-count">×{{item.left}}</text>
+            </view>
+          </view>
+        </view>
+      </block>
+    </block>
+
+    <!-- 反馈条 -->
+    <view wx:if="{{feedbackText}}" class="{{feedbackOk ? 'feedback fb-ok' : 'feedback fb-no'}}">{{feedbackText}}</view>
+    <view wx:if="{{showNext}}" class="next-hint" bindtap="next">{{isLast ? '点这里看成绩 →' : '点这里进下一题 →'}}</view>
+  </view>
+
+  <!-- ============ 结算页 ============ -->
+  <view wx:else class="result">
+    <view class="r-stars">
+      <text wx:for="{{starList}}" wx:key="*this" class="{{stars >= item ? 'r-star r-star-on' : 'r-star'}}">★</text>
+    </view>
+    <view class="r-score">{{score}} / {{total}}</view>
+    <view wx:if="{{starCount > 0}}" class="r-minstar">最少张数达成 ⭐×{{starCount}}</view>
+
+    <view class="r-breakdown">
+      <view wx:if="{{statA}}" class="r-row"><text class="r-label">🪙 认一认</text><text class="r-val">{{statA.ok}}/{{statA.total}}</text></view>
+      <view wx:if="{{statB}}" class="r-row"><text class="r-label">👛 付钱</text><text class="r-val">{{statB.ok}}/{{statB.total}}</text></view>
+      <view wx:if="{{statC}}" class="r-row"><text class="r-label">🧮 算找零</text><text class="r-val">{{statC.ok}}/{{statC.total}}</text></view>
+    </view>
+
+    <button class="btn-start" bindtap="restart">再来一局 🔁</button>
+    <button class="btn-plain" bindtap="goIntro">换个难度</button>
+    <view class="r-cross">想当店主收钱算账？去玩「我是小店主」🛒</view>
+  </view>
+
+</view>

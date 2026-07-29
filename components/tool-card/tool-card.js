@@ -6,7 +6,9 @@ Component({
     description: { type: String, value: '' },
     color: { type: String, value: '#FF6B35' },
     bgColor: { type: String, value: '#FFE5D9' },
-    path: { type: String, value: '' }
+    path: { type: String, value: '' },
+    badgeType: { type: String, value: '' },
+    badgeText: { type: String, value: '' }
   },
 
   methods: {

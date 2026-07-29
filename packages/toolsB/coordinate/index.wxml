@@ -6,7 +6,7 @@
     <view class="hero">🗺️</view>
     <view class="title">坐标寻宝</view>
     <view class="subtitle">用两个数字 (x, y) 找出宝藏！</view>
-    <view class="desc">每个位置都能用「第几列、第几行」说出来。先数列（横着、从左往右 = x），再数行（竖着、从上往下 = y）。</view>
+    <view class="desc">每个位置都能用「第几列、第几行」说出来。先数列（从左往右 = x），再数行（从下往上 = y），和数学课本里的数对一样哦。</view>
 
     <view class="count-sel">
       <text class="cs-label">每局题数</text>
@@ -41,22 +41,22 @@
     <view class="clue" wx:if="{{showStart}}">🧭 {{clueText}}</view>
 
     <view class="legend">
-      <text class="lg-x">→ 列 x（横着数）</text>
-      <text class="lg-y">↓ 行 y（竖着数）</text>
+      <text class="lg-x">→ 列 x（从左往右数）</text>
+      <text class="lg-y">↑ 行 y（从下往上数）</text>
     </view>
 
-    <!-- 5×5 网格 -->
+    <!-- 5×5 网格：课本式坐标，第 1 行在最下面，列号标在底部 -->
     <view class="grid">
-      <view class="grid-head">
-        <view class="corner"></view>
-        <view class="col-head" wx:for="{{colNums}}" wx:key="*this">{{item}}</view>
-      </view>
       <view class="grid-row" wx:for="{{gridRows}}" wx:for-item="row" wx:key="head">
         <view class="row-head">{{row.head}}</view>
         <view class="{{cell.cls}}" wx:for="{{row.cells}}" wx:for-item="cell" wx:key="key"
               bindtap="onCellTap" data-x="{{cell.x}}" data-y="{{cell.y}}">
           <text wx:if="{{cell.emoji}}" class="cell-emoji">{{cell.emoji}}</text>
         </view>
+      </view>
+      <view class="grid-head grid-foot">
+        <view class="corner"></view>
+        <view class="col-head" wx:for="{{colNums}}" wx:key="*this">{{item}}</view>
       </view>
     </view>
 

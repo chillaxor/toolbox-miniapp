@@ -17,9 +17,10 @@ function shuffle(arr) {
 }
 
 // 建一个 GRID×GRID 的网格：每行 { head:行号, cells:[{x,y,key,cls,emoji}] }
+// 课本式坐标：第 1 行在最下面（行号从下往上递增），所以渲染顺序为 y = GRID..1
 function buildGrid() {
   var rows = [];
-  for (var y = 1; y <= GRID; y++) {
+  for (var y = GRID; y >= 1; y--) {
     var cells = [];
     for (var x = 1; x <= GRID; x++) {
       cells.push({ x: x, y: y, key: x + ',' + y, cls: 'cell', emoji: '' });
@@ -29,16 +30,29 @@ function buildGrid() {
   return rows;
 }
 
+// 按行号(head)查找而非数组下标，与渲染顺序解耦
 function setCell(grid, x, y, cls, emoji) {
-  var row = grid[y - 1];
-  if (!row) return;
-  for (var i = 0; i < row.cells.length; i++) {
-    if (row.cells[i].x === x) {
-      row.cells[i].cls = cls;
-      if (emoji !== undefined) row.cells[i].emoji = emoji;
-      return;
+  for (var r = 0; r < grid.length; r++) {
+    if (grid[r].head !== y) continue;
+    var row = grid[r];
+    for (var i = 0; i < row.cells.length; i++) {
+      if (row.cells[i].x === x) {
+        row.cells[i].cls = cls;
+        if (emoji !== undefined) row.cells[i].emoji = emoji;
+        return;
+      }
     }
   }
+}
+
+function getCell(grid, x, y) {
+  for (var r = 0; r < grid.length; r++) {
+    if (grid[r].head !== y) continue;
+    for (var i = 0; i < grid[r].cells.length; i++) {
+      if (grid[r].cells[i].x === x) return grid[r].cells[i];
+    }
+  }
+  return null;
 }
 
 function cloneGrid(grid) {
@@ -91,12 +105,13 @@ function genQuestion(type) {
   }
 
   // type C 走线索：起点在内部(2..4)，随机 1-2 步，保证落点在网格内
+  // 课本式坐标：行号从下往上递增，所以「上」= y+1、「下」= y-1
   var sx = randInt(2, 4), sy = randInt(2, 4);
   var dirs = [
     { name: '右', dx: 1, dy: 0 },
     { name: '左', dx: -1, dy: 0 },
-    { name: '上', dx: 0, dy: -1 },
-    { name: '下', dx: 0, dy: 1 }
+    { name: '上', dx: 0, dy: 1 },
+    { name: '下', dx: 0, dy: -1 }
   ];
   var nMoves = Math.random() < 0.5 ? 1 : 2;
   var cx = sx, cy = sy;
@@ -108,10 +123,17 @@ function genQuestion(type) {
     var n = randInt(1, 2);
     var nx = cx + d.dx * n, ny = cy + d.dy * n;
     if (nx < 1 || nx > GRID || ny < 1 || ny > GRID) continue;
+    // 最后一步不允许走回起点（终点=🧭 会让人迷惑）
+    if (moves.length === nMoves - 1 && nx === sx && ny === sy) continue;
     cx = nx; cy = ny;
     moves.push({ name: d.name, n: n });
   }
-  var clueText = '从 🧭 出发：' + moves.map(function (m) { return '向' + m.name + '走 ' + m.n + ' 格'; }).join('，再 ') + '，最后停在哪一格？';
+  // 兜底：极小概率仍停在起点（guard 耗尽），强制向右或向上补一步
+  if (cx === sx && cy === sy) {
+    if (sx < GRID) { cx = sx + 1; moves.push({ name: '右', n: 1 }); }
+    else { cy = sy + 1; moves.push({ name: '上', n: 1 }); }
+  }
+  var clueText = '从 🧭 出发：' + moves.map(function (m) { return '向' + m.name + '走 ' + m.n + ' 格'; }).join('，再') + '，最后停在哪一格？';
   return { type: 'C', sx: sx, sy: sy, fx: cx, fy: cy, emoji: emoji,
     prompt: '跟着线索走到终点，点出最后一格！', clueText: clueText };
 }
@@ -230,13 +252,18 @@ Page({
       this._timer = setTimeout(function () { self._timer = null; self.next(); }, 1100);
     } else {
       // 点错：闪烁提示，允许重试（不计错）
+      // 先记住该格原来的样子（可能是 🧭 起点格），闪完按原样恢复，避免抹掉起点标记
+      var origCell = getCell(this.data.gridRows, x, y);
+      var origCls = origCell ? origCell.cls : 'cell';
+      var origEmoji = origCell ? origCell.emoji : '';
       var gwrong = cloneGrid(this.data.gridRows);
-      setCell(gwrong, x, y, 'cell cell-wrong', '');
+      setCell(gwrong, x, y, 'cell cell-wrong', origEmoji);
       this.setData({ gridRows: gwrong, feedbackText: this.data.questionType === 'C' ? '跟着线索数一数～' : '再看看坐标哦～' });
       var self2 = this;
       setTimeout(function () {
+        if (self2.data.answered) return; // 已答对则不回滚
         var g3 = cloneGrid(self2.data.gridRows);
-        setCell(g3, x, y, 'cell', '');
+        setCell(g3, x, y, origCls, origEmoji);
         self2.setData({ gridRows: g3 });
       }, 500);
     }

@@ -25,28 +25,68 @@ var SEG_KEYS = ['a', 'b', 'c', 'd', 'e', 'f', 'g'];
 var TOTAL_OPTIONS = [5, 8, 10, 15];
 var DEFAULT_TOTAL = 8;
 
-// 谜题：init 为「错误」等式，sol 为「移动一根」的标准解法（from/to 同槽位）
-// 所有题目均已校验：移动一根后等式成立，且仅用单根火柴的「拿起-放下」重定位
+// 谜题：init 为「错误」等式，sol 为「移动一根」的标准解法。
+// sol 格式：{ slot, from, toSlot, to } —— 拿起 slot 槽位的 from 段，放到 toSlot 槽位的 to 段（支持跨槽位）。
+// 全部经脚本校验：按 sol 移动一根后等式成立，且 init 本身为错误等式。
+// 解法覆盖：slot 0 = 第一个数、slot 1 = 加减号、slot 2 = 第二个数、slot 4 = 结果。
 var PUZZLES = [
-  { init: '6+2=9', sol: { slot: 2, from: 'e', to: 'c' } }, // 2→3
-  { init: '9-6=2', sol: { slot: 4, from: 'e', to: 'c' } }, // 2→3
-  { init: '8-6=3', sol: { slot: 4, from: 'c', to: 'e' } }, // 3→2
-  { init: '8-4=3', sol: { slot: 4, from: 'a', to: 'f' } }, // 3→4
-  { init: '7-3=3', sol: { slot: 4, from: 'a', to: 'f' } }, // 3→4
-  { init: '3+4=4', sol: { slot: 4, from: 'f', to: 'a' } }, // 4→7
-  { init: '9-2=4', sol: { slot: 4, from: 'f', to: 'a' } }, // 4→7
-  { init: '6+2=4', sol: { slot: 4, from: 'f', to: 'a' } }, // 4→7
-  { init: '5+4=6', sol: { slot: 4, from: 'e', to: 'b' } }, // 6→9
-  { init: '4+5=6', sol: { slot: 4, from: 'e', to: 'b' } }, // 6→9
-  { init: '2+4=8', sol: { slot: 4, from: 'b', to: 'e' } }, // 8→6
-  { init: '1+5=8', sol: { slot: 4, from: 'b', to: 'e' } }, // 8→6
-  { init: '5+4=8', sol: { slot: 4, from: 'e', to: 'b' } }, // 8→9
-  { init: '4+5=8', sol: { slot: 4, from: 'e', to: 'b' } }, // 8→9
-  { init: '7+1=9', sol: { slot: 4, from: 'f', to: 'e' } }, // 9→8
-  { init: '2+6=9', sol: { slot: 4, from: 'f', to: 'e' } }, // 9→8
-  { init: '5+3=9', sol: { slot: 4, from: 'f', to: 'e' } }, // 9→8
-  { init: '8-2=9', sol: { slot: 4, from: 'b', to: 'e' } }, // 9→6
-  { init: '3+6=8', sol: { slot: 4, from: 'e', to: 'b' } }  // 8→9
+  // —— 结果位（右边）解法 ——
+  { init: '1+1=3', sol: { slot: 4, from: 'c', toSlot: 4, to: 'e' } }, // 3→2
+  { init: '2+1=2', sol: { slot: 4, from: 'e', toSlot: 4, to: 'c' } }, // 2→3
+  { init: '3+6=6', sol: { slot: 4, from: 'e', toSlot: 4, to: 'b' } }, // 6→9
+  { init: '4-1=5', sol: { slot: 4, from: 'f', toSlot: 4, to: 'b' } }, // 5→3
+  { init: '5-3=3', sol: { slot: 4, from: 'c', toSlot: 4, to: 'e' } }, // 3→2
+  { init: '6-6=6', sol: { slot: 4, from: 'g', toSlot: 4, to: 'b' } }, // 6→0
+  { init: '7-7=6', sol: { slot: 4, from: 'g', toSlot: 4, to: 'b' } }, // 6→0
+  // —— 第二个数（左边）解法 ——
+  { init: '1+6=1', sol: { slot: 2, from: 'g', toSlot: 2, to: 'b' } }, // 6→0
+  { init: '2+9=2', sol: { slot: 2, from: 'g', toSlot: 2, to: 'e' } }, // 9→0
+  { init: '3+3=5', sol: { slot: 2, from: 'c', toSlot: 2, to: 'e' } }, // 5→2
+  { init: '4+5=7', sol: { slot: 2, from: 'f', toSlot: 2, to: 'b' } }, // 7→3
+  { init: '5+2=8', sol: { slot: 2, from: 'e', toSlot: 2, to: 'c' } }, // 8→3
+  { init: '6-3=1', sol: { slot: 2, from: 'b', toSlot: 2, to: 'f' } }, // 1→5
+  // —— 第一个数（左边）解法 ——
+  { init: '2+1=4', sol: { slot: 0, from: 'e', toSlot: 0, to: 'c' } }, // 2→3
+  { init: '3+1=6', sol: { slot: 0, from: 'b', toSlot: 0, to: 'f' } }, // 3→5
+  { init: '5+1=4', sol: { slot: 0, from: 'f', toSlot: 0, to: 'b' } }, // 4→3
+  { init: '6-1=8', sol: { slot: 0, from: 'e', toSlot: 0, to: 'b' } }, // 8→9
+  { init: '9+1=7', sol: { slot: 0, from: 'b', toSlot: 0, to: 'e' } }, // 9→6
+  { init: '2+2=5', sol: { slot: 0, from: 'e', toSlot: 0, to: 'c' } }, // 2→3
+  // —— 运算符解法：+ 变 -（把加号的竖杠移到数字上）——
+  { init: '5+1=5', sol: { slot: 1, from: 'v', toSlot: 0, to: 'e' } }, // → 6-1=5
+  { init: '7+1=5', sol: { slot: 1, from: 'v', toSlot: 4, to: 'e' } }, // → 7-1=6
+  { init: '6+2=6', sol: { slot: 1, from: 'v', toSlot: 0, to: 'b' } }, // → 8-2=6
+  // —— 运算符解法：- 变 +（从数字拿一根搭到减号上）——
+  { init: '7-1=2', sol: { slot: 0, from: 'a', toSlot: 1, to: 'v' } }, // → 1+1=2
+  { init: '1-9=4', sol: { slot: 2, from: 'f', toSlot: 1, to: 'v' } }, // → 1+3=4
+  { init: '1-4=9', sol: { slot: 4, from: 'b', toSlot: 1, to: 'v' } }, // → 1+4=5
+  // —— 扩充批次 2：同槽位数字解法 ——
+  { init: '2-1=2', sol: { slot: 0, from: 'e', toSlot: 0, to: 'c' } }, // 2→3 → 3-1=2
+  { init: '3+1=3', sol: { slot: 0, from: 'c', toSlot: 0, to: 'e' } }, // 3→2 → 2+1=3
+  { init: '5-1=2', sol: { slot: 0, from: 'f', toSlot: 0, to: 'b' } }, // 5→3 → 3-1=2
+  { init: '1+3=3', sol: { slot: 2, from: 'c', toSlot: 2, to: 'e' } }, // 3→2 → 1+2=3
+  { init: '2+3=4', sol: { slot: 2, from: 'c', toSlot: 2, to: 'e' } }, // 3→2 → 2+2=4
+  { init: '3-3=1', sol: { slot: 2, from: 'c', toSlot: 2, to: 'e' } }, // 3→2 → 3-2=1
+  { init: '1-1=6', sol: { slot: 4, from: 'g', toSlot: 4, to: 'b' } }, // 6→0 → 1-1=0
+  { init: '2+1=5', sol: { slot: 4, from: 'f', toSlot: 4, to: 'b' } }, // 5→3 → 2+1=3
+  { init: '3-1=3', sol: { slot: 4, from: 'c', toSlot: 4, to: 'e' } }, // 3→2 → 3-1=2
+  // —— 扩充批次 2：跨数字搬火柴（从一个数字拿一根搭到另一个数字）——
+  { init: '1-1=8', sol: { slot: 4, from: 'b', toSlot: 0, to: 'a' } }, // 8→6,1→7 → 7-1=6
+  { init: '7+5=5', sol: { slot: 0, from: 'a', toSlot: 4, to: 'e' } }, // 7→1,5→6 → 1+5=6
+  { init: '2+8=9', sol: { slot: 2, from: 'b', toSlot: 4, to: 'e' } }, // 8→6,9→8 → 2+6=8
+  { init: '1+6=5', sol: { slot: 2, from: 'e', toSlot: 4, to: 'e' } }, // 6→5,5→6 → 1+5=6
+  { init: '7+5=7', sol: { slot: 0, from: 'a', toSlot: 2, to: 'e' } }, // 7→1,5→6 → 1+6=7
+  { init: '7+6=1', sol: { slot: 0, from: 'a', toSlot: 4, to: 'a' } }, // 7→1,1→7 → 1+6=7
+  // —— 扩充批次 2：+ 变 -（拿走加号竖杠搭到数字上）——
+  { init: '1+1=6', sol: { slot: 1, from: 'v', toSlot: 0, to: 'a' } }, // → 7-1=6
+  { init: '5+1=8', sol: { slot: 1, from: 'v', toSlot: 0, to: 'b' } }, // → 9-1=8
+  { init: '3+1=8', sol: { slot: 1, from: 'v', toSlot: 0, to: 'f' } }, // → 9-1=8
+  { init: '9+2=6', sol: { slot: 1, from: 'v', toSlot: 0, to: 'e' } }, // → 8-2=6
+  // —— 扩充批次 2：- 变 +（从数字拿一根搭到减号上）——
+  { init: '1-7=2', sol: { slot: 2, from: 'a', toSlot: 1, to: 'v' } }, // → 1+1=2
+  { init: '7-2=3', sol: { slot: 0, from: 'a', toSlot: 1, to: 'v' } }, // → 1+2=3
+  { init: '2-3=6', sol: { slot: 4, from: 'e', toSlot: 1, to: 'v' } }, // → 2+3=5
+  { init: '3-8=9', sol: { slot: 2, from: 'b', toSlot: 1, to: 'v' } }  // → 3+6=9
 ];
 
 function shuffle(arr) {
@@ -76,11 +116,14 @@ function buildSlots(str) {
       segs.push({ key: 'v', on: true, cls: 'seg-on' });
       slots.push({ id: i, kind: 'op', segs: segs });
     } else if (ch === '-') {
+      // 竖段以熄灭态渲染，允许玩家把火柴放上来变成 +
       segs.push({ key: 'g', on: true, cls: 'seg-on' });
+      segs.push({ key: 'v', on: false, cls: 'seg-off' });
       slots.push({ id: i, kind: 'op', segs: segs });
     } else if (ch === '=') {
-      segs.push({ key: 'eq1', on: true, cls: 'seg-on' });
-      segs.push({ key: 'eq2', on: true, cls: 'seg-on' });
+      // 等号不参与移动（locked）
+      segs.push({ key: 'eq1', on: true, cls: 'seg-on', locked: true });
+      segs.push({ key: 'eq2', on: true, cls: 'seg-on', locked: true });
       slots.push({ id: i, kind: 'op', segs: segs });
     }
   }
@@ -218,6 +261,10 @@ Page({
     var slots = this.data.slots;
     var segObj = findSeg(slots, si, segKey);
     if (!segObj) return;
+    if (segObj.locked) {
+      wx.showToast({ title: '等号不能动哦', icon: 'none' });
+      return;
+    }
 
     // 手是空的
     if (this.data.carrying === null) {
@@ -266,7 +313,7 @@ Page({
       var self = this;
       this._timer = setTimeout(function () { self.next(); }, 1100);
     } else if (res.reason === 'incomplete') {
-      this.setData({ feedbackText: '还不是完整的数字哦，再调整一下~', feedbackOk: false });
+      this.setData({ feedbackText: '还不是完整的算式哦，再调整一下~', feedbackOk: false });
     } else {
       this.setData({ feedbackText: '再想想～等号两边还不相等', feedbackOk: false });
     }

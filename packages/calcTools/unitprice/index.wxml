@@ -1,0 +1,80 @@
+<view class="container">
+  <view class="tool-header">
+    <text class="tool-header-title">哪个更划算</text>
+    <text class="tool-header-fav" bindtap="toggleFavorite">{{isFavorite ? '❤️' : '🤍'}}</text>
+  </view>
+
+  <view class="intro-card">
+    <text class="intro-emoji">🛒</text>
+    <text class="intro-text">大包装还是小包装？把价格和分量填进来，比一比就知道买哪个最划算！</text>
+  </view>
+
+  <!-- 商品卡 -->
+  <view class="goods-card {{item.cls}}" wx:for="{{items}}" wx:key="name">
+    <view class="goods-top">
+      <view class="goods-avatar" bindtap="onEmojiTap" data-idx="{{index}}">
+        <text class="goods-emoji">{{item.emoji}}</text>
+        <text class="goods-avatar-tip">点我换</text>
+      </view>
+      <text class="goods-name">{{item.name}}</text>
+      <text class="goods-crown" wx:if="{{item.cls === 'win'}}">🏆</text>
+      <text class="goods-remove" wx:if="{{items.length > 2 && !result}}" catchtap="onRemoveItem" data-idx="{{index}}">✕</text>
+    </view>
+
+    <view class="input-row">
+      <text class="input-label">价格</text>
+      <input class="input-box" type="digit" placeholder="0" value="{{item.price}}"
+             bindinput="onPriceInput" data-idx="{{index}}" />
+      <text class="input-unit">元</text>
+    </view>
+
+    <view class="input-row">
+      <text class="input-label">分量</text>
+      <input class="input-box" type="digit" placeholder="0" value="{{item.amount}}"
+             bindinput="onAmountInput" data-idx="{{index}}" />
+      <view class="multi-wrap" wx:if="{{item.showMulti}}">
+        <text class="multi-x">×</text>
+        <input class="input-box input-multi" type="number" value="{{item.multi}}"
+               bindinput="onMultiInput" data-idx="{{index}}" />
+      </view>
+      <text class="multi-toggle {{item.showMulti ? 'multi-toggle-on' : ''}}"
+            bindtap="onMultiToggle" data-idx="{{index}}">×N</text>
+    </view>
+
+    <view class="unit-row">
+      <text class="unit-btn {{item.unit === u.key ? 'unit-on' : ''}}"
+            wx:for="{{unitList}}" wx:for-item="u" wx:key="key"
+            bindtap="onUnitTap" data-idx="{{index}}" data-unit="{{u.key}}">{{u.label}}</text>
+    </view>
+
+    <view class="perbase-tag" wx:if="{{item.perBaseText && result}}">{{item.perBaseText}}</view>
+  </view>
+
+  <!-- 加第三个 -->
+  <view class="add-btn" wx:if="{{items.length < 3 && !result}}" bindtap="onAddItem">➕ 再加一个</view>
+
+  <!-- 提示 -->
+  <view class="hint" wx:if="{{hintText}}">{{hintText}}</view>
+
+  <!-- 比一比按钮 -->
+  <button class="btn-compare {{canCompare ? '' : 'btn-disabled'}}" bindtap="onCompare">
+    {{comparing ? '正在称一称…' : '比一比！'}}
+  </button>
+
+  <!-- 结果 -->
+  <view class="result-card {{result.verdict === 'tie' ? 'result-tie' : 'result-win'}}" wx:if="{{result}}">
+    <view class="confetti" wx:if="{{result.verdict === 'win'}}">
+      <text class="cf cf1">🎉</text><text class="cf cf2">✨</text><text class="cf cf3">🎊</text><text class="cf cf4">⭐</text>
+    </view>
+    <text class="result-line result-line-main" wx:for="{{result.lines}}" wx:key="*this">{{item}}</text>
+
+    <view class="why-toggle" bindtap="onToggleWhy">
+      <text>{{showWhy ? '收起 🔼' : '为什么？🔽'}}</text>
+    </view>
+    <view class="why-box" wx:if="{{showWhy}}">
+      <text class="why-line" wx:for="{{result.explainLines}}" wx:key="*this">{{item}}</text>
+    </view>
+  </view>
+
+  <button class="btn-reset" wx:if="{{result}}" bindtap="onReset">换个东西比 🔄</button>
+</view>

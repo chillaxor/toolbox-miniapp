@@ -27,6 +27,30 @@
   display: flex;
   align-items: center;
   box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+/* 运营角标：很火 / 很赞（右上角） */
+.tool-corner-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 2rpx 12rpx;
+  font-size: 18rpx;
+  font-weight: 600;
+  line-height: 1.5;
+  border-radius: 0 16rpx 0 16rpx;
+}
+
+.badge-hot {
+  color: #E8442E;
+  background: #FFE9E0;
+}
+
+.badge-praise {
+  color: #C77800;
+  background: #FFF3D6;
 }
 
 .tool-card:active { transform: scale(0.97); }

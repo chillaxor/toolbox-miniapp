@@ -112,7 +112,10 @@ App({
       matchstick: false,
       moneyExchange: false,
       moneyShop: false,
-      pizzaFraction: false
+      pizzaFraction: false,
+      pattern: false,
+      unitprice: false,
+      moneyPay: false
     }
   }
 });

@@ -375,10 +375,37 @@
   min-width: 0;
 }
 
+.tool-name-row {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
 .tool-name {
   font-size: 30rpx;
   font-weight: 600;
   color: var(--text-strong);
+}
+
+/* 运营角标：很火 / 很赞 */
+.tool-badge {
+  margin-left: 10rpx;
+  padding: 2rpx 12rpx;
+  font-size: 19rpx;
+  font-weight: 600;
+  line-height: 1.5;
+  border-radius: 999rpx;
+  flex-shrink: 0;
+}
+
+.badge-hot {
+  color: #E8442E;
+  background: #FFE9E0;
+}
+
+.badge-praise {
+  color: #C77800;
+  background: #FFF3D6;
 }
 
 .tool-desc {

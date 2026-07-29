@@ -1,7 +1,10 @@
 <view class="tool-card" bindtap="onTap" hover-class="tool-card-hover">
   <view class="tool-card-icon" style="background-color: {{bgColor}}; color: {{color}};">{{icon}}</view>
   <view class="tool-card-info">
-    <text class="tool-card-name">{{name}}</text>
+    <view class="tool-card-name-row">
+      <text class="tool-card-name">{{name}}</text>
+      <text wx:if="{{badgeText}}" class="tool-card-badge badge-{{badgeType}}">{{badgeText}}</text>
+    </view>
     <text class="tool-card-desc">{{description}}</text>
   </view>
   <view class="tool-card-arrow">›</view>

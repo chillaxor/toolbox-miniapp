@@ -7,6 +7,7 @@
       <view class="tool-grid">
         <view class="tool-card" wx:for="{{item.tools}}" wx:for-item="tool" wx:key="id"
               style="background-color: {{item.bgColor}};" bindtap="onToolTap" data-path="{{tool.path}}">
+          <text wx:if="{{tool.badgeText}}" class="tool-corner-badge badge-{{tool.badgeType}}">{{tool.badgeText}}</text>
           <text class="tool-icon">{{tool.icon}}</text>
           <text class="tool-name">{{tool.name}}</text>
         </view>

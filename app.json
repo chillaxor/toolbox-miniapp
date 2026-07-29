@@ -19,7 +19,8 @@
         "hangingpicture/index",
         "ruler/index",
         "flashlight/index",
-        "scicalc/index"
+        "scicalc/index",
+        "unitprice/index"
       ]
     },
     {
@@ -119,7 +120,8 @@
         "todolist/index",
         "wordcount/index",
         "countdown/index",
-    "jsonformat/index"
+    "jsonformat/index",
+    "pattern/index"
   ]
     },
     {
@@ -169,7 +171,8 @@
     "moneyShop/index",
     "pizzaFraction/index",
     "matchstick/index",
-    "coordinate/index"
+    "coordinate/index",
+    "moneyPay/index"
   ]
     }
   ],

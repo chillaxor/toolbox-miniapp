@@ -28,6 +28,8 @@
             color="{{item.categoryColor}}"
             bgColor="{{item.categoryBgColor}}"
             path="{{item.path}}"
+            badgeType="{{item.badgeType}}"
+            badgeText="{{item.badgeText}}"
           />
         </view>
       </view>
@@ -144,7 +146,10 @@
         >
           <view class="tool-ico" style="background:{{item.bgColor}}">{{item.icon}}</view>
           <view class="tool-text">
-            <text class="tool-name">{{item.name}}</text>
+            <view class="tool-name-row">
+              <text class="tool-name">{{item.name}}</text>
+              <text wx:if="{{item.badgeText}}" class="tool-badge badge-{{item.badgeType}}">{{item.badgeText}}</text>
+            </view>
             <text class="tool-desc">{{item.description}}</text>
           </view>
           <text class="tool-arrow">›</text>

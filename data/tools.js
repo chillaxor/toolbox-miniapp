@@ -1,6 +1,11 @@
 /**
  * 工具配置数据
  * 包含分类信息和工具列表
+ *
+ * badge 可选字段（运营标识）：
+ *   'hot'    → 🔥 很火（人气高的工具/游戏）
+ *   'praise' → 👍 很赞（口碑好的实用工具）
+ * 不加 badge 即无标识。
  */
 
 const CATEGORIES = {
@@ -15,8 +20,9 @@ const CATEGORIES = {
 const TOOLS = [
   { id: 'bmi', name: 'BMI计算', category: 'life', icon: '📊', path: '/packages/toolsB/bmi/index', description: '计算身体质量指数' },
   { id: 'unit', name: '单位换算', category: 'life', icon: '📏', path: '/packages/calcTools/unit/index', description: '长度/重量/温度换算' },
+  { id: 'unitprice', name: '哪个更划算', category: 'life', icon: '🛒', path: '/packages/calcTools/unitprice/index', description: '大包小包比一比·看看买哪个划算' },
   { id: 'currency', name: '汇率转换', category: 'life', icon: '💱', path: '/packages/calcTools/currency/index', description: '多币种实时换算' },
-  { id: 'salary', name: '税后工资', category: 'life', icon: '💰', path: '/packages/calcTools/salary/index', description: '五险一金+个税计算' },
+  { id: 'salary', name: '税后工资', category: 'life', icon: '💰', path: '/packages/calcTools/salary/index', description: '五险一金+个税计算', badge: 'praise' },
   { id: 'calendar', name: '万年历', category: 'date', icon: '📅', path: '/packages/toolsA/calendar/index', description: '月视图+农历+节假日' },
   { id: 'countdown', name: '倒计时', category: 'date', icon: '⏳', path: '/packages/toolsA/countdown/index', description: '目标日期倒计时' },
   { id: 'workday', name: '工作日计算', category: 'date', icon: '💼', path: '/packages/toolsB/workday/index', description: '工作日天数计算' },
@@ -25,11 +31,11 @@ const TOOLS = [
   { id: 'caseconvert', name: '大小写转换', category: 'text', icon: '🔤', path: '/packages/toolsB/caseconvert/index', description: '英文大小写转换' },
   { id: 'jsonformat', name: 'JSON格式化', category: 'text', icon: '📋', path: '/packages/toolsA/jsonformat/index', description: 'JSON美化/压缩' },
   { id: 'base64', name: 'Base64编解', category: 'text', icon: '🔐', path: '/packages/moreTools/base64/index', description: '文本编解码' },
-  { id: 'imgcompress', name: '图片压缩', category: 'image', icon: '🖼️', path: '/packages/toolsA/imgcompress/index', description: '压缩图片体积' },
+  { id: 'imgcompress', name: '图片压缩', category: 'image', icon: '🖼️', path: '/packages/toolsA/imgcompress/index', description: '压缩图片体积', badge: 'praise' },
   { id: 'pdf2img', name: 'PDF转图片', category: 'image', icon: '📄', path: '/packages/toolsA/pdf2img/index', description: 'PDF文件转图片预览保存' },
   { id: 'pdf2word', name: 'PDF转Word', category: 'image', icon: '📝', path: '/packages/toolsA/pdf2word/index', description: 'PDF文件转Word文档·多格式输出' },
   { id: 'answereraser', name: '答案遮挡器', category: 'image', icon: '✏️', path: '/packages/toolsB/answereraser/index', description: '试卷图片涂抹遮挡答案·导出保存' },
-  { id: 'paperclean', name: '试卷擦除', category: 'image', icon: '🧹', path: '/packages/imgTools/paperclean/index', description: 'AI智能识别并擦除手写笔迹·还原空白试卷' },
+  { id: 'paperclean', name: '试卷擦除', category: 'image', icon: '🧹', path: '/packages/imgTools/paperclean/index', description: 'AI智能识别并擦除手写笔迹·还原空白试卷', badge: 'hot' },
   { id: 'gifmaker', name: 'GIF制作器', category: 'image', icon: '🎞️', path: '/packages/imgTools/gifmaker/index', description: '多图合成GIF动图·调速·保存分享' },
   { id: 'imgbase64', name: '图转Base64', category: 'image', icon: '🔄', path: '/packages/imgTools/imgbase64/index', description: '图片转字符串' },
   { id: 'qrcode', name: '二维码生成', category: 'image', icon: '📱', path: '/packages/imgTools/qrcode/index', description: '文本/URL生成二维码' },
@@ -65,7 +71,7 @@ const TOOLS = [
   { id: 'truthordare', name: '真心话大冒险', category: 'fun', icon: '🎭', path: '/packages/moreTools/truthordare/index', description: '聚会必备真心话大冒险' },
   { id: 'newyearwish', name: '新年许愿', category: 'fun', icon: '🎋', path: '/packages/moreTools/newyearwish/index', description: '许下新年愿望·生成贺卡' },
   { id: 'chatbubble', name: '聊天气泡', category: 'fun', icon: '💬', path: '/packages/moreTools/chatbubble/index', description: '生成趣味聊天气泡截图' },
-  { id: 'idphoto', name: '证件照生成', category: 'image', icon: '📷', path: '/packages/imgTools/idphoto/index', description: '多尺寸证件照制作' },
+  { id: 'idphoto', name: '证件照生成', category: 'image', icon: '📷', path: '/packages/imgTools/idphoto/index', description: '多尺寸证件照制作', badge: 'praise' },
   { id: 'brainage', name: '脑力测试', category: 'fun', icon: '🧠', path: '/packages/moreTools/brainage/index', description: '测试你的脑力年龄' },
   { id: 'hangingpicture', name: '挂画助手', category: 'life', icon: '🖼️', path: '/packages/calcTools/hangingpicture/index', description: '墙面画作排版规划' },
   { id: 'ruler', name: '虚拟尺子', category: 'life', icon: '📏', path: '/packages/calcTools/ruler/index', description: '手机屏幕变尺子测量' },
@@ -76,7 +82,7 @@ const TOOLS = [
   { id: 'vote', name: '投票决策', category: 'fun', icon: '🗳️', path: '/packages/toolsB/vote/index', description: '快速发起投票·统计结果' },
   { id: 'asciiart', name: 'ASCII艺术', category: 'text', icon: '🔤', path: '/packages/moreTools/asciiart/index', description: '输入文字生成ASCII字符画' },
   { id: 'mirror', name: '镜子', category: 'life', icon: '🪞', path: '/packages/toolsA/mirror/index', description: '前置摄像头全屏当镜子用' },
-  { id: 'teleprompter', name: '全屏提词器', category: 'text', icon: '📜', path: '/packages/moreTools/teleprompter/index', description: '文字自动滚动·演讲直播必备' },
+  { id: 'teleprompter', name: '全屏提词器', category: 'text', icon: '📜', path: '/packages/moreTools/teleprompter/index', description: '文字自动滚动·演讲直播必备', badge: 'praise' },
   { id: 'countdown2', name: '全屏倒计时', category: 'date', icon: '⏱️', path: '/packages/toolsA/countdown2/index', description: '大数字全屏倒计时·会议煮面运动' },
   { id: 'scoreboard', name: '计分板', category: 'fun', icon: '🏆', path: '/packages/toolsA/scoreboard/index', description: '多人比分记录·球类桌游必备' },
   { id: 'gradient', name: '渐变色壁纸', category: 'image', icon: '🎨', path: '/packages/imgTools/gradient/index', description: '选颜色生成渐变壁纸·保存到相册' },
@@ -91,20 +97,21 @@ const TOOLS = [
   { id: 'paper', name: '打印稿纸', category: 'life', icon: '📄', path: '/packages/toolsB/paper/index', description: '自定义横线方格田字格·导出打印' },
   { id: 'textpaper', name: '文字填稿纸', category: 'life', icon: '✍️', path: '/packages/toolsA/textpaper/index', description: '粘贴文字自动填入稿纸格子·分页导出' },
   { id: 'fireworks', name: '烟花特效', category: 'fun', icon: '🎆', path: '/packages/toolsA/fireworks/index', description: '全屏烟花燃放·12种类型·点击发射' },
-  { id: 'z2h', name: '字帖生成器', category: 'life', icon: '✍️', path: '/packages/toolsB/z2h/index', description: '自定义描红字帖·汉字拼音数字英文控笔' },
+  { id: 'z2h', name: '字帖生成器', category: 'life', icon: '✍️', path: '/packages/toolsB/z2h/index', description: '自定义描红字帖·汉字拼音数字英文控笔', badge: 'praise' },
   { id: 'cheesytalk', name: '土味情话', category: 'fun', icon: '💕', path: '/packages/toolsB/cheesytalk/index', description: '随机土味情话·收藏·分享给TA' },
-  { id: 'mbtitest', name: 'MBTI性格', category: 'fun', icon: '🧬', path: '/packages/toolsB/mbtitest/index', description: '专业MBTI·16型人格分析' },
+  { id: 'mbtitest', name: 'MBTI性格', category: 'fun', icon: '🧬', path: '/packages/toolsB/mbtitest/index', description: '专业MBTI·16型人格分析', badge: 'hot' },
   { id: 'guessnumber', name: '猜数字', category: 'fun', icon: '🔢', path: '/packages/toolsB/guessnumber/index', description: '猜数字大小·越猜越接近答案' },
-  { id: 'whoisspy', name: '谁是卧底', category: 'fun', icon: '🕵️', path: '/packages/toolsB/whoisspy/index', description: '聚会派对·词语卧底桌游' },
+  { id: 'whoisspy', name: '谁是卧底', category: 'fun', icon: '🕵️', path: '/packages/toolsB/whoisspy/index', description: '聚会派对·词语卧底桌游', badge: 'hot' },
   { id: 'whackmole', name: '打地鼠', category: 'fun', icon: '🔨', path: '/packages/toolsA/whackmole/index', description: '限时打地鼠·考验手速' },
   { id: 'gomoku', name: '五子棋', category: 'fun', icon: '⚫', path: '/packages/toolsB/gomoku/index', description: '经典五子棋·双人对战' },
   { id: 'snake', name: '贪吃蛇', category: 'fun', icon: '🐍', path: '/packages/toolsB/snake/index', description: '经典贪吃蛇·滑动/按键操控·速度可调' },
-  { id: 'snakebattle', name: '贪吃蛇对战', category: 'fun', icon: '🐍', path: '/packages/toolsB/snakebattle/index', description: '同屏双人·吃对方尸体变长·撞墙撞身即死·滑动转向' },
+  { id: 'snakebattle', name: '贪吃蛇对战', category: 'fun', icon: '🐍', path: '/packages/toolsB/snakebattle/index', description: '同屏双人·吃对方尸体变长·撞墙撞身即死·滑动转向', badge: 'hot' },
   { id: 'paintwar', name: '画笔战争', category: 'fun', icon: '🖌️', path: '/packages/toolsB/paintwar/index', description: '同屏双人·画线圈地占领地盘·碰线碰墙即死·占地多者赢' },
   { id: 'shopping', name: '模拟超市购物', category: 'fun', icon: '🛒', path: '/packages/toolsA/shopping/index', description: '给预算选商品·学习理财找零' },
   { id: 'growth-tracker', name: '身高体重记录', category: 'life', icon: '📏', path: '/packages/toolsA/growth-tracker/index', description: '定期记录身高体重·生长曲线·标准对比' },
   { id: 'multiplication', name: '乘法口诀表', category: 'study', icon: '✖️', path: '/packages/toolsA/multiplication/index', description: '背诵九九乘法表·抽查练习·速度测试' },
-  { id: 'mental-math', name: '口算心算', category: 'study', icon: '🧮', path: '/packages/toolsA/mental-math/index', description: '加减乘除口算练习·难度可调·计时挑战' },
+  { id: 'mental-math', name: '口算心算', category: 'study', icon: '🧮', path: '/packages/toolsA/mental-math/index', description: '加减乘除口算练习·难度可调·计时挑战', badge: 'praise' },
+  { id: 'pattern', name: '找规律填数', category: 'study', icon: '🔢', path: '/packages/toolsA/pattern/index', description: '数列找规律·等差等比斐波那契·选择填空双模式' },
   { id: 'dictation', name: '听写练习', category: 'study', icon: '🎧', path: '/packages/toolsB/dictation/index', description: '输入文字语音朗读·跟写跟读·学习助手' },
   { id: 'poetry', name: '古诗文背诵', category: 'study', icon: '📜', path: '/packages/toolsB/poetry/index', description: '古诗文填空背诵·逐句过关·看提示想诗句' },
   { id: 'idiom-stories', name: '成语故事', category: 'study', icon: '📚', path: '/packages/toolsB/idiom-stories/index', description: '经典成语故事阅读·拼音释义·学习收藏' },
@@ -130,7 +137,7 @@ const TOOLS = [
   { id: 'picpuzzle', name: '照片拼图', category: 'fun', icon: '🧩', path: '/packages/toolsA/picpuzzle/index', description: '选图切块打乱重拼·3种难度·计时挑战' },
   { id: 'lovecard', name: '情话卡片', category: 'fun', icon: '💕', path: '/packages/toolsA/lovecard/index', description: '每日情话·精美卡片·保存分享' },
   { id: 'pixelavatar', name: '像素头像', category: 'image', icon: '👾', path: '/packages/imgTools/pixelavatar/index', description: '输入名字生成专属像素风头像' },
-  { id: 'watermarkremove', name: '去水印', category: 'image', icon: '🧽', path: '/packages/imgTools/watermarkremove/index', description: 'AI智能去水印+手动涂抹修补' },
+  { id: 'watermarkremove', name: '去水印', category: 'image', icon: '🧽', path: '/packages/imgTools/watermarkremove/index', description: 'AI智能去水印+手动涂抹修补', badge: 'hot' },
   { id: 'witchpoison', name: '神秘陷阱', category: 'fun', icon: '🧪', path: '/packages/toolsB/witchpoison/index', description: '神秘陷阱猜猜看·单人双人都能玩' },
   { id: 'commandreaction', name: '指令反应', category: 'fun', icon: '🕹️', path: '/packages/toolsA/commandreaction/index', description: '手机下指令·你来做动作·测反应抗干扰' },
   { id: 'drawguess', name: '多图编号抢答画猜', category: 'fun', icon: '🎨', path: '/packages/toolsA/drawguess/index', description: '多图编号·线下画·抢答猜词·聚会必备' },
@@ -151,10 +158,32 @@ const TOOLS = [
   { id: 'grabnumber', name: '抢数字', category: 'fun', icon: '🔢', path: '/packages/toolsB/grabnumber/index', description: '横屏双人各握一边·中央蹦数字·普通抢先得分禁止别点·倍数/含数/质数/平方数·限时/惩罚/干扰可调' },
   { id: 'moneyExchange', name: '钱币换算', category: 'study', icon: '💰', path: '/packages/toolsB/moneyExchange/index', description: '元角分换算练习·选择题闯关·适合小学生' },
   { id: 'moneyShop', name: '我是小店主', category: 'study', icon: '🛒', path: '/packages/toolsB/moneyShop/index', description: '买卖游戏·算总价与找零·练算术' },
+  { id: 'moneyPay', name: '人民币购物练习', category: 'study', icon: '👛', path: '/packages/toolsB/moneyPay/index', description: '认人民币·动手付钱算找零·一年级同步' },
   { id: 'pizzaFraction', name: '分披萨', category: 'study', icon: '🍕', path: '/packages/toolsB/pizzaFraction/index', description: '图形等分学 1/2、1/3、1/4、1/8·动画切分' },
-  { id: 'matchstick', name: '火柴棒算式', category: 'study', icon: '🧮', path: '/packages/toolsB/matchstick/index', description: '移动一根火柴让等式成立·七段数码管·练逻辑' },
+  { id: 'matchstick', name: '火柴棒算式', category: 'study', icon: '🧮', path: '/packages/toolsB/matchstick/index', description: '移动一根火柴让等式成立·七段数码管·练逻辑', badge: 'hot' },
   { id: 'coordinate', name: '坐标寻宝', category: 'study', icon: '🗺️', path: '/packages/toolsB/coordinate/index', description: 'XY网格按提示找宝物·坐标(x,y)启蒙·坐标系入门' }
 ];
+
+/**
+ * badge 标识文案映射
+ * key = badge 值，value = 展示文案
+ */
+var BADGE_LABELS = {
+  hot: '🔥 很火',
+  praise: '👍 很赞'
+};
+
+/**
+ * 获取工具的 badge 展示信息
+ * @param {Object} tool - 工具对象
+ * @returns {{type: string, text: string}} 无 badge 时 type/text 均为空串
+ */
+function getBadgeInfo(tool) {
+  if (tool && tool.badge && BADGE_LABELS[tool.badge]) {
+    return { type: tool.badge, text: BADGE_LABELS[tool.badge] };
+  }
+  return { type: '', text: '' };
+}
 
 /**
  * 根据分类获取工具列表
@@ -214,6 +243,7 @@ function getCategoryList() {
 module.exports = {
   CATEGORIES: CATEGORIES,
   TOOLS: TOOLS,
+  getBadgeInfo: getBadgeInfo,
   getToolsByCategory: getToolsByCategory,
   getToolById: getToolById,
   getCategoryById: getCategoryById,

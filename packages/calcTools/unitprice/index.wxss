@@ -1,0 +1,341 @@
+/* 哪个更划算 · 果冻色儿童风 */
+page {
+  background: #FFF8EC;
+}
+
+.container {
+  padding: 24rpx 28rpx 60rpx;
+}
+
+.tool-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16rpx 4rpx;
+}
+.tool-header-title {
+  font-size: 40rpx;
+  font-weight: 800;
+  color: #3D3D3D;
+}
+.tool-header-fav {
+  font-size: 40rpx;
+}
+
+/* 介绍卡 */
+.intro-card {
+  display: flex;
+  align-items: center;
+  background: #FFF1D6;
+  border: 4rpx solid #FFD93D;
+  border-radius: 28rpx;
+  padding: 20rpx 24rpx;
+  margin-bottom: 24rpx;
+}
+.intro-emoji {
+  font-size: 56rpx;
+  margin-right: 20rpx;
+}
+.intro-text {
+  flex: 1;
+  font-size: 26rpx;
+  color: #7A5C1E;
+  line-height: 1.6;
+}
+
+/* 商品卡 */
+.goods-card {
+  position: relative;
+  background: #FFFFFF;
+  border: 4rpx solid #FFE0B3;
+  border-radius: 28rpx;
+  padding: 24rpx;
+  margin-bottom: 24rpx;
+  transition: border-color 0.3s, box-shadow 0.3s, opacity 0.3s;
+}
+.goods-card.shake {
+  animation: weigh 0.6s ease-in-out;
+}
+@keyframes weigh {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(-2deg) translateY(-6rpx); }
+  50% { transform: rotate(2deg); }
+  75% { transform: rotate(-1.5deg) translateY(-4rpx); }
+  100% { transform: rotate(0deg); }
+}
+.goods-card.win {
+  border-color: #FFC107;
+  box-shadow: 0 0 0 6rpx rgba(255, 193, 7, 0.25), 0 8rpx 24rpx rgba(255, 193, 7, 0.3);
+}
+.goods-card.lose {
+  opacity: 0.72;
+}
+.goods-card.tie {
+  border-color: #9BD3FF;
+}
+
+.goods-top {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+.goods-avatar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #F3FAFF;
+  border: 3rpx dashed #9BD3FF;
+  border-radius: 20rpx;
+  padding: 8rpx 16rpx;
+  margin-right: 20rpx;
+}
+.goods-emoji {
+  font-size: 52rpx;
+  line-height: 1.2;
+}
+.goods-avatar-tip {
+  font-size: 18rpx;
+  color: #7FB8E8;
+}
+.goods-name {
+  flex: 1;
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #3D3D3D;
+}
+.goods-crown {
+  font-size: 44rpx;
+  margin-right: 8rpx;
+}
+.goods-remove {
+  font-size: 30rpx;
+  color: #C9C9C9;
+  padding: 8rpx 12rpx;
+}
+
+/* 输入行 */
+.input-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+.input-label {
+  width: 88rpx;
+  font-size: 28rpx;
+  color: #8A6D3B;
+  font-weight: 600;
+}
+.input-box {
+  flex: 1;
+  height: 76rpx;
+  background: #FFF8EC;
+  border: 3rpx solid #FFE0B3;
+  border-radius: 18rpx;
+  padding: 0 20rpx;
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #3D3D3D;
+}
+.input-unit {
+  margin-left: 14rpx;
+  font-size: 28rpx;
+  color: #8A6D3B;
+}
+.multi-wrap {
+  display: flex;
+  align-items: center;
+  margin-left: 12rpx;
+}
+.multi-x {
+  font-size: 30rpx;
+  color: #8A6D3B;
+  margin-right: 8rpx;
+}
+.input-multi {
+  flex: none;
+  width: 96rpx;
+  text-align: center;
+}
+.multi-toggle {
+  margin-left: 14rpx;
+  font-size: 24rpx;
+  color: #B0B0B0;
+  border: 3rpx solid #E5E5E5;
+  border-radius: 14rpx;
+  padding: 6rpx 14rpx;
+  font-weight: 700;
+}
+.multi-toggle-on {
+  color: #FF9F43;
+  border-color: #FF9F43;
+  background: #FFF3E6;
+}
+
+/* 单位胶囊 */
+.unit-row {
+  display: flex;
+  flex-wrap: wrap;
+}
+.unit-btn {
+  min-width: 84rpx;
+  text-align: center;
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #8A8A8A;
+  background: #F5F5F5;
+  border: 3rpx solid #E8E8E8;
+  border-radius: 999rpx;
+  padding: 10rpx 22rpx;
+  margin: 8rpx 12rpx 0 0;
+  box-sizing: border-box;
+}
+.unit-on {
+  color: #FFFFFF;
+  background: #4DA8FF;
+  border-color: #4DA8FF;
+  box-shadow: 0 4rpx 10rpx rgba(77, 168, 255, 0.35);
+}
+
+/* 单价角标 */
+.perbase-tag {
+  position: absolute;
+  top: -18rpx;
+  right: 24rpx;
+  background: #FF9F43;
+  color: #FFFFFF;
+  font-size: 24rpx;
+  font-weight: 700;
+  border-radius: 999rpx;
+  padding: 6rpx 20rpx;
+  box-shadow: 0 4rpx 10rpx rgba(255, 159, 67, 0.35);
+}
+
+/* 加一个 */
+.add-btn {
+  text-align: center;
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #7FB8E8;
+  border: 4rpx dashed #9BD3FF;
+  border-radius: 24rpx;
+  padding: 20rpx 0;
+  margin-bottom: 24rpx;
+  background: #F7FCFF;
+}
+
+/* 提示 */
+.hint {
+  text-align: center;
+  font-size: 26rpx;
+  color: #E8833A;
+  background: #FFF0E3;
+  border-radius: 18rpx;
+  padding: 14rpx 20rpx;
+  margin-bottom: 20rpx;
+}
+
+/* 比一比按钮 */
+.btn-compare {
+  background: linear-gradient(135deg, #FF9F43, #FFC107);
+  color: #FFFFFF;
+  font-size: 36rpx;
+  font-weight: 800;
+  border-radius: 999rpx;
+  padding: 8rpx 0;
+  box-shadow: 0 8rpx 20rpx rgba(255, 159, 67, 0.4);
+  border: none;
+}
+.btn-compare::after { border: none; }
+.btn-compare:active {
+  transform: scale(0.96);
+}
+.btn-disabled {
+  background: #E8E8E8;
+  color: #B0B0B0;
+  box-shadow: none;
+}
+
+/* 结果卡 */
+.result-card {
+  position: relative;
+  border-radius: 28rpx;
+  padding: 32rpx 28rpx 24rpx;
+  margin-top: 28rpx;
+  overflow: hidden;
+  animation: pop-in 0.35s ease-out;
+}
+@keyframes pop-in {
+  0% { transform: scale(0.85); opacity: 0; }
+  70% { transform: scale(1.04); }
+  100% { transform: scale(1); opacity: 1; }
+}
+.result-win {
+  background: #FFF6DA;
+  border: 4rpx solid #FFC107;
+}
+.result-tie {
+  background: #F0F8FF;
+  border: 4rpx solid #9BD3FF;
+}
+.result-line {
+  display: block;
+  text-align: center;
+  font-size: 28rpx;
+  color: #7A5C1E;
+  line-height: 1.9;
+}
+.result-line-main:first-child {
+  font-size: 38rpx;
+  font-weight: 800;
+  color: #3D3D3D;
+}
+
+/* 撒花 */
+.confetti .cf {
+  position: absolute;
+  top: -10rpx;
+  font-size: 36rpx;
+  animation: fall 1.4s ease-in forwards;
+}
+.cf1 { left: 12%; animation-delay: 0s; }
+.cf2 { left: 38%; animation-delay: 0.15s; }
+.cf3 { left: 64%; animation-delay: 0.3s; }
+.cf4 { left: 85%; animation-delay: 0.1s; }
+@keyframes fall {
+  0% { transform: translateY(-40rpx) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(300rpx) rotate(300deg); opacity: 0; }
+}
+
+/* 为什么折叠区 */
+.why-toggle {
+  text-align: center;
+  font-size: 26rpx;
+  color: #4DA8FF;
+  font-weight: 700;
+  padding: 16rpx 0 4rpx;
+}
+.why-box {
+  background: #FFFFFF;
+  border-radius: 20rpx;
+  padding: 20rpx 24rpx;
+  margin-top: 12rpx;
+}
+.why-line {
+  display: block;
+  font-size: 26rpx;
+  color: #666666;
+  line-height: 2;
+  font-family: monospace;
+}
+
+/* 重来 */
+.btn-reset {
+  margin-top: 24rpx;
+  background: #FFFFFF;
+  color: #FF9F43;
+  font-size: 30rpx;
+  font-weight: 700;
+  border: 4rpx solid #FF9F43;
+  border-radius: 999rpx;
+}
+.btn-reset::after { border: none; }

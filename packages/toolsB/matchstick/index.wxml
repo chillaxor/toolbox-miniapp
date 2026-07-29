@@ -5,7 +5,7 @@
     <view class="hero">🧮</view>
     <view class="title">火柴棒算式</view>
     <view class="subtitle">移动一根火柴，让算式变正确！</view>
-    <view class="desc">每一题都是一道「不对」的算式，动动脑筋，把其中一根火柴挪个位置，等式成立就赢啦～</view>
+    <view class="desc">每一题都是一道「不对」的算式，动动脑筋，把其中一根火柴挪个位置，等式成立就赢啦～数字和加减号都可以动，等号不能动哦！</view>
 
     <view class="count-sel">
       <text class="cs-label">每局题数</text>

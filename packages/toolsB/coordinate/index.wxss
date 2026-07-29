@@ -68,6 +68,7 @@
   box-shadow: 0 10rpx 26rpx rgba(46,125,175,0.12); width: 100%; box-sizing: border-box;
 }
 .grid-head { display: flex; align-items: center; margin-bottom: 10rpx; }
+.grid-foot { margin-bottom: 0; margin-top: 4rpx; }
 .corner { width: 56rpx; }
 .col-head { flex: 1; text-align: center; font-size: 26rpx; color: #2E7DAF; font-weight: 700; }
 .grid-row { display: flex; align-items: center; margin-bottom: 10rpx; }
