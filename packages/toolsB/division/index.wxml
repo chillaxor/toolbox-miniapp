@@ -1,0 +1,195 @@
+<!-- 除法启蒙·教学式 -->
+<view class="page">
+
+  <!-- ===== 首页 ===== -->
+  <view wx:if="{{state === 'intro'}}" class="intro">
+    <view class="hero">
+      <text class="hero-emoji">➗</text>
+      <text class="hero-title">除法·这样学</text>
+      <text class="hero-sub">不是背题，是看懂「平均分 → 连减 → 除法 → 用口诀求商」</text>
+    </view>
+
+    <view class="mod-grid">
+      <view class="mod-card" data-module="meaning" bindtap="onSelectModule">
+        <text class="mod-emoji">🍰</text>
+        <text class="mod-name">意义关</text>
+        <text class="mod-desc">圈组 → 连减 → 除法 → 口诀</text>
+        <view wx:if="{{selectedModule === 'meaning'}}" class="mod-on">已选</view>
+      </view>
+      <view class="mod-card" data-module="compare" bindtap="onSelectModule">
+        <text class="mod-emoji">🔀</text>
+        <text class="mod-name">分法对比</text>
+        <text class="mod-desc">等分除 vs 包含除，同一堆点</text>
+        <view wx:if="{{selectedModule === 'compare'}}" class="mod-on">已选</view>
+      </view>
+      <view class="mod-card" data-module="pattern" bindtap="onSelectModule">
+        <text class="mod-emoji">🪜</text>
+        <text class="mod-name">编商</text>
+        <text class="mod-desc">固定除数，自己推出整条</text>
+        <view wx:if="{{selectedModule === 'pattern'}}" class="mod-on">已选</view>
+      </view>
+      <view class="mod-card" data-module="quiz" bindtap="onSelectModule">
+        <text class="mod-emoji">⏱️</text>
+        <text class="mod-name">小测验</text>
+        <text class="mod-desc">学完来快速回忆一下</text>
+        <view wx:if="{{selectedModule === 'quiz'}}" class="mod-on">已选</view>
+      </view>
+    </view>
+
+    <!-- 意义关 / 小测验：选难度 -->
+    <view wx:if="{{selectedModule === 'meaning' || selectedModule === 'quiz'}}" class="pick">
+      <text class="pick-label">难度</text>
+      <view class="pills">
+        <view class="pill {{level === 1 ? 'pill-on' : ''}}" data-level="1" bindtap="onSelectLevel">L1 · 2~5</view>
+        <view class="pill {{level === 2 ? 'pill-on' : ''}}" data-level="2" bindtap="onSelectLevel">L2 · 6~9</view>
+        <view class="pill {{level === 3 ? 'pill-on' : ''}}" data-level="3" bindtap="onSelectLevel">L3 · 全</view>
+      </view>
+    </view>
+
+    <!-- 编商：选除数 -->
+    <view wx:if="{{selectedModule === 'pattern'}}" class="pick">
+      <text class="pick-label">练除以几</text>
+      <view class="pills">
+        <view wx:for="{{[2,3,4,5,6,7,8,9]}}" wx:key="*this" class="pill {{divisor === item ? 'pill-on' : ''}}" data-divisor="{{item}}" bindtap="onSelectDivisor">÷{{item}}</view>
+      </view>
+    </view>
+
+    <button class="start-btn" bindtap="startGame">开始学习</button>
+
+    <view wx:if="{{wrongBook.length > 0}}" class="wb-tip">
+      <text>上次易错口诀：{{wrongBook.join('、')}}</text>
+    </view>
+  </view>
+
+  <!-- ===== 练习 ===== -->
+  <view wx:if="{{state === 'play'}}" class="play">
+    <view class="topbar">
+      <text class="prog">第 {{idx + 1}} / {{rounds}} 题</text>
+      <text class="modtag">{{moduleName}}</text>
+    </view>
+
+    <!-- 反馈条 -->
+    <view wx:if="{{feedback}}" class="fb fb-{{fbType}}">
+      <text>{{feedback}}</text>
+    </view>
+    <view wx:if="{{derivation}}" class="deriv">
+      <text>💡 {{derivation}}</text>
+    </view>
+
+    <!-- 意义关 -->
+    <view wx:if="{{q.type === 'meaning'}}" class="card">
+      <view class="steps">
+        <view class="step-dot {{stepIdx === 0 ? 'cur' : ''}} {{stepIdx > 0 ? 'done' : ''}}">1</view>
+        <view class="step-dot {{stepIdx === 1 ? 'cur' : ''}} {{stepIdx > 1 ? 'done' : ''}}">2</view>
+        <view class="step-dot {{stepIdx === 2 ? 'cur' : ''}} {{stepIdx > 2 ? 'done' : ''}}">3</view>
+        <view class="step-dot {{stepIdx === 3 ? 'cur' : ''}}">4</view>
+      </view>
+
+      <!-- 步骤1：圈组 -->
+      <view wx:if="{{curStep.kind === 'count'}}">
+        <text class="q">{{curStep.prompt}}</text>
+        <view class="dotwrap" style="width:{{q.layout.cols * 100}}rpx;">
+          <view wx:for="{{cellsView}}" wx:key="idx" class="dot" style="background:{{item.on ? item.color : '#23f008'}};" data-gi="{{item.gi}}" bindtap="onTapCell"></view>
+        </view>
+        <text class="count-hint">已圈 {{countedCount}} / {{q.groups}} 份（每份 {{q.per}} 个）</text>
+        <button class="next-btn" disabled="{{q.groups > countedCount}}" bindtap="onCountNext">下一步</button>
+      </view>
+
+      <!-- 步骤2：连减 -->
+      <view wx:if="{{curStep.kind === 'sub'}}">
+        <text class="q">除法就是「连续减相同的数」，数数减了几次：</text>
+        <view class="expr">
+          <text class="expr-txt">{{curStep.prompt}}</text>
+          <input class="ans" type="number" value="{{input}}" bindinput="onStepInput" placeholder="几次" />
+        </view>
+        <button class="check-btn" bindtap="onStepCheck">检查</button>
+      </view>
+
+      <!-- 步骤3：写除法 -->
+      <view wx:if="{{curStep.kind === 'div'}}">
+        <text class="q">写成除法算式：</text>
+        <view class="expr">
+          <text class="expr-txt">{{curStep.prompt}}</text>
+          <input class="ans" type="number" value="{{input}}" bindinput="onStepInput" placeholder="?" />
+        </view>
+        <button class="check-btn" bindtap="onStepCheck">检查</button>
+      </view>
+
+      <!-- 步骤4：口诀 -->
+      <view wx:if="{{curStep.kind === 'verse'}}">
+        <text class="q">{{curStep.prompt}}</text>
+        <view class="opts">
+          <view wx:for="{{verseOpts}}" wx:key="*this" class="opt {{fbType === 'wrong' && item === correctVerse ? 'opt-right' : ''}}" data-v="{{item}}" bindtap="onVerseTap">{{item}}</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 分法对比 -->
+    <view wx:if="{{q.type === 'compare'}}" class="card">
+      <text class="q">同一堆点，换种问法，算的是同一句口诀吗？</text>
+      <view class="compare-row">
+        <view class="compare-box">
+          <text class="compare-label">等分除：{{q.label1}}</text>
+          <view class="dotwrap small" style="width:{{q.layout.cols * 44}}rpx;">
+            <view wx:for="{{q.layout.cells}}" wx:key="idx" class="dot sm" style="background:#4DB6AC;"></view>
+          </view>
+        </view>
+        <text class="compare-eq">⬇️ 换个问法</text>
+        <view class="compare-box">
+          <text class="compare-label">包含除：{{q.label2}}</text>
+          <view class="dotwrap small" style="width:{{q.layout.cols * 44}}rpx;">
+            <view wx:for="{{q.layout.cells}}" wx:key="idx" class="dot sm" style="background:#FF8A65;"></view>
+          </view>
+          <input class="ans" type="number" value="{{input}}" bindinput="onCompareInput" placeholder="几份" />
+          <button class="check-btn" bindtap="onCompareCheck">数好了</button>
+        </view>
+      </view>
+    </view>
+
+    <!-- 编商 -->
+    <view wx:if="{{q.type === 'pattern'}}" class="card">
+      <text class="q">除以 {{q.divisor}}：自己用连减/口诀，把空填出来</text>
+      <view class="ladder">
+        <view wx:for="{{q.rows}}" wx:key="n" class="lrow {{item.blank ? 'lrow-blank' : ''}} {{solved[index] ? 'lrow-done' : ''}}">
+          <text class="ltext">{{item.dividend}} ÷ {{q.divisor}} =</text>
+          <block wx:if="{{item.blank && !solved[index]}}">
+            <input class="ans sm" type="number" value="{{patternInputs[index]}}" data-idx="{{index}}" bindinput="onPatternInput" placeholder="?" />
+            <button class="mini-check" data-idx="{{index}}" bindtap="onPatternCheck">✓</button>
+          </block>
+          <text wx:else class="lval">{{item.quotient}} · {{item.verse}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 小测验 -->
+    <view wx:if="{{q.type === 'quiz'}}" class="card">
+      <text class="q">快速回忆：</text>
+      <view class="expr">
+        <text class="expr-txt big">{{q.prompt}}</text>
+        <input class="ans" type="number" value="{{input}}" bindinput="onQuizInput" placeholder="?" />
+      </view>
+      <button class="check-btn" bindtap="onQuizCheck">检查</button>
+    </view>
+  </view>
+
+  <!-- ===== 结果 ===== -->
+  <view wx:if="{{state === 'result'}}" class="result">
+    <text class="res-title">这一轮完成啦！</text>
+    <view class="stars">
+      <text wx:for="{{[1,2,3]}}" wx:key="*this" class="star {{item > starCount ? '' : 'star-on'}}">★</text>
+    </view>
+    <view wx:if="{{weakVerses.length > 0}}" class="weak">
+      <text class="weak-t">还要多练的口诀：</text>
+      <text class="weak-v">{{weakVerses.join('、')}}</text>
+    </view>
+    <view wx:else class="weak ok">
+      <text>全部答对，除法掌握得很棒！🎉</text>
+    </view>
+    <button class="start-btn" bindtap="restart">再来一轮</button>
+    <button class="ghost-btn" bindtap="goIntro">换个模块</button>
+    <view class="cross-sell" bindtap="goMultTable">
+      <text>💡 除法是乘法的逆运算，先练熟「乘法口诀闯关 ⚡」除法更快 →</text>
+    </view>
+  </view>
+
+</view>

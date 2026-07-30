@@ -115,7 +115,9 @@ App({
       pizzaFraction: false,
       pattern: false,
       unitprice: false,
-      moneyPay: false
+      moneyPay: false,
+      multTable: false,
+      division: false
     }
   }
 });

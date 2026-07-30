@@ -172,7 +172,9 @@
     "pizzaFraction/index",
     "matchstick/index",
     "coordinate/index",
-    "moneyPay/index"
+    "moneyPay/index",
+    "multTable/index",
+    "division/index"
   ]
     }
   ],

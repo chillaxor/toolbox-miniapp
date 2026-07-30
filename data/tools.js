@@ -159,6 +159,8 @@ const TOOLS = [
   { id: 'moneyExchange', name: '钱币换算', category: 'study', icon: '💰', path: '/packages/toolsB/moneyExchange/index', description: '元角分换算练习·选择题闯关·适合小学生' },
   { id: 'moneyShop', name: '我是小店主', category: 'study', icon: '🛒', path: '/packages/toolsB/moneyShop/index', description: '买卖游戏·算总价与找零·练算术' },
   { id: 'moneyPay', name: '人民币购物练习', category: 'study', icon: '👛', path: '/packages/toolsB/moneyPay/index', description: '认人民币·动手付钱算找零·一年级同步' },
+  { id: 'multTable', name: '乘法闯关', category: 'study', icon: '⚡', path: '/packages/toolsB/multTable/index', description: '看图画乘法·对口诀·连击挑战·二年级同步' },
+  { id: 'division', name: '除法启蒙', category: 'study', icon: '➗', path: '/packages/toolsB/division/index', description: '平均分·连减·用口诀求商·二年级同步', badge: 'hot' },
   { id: 'pizzaFraction', name: '分披萨', category: 'study', icon: '🍕', path: '/packages/toolsB/pizzaFraction/index', description: '图形等分学 1/2、1/3、1/4、1/8·动画切分' },
   { id: 'matchstick', name: '火柴棒算式', category: 'study', icon: '🧮', path: '/packages/toolsB/matchstick/index', description: '移动一根火柴让等式成立·七段数码管·练逻辑', badge: 'hot' },
   { id: 'coordinate', name: '坐标寻宝', category: 'study', icon: '🗺️', path: '/packages/toolsB/coordinate/index', description: 'XY网格按提示找宝物·坐标(x,y)启蒙·坐标系入门' }
