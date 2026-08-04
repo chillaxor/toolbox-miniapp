@@ -1,4 +1,4 @@
-// 远程数据源：gitee 上的 elements-data
+// 数据源：gitee 上的 elements-data
 // 注意：微信小程序 wx.request 不会自动跟随 gitee raw 的 302 跳转（跳到 raw.giteeusercontent.com），
 // 所以这里改用云函数 giteeData 做代理——由云端 Node.js 去拉取并解析，绕开域名白名单与重定向限制。
 const GITEE_ELEMENTS_URL = 'https://gitee.com/b64882/qian_data/raw/master/elements-data-for-gitee.json';
@@ -10,8 +10,8 @@ let CATEGORY_COLORS = {};
 
 Page({
   data: {
-    loading: true,        // 首次从远程加载中
-    loadError: false,     // 远程与缓存都失败
+    loading: true,        // 首次从加载中
+    loadError: false,     // 与缓存都失败
     loadErrorMsg: '',      // 失败时的具体原因（排查用）
     searchKey: '',
     filterCategory: '',
@@ -40,7 +40,7 @@ Page({
     this.loadElements();
   },
 
-  // 通过云函数 giteeData 拉取远程数据；失败则用本地 storage 缓存兜底；都失败才进入错误态
+  // 通过云函数 giteeData 拉取数据；失败则用本地 storage 缓存兜底；都失败才进入错误态
   loadElements() {
     this.setData({ loading: true, loadError: false });
     const cache = wx.getStorageSync('remote_elements_cache');
@@ -59,7 +59,7 @@ Page({
         } else if (cache && Array.isArray(cache.ELEMENTS) && cache.CATEGORY_COLORS) {
           this.useCache(cache);
         } else {
-          this.setData({ loading: false, loadError: true, loadErrorMsg: '数据格式不对：' + (result.error || '远程返回空') });
+          this.setData({ loading: false, loadError: true, loadErrorMsg: '数据格式不对：' + (result.error || '返回空') });
           wx.showToast({ title: '元素数据加载失败', icon: 'none' });
         }
       },

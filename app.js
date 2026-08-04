@@ -33,6 +33,16 @@ App({
       var merged = Object.assign({}, base, flags);
       try { wx.setStorageSync('feature_flags', merged); } catch (e) {}
       self.globalData.featureFlags = merged;
+      if (Array.isArray(flags.homePopularCats) && flags.homePopularCats.length) {
+        try { wx.setStorageSync('home_popular_cats', flags.homePopularCats); } catch (e) {}
+        self.globalData.homePopularCats = flags.homePopularCats;
+      } else {
+        var _cachedCats = null;
+        try { _cachedCats = wx.getStorageSync('home_popular_cats'); } catch (e) {}
+        if (Array.isArray(_cachedCats) && _cachedCats.length) {
+          self.globalData.homePopularCats = _cachedCats;
+        }
+      }
       try {
         var pages = getCurrentPages() || [];
         pages.forEach(function (p) {
@@ -123,6 +133,7 @@ App({
       wordle: false,
       linknav: false,
       homepageV2: true
-    }
+    },
+    homePopularCats: ['life', 'image']
   }
 });

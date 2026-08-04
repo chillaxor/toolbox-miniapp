@@ -1,4 +1,4 @@
-// 小小侦探案件库（本地兜底，与 gitee 远程一致）
+// 小小侦探案件库（本地兜底，与 gitee 一致）
 // gitee: https://gitee.com/b64882/qian_data/raw/master/clueguess_cases.json
 module.exports = [
   {

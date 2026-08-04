@@ -1,7 +1,7 @@
 const storage = require('../../../utils/storage.js');
 const BADGE_KEY = 'detective_badges';
 
-// 案件库：运行时优先从 gitee 拉取（wx.request 直连，不走云函数），拉到就用远程；
+// 案件库：运行时优先从 gitee 拉取（wx.request 直连，不走云函数），拉到就用；
 // 拉不到则用本地 data/clueguess_cases.js（4 条）兜底。动脑玩法：线索需玩家自己判断排除谁。
 // 每个案件：生活化、无暴力；线索 eliminate 并集恰好排除"除凶手外的所有人"。
 const FALLBACK_CASES = require('../../../data/clueguess_cases.js');

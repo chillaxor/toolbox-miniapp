@@ -108,14 +108,29 @@ Page({
   },
 
   /**
-   * 构建「热门工具」分组：每个分类取前 3 个可见工具
+   * 解析「热门工具」允许显示的分类列表
+   * @returns {Array|null} 分类 id 数组；null 表示显示全部（兜底）
+   */
+  _resolvePopularCats: function () {
+    var app = getApp();
+    var cats = (app.globalData && app.globalData.homePopularCats) || null;
+    if (!cats || !cats.length) {
+      try { cats = wx.getStorageSync('home_popular_cats') || null; } catch (e) {}
+    }
+    if (Array.isArray(cats) && cats.length) return cats;
+    return null;
+  },
+
+  /**
    * @returns {Array}
    */
   _buildPopular: function () {
+    var allowed = this._resolvePopularCats();
     var groups = [];
     var cats = this.data.categoryList;
     for (var i = 0; i < cats.length; i++) {
       var cat = cats[i];
+      if (allowed && allowed.indexOf(cat.id) === -1) continue; // 限定分类
       var tools = this.getVisibleTools(cat.id).slice(0, 3);
       groups.push({
         catId: cat.id,
@@ -400,6 +415,7 @@ Page({
     var currentTools = this.getVisibleTools(active.id);
     this.setData({ currentTools: currentTools });
     this._maybeLoadFeatured();
+    this._refreshHomeV2();
   },
 
   /**

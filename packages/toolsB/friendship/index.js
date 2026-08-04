@@ -1,7 +1,7 @@
 const storage = require('../../../utils/storage.js');
 const SCENES = require('../../../data/friendship_scenes.js');
 
-// 远程场景库：wx.request 直连 gitee（主），jsDelivr 镜像回退；拉不到则用本地 SCENES 兜底。
+// 场景库：wx.request 直连 gitee（主），jsDelivr 镜像回退；拉不到则用本地 SCENES 兜底。
 const SCENES_URL = 'https://gitee.com/b64882/qian_data/raw/master/friendship_scenes.json';
 const SCENES_MIRROR = 'https://cdn.jsdelivr.net/gh/b64882/qian_data@master/friendship_scenes.json';
 const SCENES_CACHE_KEY = 'friendship_scenes_cache';
@@ -58,7 +58,7 @@ Page({
       wx.reLaunch({ url: '/pages/index/index' });
       return;
     }
-    this._scenes = SCENES;        // 本地兜底，远程拉取成功会替换
+    this._scenes = SCENES;        // 本地兜底，拉取成功会替换
     this.refreshHome();
     this.loadScenes();
   },

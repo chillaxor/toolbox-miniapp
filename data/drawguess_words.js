@@ -1,5 +1,5 @@
 // 词库本地兜底：小程序 require('.json') 在部分基础库会失败，故用 .js 导出。
-// 远程文件见 data/drawguess_words.json（仅 word 字符串数组，无 icon/cat）。
+// 文件见 data/drawguess_words.json（仅 word 字符串数组，无 icon/cat）。
 // 上传到 gitee：https://gitee.com/b64882/qian_data/raw/master/drawguess_words.json
 module.exports = [
   "苹果", "香蕉", "西瓜", "草莓", "葡萄", "蛋糕", "汉堡", "披萨", "面条", "冰淇淋",

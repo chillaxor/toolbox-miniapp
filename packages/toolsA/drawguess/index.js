@@ -1,7 +1,7 @@
 var storage = require('../../../utils/storage.js');
 
-// 词库远程加载：纯 word 字符串数组（无 emoji / 无 cat）
-// 远程文件（上传到 gitee）：https://gitee.com/b64882/qian_data/raw/master/drawguess_words.json
+// 词库加载：纯 word 字符串数组（无 emoji / 无 cat）
+// 文件（上传到 gitee）：https://gitee.com/b64882/qian_data/raw/master/drawguess_words.json
 // 本地兜底（小程序 require('.json') 部分基础库会失败，故用 .js）：data/drawguess_words.js
 var LOCAL_WORDS = require('../../../data/drawguess_words.js');
 var DATA_URL = 'https://gitee.com/b64882/qian_data/raw/master/drawguess_words.json';
@@ -37,8 +37,8 @@ Page({
     readIndex: -1,             // show 阶段当前高亮的编号
     reading: false,
     ttsAvailable: false,
-    wordCount: LOCAL_WORDS.length, // 当前可用词数（远程/本地）
-    remoteReady: false,        // 远程词库是否拉取成功
+    wordCount: LOCAL_WORDS.length, // 当前可用词数（/本地）
+    remoteReady: false,        // 词库是否拉取成功
     // quiz
     quizState: 'pick',         // pick | answer
     currentNum: 0,
@@ -67,7 +67,7 @@ Page({
     } catch (e) {
       this._si = null;
     }
-    this._words = LOCAL_WORDS.slice(); // 先用本地兜底，远程拉到再覆盖
+    this._words = LOCAL_WORDS.slice(); // 先用本地兜底，拉到再覆盖
     this.setData({
       ttsAvailable: !!this._si,
       isFavorite: storage.isFavorite('drawguess'),
@@ -79,7 +79,7 @@ Page({
     this._loadRemoteWords();
   },
 
-  // ---------- 远程词库加载（wx.request，失败回退本地） ----------
+  // ---------- 词库加载（wx.request，失败回退本地） ----------
   _loadRemoteWords: function () {
     var self = this;
     wx.request({

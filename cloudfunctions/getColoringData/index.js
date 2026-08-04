@@ -4,7 +4,7 @@ const axios = require('axios')
 
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 
-// 远程涂色数据源（gitee raw）
+// 涂色数据源（gitee raw）
 const REMOTE_URL = 'https://gitee.com/b64882/qian_data/raw/master/coloring-data.js'
 
 // 本地兜底数据：部署时随云函数一起上传，gitee 拉取失败时使用
@@ -19,7 +19,7 @@ try {
 let cache = null
 
 /**
- * 解析远程 JS 字符串，取出 module.exports 导出的涂色数据。
+ * 解析 JS 字符串，取出 module.exports 导出的涂色数据。
  * coloring-data.js 内含 circle/star/heart 等 helper 函数（加载时动态生成坐标），
  * 不是纯 JSON，故用 new Function 在受控作用域里执行一遍后再读取 module.exports。
  */
@@ -42,13 +42,13 @@ exports.main = async (event, context) => {
     const response = await axios.get(REMOTE_URL, { timeout: 8000 })
     const dataStr = response.data
     if (typeof dataStr !== 'string' || dataStr.indexOf('module.exports') === -1) {
-      throw new Error('远程涂色数据格式异常（可能不是 JS 文件）')
+      throw new Error('涂色数据格式异常（可能不是 JS 文件）')
     }
     const COLORING_DATA = parseColoring(dataStr)
     if (!COLORING_DATA || !COLORING_DATA.templates) {
       throw new Error('解析得到的涂色数据无效')
     }
-    // 仅缓存 gitee 成功的结果，本地兜底不缓存以便后续重试远程
+    // 仅缓存 gitee 成功的结果，本地兜底不缓存以便后续重试
     cache = COLORING_DATA
     return { COLORING_DATA, source: 'gitee' }
   } catch (error) {

@@ -1,4 +1,4 @@
-// 云函数：giteeData —— 通用 gitee 远程数据代理
+// 云函数：giteeData —— 通用 gitee 数据代理
 // 解决小程序 wx.request 不跟随 gitee raw 的 302 跳转（跳到 raw.giteeusercontent.com）问题：
 // 由云端 Node.js（axios 默认自动跟随重定向）去拉取并解析，再把干净数据回传小程序。
 // 小程序侧用 wx.cloud.callFunction 调用，完全不受 request 域名白名单限制，也不需要 gitee 域名加白。
@@ -16,14 +16,14 @@ const cache = new Map()
 const DEFAULT_TTL = 10 * 60 * 1000 // 10 分钟
 
 /**
- * 解析远程内容，兼容三种格式：
+ * 解析内容，兼容三种格式：
  *  1) 合法 JSON（如 elements-data-for-gitee.json）—— 直接 JSON.parse
  *  2) 含 module.exports 的 CommonJS 模块（如 coloring-data.js）—— new Function 受控执行后读 module.exports
  *  3) `var X = [...]` / `const X = {...}` 纯字面量（如 lingqian_data.js）—— new Function('return '+body)()
  */
 function parseContent(str) {
   const s = (str || '').trim()
-  if (!s) throw new Error('远程内容为空')
+  if (!s) throw new Error('内容为空')
 
   // 1) 先试 JSON
   try {
@@ -47,7 +47,7 @@ function parseContent(str) {
     // eslint-disable-next-line no-new-func
     return (new Function('return ' + body))()
   } catch (e) {
-    throw new Error('远程内容既非 JSON、也非可解析的 JS 模块/字面量')
+    throw new Error('内容既非 JSON、也非可解析的 JS 模块/字面量')
   }
 }
 
@@ -93,7 +93,7 @@ exports.main = async (event, context) => {
 
     return { data: parsed, source: 'gitee' }
   } catch (error) {
-    console.error('[giteeData] 远程获取失败:', url, error && error.message)
+    console.error('[giteeData] 获取失败:', url, error && error.message)
     // 若缓存里有（即便过期）也先兜底返回，提升弱网可用性
     if (hit) {
       return { data: hit.value, source: 'cache-stale' }

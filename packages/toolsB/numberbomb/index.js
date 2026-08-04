@@ -24,7 +24,7 @@ Page({
   onLoad: function () {
     var __flags = wx.getStorageSync('feature_flags')
       || (getApp() && getApp().globalData && getApp().globalData.featureFlags) || {};
-    // 用 === false：远程未配置该键（undefined）时也放行，保证本地可见；仅显式 false 才隐藏
+    // 用 === false：未配置该键（undefined）时也放行，保证本地可见；仅显式 false 才隐藏
     if (__flags.numberbomb === false) {
       wx.reLaunch({ url: '/pages/index/index' });
       return;

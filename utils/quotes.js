@@ -85,8 +85,8 @@ var QUOTES = [
 
 var CATEGORIES = ['全部', '励志', '人生', '爱情', '友情', '智慧', '哲理', '职场', '学习'];
 
-// ===== 远程数据：gitee wx.request 直连 + jsDelivr 镜像回退（不用云函数）=====
-// 远程 quotes.json 中的中文已转成 \uXXXX 存储，JSON.parse 会自动还原。
+// ===== 数据：gitee wx.request 直连 + jsDelivr 镜像回退（不用云函数）=====
+//  quotes.json 中的中文已转成 \uXXXX 存储，JSON.parse 会自动还原。
 var QUOTES_GITEE = 'https://gitee.com/b64882/qian_data/raw/master/quotes.json';
 var QUOTES_MIRROR = 'https://cdn.jsdelivr.net/gh/b64882/qian_data@master/quotes.json';
 var _quotesLoaded = false;

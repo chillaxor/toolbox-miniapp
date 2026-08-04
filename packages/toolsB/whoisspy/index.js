@@ -1,16 +1,16 @@
 var storage = require('../../../utils/storage.js');
 
-// 词库远程基址（gitee 仓库，可随时更新词库/拼音，无需发版）
-// 远程文件：whoisspy-words.json  —— 结构 [{c:平民词, s:卧底词, cp:平民词拼音, sp:卧底词拼音}, ...]
+// 词库基址（gitee 仓库，可随时更新词库/拼音，无需发版）
+// 文件：whoisspy-words.json  —— 结构 [{c:平民词, s:卧底词, cp:平民词拼音, sp:卧底词拼音}, ...]
 var WORD_DATA_BASE = 'https://gitee.com/b64882/qian_data/raw/master/';
-// 本地兜底词库（远程拉取失败时使用，结构与远程一致）
+// 本地兜底词库（拉取失败时使用，结构与一致）
 // 注意：必须用 .js 而非 .json —— 小程序 require .json 在部分基础库下会加载失败导致整页白屏
 var LOCAL_WORD_PAIRS = require('../../../data/whoisspy-words.js');
 // 随机局中，平民词与卧底词互换的概率（0~1）。0=永不互换，0.5=各一半，1=总是互换。
 // 这样"谁是卧底词/谁是平民词"不固定，增加随机性。
 var SWAP_PROBABILITY = 0.5;
 
-// 运行时词库：优先远程，失败回退本地
+// 运行时词库：优先，失败回退本地
 var WORD_PAIRS = LOCAL_WORD_PAIRS;
 
 Page({
@@ -66,7 +66,7 @@ Page({
     this.checkFavorite();
   },
 
-  // 拉取远程词库（经云函数 giteeData 代理拉取，绕开小程序 request 域名白名单与 gitee 的 302 重定向）
+  // 拉取词库（经云函数 giteeData 代理拉取，绕开小程序 request 域名白名单与 gitee 的 302 重定向）
   loadWordPairs: function () {
     var cacheKey = 'whoisspy_wordpairs';
     var cached = wx.getStorageSync(cacheKey);

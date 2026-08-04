@@ -91,7 +91,7 @@ Page({
     this.loadColoringData();
   },
 
-  // 通过云函数获取涂色数据（gitee 远程 + 本地兜底）
+  // 通过云函数获取涂色数据（gitee  + 本地兜底）
   loadColoringData: function () {
     var self = this;
     wx.cloud.callFunction({
