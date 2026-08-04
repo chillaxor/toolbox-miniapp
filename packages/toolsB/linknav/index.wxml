@@ -14,7 +14,6 @@
     <view wx:for="{{displayLinks}}" wx:key="url" class="link-item"
       bindtap="tapLink" data-name="{{item.name}}" data-url="{{item.url}}">
       <view class="link-name">{{item.name}}</view>
-      <view class="link-arrow">复制</view>
     </view>
 
     <view wx:if="{{isEmpty}}" class="empty">

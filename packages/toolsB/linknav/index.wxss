@@ -49,36 +49,21 @@
   align-items: center;
   background: #fff;
   border-radius: 18rpx;
-  padding: 24rpx 28rpx;
+  padding: 26rpx 28rpx;
   margin-bottom: 16rpx;
   box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.04);
+}
+.link-item:active {
+  background: #f0fbfa;
 }
 .link-name {
   font-size: 30rpx;
   color: #222;
   font-weight: 600;
-  flex: 0 0 auto;
-  max-width: 240rpx;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.link-url {
   flex: 1;
-  font-size: 24rpx;
-  color: #9aa0aa;
-  margin: 0 16rpx;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.link-arrow {
-  flex: 0 0 auto;
-  font-size: 24rpx;
-  color: #4ECDC4;
-  border: 1rpx solid #4ECDC4;
-  border-radius: 24rpx;
-  padding: 6rpx 20rpx;
+  min-width: 0;
+  line-height: 1.45;
+  overflow-wrap: break-word;
 }
 
 /* 空态 */
