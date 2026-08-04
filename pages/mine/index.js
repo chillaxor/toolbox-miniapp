@@ -4,15 +4,35 @@ Page({
   data: {
     totalUsage: 0,
     favoriteCount: 0,
-    cacheSize: ''
+    cacheSize: '',
+    homepageV2: true
   },
 
-  onLoad: function () { this.loadStats(); },
+  onLoad: function () {
+    var stored;
+    try { stored = wx.getStorageSync('homepage_v2'); } catch (e) {}
+    if (typeof stored === 'boolean') this.data.homepageV2 = stored;
+    this.loadStats();
+  },
   onShow: function () {
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       this.getTabBar().setData({ selected: 3 });
     }
+    var stored;
+    try { stored = wx.getStorageSync('homepage_v2'); } catch (e) {}
+    if (typeof stored === 'boolean') this.setData({ homepageV2: stored });
     this.loadStats();
+  },
+
+  onToggleHomeV2: function (e) {
+    var val = e.detail.value;
+    try { wx.setStorageSync('homepage_v2', val); } catch (err) {}
+    var app = getApp();
+    if (app.globalData && app.globalData.featureFlags) {
+      app.globalData.featureFlags.homepageV2 = val;
+    }
+    this.setData({ homepageV2: val });
+    wx.showToast({ title: val ? '已切新版首页' : '已切旧版首页', icon: 'none' });
   },
 
   loadStats: function () {

@@ -35,7 +35,9 @@ Page({
     activeColor: '#FF6B35',
     currentTools: [],
     recentTools: [],
-    featuredList: []
+    featuredList: [],
+    homepageV2: true,
+    popularGroups: []
   },
 
   onLoad: function () {
@@ -54,6 +56,7 @@ Page({
       this._flags = flags;
       this.applyFeatureFlags(flags);
     }
+    this._refreshHomeV2();
     this._loadRecent();
   },
 
@@ -89,6 +92,57 @@ Page({
 
     this._maybeLoadFeatured();
     this._loadRecent();
+    this._refreshHomeV2();
+  },
+
+  /**
+   * @returns {boolean}
+   */
+  _resolveHomeV2: function () {
+    var stored;
+    try { stored = wx.getStorageSync('homepage_v2'); } catch (e) {}
+    if (typeof stored === 'boolean') return stored;
+    var app = getApp();
+    var flags = (app.globalData && app.globalData.featureFlags) || {};
+    return flags.homepageV2 !== false;
+  },
+
+  /**
+   * 构建「热门工具」分组：每个分类取前 3 个可见工具
+   * @returns {Array}
+   */
+  _buildPopular: function () {
+    var groups = [];
+    var cats = this.data.categoryList;
+    for (var i = 0; i < cats.length; i++) {
+      var cat = cats[i];
+      var tools = this.getVisibleTools(cat.id).slice(0, 3);
+      groups.push({
+        catId: cat.id,
+        name: cat.name,
+        color: cat.color,
+        bgColor: cat.bgColor,
+        tools: tools
+      });
+    }
+    return groups;
+  },
+
+  /**
+   * 刷新首页 V2 状态 + 热门分组；旧版则确保 currentTools 存在
+   */
+  _refreshHomeV2: function () {
+    var v2 = this._resolveHomeV2();
+    if (v2) {
+      this.setData({ homepageV2: true, popularGroups: this._buildPopular() });
+    } else {
+      var patch = { homepageV2: false };
+      if (!this.data.currentTools.length) {
+        var active = this.data.categoryList[this.data.activeCategoryIndex];
+        patch.currentTools = this.getVisibleTools(active.id);
+      }
+      this.setData(patch);
+    }
   },
 
   _buildImageFallback: function () {
@@ -233,11 +287,19 @@ Page({
   },
 
   /**
-   * 切换分类：更新列表并滚动定位到工具列表
+   * 切换分类：
+   *  - V2 首页：进入独立分类页（密集网格浏览，滚动量锐减）
+   *  - 旧版首页：替换下方长列表并滚动定位
    */
   onCategoryTap: function (e) {
     var index = e.currentTarget.dataset.index;
     var category = this.data.categoryList[index];
+
+    if (this.data.homepageV2) {
+      wx.navigateTo({ url: '/pages/category/category?id=' + category.id });
+      return;
+    }
+
     var currentTools = this.getVisibleTools(category.id);
 
     this.setData({
@@ -250,6 +312,14 @@ Page({
     try {
       wx.pageScrollTo({ selector: '#toolList', duration: 300 });
     } catch (err) {}
+  },
+
+  /**
+   * 热门分组「查看全部」→ 进入独立分类页
+   */
+  onViewAll: function (e) {
+    var catId = e.currentTarget.dataset.cat;
+    wx.navigateTo({ url: '/pages/category/category?id=' + catId });
   },
 
   /**

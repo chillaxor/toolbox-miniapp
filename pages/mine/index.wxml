@@ -40,6 +40,10 @@
 
   <!-- 设置 -->
   <view class="card">
+    <view class="setting-item">
+      <text class="setting-label">新版首页布局</text>
+      <switch class="setting-switch" checked="{{homepageV2}}" bindchange="onToggleHomeV2" color="#4ECDC4" />
+    </view>
     <view class="setting-item" bindtap="onClearCache">
       <text class="setting-label">清除缓存</text>
       <text class="setting-arrow">▶</text>

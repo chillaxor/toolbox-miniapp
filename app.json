@@ -4,7 +4,8 @@
     "pages/tanxiang/index",
     "pages/favorites/index",
     "pages/history/index",
-    "pages/mine/index"
+    "pages/mine/index",
+    "pages/category/category"
   ],
   "subpackages": [
     {

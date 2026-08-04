@@ -121,7 +121,8 @@ App({
       calendarKids: false,
       clockKids: false,
       wordle: false,
-      linknav: false
+      linknav: false,
+      homepageV2: true
     }
   }
 });

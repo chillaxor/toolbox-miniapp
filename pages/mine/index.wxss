@@ -47,6 +47,11 @@
   color: var(--color-hint);
 }
 
+.setting-switch {
+  transform: scale(0.9);
+  margin-right: -10rpx;
+}
+
 page {
   padding-bottom: calc(110rpx + env(safe-area-inset-bottom));
 }

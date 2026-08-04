@@ -49,6 +49,8 @@ Page({
   _startTime: 0,       // 倒计时开始的时刻戳
   _pausedElapsed: 0,   // 暂停时已经过去的毫秒数
   _totalMs: 0,         // 总毫秒数
+  _isRunning: false,   // 是否正在运行（用实例变量，避免 setData 异步导致 _tick 误判）
+  _isPaused: false,    // 是否暂停（同上，同步可读）
 
   onLoad: function () {
     // 获取屏幕亮度
@@ -74,9 +76,10 @@ Page({
   },
 
   onShow: function () {
-    // 如果正在运行，重新校准显示
-    if (this.data.isRunning && !this.data.isPaused) {
-      this._tick();
+    // 回到前台：如果正在倒计时且未暂停，重新启动定时器（后台时 setInterval 可能被系统回收）
+    // 用时间戳差值自动补齐后台流逝的时间，无需手动续算
+    if (this._isRunning && !this._isPaused) {
+      this._startTimer();
     }
   },
 
@@ -164,6 +167,8 @@ Page({
     this._totalMs = totalSec * 1000;
     this._pausedElapsed = 0;
     this._startTime = Date.now();
+    this._isRunning = true;
+    this._isPaused = false;
 
     // 保持屏幕常亮
     wx.setKeepScreenOn({ keepScreenOn: true });
@@ -183,9 +188,10 @@ Page({
   },
 
   onPause: function () {
-    if (this.data.isPaused) {
-      // 恢复
+    if (this._isPaused) {
+      // 恢复：以当前时刻为新的起点，已暂停时长累加到 _pausedElapsed
       this._startTime = Date.now();
+      this._isPaused = false;
       this.setData({ isPaused: false });
       this._startTimer();
     } else {
@@ -193,6 +199,7 @@ Page({
       this._clearTimer();
       var elapsed = Date.now() - this._startTime;
       this._pausedElapsed = this._pausedElapsed + elapsed;
+      this._isPaused = true;
       this.setData({ isPaused: true });
     }
   },
@@ -200,6 +207,10 @@ Page({
   onReset: function () {
     this._clearTimer();
     this._restoreBrightness();
+    this._isRunning = false;
+    this._isPaused = false;
+    this._pausedElapsed = 0;
+    this._startTime = 0;
 
     // 显示导航栏
     wx.showNavigationBar({
@@ -222,19 +233,23 @@ Page({
   // ========== 定时器逻辑 ==========
 
   _startTimer: function () {
+    if (!this._isRunning || this._isPaused) return;
     var that = this;
     this._clearTimer();
-
-    // 立即执行一次
-    this._tick();
-
-    this._timer = setInterval(function () {
+    // 递归 setTimeout：微信环境比 setInterval 更可靠，后台回收后 onShow 能稳定续上
+    var loop = function () {
+      if (!that._isRunning || that._isPaused) return;
       that._tick();
-    }, 100); // 100ms 刷新，保证流畅
+      if (that._isRunning && !that._isPaused) {
+        that._timer = setTimeout(loop, 100);
+      }
+    };
+    // 先建好定时器，再走第一帧；即使首帧 canvas 尚未渲染导致绘制抛错，也不会影响计时本身
+    that._timer = setTimeout(loop, 0);
   },
 
   _tick: function () {
-    if (!this.data.isRunning || this.data.isPaused) return;
+    if (!this._isRunning || this._isPaused) return;
 
     var now = Date.now();
     var elapsed = this._pausedElapsed + (now - this._startTime);
@@ -252,6 +267,7 @@ Page({
         isRunning: false,
         isTimeUp: true
       });
+      this._isRunning = false;
       this._drawProgressRing(1);
       this._onTimeUp();
       return;
@@ -278,7 +294,7 @@ Page({
 
   _clearTimer: function () {
     if (this._timer) {
-      clearInterval(this._timer);
+      clearTimeout(this._timer);
       this._timer = null;
     }
   },
@@ -336,61 +352,65 @@ Page({
   // ========== Canvas 绘制圆环进度条 ==========
 
   _drawProgressRing: function (progress) {
-    var canvasWidth = this.data.canvasWidth;
-    var canvasHeight = this.data.canvasHeight;
+    try {
+      var canvasWidth = this.data.canvasWidth;
+      var canvasHeight = this.data.canvasHeight;
 
-    if (!canvasWidth || canvasWidth <= 0) return;
+      if (!canvasWidth || canvasWidth <= 0) return;
 
-    var ctx = wx.createCanvasContext('progressCanvas', this);
-    var centerX = canvasWidth / 2;
-    var centerY = canvasHeight / 2;
-    var lineWidth = Math.max(6, canvasWidth * 0.04);
-    var radius = centerX - lineWidth;
+      var ctx = wx.createCanvasContext('progressCanvas', this);
+      var centerX = canvasWidth / 2;
+      var centerY = canvasHeight / 2;
+      var lineWidth = Math.max(6, canvasWidth * 0.04);
+      var radius = centerX - lineWidth;
 
-    // 清空画布
-    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+      // 清空画布
+      ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
-    // 背景圆环
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
-    ctx.setStrokeStyle('rgba(255, 255, 255, 0.15)');
-    ctx.setLineWidth(lineWidth);
-    ctx.setLineCap('round');
-    ctx.stroke();
-
-    // 进度圆环
-    if (progress > 0) {
-      var startAngle = -Math.PI / 2;
-      var endAngle = startAngle + 2 * Math.PI * progress;
-
-      // 渐变色：根据进度从绿色到橙色到红色
-      var color;
-      if (progress < 0.6) {
-        color = '#4ECDC4';
-      } else if (progress < 0.85) {
-        color = '#FF6B35';
-      } else {
-        color = '#E74C3C';
-      }
-
+      // 背景圆环
       ctx.beginPath();
-      ctx.arc(centerX, centerY, radius, startAngle, endAngle);
-      ctx.setStrokeStyle(color);
+      ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+      ctx.setStrokeStyle('rgba(255, 255, 255, 0.15)');
       ctx.setLineWidth(lineWidth);
       ctx.setLineCap('round');
       ctx.stroke();
 
-      // 进度末端的小圆点发光效果
-      var dotX = centerX + radius * Math.cos(endAngle);
-      var dotY = centerY + radius * Math.sin(endAngle);
-      ctx.beginPath();
-      ctx.arc(dotX, dotY, lineWidth * 0.8, 0, 2 * Math.PI);
-      ctx.setFillStyle(color);
-      ctx.setShadow(0, 0, 8, color);
-      ctx.fill();
-      ctx.setShadow(0, 0, 0, 'transparent');
-    }
+      // 进度圆环
+      if (progress > 0) {
+        var startAngle = -Math.PI / 2;
+        var endAngle = startAngle + 2 * Math.PI * progress;
 
-    ctx.draw();
+        // 渐变色：根据进度从绿色到橙色到红色
+        var color;
+        if (progress < 0.6) {
+          color = '#4ECDC4';
+        } else if (progress < 0.85) {
+          color = '#FF6B35';
+        } else {
+          color = '#E74C3C';
+        }
+
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+        ctx.setStrokeStyle(color);
+        ctx.setLineWidth(lineWidth);
+        ctx.setLineCap('round');
+        ctx.stroke();
+
+        // 进度末端的小圆点发光效果
+        var dotX = centerX + radius * Math.cos(endAngle);
+        var dotY = centerY + radius * Math.sin(endAngle);
+        ctx.beginPath();
+        ctx.arc(dotX, dotY, lineWidth * 0.8, 0, 2 * Math.PI);
+        ctx.setFillStyle(color);
+        ctx.setShadow(0, 0, 8, color);
+        ctx.fill();
+        ctx.setShadow(0, 0, 0, 'transparent');
+      }
+
+      ctx.draw();
+    } catch (e) {
+      // 首帧 canvas 尚未渲染时 draw 可能抛错，忽略即可，下一帧自然正常
+    }
   }
 });

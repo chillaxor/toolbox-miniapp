@@ -1,0 +1,201 @@
+/* 独立分类页 · 三列密集网格浏览 */
+.container {
+  min-height: 100vh;
+  background-color: #F6F7FB;
+}
+
+/* ========== 吸顶头 ========== */
+.cat-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  padding: calc(env(safe-area-inset-top) + 20rpx) 28rpx 20rpx;
+  box-shadow: 0 6rpx 18rpx rgba(31, 38, 89, 0.06);
+}
+
+.cat-head-bar {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.cat-head-ico {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 22rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40rpx;
+  color: #fff;
+  margin-right: 18rpx;
+  flex-shrink: 0;
+}
+
+.cat-head-name {
+  font-size: 36rpx;
+  font-weight: 800;
+  color: #2a2e3d;
+}
+
+.cat-head-count {
+  margin-left: auto;
+  font-size: 22rpx;
+  color: #7a8090;
+  background: rgba(255, 255, 255, 0.7);
+  padding: 6rpx 18rpx;
+  border-radius: 20rpx;
+}
+
+/* 搜索胶囊 */
+.cat-search {
+  display: flex;
+  align-items: center;
+  height: 80rpx;
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 40rpx;
+  padding: 0 28rpx;
+  box-shadow: 0 4rpx 12rpx rgba(31, 38, 89, 0.05);
+}
+
+.cat-search-ico {
+  font-size: 30rpx;
+  margin-right: 12rpx;
+  flex-shrink: 0;
+}
+
+.cat-search-input {
+  flex: 1;
+  height: 80rpx;
+  font-size: 28rpx;
+  color: #2a2e3d;
+}
+
+/* 筛选 chips */
+.cat-chips {
+  display: flex;
+  gap: 16rpx;
+  margin-top: 18rpx;
+}
+
+.cat-chip {
+  font-size: 26rpx;
+  color: #5a6072;
+  background: rgba(255, 255, 255, 0.75);
+  padding: 10rpx 30rpx;
+  border-radius: 30rpx;
+  transition: all 0.15s ease;
+}
+
+.chip-on {
+  color: #fff;
+  font-weight: 700;
+}
+
+/* chip 选中色随分类主色（inline style 注入 background） */
+.chip-on {
+  background: var(--chip-color, #FF6B35);
+}
+
+/* ========== 网格 ========== */
+.cat-body {
+  padding: 24rpx 28rpx 0;
+}
+
+.cat-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20rpx;
+}
+
+.cat-card-x {
+  width: calc((100% - 40rpx) / 3);
+  background: #ffffff;
+  border-radius: 24rpx;
+  padding: 26rpx 14rpx 22rpx;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 4rpx 14rpx rgba(31, 38, 89, 0.05);
+}
+
+.cat-card-hover {
+  transform: scale(0.96);
+  background: #fafbff;
+}
+
+.cat-card-ico {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 46rpx;
+  margin-bottom: 16rpx;
+}
+
+.cat-card-name-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.cat-card-name {
+  font-size: 25rpx;
+  font-weight: 600;
+  color: #2a2e3d;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 150rpx;
+}
+
+.cat-card-badge {
+  margin-left: 8rpx;
+  padding: 1rpx 9rpx;
+  font-size: 17rpx;
+  font-weight: 600;
+  line-height: 1.5;
+  border-radius: 999rpx;
+  flex-shrink: 0;
+}
+
+/* 角标配色与首页保持一致 */
+.badge-hot {
+  color: #E8442E;
+  background: #FFE9E0;
+}
+
+.badge-praise {
+  color: #C77800;
+  background: #FFF3D6;
+}
+
+/* ========== 空态 ========== */
+.cat-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120rpx 0;
+}
+
+.cat-empty-icon {
+  font-size: 80rpx;
+  margin-bottom: 24rpx;
+}
+
+.cat-empty-text {
+  font-size: 28rpx;
+  color: #9aa0ad;
+}
+
+/* 底部留白：覆盖固定自定义 tabBar 遮挡 */
+.bottom-space {
+  height: calc(130rpx + env(safe-area-inset-bottom));
+}
