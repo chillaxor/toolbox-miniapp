@@ -142,6 +142,7 @@ const TOOLS = [
   { id: 'commandreaction', name: '指令反应', category: 'fun', icon: '🕹️', path: '/packages/toolsA/commandreaction/index', description: '手机下指令·你来做动作·测反应抗干扰' },
   { id: 'drawguess', name: '多图编号抢答画猜', category: 'fun', icon: '🎨', path: '/packages/toolsA/drawguess/index', description: '多图编号·线下画·抢答猜词·聚会必备' },
   { id: 'guessword', name: '头顶猜词', category: 'fun', icon: '📱', path: '/packages/toolsB/guessword/index', description: '手机顶头上·对面描述·翻手机切词·双人聚会' },
+  { id: 'wordle', name: '汉兜猜词', category: 'fun', icon: '🟩', path: '/packages/toolsB/wordle/index', description: '6次猜4字成语·绿黄灰提示·每日一题' },
   { id: 'clueguess', name: '小小侦探', category: 'fun', icon: '🕵️', path: '/packages/toolsA/clueguess/index', description: '搜集线索·缩圈排除·指认凶手·侦探徽章' },
   { id: 'friendship', name: '友谊修复', category: 'fun', icon: '🤝', path: '/packages/toolsB/friendship/index', description: '模拟吵架·识别情绪·选对方式和解·关系升温' },
   { id: 'pipeconnect', name: '水管连接', category: 'fun', icon: '🚰', path: '/packages/toolsB/pipeconnect/index', description: '旋转管道连通水路·考验空间想象力' },
@@ -163,7 +164,9 @@ const TOOLS = [
   { id: 'division', name: '除法启蒙', category: 'study', icon: '➗', path: '/packages/toolsB/division/index', description: '平均分·连减·用口诀求商·二年级同步', badge: 'hot' },
   { id: 'pizzaFraction', name: '分披萨', category: 'study', icon: '🍕', path: '/packages/toolsB/pizzaFraction/index', description: '图形等分学 1/2、1/3、1/4、1/8·动画切分' },
   { id: 'matchstick', name: '火柴棒算式', category: 'study', icon: '🧮', path: '/packages/toolsB/matchstick/index', description: '移动一根火柴让等式成立·七段数码管·练逻辑', badge: 'hot' },
-  { id: 'coordinate', name: '坐标寻宝', category: 'study', icon: '🗺️', path: '/packages/toolsB/coordinate/index', description: 'XY网格按提示找宝物·坐标(x,y)启蒙·坐标系入门' }
+  { id: 'coordinate', name: '坐标寻宝', category: 'study', icon: '🗺️', path: '/packages/toolsB/coordinate/index', description: 'XY网格按提示找宝物·坐标(x,y)启蒙·坐标系入门' },
+  { id: 'calendarKids', name: '年月日历', category: 'study', icon: '📆', path: '/packages/toolsB/calendarKids/index', description: '认月份·学大小月口诀·闰年判断·翻真实月历' },
+  { id: 'clockKids', name: '钟表小能手', category: 'study', icon: '🕐', path: '/packages/toolsB/clockKids/index', description: '认整时半时·学几时几分·动手拨一拨·一年级同步' }
 ];
 
 /**

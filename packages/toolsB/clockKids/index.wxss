@@ -1,0 +1,89 @@
+.page { padding: 24rpx 24rpx 60rpx; background: #FFF3E0; min-height: 100vh; box-sizing: border-box; }
+
+/* 顶部切换 */
+.tabs { display: flex; background: #fff; border-radius: 20rpx; padding: 8rpx; box-shadow: 0 4rpx 16rpx rgba(255,152,0,.14); }
+.tab { flex: 1; text-align: center; padding: 18rpx 0; font-size: 28rpx; color: #8a6d4b; border-radius: 16rpx; }
+.tab-on { background: #FF9800; color: #fff; font-weight: 500; }
+
+.section-title { font-size: 30rpx; font-weight: 500; color: #E65100; margin: 34rpx 8rpx 18rpx; }
+.tip { font-size: 24rpx; color: #8a6d4b; line-height: 1.6; margin: 10rpx 8rpx; background: #fff; border-radius: 14rpx; padding: 16rpx 20rpx; }
+
+/* ===== 表盘（纯 CSS） ===== */
+.clock-face {
+  position: relative;
+  width: 560rpx; height: 560rpx;
+  border-radius: 50%;
+  background: #fffdf8;
+  border: 10rpx solid #FFB74D;
+  margin: 10rpx auto;
+  box-shadow: 0 8rpx 24rpx rgba(255,152,0,.18);
+  box-sizing: border-box;
+}
+.clock-sm { width: 280rpx; height: 280rpx; border-width: 6rpx; margin: 0; }
+.c-num {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 60rpx; height: 60rpx; line-height: 60rpx;
+  text-align: center; font-size: 34rpx; color: #5d4037; font-weight: 500;
+}
+.clock-sm .c-num { width: 40rpx; height: 40rpx; line-height: 40rpx; font-size: 24rpx; }
+.hand { position: absolute; left: 50%; bottom: 50%; transform-origin: 50% 100%; border-radius: 999rpx; }
+.hand-hour { width: 14rpx; height: 150rpx; margin-left: -7rpx; background: #37474F; }
+.hand-min { width: 10rpx; height: 220rpx; margin-left: -5rpx; background: #FB8C00; }
+.clock-sm .hand-hour { width: 9rpx; height: 76rpx; margin-left: -4.5rpx; }
+.clock-sm .hand-min { width: 6rpx; height: 110rpx; margin-left: -3rpx; }
+.clock-center { position: absolute; left: 50%; top: 50%; width: 26rpx; height: 26rpx; margin: -13rpx 0 0 -13rpx; border-radius: 50%; background: #37474F; }
+.clock-sm .clock-center { width: 16rpx; height: 16rpx; margin: -8rpx 0 0 -8rpx; }
+
+/* 指针图例 */
+.legend { margin: 18rpx 8rpx 0; background: #fff; border-radius: 14rpx; padding: 16rpx 20rpx; }
+.lg { display: flex; align-items: center; font-size: 26rpx; color: #5d4037; line-height: 1.8; }
+.lg-bar { width: 40rpx; height: 10rpx; border-radius: 999rpx; margin-right: 16rpx; }
+.lg-hour { background: #37474F; height: 14rpx; }
+.lg-min { background: #FB8C00; }
+
+.demo-btn { margin: 20rpx 8rpx 0; text-align: center; padding: 20rpx 0; background: #FFE0B2; color: #E65100; border-radius: 16rpx; font-size: 28rpx; font-weight: 500; }
+.demo-btn.demo-on { background: #FF9800; color: #fff; }
+
+/* 难度选择 */
+.levels { display: flex; gap: 16rpx; margin: 8rpx 8rpx 0; }
+.lv { flex: 1; text-align: center; padding: 16rpx 0; background: #fff; border-radius: 14rpx; font-size: 26rpx; color: #8a6d4b; }
+.lv-on { background: #FF9800; color: #fff; font-weight: 500; }
+
+/* 选项 chip */
+.pick-label { font-size: 26rpx; color: #8a6d4b; margin: 22rpx 8rpx 10rpx; }
+.chip-row { display: flex; flex-wrap: wrap; gap: 14rpx; padding: 0 8rpx; }
+.chip {
+  min-width: 76rpx; text-align: center;
+  padding: 16rpx 0; background: #fff; border-radius: 14rpx;
+  font-size: 28rpx; color: #5d4037; box-shadow: 0 2rpx 6rpx rgba(0,0,0,.05);
+}
+.chip.chip-on { background: #FF9800; color: #fff; font-weight: 500; }
+
+.next-btn { margin: 26rpx 8rpx 0; text-align: center; padding: 22rpx 0; background: #FF9800; color: #fff; border-radius: 16rpx; font-size: 30rpx; font-weight: 500; }
+
+/* 反馈 + 推导步骤 */
+.feedback { margin: 22rpx 8rpx 0; font-size: 28rpx; font-weight: 500; }
+.feedback.ok { color: #2E7D32; }
+.feedback.no { color: #C62828; }
+
+.steps { margin: 16rpx 8rpx 0; }
+.step { background: #fff; border-radius: 16rpx; padding: 18rpx 22rpx; margin-bottom: 12rpx; border-left: 8rpx solid #FFCC80; box-shadow: 0 3rpx 10rpx rgba(0,0,0,.05); }
+.step-label { font-size: 28rpx; font-weight: 500; color: #E65100; }
+.step-detail { font-size: 25rpx; color: #5d4037; margin-top: 6rpx; line-height: 1.6; }
+
+/* 拨时间：目标区 */
+.set-top { display: flex; justify-content: center; }
+.set-goal { background: #fff; border-radius: 18rpx; padding: 18rpx; text-align: center; box-shadow: 0 4rpx 12rpx rgba(0,0,0,.06); }
+.goal-label { font-size: 24rpx; color: #8a6d4b; }
+.goal-text { font-size: 40rpx; font-weight: 500; color: #E65100; margin: 6rpx 0 12rpx; }
+
+/* 闯关 */
+.ch-head { display: flex; justify-content: space-between; align-items: center; margin: 12rpx 8rpx 6rpx; }
+.ch-progress { font-size: 28rpx; color: #8a6d4b; }
+.ch-score { font-size: 28rpx; font-weight: 500; color: #E65100; }
+
+.result-card { margin-top: 80rpx; background: #fff; border-radius: 24rpx; padding: 50rpx 30rpx; text-align: center; box-shadow: 0 8rpx 24rpx rgba(255,152,0,.16); }
+.result-title { font-size: 38rpx; font-weight: 500; color: #E65100; }
+.result-score { font-size: 80rpx; font-weight: 500; color: #FF9800; margin: 16rpx 0; }
+.result-sub { font-size: 26rpx; color: #8a6d4b; }

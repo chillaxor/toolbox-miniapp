@@ -1,0 +1,41 @@
+<view class="page">
+  <view class="head">
+    <text class="title">汉兜猜词</text>
+    <view class="modes">
+      <text class="mode {{mode === 'daily' ? 'on' : ''}}" bindtap="onDaily">每日一题</text>
+      <text class="mode {{mode === 'free' ? 'on' : ''}}" bindtap="onRestart">自由练习</text>
+    </view>
+  </view>
+
+  <view class="grid">
+    <view class="row" wx:for="{{grid}}" wx:for-item="row" wx:key="k">
+      <view class="cell {{cell.cls}}" wx:for="{{row.cells}}" wx:for-item="cell" wx:key="k">
+        <text class="ch">{{cell.char}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="msg" wx:if="{{message}}">{{message}}</view>
+
+  <input class="inp" value="{{draft}}" maxlength="{{WORD_LEN}}" bindinput="onInput" bindconfirm="onSubmit" placeholder="输入4个汉字" confirm-type="search" />
+
+  <button class="btn" bindtap="onSubmit">猜 一 猜</button>
+
+  <view class="stats" wx:if="{{stats.played > 0}}">
+    <view class="stat"><text class="num">{{stats.played}}</text><text class="lab">局数</text></view>
+    <view class="stat"><text class="num">{{stats.wins}}</text><text class="lab">胜</text></view>
+    <view class="stat"><text class="num">{{stats.streak}}</text><text class="lab">连胜</text></view>
+    <view class="stat"><text class="num">{{winRateText}}</text><text class="lab">胜率</text></view>
+  </view>
+
+  <view class="result" wx:if="{{showResult}}">
+    <view class="mask" bindtap="closeResult"></view>
+    <view class="panel">
+      <text class="rtitle">{{status === 'won' ? '猜对啦！' : '差一点'}}</text>
+      <text class="rword">答案：{{reveal}}</text>
+      <textarea class="share" value="{{shareText}}" disabled auto-height></textarea>
+      <button class="btn" bindtap="onShare">复制战绩</button>
+      <button class="btn ghost" bindtap="onRestart">再来一局</button>
+    </view>
+  </view>
+</view>

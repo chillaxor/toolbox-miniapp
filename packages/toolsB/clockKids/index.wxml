@@ -1,0 +1,164 @@
+<view class="page">
+
+  <!-- 顶部模块切换 -->
+  <view class="tabs">
+    <view wx:for="{{tabs}}" wx:key="id" class="tab {{tab === item.id ? 'tab-on' : ''}}" data-tab="{{item.id}}" bindtap="switchTab">{{item.name}}</view>
+  </view>
+
+  <!-- ============ 模块A：认识钟表 ============ -->
+  <block wx:if="{{tab === 'face'}}">
+    <view class="section-title">钟表上有什么</view>
+    <view class="clock-face">
+      <view wx:for="{{clockNumbers}}" wx:key="n" class="c-num" style="left:{{item.x}}%;top:{{item.y}}%;">{{item.n}}</view>
+      <view class="hand hand-hour" style="transform: rotate({{faceClock.hourAngle}}deg);"></view>
+      <view class="hand hand-min" style="transform: rotate({{faceClock.minuteAngle}}deg);"></view>
+      <view class="clock-center"></view>
+    </view>
+
+    <view class="legend">
+      <view class="lg"><view class="lg-bar lg-hour"></view>时针：短粗，指「几时」</view>
+      <view class="lg"><view class="lg-bar lg-min"></view>分针：细长，指「几分」</view>
+    </view>
+
+    <view class="demo-btn {{faceDemoRun ? 'demo-on' : ''}}" bindtap="toggleDemo">{{faceDemoRun ? '⏸ 暂停演示' : '▶ 让分针走一圈'}}</view>
+    <view class="tip">{{faceCaption}}</view>
+
+    <view class="section-title">记住这两点</view>
+    <view class="tip">• 分针走一大圈（60 小格 = 60 分），时针才走 1 大格 —— 这就是 1 小时。</view>
+    <view class="tip">• 分针指 12 是整时；指 6 是半时；指其他大格要数「几 × 5」分。</view>
+  </block>
+
+  <!-- ============ 模块B：认时间 ============ -->
+  <block wx:if="{{tab === 'read'}}">
+    <view class="levels">
+      <view class="lv {{readLevel === 'easy' ? 'lv-on' : ''}}" data-level="easy" bindtap="onReadLevel">简单·整时半时</view>
+      <view class="lv {{readLevel === 'hard' ? 'lv-on' : ''}}" data-level="hard" bindtap="onReadLevel">进阶·几时几分</view>
+    </view>
+
+    <view class="section-title">钟表上显示的是几点？</view>
+    <view class="clock-face">
+      <view wx:for="{{clockNumbers}}" wx:key="n" class="c-num" style="left:{{item.x}}%;top:{{item.y}}%;">{{item.n}}</view>
+      <view class="hand hand-hour" style="transform: rotate({{readClock.hourAngle}}deg);"></view>
+      <view class="hand hand-min" style="transform: rotate({{readClock.minuteAngle}}deg);"></view>
+      <view class="clock-center"></view>
+    </view>
+
+    <view class="pick-label">选一选：时</view>
+    <view class="chip-row">
+      <view wx:for="{{readChipsHour}}" wx:key="n" class="chip {{item.selected ? 'chip-on' : ''}}" data-scope="read" data-index="{{index}}" bindtap="onHourTap">{{item.n}}</view>
+    </view>
+    <view class="pick-label">分（每大格 = 5 分）</view>
+    <view class="chip-row">
+      <view wx:for="{{readChipsMin}}" wx:key="m" class="chip {{item.selected ? 'chip-on' : ''}}" data-scope="read" data-index="{{index}}" bindtap="onMinTap">{{item.m}}</view>
+    </view>
+
+    <view wx:if="{{!readChecked}}" class="next-btn" data-scope="read" bindtap="onCheck">我读好啦，检查一下</view>
+
+    <block wx:if="{{readChecked}}">
+      <view class="feedback {{readCorrect ? 'ok' : 'no'}}">{{readFeedback}}</view>
+      <view class="steps">
+        <view wx:for="{{readSteps}}" wx:key="key" class="step">
+          <view class="step-label">{{item.label}}</view>
+          <view class="step-detail">{{item.detail}}</view>
+        </view>
+      </view>
+      <view class="next-btn" data-scope="read" bindtap="onNext">换一题</view>
+    </block>
+  </block>
+
+  <!-- ============ 模块C：拨时间 ============ -->
+  <block wx:if="{{tab === 'set'}}">
+    <view class="section-title">请拨出这个时间</view>
+    <view class="set-top">
+      <view class="set-goal">
+        <view class="goal-label">目标</view>
+        <view class="goal-text">{{setQuiz.text}}</view>
+        <view class="clock-face clock-sm">
+          <view wx:for="{{clockNumbers}}" wx:key="n" class="c-num" style="left:{{item.x}}%;top:{{item.y}}%;">{{item.n}}</view>
+          <view class="hand hand-hour" style="transform: rotate({{setTargetClock.hourAngle}}deg);"></view>
+          <view class="hand hand-min" style="transform: rotate({{setTargetClock.minuteAngle}}deg);"></view>
+          <view class="clock-center"></view>
+        </view>
+      </view>
+    </view>
+
+    <view class="section-title">我的钟表（点下面的数字拨针）</view>
+    <view class="clock-face">
+      <view wx:for="{{clockNumbers}}" wx:key="n" class="c-num" style="left:{{item.x}}%;top:{{item.y}}%;">{{item.n}}</view>
+      <view class="hand hand-hour" style="transform: rotate({{setMyClock.hourAngle}}deg);"></view>
+      <view class="hand hand-min" style="transform: rotate({{setMyClock.minuteAngle}}deg);"></view>
+      <view class="clock-center"></view>
+    </view>
+
+    <view class="pick-label">拨到：时</view>
+    <view class="chip-row">
+      <view wx:for="{{setChipsHour}}" wx:key="n" class="chip {{item.selected ? 'chip-on' : ''}}" data-scope="set" data-index="{{index}}" bindtap="onSetHourTap">{{item.n}}</view>
+    </view>
+    <view class="pick-label">拨到：分</view>
+    <view class="chip-row">
+      <view wx:for="{{setChipsMin}}" wx:key="m" class="chip {{item.selected ? 'chip-on' : ''}}" data-scope="set" data-index="{{index}}" bindtap="onSetMinTap">{{item.m}}</view>
+    </view>
+
+    <view wx:if="{{!setChecked}}" class="next-btn" bindtap="onSetCheck">检查拨得对不对</view>
+
+    <block wx:if="{{setChecked}}">
+      <view class="feedback {{setCorrect ? 'ok' : 'no'}}">{{setFeedback}}</view>
+      <view class="steps">
+        <view wx:for="{{setSteps}}" wx:key="key" class="step">
+          <view class="step-label">{{item.label}}</view>
+          <view class="step-detail">{{item.detail}}</view>
+        </view>
+      </view>
+      <view class="next-btn" bindtap="onSetNext">再拨一个</view>
+    </block>
+  </block>
+
+  <!-- ============ 模块D：闯关 ============ -->
+  <block wx:if="{{tab === 'challenge'}}">
+    <block wx:if="{{chDone}}">
+      <view class="result-card">
+        <view class="result-title">闯关完成！</view>
+        <view class="result-score">{{chScore}} / {{chTotal}}</view>
+        <view class="result-sub">{{chScore === chTotal ? '全对，你是认钟表小高手！🌟' : (chScore * 2 >= chTotal ? '很棒，再多练练就更稳啦～' : '没关系，多玩几次就熟了！')}}</view>
+        <view class="next-btn" data-scope="challenge" bindtap="onNext">再来一局</view>
+      </view>
+    </block>
+
+    <block wx:else>
+      <view class="ch-head">
+        <view class="ch-progress">第 {{chRound}} / {{chTotalConst}} 题</view>
+        <view class="ch-score">得分 {{chScore}}</view>
+      </view>
+
+      <view class="clock-face">
+        <view wx:for="{{clockNumbers}}" wx:key="n" class="c-num" style="left:{{item.x}}%;top:{{item.y}}%;">{{item.n}}</view>
+        <view class="hand hand-hour" style="transform: rotate({{chClock.hourAngle}}deg);"></view>
+        <view class="hand hand-min" style="transform: rotate({{chClock.minuteAngle}}deg);"></view>
+        <view class="clock-center"></view>
+      </view>
+
+      <view class="pick-label">读出：时</view>
+      <view class="chip-row">
+        <view wx:for="{{chChipsHour}}" wx:key="n" class="chip {{item.selected ? 'chip-on' : ''}}" data-scope="challenge" data-index="{{index}}" bindtap="onHourTap">{{item.n}}</view>
+      </view>
+      <view class="pick-label">读出：分</view>
+      <view class="chip-row">
+        <view wx:for="{{chChipsMin}}" wx:key="m" class="chip {{item.selected ? 'chip-on' : ''}}" data-scope="challenge" data-index="{{index}}" bindtap="onMinTap">{{item.m}}</view>
+      </view>
+
+      <view wx:if="{{!chChecked}}" class="next-btn" data-scope="challenge" bindtap="onCheck">提交这一题</view>
+
+      <block wx:if="{{chChecked}}">
+        <view class="feedback {{chCorrect ? 'ok' : 'no'}}">{{chFeedback}}</view>
+        <view class="steps">
+          <view wx:for="{{chSteps}}" wx:key="key" class="step">
+            <view class="step-label">{{item.label}}</view>
+            <view class="step-detail">{{item.detail}}</view>
+          </view>
+        </view>
+        <view class="next-btn" data-scope="challenge" bindtap="onNext">{{chTotal >= 9 ? '看成绩' : '下一题'}}</view>
+      </block>
+    </block>
+  </block>
+
+</view>

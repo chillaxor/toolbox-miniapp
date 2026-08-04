@@ -117,7 +117,10 @@ App({
       unitprice: false,
       moneyPay: false,
       multTable: false,
-      division: false
+      division: false,
+      calendarKids: false,
+      clockKids: false,
+      wordle: false
     }
   }
 });

@@ -174,7 +174,10 @@
     "coordinate/index",
     "moneyPay/index",
     "multTable/index",
-    "division/index"
+    "division/index",
+    "calendarKids/index",
+        "clockKids/index",
+        "wordle/index"
   ]
     }
   ],

@@ -1,0 +1,130 @@
+<view class="page">
+
+  <!-- 顶部模块切换 -->
+  <view class="tabs">
+    <view wx:for="{{tabs}}" wx:key="id" class="tab {{tab === item.id ? 'tab-on' : ''}}" data-tab="{{item.id}}" bindtap="switchTab">{{item.name}}</view>
+  </view>
+
+  <!-- ============ 模块A：认识月份 ============ -->
+  <block wx:if="{{tab === 'sense'}}">
+    <view class="section-title">一年有 12 个月，天数不一样</view>
+    <view class="month-grid">
+      <view wx:for="{{months}}" wx:key="month" class="m-card {{item.cls}}" data-month="{{item.month}}" bindtap="onMonthTap">
+        <view class="m-name">{{item.name}}</view>
+        <view class="m-days">{{item.daysLabel}}天</view>
+        <view class="m-season">{{item.season}}季</view>
+      </view>
+    </view>
+
+    <view wx:if="{{selectedMonth}}" class="detail">
+      <view class="detail-h">{{selectedMonth.name}}：{{selectedMonth.daysLabel}}天</view>
+      <view class="detail-line">类型：{{selectedMonth.typeText}}</view>
+      <view class="detail-line">季节：{{selectedMonth.season}}季</view>
+      <view class="detail-line">拳头法：{{selectedMonth.knuckleText}}</view>
+    </view>
+
+    <view class="section-title">拳头记忆法</view>
+    <view class="knuckle-strip">
+      <view wx:for="{{knuckles}}" wx:key="month" class="kn {{item.cls}}">{{item.month}}</view>
+    </view>
+    <view class="tip">凸起=大月(31天)，凹下=小月(30天)；数到7月后从食指重新数 8、10、12</view>
+
+    <view class="section-title">为什么会有闰年？</view>
+    <view class="orbit">
+      <view class="sun">☀</view>
+      <view class="earth-track">
+        <view class="earth">🌍</view>
+      </view>
+    </view>
+    <view class="tip">地球绕太阳一圈约 365.2422 天，每 4 年攒出约 1 天 → 这一年的 2 月多 1 天，变成 29 天，叫闰年。</view>
+  </block>
+
+  <!-- ============ 模块B：口诀练习 ============ -->
+  <block wx:if="{{tab === 'rhyme'}}">
+    <view class="section-title">口诀填空</view>
+    <view class="rhyme-card">
+      <view class="rhyme-text">{{rhymeQuizzes[rhymeIdx].prefix}}<text class="blank">__</text>{{rhymeQuizzes[rhymeIdx].suffix}}</view>
+      <view class="r-choices">
+        <view wx:for="{{rhymeView}}" wx:key="text" class="r-choice {{item.cls}}" data-index="{{index}}" bindtap="onRhymeChoice">{{item.text}}</view>
+      </view>
+      <view wx:if="{{rhymeResult}}" class="r-fb {{rhymeResult.ok ? 'ok' : 'no'}}">{{rhymeResult.ok ? '答对啦！' : rhymeResult.hint}}</view>
+      <view wx:if="{{rhymeResult}}" class="next-btn" bindtap="nextRhyme">下一句口诀</view>
+    </view>
+
+    <view class="section-title">月份 → 天数</view>
+    <view class="quiz-card" wx:if="{{quizMonth}}">
+      <view class="q-text">{{quizMonth.question}}</view>
+      <view class="d-opts">
+        <view wx:for="{{quizMonth.options}}" wx:key="value" class="d-opt {{item.cls}}" data-index="{{index}}" bindtap="onMonthOptTap">{{item.value}}天</view>
+      </view>
+      <view wx:if="{{quizMonth.answered}}" class="q-fb">{{quizMonth.feedback}}</view>
+      <view wx:if="{{quizMonth.answered}}" class="next-btn" bindtap="nextMonthQuiz">换一题</view>
+    </view>
+
+    <view class="section-title">天数 → 哪些月份</view>
+    <view class="quiz-card" wx:if="{{quizDays}}">
+      <view class="q-text">{{quizDays.question}}</view>
+      <view class="m-chips">
+        <view wx:for="{{quizDays.chips}}" wx:key="month" class="m-chip {{item.cls}}" data-index="{{index}}" bindtap="onDaysChipTap">{{item.month}}月</view>
+      </view>
+      <view wx:if="{{!daysChecked}}" class="next-btn" bindtap="checkDaysQuiz">检查答案</view>
+      <view wx:if="{{daysChecked}}" class="q-fb">{{daysFeedback}}</view>
+      <view wx:if="{{daysChecked}}" class="next-btn" bindtap="nextDaysQuiz">换一题</view>
+    </view>
+  </block>
+
+  <!-- ============ 模块C：闰年判断 ============ -->
+  <block wx:if="{{tab === 'leap'}}">
+    <view class="section-title">先猜一猜，再看步骤</view>
+    <view class="year-row">
+      <view class="step-btn" bindtap="decLeap">−</view>
+      <input class="year-input" type="number" value="{{leapYear}}" bindinput="onLeapInput" />
+      <view class="step-btn" bindtap="incLeap">＋</view>
+    </view>
+    <view class="guess-row">
+      <view class="guess leap" bindtap="guessLeap" data-leap="1">我猜是闰年 🟢</view>
+      <view class="guess flat" bindtap="guessLeap" data-leap="0">我猜是平年 ⚪</view>
+    </view>
+
+    <view class="steps" wx:if="{{leapView.length}}">
+      <view wx:for="{{leapView}}" wx:key="label" class="step {{item.cls}}">
+        <view class="step-label">{{item.label}}</view>
+        <view class="step-detail">{{item.detail}}</view>
+        <view class="step-result">{{item.result}}</view>
+      </view>
+    </view>
+
+    <view class="leap-result" wx:if="{{leapResult}}">
+      <view class="lr-title {{leapResult.isLeap ? 'leap' : 'flat'}}">{{leapResult.isLeap ? '闰年' : '平年'}} · 2月有 {{leapResult.febDays}} 天</view>
+      <view wx:if="{{leapResult.correct !== null}}" class="lr-ok {{leapResult.correct ? 'ok' : 'no'}}">{{leapResult.correct ? '你判断对啦！' : '再想想～'}}</view>
+      <view class="lr-expl">{{leapResult.expl}}</view>
+      <view class="next-btn" bindtap="resetLeap">重新判一个</view>
+    </view>
+  </block>
+
+  <!-- ============ 模块D：翻月历 ============ -->
+  <block wx:if="{{tab === 'calendar'}}">
+    <view class="cal-head">
+      <view class="nav" bindtap="prevYear">«</view>
+      <view class="nav" bindtap="prevMonth">‹</view>
+      <view class="cal-title">{{calYear}}年{{calMonth}}月</view>
+      <view class="nav" bindtap="nextMonth">›</view>
+      <view class="nav" bindtap="nextYear">»</view>
+    </view>
+    <view class="week-row">
+      <view class="wk">日</view><view class="wk">一</view><view class="wk">二</view><view class="wk">三</view><view class="wk">四</view><view class="wk">五</view><view class="wk">六</view>
+    </view>
+    <view class="cal-grid">
+      <view wx:for="{{calCells}}" wx:key="id" class="cell {{item.inMonth ? '' : 'out'}} {{item.isToday ? 'today' : ''}} {{item.isFestival ? 'fest' : ''}}" data-index="{{index}}" bindtap="onCellTap">
+        <view class="c-day">{{item.day}}</view>
+        <view wx:if="{{item.isFestival}}" class="c-fest">{{item.festivalName}}</view>
+      </view>
+    </view>
+    <view wx:if="{{calSelected}}" class="cal-detail">
+      <view class="cd-date">{{calSelected.date}} 星期{{calSelected.weekdayName}}</view>
+      <view wx:if="{{calSelected.festival}}" class="cd-fest">🎉 {{calSelected.festival}}</view>
+      <view class="cd-rel">{{calSelected.rel}}</view>
+    </view>
+  </block>
+
+</view>
