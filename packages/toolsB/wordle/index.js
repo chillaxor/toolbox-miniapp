@@ -33,7 +33,11 @@ Page({
     winRateText: '0%',
     showResult: false,
     reveal: '',
-    shareText: ''
+    shareText: '',
+    riddle: { meaning: '', pinyin: '', tags: [] },
+    firstChar: '',
+    hintFirst: false,
+    showRiddle: true
   },
 
   onLoad: function () {
@@ -67,21 +71,25 @@ Page({
 
   startGame: function (mode) {
     const dayIndex = E.dayIndexFromDate(new Date());
-    const answer = mode === 'free'
+    const entry = mode === 'free'
       ? ANSWERS[Math.floor(Math.random() * ANSWERS.length)]
       : E.pickWord('d' + dayIndex, ANSWERS);
     this.board = [];
     this.setData({
       mode: mode,
       dayIndex: dayIndex,
-      answer: answer,
+      answer: entry.word,
       status: 'playing',
       draft: '',
       message: '',
       showResult: false,
       reveal: '',
       shareText: '',
-      grid: emptyGrid()
+      grid: emptyGrid(),
+      riddle: { meaning: entry.meaning, pinyin: entry.pinyin, tags: entry.tags },
+      firstChar: '',
+      hintFirst: false,
+      showRiddle: true
     });
   },
 
@@ -132,6 +140,15 @@ Page({
       this.setData({ draft: '', message: '' });
     }
     this.renderGrid();
+  },
+
+  onHintFirst: function () {
+    if (this.data.hintFirst || this.data.status !== 'playing') return;
+    this.setData({ hintFirst: true, firstChar: this.data.answer[0], message: '提示：首字为「' + this.data.answer[0] + '」' });
+  },
+
+  toggleRiddle: function () {
+    this.setData({ showRiddle: !this.data.showRiddle });
   },
 
   finishGame: function (won) {

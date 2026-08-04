@@ -177,7 +177,8 @@
     "division/index",
     "calendarKids/index",
         "clockKids/index",
-        "wordle/index"
+        "wordle/index",
+        "linknav/index"
   ]
     }
   ],

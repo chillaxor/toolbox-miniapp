@@ -23,6 +23,7 @@ const TOOLS = [
   { id: 'unitprice', name: '哪个更划算', category: 'life', icon: '🛒', path: '/packages/calcTools/unitprice/index', description: '大包小包比一比·看看买哪个划算' },
   { id: 'currency', name: '汇率转换', category: 'life', icon: '💱', path: '/packages/calcTools/currency/index', description: '多币种实时换算' },
   { id: 'salary', name: '税后工资', category: 'life', icon: '💰', path: '/packages/calcTools/salary/index', description: '五险一金+个税计算', badge: 'praise' },
+  { id: 'linknav', name: '常用网站', category: 'life', icon: '🔗', path: '/packages/toolsB/linknav/index', description: '常用网站分类导航·点名称复制网址' },
   { id: 'calendar', name: '万年历', category: 'date', icon: '📅', path: '/packages/toolsA/calendar/index', description: '月视图+农历+节假日' },
   { id: 'countdown', name: '倒计时', category: 'date', icon: '⏳', path: '/packages/toolsA/countdown/index', description: '目标日期倒计时' },
   { id: 'workday', name: '工作日计算', category: 'date', icon: '💼', path: '/packages/toolsB/workday/index', description: '工作日天数计算' },

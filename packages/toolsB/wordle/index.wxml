@@ -7,6 +7,22 @@
     </view>
   </view>
 
+  <view class="riddle">
+    <view class="riddle-head" bindtap="toggleRiddle">
+      <text class="riddle-title">谜面 · 猜猜是哪个成语</text>
+      <text class="riddle-toggle">{{showRiddle ? '收起' : '展开'}}</text>
+    </view>
+    <block wx:if="{{showRiddle}}">
+      <view class="riddle-line"><text class="m-label">释义</text><text class="m-val">{{riddle.meaning}}</text></view>
+      <view class="riddle-line"><text class="m-label">拼音</text><text class="m-val">{{riddle.pinyin}}</text></view>
+      <view class="riddle-tags" wx:if="{{riddle.tags.length > 0}}">
+        <text class="tag" wx:for="{{riddle.tags}}" wx:for-item="t" wx:key="*this">{{t}}</text>
+      </view>
+      <view class="riddle-first" wx:if="{{hintFirst}}">首字提示：{{firstChar}}</view>
+      <view class="riddle-hintbtn" wx:if="{{!hintFirst && status === 'playing'}}" bindtap="onHintFirst">还是没思路？看首字</view>
+    </block>
+  </view>
+
   <view class="grid">
     <view class="row" wx:for="{{grid}}" wx:for-item="row" wx:key="k">
       <view class="cell {{cell.cls}}" wx:for="{{row.cells}}" wx:for-item="cell" wx:key="k">

@@ -1,0 +1,35 @@
+<view class="page">
+  <view class="search-bar">
+    <input class="search-input" placeholder="搜索名称或网址" placeholder-class="ph"
+      value="{{keyword}}" bindinput="onSearch" confirm-type="search" />
+  </view>
+
+  <scroll-view scroll-x="true" class="tabs" wx:if="{{categories.length > 0}}">
+    <view wx:for="{{categories}}" wx:key="name"
+      class="tab {{activeCategory === item.name ? 'tab-on' : ''}}"
+      bindtap="switchCategory" data-name="{{item.name}}">{{item.name}}</view>
+  </scroll-view>
+
+  <view class="list">
+    <view wx:for="{{displayLinks}}" wx:key="url" class="link-item"
+      bindtap="tapLink" data-name="{{item.name}}" data-url="{{item.url}}">
+      <view class="link-name">{{item.name}}</view>
+      <view class="link-arrow">复制</view>
+    </view>
+
+    <view wx:if="{{isEmpty}}" class="empty">
+      <view class="empty-emoji">🔗</view>
+      <view class="empty-text">{{loading ? '加载中…' : '没有匹配的网站'}}</view>
+    </view>
+  </view>
+
+  <view wx:if="{{popup.show}}" class="mask" bindtap="closePopup">
+    <view class="popup" catchtap="stopTap">
+      <view class="popup-icon">📋</view>
+      <view class="popup-title">{{popup.name}}</view>
+      <view class="popup-url">{{popup.url}}</view>
+      <view class="copy-btn" bindtap="copyLink">复制网址</view>
+      <view class="popup-close" bindtap="closePopup">关闭</view>
+    </view>
+  </view>
+</view>

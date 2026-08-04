@@ -120,7 +120,8 @@ App({
       division: false,
       calendarKids: false,
       clockKids: false,
-      wordle: false
+      wordle: false,
+      linknav: false
     }
   }
 });

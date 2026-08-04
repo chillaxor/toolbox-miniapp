@@ -26,6 +26,54 @@
 }
 .mode.on { color: #fff; background: #6aaa64; border-color: #6aaa64; }
 
+.riddle {
+  width: 100%;
+  box-sizing: border-box;
+  background: #fff;
+  border: 1rpx solid #e7e7e7;
+  border-radius: 16rpx;
+  padding: 20rpx 24rpx;
+  margin-bottom: 20rpx;
+}
+.riddle-head { display: flex; justify-content: space-between; align-items: center; }
+.riddle-title { font-size: 28rpx; font-weight: 700; color: #333; }
+.riddle-toggle { font-size: 24rpx; color: #6aaa64; }
+.riddle-line { display: flex; align-items: flex-start; margin-top: 16rpx; }
+.m-label {
+  flex: none;
+  font-size: 24rpx;
+  font-weight: 700;
+  color: #6aaa64;
+  background: #eef6ec;
+  border-radius: 8rpx;
+  padding: 4rpx 12rpx;
+  margin-right: 14rpx;
+}
+.m-val { font-size: 28rpx; color: #444; line-height: 1.5; }
+.riddle-tags { display: flex; flex-wrap: wrap; gap: 12rpx; margin-top: 16rpx; }
+.tag {
+  font-size: 22rpx;
+  color: #b07d2b;
+  background: #fbf3e2;
+  border-radius: 20rpx;
+  padding: 4rpx 16rpx;
+}
+.riddle-first {
+  margin-top: 16rpx;
+  font-size: 28rpx;
+  color: #c0392b;
+  font-weight: 700;
+}
+.riddle-hintbtn {
+  margin-top: 18rpx;
+  align-self: flex-start;
+  font-size: 24rpx;
+  color: #6aaa64;
+  border: 1rpx dashed #6aaa64;
+  border-radius: 24rpx;
+  padding: 10rpx 22rpx;
+}
+
 .grid { display: flex; flex-direction: column; gap: 12rpx; margin: 12rpx 0 24rpx; }
 .row { display: flex; gap: 12rpx; }
 .cell {
