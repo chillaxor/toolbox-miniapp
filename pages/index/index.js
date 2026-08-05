@@ -297,6 +297,7 @@ Page({
       var badge = toolsData.getBadgeInfo(t);
       t.badgeType = badge.type;
       t.badgeText = badge.text;
+      t.badgeEmoji = badge.emoji;
     });
     return visible;
   },
@@ -380,7 +381,8 @@ Page({
           categoryColor: cat ? cat.color : '#FF6B35',
           categoryBgColor: cat ? cat.bgColor : '#FFE5D9',
           badgeType: badge.type,
-          badgeText: badge.text
+          badgeText: badge.text,
+          badgeEmoji: badge.emoji
         });
       }
     }

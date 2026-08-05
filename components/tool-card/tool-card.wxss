@@ -23,6 +23,7 @@
   font-size: 40rpx;
   margin-right: 20rpx;
   flex-shrink: 0;
+  position: relative;
 }
 
 .tool-card-info {
@@ -45,14 +46,22 @@
   line-height: 1.4;
 }
 
-/* 运营角标：很火 / 很赞 */
+/* 运营角标：图标右上角小徽章 */
 .tool-card-badge {
-  margin-left: 10rpx;
-  padding: 2rpx 12rpx;
-  font-size: 19rpx;
-  font-weight: 600;
-  line-height: 1.5;
+  position: absolute;
+  top: -8rpx;
+  right: -8rpx;
+  min-width: 30rpx;
+  height: 30rpx;
+  padding: 0 6rpx;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18rpx;
+  line-height: 1;
   border-radius: 999rpx;
+  border: 2rpx solid #ffffff;
   flex-shrink: 0;
 }
 

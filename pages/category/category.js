@@ -57,7 +57,8 @@ Page({
         color: cat.color,
         bgColor: cat.bgColor,
         badgeType: badge.type,
-        badgeText: badge.text
+        badgeText: badge.text,
+        badgeEmoji: badge.emoji
       });
     }
 

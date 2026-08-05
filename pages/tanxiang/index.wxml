@@ -90,9 +90,9 @@
     <text class="lingqian-fab-text">佛祖签</text>
   </view>
 
-  <!-- 更换背景悬浮小图标（位于佛祖签下方） -->
+  <!-- 更换背景悬浮圆形图标（位于佛祖签上方） -->
   <view class="bg-fab" bindtap="openBgPicker">
-    <view class="bg-fab-inner">🖼</view>
+    <view class="bg-fab-inner">🌄</view>
     <text class="bg-fab-text">背景</text>
   </view>
 

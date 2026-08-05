@@ -24,7 +24,7 @@ const TOOLS = [
   { id: 'currency', name: '汇率转换', category: 'life', icon: '💱', path: '/packages/calcTools/currency/index', description: '多币种实时换算' },
   { id: 'salary', name: '税后工资', category: 'life', icon: '💰', path: '/packages/calcTools/salary/index', description: '五险一金+个税计算', badge: 'praise' },
   { id: 'linknav', name: '常用网站', category: 'life', icon: '🔗', path: '/packages/toolsB/linknav/index', description: '常用网站分类导航·点名称复制网址' },
-  { id: 'calendar', name: '万年历', category: 'date', icon: '📅', path: '/packages/toolsA/calendar/index', description: '月视图+农历+节假日' },
+  { id: 'calendar', name: '万年历', category: 'date', icon: '📅', path: '/packages/toolsA/calendar/index', description: '月视图+农历+节假日' , badge: 'hot' },
   { id: 'countdown', name: '倒计时', category: 'date', icon: '⏳', path: '/packages/toolsA/countdown/index', description: '目标日期倒计时' },
   { id: 'workday', name: '工作日计算', category: 'date', icon: '💼', path: '/packages/toolsB/workday/index', description: '工作日天数计算' },
   { id: 'lunar', name: '农历转换', category: 'date', icon: '🌙', path: '/packages/toolsB/lunar/index', description: '公历↔农历互转' },
@@ -41,7 +41,7 @@ const TOOLS = [
   { id: 'imgbase64', name: '图转Base64', category: 'image', icon: '🔄', path: '/packages/imgTools/imgbase64/index', description: '图片转字符串' },
   { id: 'qrcode', name: '二维码生成', category: 'image', icon: '📱', path: '/packages/imgTools/qrcode/index', description: '文本/URL生成二维码' },
   { id: 'loan', name: '贷款计算器', category: 'life', icon: '🏦', path: '/packages/calcTools/loan/index', description: '房贷/车贷月供计算' },
-  { id: 'worldclock', name: '世界时钟', category: 'date', icon: '🌍', path: '/packages/toolsB/worldclock/index', description: '全球城市当前时间' },
+  { id: 'worldclock', name: '世界时钟', category: 'date', icon: '🌍', path: '/packages/toolsB/worldclock/index', description: '全球城市当前时间' , badge: 'hot' },
   { id: 'whateat', name: '今天吃什么', category: 'fun', icon: '🍜', path: '/packages/toolsB/whateat/index', description: '随机推荐菜品' },
   { id: 'drawlot', name: '抽签抓阄', category: 'fun', icon: '🎯', path: '/packages/moreTools/drawlot/index', description: '输入选项随机抽取' },
   { id: 'dice', name: '摇骰子', category: 'fun', icon: '🎲', path: '/packages/moreTools/dice/index', description: '1-6随机摇骰子' },
@@ -171,24 +171,28 @@ const TOOLS = [
 ];
 
 /**
- * badge 标识文案映射
- * key = badge 值，value = 展示文案
+ * badge 标识配置（角标统一叠加在图标「右上角」）
+ * key = badge 值
+ *   emoji : 角标内显示的图标（彩色 emoji，叠在图标右上角的小徽章）
+ *   label : 完整文案（保留兼容）
+ *   cls   : 颜色类后缀（badge-hot / badge-praise）
  */
-var BADGE_LABELS = {
-  hot: '🔥 很火',
-  praise: '👍 很赞'
+var BADGE_CONFIG = {
+  hot:    { emoji: '🔥', label: '很火', cls: 'hot' },
+  praise: { emoji: '👍', label: '很赞', cls: 'praise' }
 };
 
 /**
  * 获取工具的 badge 展示信息
  * @param {Object} tool - 工具对象
- * @returns {{type: string, text: string}} 无 badge 时 type/text 均为空串
+ * @returns {{type, emoji, label, text}} 无 badge 时字段均为空串
  */
 function getBadgeInfo(tool) {
-  if (tool && tool.badge && BADGE_LABELS[tool.badge]) {
-    return { type: tool.badge, text: BADGE_LABELS[tool.badge] };
+  if (tool && tool.badge && BADGE_CONFIG[tool.badge]) {
+    var b = BADGE_CONFIG[tool.badge];
+    return { type: b.cls, emoji: b.emoji, label: b.label, text: b.emoji + ' ' + b.label };
   }
-  return { type: '', text: '' };
+  return { type: '', emoji: '', label: '', text: '' };
 }
 
 /**

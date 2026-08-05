@@ -8,7 +8,8 @@ Component({
     bgColor: { type: String, value: '#FFE5D9' },
     path: { type: String, value: '' },
     badgeType: { type: String, value: '' },
-    badgeText: { type: String, value: '' }
+    badgeText: { type: String, value: '' },
+    badgeEmoji: { type: String, value: '' }
   },
 
   methods: {

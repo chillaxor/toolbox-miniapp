@@ -135,6 +135,7 @@
   justify-content: center;
   font-size: 46rpx;
   margin-bottom: 16rpx;
+  position: relative;
 }
 
 .cat-card-name-row {
@@ -155,13 +156,22 @@
   max-width: 150rpx;
 }
 
+/* 运营角标：图标右上角小徽章 */
 .cat-card-badge {
-  margin-left: 8rpx;
-  padding: 1rpx 9rpx;
-  font-size: 17rpx;
-  font-weight: 600;
-  line-height: 1.5;
+  position: absolute;
+  top: -8rpx;
+  right: -8rpx;
+  min-width: 30rpx;
+  height: 30rpx;
+  padding: 0 6rpx;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18rpx;
+  line-height: 1;
   border-radius: 999rpx;
+  border: 2rpx solid #ffffff;
   flex-shrink: 0;
 }
 
