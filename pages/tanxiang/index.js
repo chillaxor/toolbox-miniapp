@@ -62,7 +62,7 @@ var INCENSE_BY_ID = {};
 ALL_INCENSE.forEach(function (it) { INCENSE_BY_ID[it.id] = it; });
 
 var BG_SOLID = [
-  { id: 'color-default', color: '#1a120b' }
+  { id: 'color-default', color: '#f57505' }
 ];
 var BG_GITEE = [
   { id: 'gitee-yu', image: INCENSE_IMG_BASE + 'yu.jpg' },
